@@ -8,13 +8,15 @@ mongoose.set('strictQuery', false);
 require("dotenv").config();
 //Declare ll methods el haktbha 
 //patientController
-const {createPatient} = require("./Controllers/patientController");
+const {addFamilyMember} = require("./Controllers/patientController");
 
 //doctorController 
 const {createDoctor} = require("./Controllers/doctorController");
 
 //adminstratorController
-const {addAdmin,addPackage,addPatient,addDoctor,updatePackage} = require("./Controllers/adminstratorController");
+const {addAdmin,addPackage,addPatient,addDoctor,
+  updatePackage,deletePackage,removeDoctor,removePatient,removeAdmin
+} = require("./Controllers/adminstratorController");
 
 //el link bta3 el DB
 const MongoURI = process.env.MONGO_URI ;
@@ -58,30 +60,38 @@ server.use(express.json())
 server.post("/addAdmin",addAdmin);
 server.post("/addPatient",addPatient);
 server.post("/addDoctor",addDoctor);
+server.post("/addPackage",addPackage);
+server.post("/addFamilyMember",addFamilyMember);
 ////////////// GET
 //patient
-server.get("/doctorDetails", doctorDetails);
-server.get("/viewPrescriptions", viewPrescriptions);
-server.get("/viewFamilyMembers", viewFamilyMembers);
-server.get("/selectPrescription", selectPrescription);
-server.get("/filterPrescriptions", filterPrescriptions);
-server.get("/filterApointmentsByDateAndStatus", filterApointmentsByDateAndStatus);
-server.get("/searchDoctors", searchDoctors);
-server.get("/filterDoctors", filterPrescriptions);
-//doctor
-server.get("/selectPatient", selectPatient);
-server.get("/viewInfoAndHealthRecord", viewInfoAndHealthRecord);
-server.get("/viewPatients", viewPatients);
-server.get("/filterApointmentsByDateAndStatusDoc", filterApointmentsByDateAndStatusDoc);
-server.get("/filterPatientsByAppointments", filterPatientsByAppointments);
-server.get("/searchPatientByName", searchPatientByName);
+//server.get("/doctorDetails", doctorDetails);
+// server.get("/viewPrescriptions", viewPrescriptions);
+// server.get("/viewFamilyMembers", viewFamilyMembers);
+// server.get("/selectPrescription", selectPrescription);
+// server.get("/filterPrescriptions", filterPrescriptions);
+// server.get("/filterApointmentsByDateAndStatus", filterApointmentsByDateAndStatus);
+// server.get("/searchDoctors", searchDoctors);
+// server.get("/filterDoctors", filterPrescriptions);
+// //doctor
+// server.get("/selectPatient", selectPatient);
+// server.get("/viewInfoAndHealthRecord", viewInfoAndHealthRecord);
+// server.get("/viewPatients", viewPatients);
+// server.get("/filterApointmentsByDateAndStatusDoc", filterApointmentsByDateAndStatusDoc);
+// server.get("/filterPatientsByAppointments", filterPatientsByAppointments);
+// server.get("/searchPatientByName", searchPatientByName);
 //////////////PUT
 //admin
 server.put("/updatePackage", updatePackage);
 //docotr
-server.put("/updateDoctorProfile", updateDoctorProfile);
+// server.put("/updateDoctorProfile", updateDoctorProfile);
 ///////////// DELETE
-//server.delete("/deleteUser", deleteUser);
+//admin
+server.delete("/deletePackage", deletePackage);
+server.delete("/removeDoctor", removeDoctor);
+server.delete("/removePatient", removePatient);
+server.delete("/removeAdmin", removeAdmin);
+
+
 
 
 
