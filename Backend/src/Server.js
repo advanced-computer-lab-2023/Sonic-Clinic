@@ -68,6 +68,9 @@ server.post("/addFamilyMember",addFamilyMember);
 server.post("/addPatient",addPatient);
 server.post("/addPotentialDoctor",addPotentialDoctor);
 ////////////// GET
+//admin
+server.get("/viewAllPatients", viewAllPatients);
+server.get("/viewAllDoctors", viewAllDoctors);
 //patient
 server.get("/doctorDetails", doctorDetails);
  server.get("/viewPrescriptions", viewPrescriptions);
