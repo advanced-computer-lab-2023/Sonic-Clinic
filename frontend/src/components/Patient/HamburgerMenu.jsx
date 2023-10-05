@@ -36,10 +36,11 @@ function HamburgerMenu() {
             {" "}
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              width="30"
-              height="30"
+              width="40"
+              height="40"
               viewBox="0 0 30 30"
               fill="none"
+              onClick={handleMenuClick}
             >
               <path d="M4 23H26H4Z" fill="#05AFB9" />
               <path
@@ -49,7 +50,7 @@ function HamburgerMenu() {
                 stroke-miterlimit="10"
                 stroke-linecap="round"
               />
-            </svg>
+            </svg>{" "}
           </div>
         }
         customCrossIcon={false}
@@ -57,8 +58,8 @@ function HamburgerMenu() {
         styles={{
           bmBurgerButton: {
             position: "fixed",
-            width: "30px",
-            height: "24px",
+            width: "40px",
+            height: "40px",
             left: "20px", // Adjust the distance from the left edge
             top: "20px",
           },
@@ -165,7 +166,7 @@ function HamburgerMenu() {
           <a
             id="profile"
             className="menu-item"
-            href="/"
+            href="/patient/profile"
             onClick={closeMenu}
             style={{
               color: "var(--gray-600, #6C757D)",
@@ -181,7 +182,7 @@ function HamburgerMenu() {
             }}
           >
             <FontAwesomeIcon icon={faUser} style={{ marginRight: "0.5rem" }} />
-            Profile
+            My Profile
           </a>
 
           <hr className="menu-line" />
