@@ -13,5 +13,5 @@ const adminstratorSchema = new Schema({
 
 }, { timestamps: true });
 
-const User = mongoose.model('Adminstrator', adminstratorSchema);
+const Adminstrator = mongoose.model('Adminstrator', adminstratorSchema);
 module.exports = Adminstrator;
