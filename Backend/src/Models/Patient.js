@@ -37,7 +37,12 @@ const patientSchema = new Schema({
   emergencyMobileNumber: {
     type: String,
     required: true
+  },
+  package: {
+    type: String,
+    required: true
   }
+
 }, { timestamps: true });
 
 const Patient = mongoose.model('Patient', patientSchema);
