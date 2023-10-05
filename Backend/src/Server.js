@@ -8,10 +8,10 @@ mongoose.set('strictQuery', false);
 require("dotenv").config();
 //Declare ll methods el haktbha 
 //patientController
-const {createPatient} = require("./Controllers/patientController");
+const {createPatient,selectPrescription,viewFamilyMembers,filterPrescriptions,viewPrescriptions,filterApointmentsByDateAndStatus,filterDoctors,searchDoctors,doctorDetails} = require("./Controllers/patientController");
 
 //doctorController 
-const {createDoctor} = require("./Controllers/doctorController");
+const {createPatient,selectPrescription,viewFamilyMembers,filterPrescriptions,viewPrescriptions,filterApointmentsByDateAndStatus,filterDoctors,searchDoctors,doctorDetails} = require("./Controllers/doctorController");
 
 //adminstratorController
 const {addAdmin,addPackage,addPatient,addDoctor,updatePackage} = require("./Controllers/adminstratorController");
