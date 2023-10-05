@@ -15,12 +15,11 @@ const {selectPatient,viewInfoAndHealthRecord,viewPatients,updateDoctorProfile,fi
 
 //adminstratorController
 const {addAdmin,addPackage,addDoctor,
-  updatePackage,deletePackage,removeDoctor,removePatient,removeAdmin,viewPotentialDoctors,rejectPotientialDoctor
+  updatePackage,deletePackage,removeDoctor,removePatient,removeAdmin,viewPotentialDoctors,rejectPotentialDoctor, viewAllDoctors,viewAllPatients
 } = require("./Controllers/adminstratorController");
 
-guestController
-const {addPatient,addPotentialDoctor,
-} = require("./Controllers/guestController");
+//guestController
+const {addPatient,addPotentialDoctor} = require("./Controllers/guestController");
 //el link bta3 el DB
 const MongoURI = process.env.MONGO_URI ;
 
@@ -34,6 +33,7 @@ const port = process.env.PORT || "8000";
  const patient = require('./Models/Patient');
  const doctor = require('./Models/Doctor');
  const adminstrator = require('./Models/Adminstrator');
+ const potentialDoctor = require('./Models/PotentialDoctor');
                       //////////////////////////////////////////////////////////////////////////////////////
 // configurations
 // Mongo DB
@@ -71,6 +71,7 @@ server.post("/addPotentialDoctor",addPotentialDoctor);
 //admin
 server.get("/viewAllPatients", viewAllPatients);
 server.get("/viewAllDoctors", viewAllDoctors);
+server.get("/viewPotentialDoctors", viewPotentialDoctors);
 //patient
 server.get("/doctorDetails", doctorDetails);
  server.get("/viewPrescriptions", viewPrescriptions);
@@ -100,7 +101,7 @@ server.delete("/deletePackage", deletePackage);
 server.delete("/removeDoctor", removeDoctor);
 server.delete("/removePatient", removePatient);
 server.delete("/removeAdmin", removeAdmin);
-server.delete("/rejectDoctor", rejectPotientialDoctor);
+server.delete("/rejectDoctor", rejectPotentialDoctor);
 
 /*
                                                     End of your code

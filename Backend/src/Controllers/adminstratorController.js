@@ -92,7 +92,7 @@ const deletePackage = async(req,res) => {
     return res.status(500).json({ message: 'Internal server error' });
    }
 }
-const rejectPotientialDoctor = async(req,res) => {
+const rejectPotentialDoctor = async(req,res) => {
    try{
       const username = req.body.username;
       const rejectedDoctor = await potentialDoctorModel.findOneAndDelete({ username: username });
@@ -182,4 +182,4 @@ const viewAllDoctors= async(req,res)=>{
     }
 }
 module.exports = {addAdmin,addPackage,addDoctor,updatePackage,deletePackage,removeDoctor,removePatient,removeAdmin,viewAllPatients,viewAllDoctors,
-   viewPotentialDoctors,rejectPotientialDoctor};
+   viewPotentialDoctors,rejectPotentialDoctor};
