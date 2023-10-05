@@ -1,7 +1,8 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import AppNavbar from "./components/AppNavigation/AppNavbar";
+import AppNavbar from "./Components/AppNavigation/AppNavbar";
 import "bootstrap/dist/css/bootstrap.min.css";
-import PatientHomePage from "./pages/Patient/PatientHomePage";
+import PatientHomePage from "./Pages/Patient/PatientHomePage";
+
 function App() {
   return (
     <div className="bg-light">
