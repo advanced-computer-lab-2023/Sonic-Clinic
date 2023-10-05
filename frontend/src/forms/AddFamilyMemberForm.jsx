@@ -84,7 +84,6 @@ function AddFamilyMemberForm({ onAddFamilyMember }) {
         >
           <option>Male</option>
           <option>Female</option>
-          <option>Other</option>
         </Form.Control>
       </Form.Group>
 
@@ -98,10 +97,9 @@ function AddFamilyMemberForm({ onAddFamilyMember }) {
           required
         >
           <option>Husband</option>
-          <option>Daughter</option>
+          <option>Wife</option>
           <option>Son</option>
           <option>Daughter</option>
-          <option>Other</option>
         </Form.Control>
       </Form.Group>
 
