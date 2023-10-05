@@ -134,4 +134,32 @@ const removeAdmin = async(req,res) => {
     return res.status(500).json({ message: 'Internal server error' });
    }
 }
-module.exports = {addAdmin,addPackage,addPatient,addDoctor,updatePackage,deletePackage,removeDoctor,removePatient,removeAdmin};
+
+const viewAllPatients= async(req,res)=>{
+   try {
+      const patients = await patientModel.find();
+
+      if (!patients || patients.length === 0) {
+        return res.status(404).json({ message: 'No patients found.' });
+      }
+
+      res.status(200).json({ patients });
+    } catch (error) {
+      res.status(500).json({ message: 'Server Error' });
+    }
+}
+
+const viewAllDoctors= async(req,res)=>{
+   try {
+      const doctors = await doctorModel.find();
+
+      if (!doctors || doctors.length === 0) {
+        return res.status(404).json({ message: 'No doctors found.' });
+      }
+
+      res.status(200).json({ doctors });
+    } catch (error) {
+      res.status(500).json({ message: 'Server Error' });
+    }
+}
+module.exports = {addAdmin,addPackage,addPatient,addDoctor,updatePackage,deletePackage,removeDoctor,removePatient,removeAdmin,viewAllPatients,viewAllDoctors};

@@ -15,7 +15,7 @@ const {createDoctor,selectPatient,viewInfoAndHealthRecord,viewPatients,updateDoc
 
 //adminstratorController
 const {addAdmin,addPackage,addPatient,addDoctor,
-  updatePackage,deletePackage,removeDoctor,removePatient,removeAdmin
+  updatePackage,deletePackage,removeDoctor,removePatient,removeAdmin,viewAllPatients,viewAllDoctors
 } = require("./Controllers/adminstratorController");
 
 //el link bta3 el DB
@@ -63,6 +63,9 @@ server.post("/addDoctor",addDoctor);
 server.post("/addPackage",addPackage);
 server.post("/addFamilyMember",addFamilyMember);
 ////////////// GET
+//admin
+server.get("/viewAllPatients", viewAllPatients);
+server.get("/viewAllDoctors", viewAllDoctors);
 //patient
 server.get("/doctorDetails", doctorDetails);
  server.get("/viewPrescriptions", viewPrescriptions);

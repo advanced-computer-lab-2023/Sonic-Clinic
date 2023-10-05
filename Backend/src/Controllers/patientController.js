@@ -3,57 +3,63 @@ const { default: mongoose } = require('mongoose');
 const doctorModel = require('../Models/Doctor.js');
 const familyMemberModel = require('../Models/FamilyMember.js');
 
-const doctorDetails = async (req,res) => {
-   const doctorName = req.params.name;
+const doctorDetails = async (req, res) => {
+  const { name: doctorName } = req.query;
 
-    try {
-      const doctor = await doctorModel.findOne({ name: doctorName });
+  try {
+    const doctor = await doctorModel.findOne({ name: doctorName });
 
-      if (!doctor) {
-        return res.status(404).json({ message: 'Doctor not found.' });
-      }
-
-      res.status(200).json({ doctor });
-    } catch (error) {
-      res.status(500).json({ message: 'Server Error' });
+    if (!doctor) {
+      return res.status(404).json({ message: 'Doctor not found.' });
     }
-}
 
-const searchDoctors= async (req,res) => {
-   const { name, specialty } = req.query;
+    res.status(200).json({ doctor });
+  } catch (error) {
+    res.status(500).json({ message: 'Server Error' });
+  }
+};
+
+
+const searchDoctors = async (req, res) => {
+  const { name, speciality } = req.body;
+
+  try {
     let query = {};
 
-    if (name) {
-      query.name = { $regex: new RegExp(name, 'i') }; 
+    if (name && speciality) {
+      query = { name, speciality };
+    } else if (name) {
+      query.name = name;
+      query.speciality = { $exists: true }; 
+    } else if (speciality) {
+      query.speciality = speciality;
+      query.name = { $exists: true }; 
     }
 
-    if (specialty) {
-      query.specialty = { $regex: new RegExp(specialty, 'i') }; 
+    const doctors = await doctorModel.find(query);
+
+    if (!doctors || doctors.length === 0) {
+      return res.status(404).json({ message: 'No doctors found.' });
     }
 
-    try {
-      const doctors = await doctorModel.find(query);
+    res.status(200).json({ doctors });
+  } catch (error) {
+    res.status(500).json({ message: 'Server Error' });
+  }
+};
 
-      if (!doctors || doctors.length === 0) {
-        return res.status(404).json({ message: 'No doctors found.' });
-      }
 
-      res.status(200).json({ doctors });
-    } catch (error) {
-      res.status(500).json({ message: 'Server Error' });
-    }
-}
 
 const filterDoctors= async (req,res)=>{
-   const { specialty, date, time } = req.query;
+   const { speciality, date, time } = req.query;
    let query = {};
 
-   if (specialty) {
-     query.specialty = { $regex: new RegExp(specialty, 'i') }; 
+   if (speciality) {
+     query.speciality = { $regex: new RegExp(speciality, 'i') }; 
    }
 
    try {
-     // Find doctors based on specialty
+     // Find doctors based on speciality
      let doctors = await doctorModel.find(query);
 
      if (!doctors || doctors.length === 0) {

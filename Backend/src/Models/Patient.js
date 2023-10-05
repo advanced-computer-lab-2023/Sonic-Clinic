@@ -45,8 +45,19 @@ const patientSchema = new Schema({
   prescriptions: {
     type: String,
     required: true
-  }
-
+  },
+  appointments: [
+    {
+      date: {
+        type: Date,
+        required: true,
+      },
+      description: {
+        type: String,
+        required: true,
+      },
+    },
+  ],
 }, { timestamps: true });
 
 const Patient = mongoose.model('Patient', patientSchema);

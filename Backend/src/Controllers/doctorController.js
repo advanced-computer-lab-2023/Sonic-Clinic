@@ -7,39 +7,41 @@ const createDoctor = async(req,res) => {
    //Name, Email and Age
 }
 
-const searchPatientByName= async(req,res) => {
-   const { name } = req.query;
-
-    try {
-      const patients = await patientModel.find({ name: { $regex: new RegExp(name, 'i') } });
-
-      if (!patients || patients.length === 0) {
-        return res.status(404).json({ message: 'No patients found.' });
-      }
-
-      res.status(200).json({ patients });
-    } catch (error) {
-      res.status(500).json({ message: 'Server Error' });
-    }
-}
-
-const filterPatientsByAppointments= async(req,res) => {
+const searchPatientByName = async (req, res) => {
+   const { name: patientName } = req.query;
+ 
    try {
-      const patients = await Patient.find({
-        appointments: {
-          $elemMatch: { date: { $gte: new Date() } } 
-        }
-      });
+     const patient = await patientModel.findOne({ name: patientName });
+ 
+     if (!patient) {
+       return res.status(404).json({ message: 'No patients found.' });
+     }
+ 
+     res.status(200).json({ patient });
+   } catch (error) {
+     res.status(500).json({ message: 'Server Error' });
+   }
+ };
+ 
+ 
+ 
 
-      if (!patients || patients.length === 0) {
-        return res.status(404).json({ message: 'No patients with upcoming appointments found.' });
-      }
-
-      res.status(200).json({ patients });
-    } catch (error) {
-      res.status(500).json({ message: 'Server Error' });
-    }
-}
+ const filterPatientsByAppointments = async (req, res) => {
+   try {
+     const patients = await patientModel.find({
+       'appointments.date': { $gte: new Date() }
+     });
+ 
+     if (!patients || patients.length === 0) {
+       return res.status(404).json({ message: 'No patients with upcoming appointments found.' });
+     }
+ 
+     res.status(200).json({ patients });
+   } catch (error) {
+     res.status(500).json({ message: 'Server Error' });
+   }
+ };
+ 
 
 const filterApointmentsByDateAndStatusDoc= async(req,res) => {
    const { date, status } = req.query;
