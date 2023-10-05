@@ -8,10 +8,10 @@ mongoose.set('strictQuery', false);
 require("dotenv").config();
 //Declare ll methods el haktbha 
 //patientController
-const {createPatient,selectPrescription,viewFamilyMembers,filterPrescriptions,viewPrescriptions,filterApointmentsByDateAndStatus,filterDoctors,searchDoctors,doctorDetails,addFamilyMember} = require("./Controllers/patientController");
+const {selectPrescription,viewFamilyMembers,filterPrescriptions,viewPrescriptions,filterApointmentsByDateAndStatus,filterDoctors,searchDoctors,doctorDetails,addFamilyMember} = require("./Controllers/patientController");
 
 //doctorController 
-const {createDoctor,selectPatient,viewInfoAndHealthRecord,viewPatients,updateDoctorProfile,filterApointmentsByDateAndStatusDoc,filterPatientsByAppointments,searchPatientByName} = require("./Controllers/doctorController");
+const {selectPatient,viewInfoAndHealthRecord,viewPatients,updateDoctorProfile,filterApointmentsByDateAndStatusDoc,filterPatientsByAppointments,searchPatientByName} = require("./Controllers/doctorController");
 
 //adminstratorController
 const {addAdmin,addPackage,addPatient,addDoctor,
@@ -90,11 +90,6 @@ server.delete("/deletePackage", deletePackage);
 server.delete("/removeDoctor", removeDoctor);
 server.delete("/removePatient", removePatient);
 server.delete("/removeAdmin", removeAdmin);
-
-
-
-
-
 
 /*
                                                     End of your code

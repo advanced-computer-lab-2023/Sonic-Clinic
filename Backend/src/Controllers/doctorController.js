@@ -2,10 +2,6 @@ const doctorModel = require('../Models/Doctor.js');
 const { default: mongoose } = require('mongoose');
 const patientModel = require('../Models/Patient.js');
 
-const createDoctor = async(req,res) => {
-   //add a new user to the database with 
-   //Name, Email and Age
-}
 
 const searchPatientByName= async(req,res) => {
    const { name } = req.query;
