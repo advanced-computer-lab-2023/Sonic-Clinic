@@ -14,7 +14,7 @@ const {createPatient} = require("./Controllers/patientController");
 const {createDoctor} = require("./Controllers/doctorController");
 
 //adminstratorController
-const {addAdmin,addPackage,addPatient,addDoctor,updatePackage} = require("./controllers/adminstratorController");
+const {addAdmin,addPackage,addPatient,addDoctor,updatePackage} = require("./Controllers/adminstratorController");
 
 //el link bta3 el DB
 const MongoURI = process.env.MONGO_URI ;
