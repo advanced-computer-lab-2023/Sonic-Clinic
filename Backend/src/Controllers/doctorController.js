@@ -1,4 +1,4 @@
-const userModel = require('../Models/Doctor.js');
+const doctorModel = require('../Models/Doctor.js');
 const { default: mongoose } = require('mongoose');
 
 const createDoctor = async(req,res) => {
