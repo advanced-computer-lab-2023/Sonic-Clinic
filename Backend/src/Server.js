@@ -14,10 +14,13 @@ const {selectPrescription,viewFamilyMembers,filterPrescriptions,viewPrescription
 const {selectPatient,viewInfoAndHealthRecord,viewPatients,updateDoctorProfile,filterApointmentsByDateAndStatusDoc,filterPatientsByAppointments,searchPatientByName} = require("./Controllers/doctorController");
 
 //adminstratorController
-const {addAdmin,addPackage,addPatient,addDoctor,
-  updatePackage,deletePackage,removeDoctor,removePatient,removeAdmin
+const {addAdmin,addPackage,addDoctor,
+  updatePackage,deletePackage,removeDoctor,removePatient,removeAdmin,viewPotentialDoctors
 } = require("./Controllers/adminstratorController");
 
+guestController
+const {addPatient,addPotentialDoctor,
+} = require("./Controllers/guestController");
 //el link bta3 el DB
 const MongoURI = process.env.MONGO_URI ;
 
@@ -58,10 +61,12 @@ server.use(express.json())
 ///////////// POST
 //admin
 server.post("/addAdmin",addAdmin);
-server.post("/addPatient",addPatient);
 server.post("/addDoctor",addDoctor);
 server.post("/addPackage",addPackage);
 server.post("/addFamilyMember",addFamilyMember);
+//guest
+server.post("/addPatient",addPatient);
+server.post("/addPotentialDoctor",addPotentialDoctor);
 ////////////// GET
 //patient
 server.get("/doctorDetails", doctorDetails);
@@ -79,6 +84,8 @@ server.get("/doctorDetails", doctorDetails);
  server.get("/filterApointmentsByDateAndStatusDoc", filterApointmentsByDateAndStatusDoc);
  server.get("/filterPatientsByAppointments", filterPatientsByAppointments);
  server.get("/searchPatientByName", searchPatientByName);
+ //admin
+ server.get("/viewPotentialDoctors", viewPotentialDoctors);
 //////////////PUT
 //admin
 server.put("/updatePackage", updatePackage);

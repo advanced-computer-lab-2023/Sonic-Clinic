@@ -29,18 +29,7 @@ const addDoctor = async(req,res) => {
 
    }
 }
-const addPatient = async(req,res) => {
-   try{
-      const newPatient = await patientModel.create(req.body);
-      console.log("Patient Created!")
-      res.status(200).send(newPatient);
 
-   }
-   catch(error){
-      res.status(400).send({error:error.message});
-
-   }
-}
 const addPackage = async(req,res) => {
    try{
       const newPackage = await packagesModel.create(req.body);
@@ -73,6 +62,20 @@ const addPackage = async(req,res) => {
       }
 
 }
+const viewPotentialDoctors = async (req, res) => {
+   try {
+     const potentialDoctors = await potentialDoctorModel.find({});
+ 
+     if (!potentialDoctors || potentialDoctors.length === 0) {
+       return res.status(404).json({ message: 'No potential doctors found.' });
+     }
+ 
+     res.status(200).json({ potentialDoctors });
+   } catch (error) {
+     res.status(500).json({ message: 'Server Error' });
+   }
+ };
+ 
 const deletePackage = async(req,res) => {
    try{
       const packageType = req.body.type;
@@ -134,4 +137,4 @@ const removeAdmin = async(req,res) => {
     return res.status(500).json({ message: 'Internal server error' });
    }
 }
-module.exports = {addAdmin,addPackage,addPatient,addDoctor,updatePackage,deletePackage,removeDoctor,removePatient,removeAdmin};
+module.exports = {addAdmin,addPackage,addDoctor,updatePackage,deletePackage,removeDoctor,removePatient,removeAdmin,viewPotentialDoctors};
