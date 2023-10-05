@@ -11,7 +11,7 @@ const searchPatientByName= async(req,res) => {
    const { name } = req.query;
 
     try {
-      const patients = await Patient.find({ name: { $regex: new RegExp(name, 'i') } });
+      const patients = await patientModel.find({ name: { $regex: new RegExp(name, 'i') } });
 
       if (!patients || patients.length === 0) {
         return res.status(404).json({ message: 'No patients found.' });
@@ -41,7 +41,7 @@ const filterPatientsByAppointments= async(req,res) => {
     }
 }
 
-const filterApointmentsByDateAndStatus= async(req,res) => {
+const filterApointmentsByDateAndStatusDoc= async(req,res) => {
    const { date, status } = req.query;
    const query = {};
    if (date) {
@@ -53,7 +53,7 @@ const filterApointmentsByDateAndStatus= async(req,res) => {
    }
 
    try {
-     const appointments = await Patient.find({ 'appointments.date': query.date, 'appointments.status': query.status });
+     const appointments = await patientModel.find({ 'appointments.date': query.date, 'appointments.status': query.status });
 
      if (!appointments || appointments.length === 0) {
        return res.status(404).json({ message: 'No appointments found.' });
@@ -69,7 +69,7 @@ const updateDoctorProfile= async(req,res)=>{
    const { email, hourlyRate, affiliation } = req.body;
 
     try {
-      const doctor = await Doctor.findOne({ username: req.user.username }); 
+      const doctor = await doctorModel.findOne({ username: req.user.username }); 
 
       if (!doctor) {
         return res.status(404).json({ message: 'Doctor not found.' });
@@ -91,7 +91,7 @@ const updateDoctorProfile= async(req,res)=>{
 
 const viewPatients= async(req,res)=>{
    try {
-      const doctor = await Doctor.findOne({ username: req.user.username }).populate('patients');
+      const doctor = await doctorModel.findOne({ username: req.user.username }).populate('patients');
 
       if (!doctor) {
         return res.status(404).json({ message: 'Doctor not found.' });
@@ -109,7 +109,7 @@ const viewInfoAndHealthRecord= async(req,res) =>{
    const { patientUsername } = req.query;
 
    try {
-     const patient = await Patient.findOne({ username: patientUsername });
+     const patient = await patientModel.findOne({ username: patientUsername });
 
      if (!patient) {
        return res.status(404).json({ message: 'Patient not found.' });
@@ -140,7 +140,7 @@ const selectPatient = async(req,res) =>{
    const { patientUsername } = req.query;
 
    try {
-     const doctor = await Doctor.findOne({ username: req.user.username }).populate('patients');
+     const doctor = await doctorModel.findOne({ username: req.user.username }).populate('patients');
      const selectedPatient = doctor.patients.find(patient => patient.username === patientUsername);
 
      if (!selectedPatient) {
@@ -153,4 +153,4 @@ const selectPatient = async(req,res) =>{
    }
 }
 
-module.exports = {createDoctor};
+module.exports = {createDoctor,selectPatient,viewInfoAndHealthRecord,viewPatients,updateDoctorProfile,filterApointmentsByDateAndStatusDoc,filterPatientsByAppointments,searchPatientByName};

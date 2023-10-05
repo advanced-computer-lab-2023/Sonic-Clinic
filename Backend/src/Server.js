@@ -54,15 +54,35 @@ server.get("/home", (req, res) => {
 server.use(express.json())
 
 ///////////// POST
+//admin
 server.post("/addAdmin",addAdmin);
 server.post("/addPatient",addPatient);
 server.post("/addDoctor",addDoctor);
 ////////////// GET
-//server.get("/users", getUsers);
+//patient
+server.get("/doctorDetails", doctorDetails);
+server.get("/viewPrescriptions", viewPrescriptions);
+server.get("/viewFamilyMembers", viewFamilyMembers);
+server.get("/selectPrescription", selectPrescription);
+server.get("/filterPrescriptions", filterPrescriptions);
+server.get("/filterApointmentsByDateAndStatus", filterApointmentsByDateAndStatus);
+server.get("/searchDoctors", searchDoctors);
+server.get("/filterDoctors", filterPrescriptions);
+//doctor
+server.get("/selectPatient", selectPatient);
+server.get("/viewInfoAndHealthRecord", viewInfoAndHealthRecord);
+server.get("/viewPatients", viewPatients);
+server.get("/filterApointmentsByDateAndStatusDoc", filterApointmentsByDateAndStatusDoc);
+server.get("/filterPatientsByAppointments", filterPatientsByAppointments);
+server.get("/searchPatientByName", searchPatientByName);
 //////////////PUT
+//admin
 server.put("/updatePackage", updatePackage);
-///////////// UPDATE
+//docotr
+server.put("/updateDoctorProfile", updateDoctorProfile);
+///////////// DELETE
 //server.delete("/deleteUser", deleteUser);
+
 
 
 

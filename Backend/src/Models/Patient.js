@@ -42,8 +42,9 @@ const patientSchema = new Schema({
     type: String,
     required: true
   },
-  perscription: {
+  prescriptions: {
     type: String,
+    required: true
   }
 
 }, { timestamps: true });
