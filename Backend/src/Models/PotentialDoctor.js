@@ -33,12 +33,7 @@ const potentialDoctorSchema = new Schema({
   educationalBackground: {
     type: String,
     required: true
-  },
-  patients: {
-    type: Array,
-    required: true
   }
-
 }, { timestamps: true });
 
 const PotentialDoctor = mongoose.model('PotentialDoctor', potentialDoctorSchema);
