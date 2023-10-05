@@ -8,10 +8,10 @@ mongoose.set('strictQuery', false);
 require("dotenv").config();
 //Declare ll methods el haktbha 
 //patientController
-const {createPatient,selectPrescription,viewFamilyMembers,filterPrescriptions,viewPrescriptions,filterApointmentsByDateAndStatus,filterDoctors,searchDoctors,doctorDetails} = require("./Controllers/patientController");
+const {createPatient,selectPrescription,viewFamilyMembers,filterPrescriptions,viewPrescriptions,filterApointmentsByDateAndStatus,filterDoctors,searchDoctors,doctorDetails,addFamilyMember} = require("./Controllers/patientController");
 
 //doctorController 
-const {createPatient,selectPrescription,viewFamilyMembers,filterPrescriptions,viewPrescriptions,filterApointmentsByDateAndStatus,filterDoctors,searchDoctors,doctorDetails} = require("./Controllers/doctorController");
+const {createDoctor,selectPatient,viewInfoAndHealthRecord,viewPatients,updateDoctorProfile,filterApointmentsByDateAndStatusDoc,filterPatientsByAppointments,searchPatientByName} = require("./Controllers/doctorController");
 
 //adminstratorController
 const {addAdmin,addPackage,addPatient,addDoctor,
@@ -64,21 +64,21 @@ server.post("/addPackage",addPackage);
 server.post("/addFamilyMember",addFamilyMember);
 ////////////// GET
 //patient
-//server.get("/doctorDetails", doctorDetails);
-// server.get("/viewPrescriptions", viewPrescriptions);
-// server.get("/viewFamilyMembers", viewFamilyMembers);
-// server.get("/selectPrescription", selectPrescription);
-// server.get("/filterPrescriptions", filterPrescriptions);
-// server.get("/filterApointmentsByDateAndStatus", filterApointmentsByDateAndStatus);
-// server.get("/searchDoctors", searchDoctors);
-// server.get("/filterDoctors", filterPrescriptions);
+server.get("/doctorDetails", doctorDetails);
+ server.get("/viewPrescriptions", viewPrescriptions);
+ server.get("/viewFamilyMembers", viewFamilyMembers);
+ server.get("/selectPrescription", selectPrescription);
+ server.get("/filterPrescriptions", filterPrescriptions);
+ server.get("/filterApointmentsByDateAndStatus", filterApointmentsByDateAndStatus);
+ server.get("/searchDoctors", searchDoctors);
+ server.get("/filterDoctors", filterPrescriptions);
 // //doctor
-// server.get("/selectPatient", selectPatient);
-// server.get("/viewInfoAndHealthRecord", viewInfoAndHealthRecord);
-// server.get("/viewPatients", viewPatients);
-// server.get("/filterApointmentsByDateAndStatusDoc", filterApointmentsByDateAndStatusDoc);
-// server.get("/filterPatientsByAppointments", filterPatientsByAppointments);
-// server.get("/searchPatientByName", searchPatientByName);
+ server.get("/selectPatient", selectPatient);
+ server.get("/viewInfoAndHealthRecord", viewInfoAndHealthRecord);
+ server.get("/viewPatients", viewPatients);
+ server.get("/filterApointmentsByDateAndStatusDoc", filterApointmentsByDateAndStatusDoc);
+ server.get("/filterPatientsByAppointments", filterPatientsByAppointments);
+ server.get("/searchPatientByName", searchPatientByName);
 //////////////PUT
 //admin
 server.put("/updatePackage", updatePackage);
