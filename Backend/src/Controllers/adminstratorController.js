@@ -4,6 +4,7 @@ const administratorModel = require('../Models/Adminstrator.js');
 const packagesModel = require('../Models/Packages.js');
 const doctorModel = require('../Models/Doctor.js');
 const patientModel = require('../Models/Patient.js');
+const potentialDoctorModel = require('../Models/PotentialDoctor.js');
 
 const addAdmin = async(req,res) => {
    try{
@@ -91,6 +92,21 @@ const deletePackage = async(req,res) => {
     return res.status(500).json({ message: 'Internal server error' });
    }
 }
+const rejectPotientialDoctor = async(req,res) => {
+   try{
+      const username = req.body.username;
+      const rejectedDoctor = await potentialDoctorModel.findOneAndDelete({ username: username });
+
+    if (!rejectedDoctor) {
+      return res.status(404).json({ message: 'Potential Doctor not found' });
+    }
+    return res.status(200).json({ message: 'Potential Doctor rejected' });
+   }
+   catch(error){
+   console.error(error);
+    return res.status(500).json({ message: 'Internal server error' });
+   }
+}
 
 const removeDoctor = async(req,res) => {
    try{
@@ -165,4 +181,5 @@ const viewAllDoctors= async(req,res)=>{
       res.status(500).json({ message: 'Server Error' });
     }
 }
-module.exports = {addAdmin,addPackage,addDoctor,updatePackage,deletePackage,removeDoctor,removePatient,removeAdmin,viewAllPatients,viewAllDoctors,viewPotentialDoctors};
+module.exports = {addAdmin,addPackage,addDoctor,updatePackage,deletePackage,removeDoctor,removePatient,removeAdmin,viewAllPatients,viewAllDoctors,
+   viewPotentialDoctors,rejectPotientialDoctor};

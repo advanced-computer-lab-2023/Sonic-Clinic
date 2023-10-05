@@ -15,7 +15,7 @@ const {selectPatient,viewInfoAndHealthRecord,viewPatients,updateDoctorProfile,fi
 
 //adminstratorController
 const {addAdmin,addPackage,addDoctor,
-  updatePackage,deletePackage,removeDoctor,removePatient,removeAdmin,viewPotentialDoctors
+  updatePackage,deletePackage,removeDoctor,removePatient,removeAdmin,viewPotentialDoctors,rejectPotientialDoctor
 } = require("./Controllers/adminstratorController");
 
 guestController
@@ -100,6 +100,7 @@ server.delete("/deletePackage", deletePackage);
 server.delete("/removeDoctor", removeDoctor);
 server.delete("/removePatient", removePatient);
 server.delete("/removeAdmin", removeAdmin);
+server.delete("/rejectDoctor", rejectPotientialDoctor);
 
 /*
                                                     End of your code
