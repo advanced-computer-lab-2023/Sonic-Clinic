@@ -1,7 +1,7 @@
 import { Container, Row } from "react-bootstrap";
-import AppNavbar from "../../Components/AppNavigation/AppNavbar";
-import MainImg from "../../Components/Patient/MainImg";
-import HamburgerMenu from "../../Components/Patient/HamburgerMenu";
+import AppNavbar from "../../components/AppNavigation/AppNavbar";
+import MainImg from "../../components/Patient/MainImg";
+import HamburgerMenu from "../../components/Patient/HamburgerMenu";
 
 function PatientHomePage() {
   return (
