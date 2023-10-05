@@ -14,7 +14,7 @@ const {createPatient} = require("./Controllers/patientController");
 const {createDoctor} = require("./Controllers/doctorController");
 
 //adminstratorController
-const {createAdminstrator} = require("./controllers/adminstratorController");
+const {addAdmin,addPackage,addPatient,addDoctor,updatePackage} = require("./controllers/adminstratorController");
 
 //el link bta3 el DB
 const MongoURI = process.env.MONGO_URI ;
@@ -54,11 +54,13 @@ server.get("/home", (req, res) => {
 server.use(express.json())
 
 ///////////// POST
-server.post("/addDoctor",createDoctor);
+server.post("/addAdmin",addAdmin);
+server.post("/addPatient",addPatient);
+server.post("/addDoctor",addDoctor);
 ////////////// GET
 //server.get("/users", getUsers);
 //////////////PUT
-//server.put("/updateUser", updateUser);
+server.put("/updatePackage", updatePackage);
 ///////////// UPDATE
 //server.delete("/deleteUser", deleteUser);
 
