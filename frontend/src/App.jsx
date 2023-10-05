@@ -1,4 +1,4 @@
-import React from 'react'
+import React from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import AppNavbar from "./components/AppNavigation/AppNavbar";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -7,10 +7,13 @@ import PatientViewDoctors from "./pages/Patient/PatientViewDoctors";
 import PatientProfile from "./pages/Patient/PatientProfile";
 import AdminHomePage from "./pages/Admin/AdminHomePage";
 import AdminHomeCard from "./components/Admin/AdminHomeCard";
-import AdminViewTable from './components/Admin/AdminViewTable';
-import AdminSearchBar from './components/Admin/AdminSearchBar';
-import AdminPatientsPage from './pages/Admin/AdminPatientsPage';
-import AdminDoctorsPage from './pages/Admin/AdminDoctorsPage';
+import AdminViewTable from "./components/Admin/AdminViewTable";
+import AdminSearchBar from "./components/Admin/AdminSearchBar";
+import AdminPatientsPage from "./pages/Admin/AdminPatientsPage";
+import AdminDoctorsPage from "./pages/Admin/AdminDoctorsPage";
+import PatientViewPrescriptions from "./pages/Patient/PatientViewPrescriptions";
+import PatientViewAppointments from "./pages/Patient/PatientViewAppointments";
+import DrHomePage from "./pages/Doctor/DrHomePage";
 
 function App() {
   return (
@@ -22,16 +25,27 @@ function App() {
 
             <Route path="patient">
               <Route path="view-doctors" element={<PatientViewDoctors />} />
+              <Route
+                path="view-appointments"
+                element={<PatientViewAppointments />}
+              />
+              <Route
+                path="view-prescriptions"
+                element={<PatientViewPrescriptions />}
+              />
               <Route path="profile" element={<PatientProfile />} />
               <Route index element={<PatientHomePage />} />
             </Route>
-            <Route index element={<AdminHomePage/>} />
+            <Route path="doctor">
+              <Route index element={<DrHomePage />} />
+            </Route>
+            <Route index element={<AdminHomePage />} />
           </Route>
           <Route path="/adminDocs">
-            <Route index element={<AdminDoctorsPage/>} />
+            <Route index element={<AdminDoctorsPage />} />
           </Route>
           <Route path="/adminPatients">
-            <Route index element={<AdminPatientsPage/>} />
+            <Route index element={<AdminPatientsPage />} />
           </Route>
         </Routes>
       </BrowserRouter>
