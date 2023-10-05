@@ -41,6 +41,9 @@ const patientSchema = new Schema({
   package: {
     type: String,
     required: true
+  },
+  perscription: {
+    type: String,
   }
 
 }, { timestamps: true });
