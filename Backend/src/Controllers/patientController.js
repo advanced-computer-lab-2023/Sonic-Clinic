@@ -3,11 +3,6 @@ const { default: mongoose } = require('mongoose');
 const doctorModel = require('../Models/Doctor.js');
 const familyMemberModel = require('../Models/FamilyMember.js');
 
-const createPatient = async(req,res) => {
-   //add a new user to the database with 
-   //Name, Email and Age
-}
-
 const doctorDetails = async (req,res) => {
    const doctorName = req.params.name;
 
@@ -210,5 +205,18 @@ const selectPrescription= async (req,res) => {
      res.status(500).json({ message: 'Server Error' });
    }
 }
+const addFamilyMember = async(req,res) => {
+   try{
+      const newFamilyMember = await familyMemberModel.create(req.body);
+      console.log("Family member Created!")
+      res.status(200).send(newFamilyMember);
 
-module.exports = {createPatient,selectPrescription,viewFamilyMembers,filterPrescriptions,viewPrescriptions,filterApointmentsByDateAndStatus,filterDoctors,searchDoctors,doctorDetails};
+   }
+   catch(error){
+      res.status(400).send({error:error.message});
+
+   }
+}
+
+module.exports = {selectPrescription,viewFamilyMembers,filterPrescriptions,viewPrescriptions,filterApointmentsByDateAndStatus,filterDoctors,searchDoctors,doctorDetails
+,addFamilyMember};
