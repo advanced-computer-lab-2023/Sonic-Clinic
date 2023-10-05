@@ -10,10 +10,20 @@ const packagesSchema = new Schema({
     type: Number,
     required: true
   },
-  service: {
-    type: String,
-    required: true,
-  }
+  sessionDiscount: {
+    type: Number,
+    required: true
+  },
+  medicineDiscount: {
+    type: Number,
+    required: true
+  },
+  packageDiscountFM: {
+    type: Number,
+    required: true
+  },
+
+  
 
 }, { timestamps: true });
 
