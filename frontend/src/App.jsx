@@ -17,6 +17,7 @@ import Login from "./pages/Guest/Login";
 import PatientSignup from "./pages/Guest/PatientSignup";
 import DrSignup from "./pages/Guest/DrSignup";
 import DrAppointments from "./pages/Doctor/DrAppointments";
+import GuestHomePage from "./pages/Guest/GuestHomePage";
 
 function App() {
   return (
@@ -52,6 +53,10 @@ function App() {
 
           <Route path="doctor-appointments" element={<DrAppointments/>} />
         </Route>
+
+        <Route path="GuestHomePage">
+          <Route index element={<GuestHomePage />} />
+          </Route>
 
         <Route path="admin">
           <Route index element={<AdminHomePage />} />
