@@ -5,7 +5,7 @@ import { Col, Container, Form, Row } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import FormPassword from "../FormPassword";
-import FormInput from "./FormInput";
+import FormInput from "../FormInput";
 import { setCredentials } from "../../state/loginPatientReducer";
 
 const LoginForm = () => {

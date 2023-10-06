@@ -1,7 +1,7 @@
 import React from "react";
 import { Row, Col, Form } from "react-bootstrap";
 
-import "../forms.css";
+import "./forms.css";
 
 const FormInput = (props) => {
   const { name, type, placeholder, value, onChange } = props;
