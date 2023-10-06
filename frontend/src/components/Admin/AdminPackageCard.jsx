@@ -3,19 +3,26 @@ import { Button, Card, ListGroup, Form } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPenToSquare, faTrashCan } from "@fortawesome/free-solid-svg-icons";
 
-export default function AdminPackageCard({dynamicTexts,packageName}) {
+export default function AdminPackageCard({ dynamicTexts, packageName, id }) {
   const [isEditing, setIsEditing] = useState(false);
-  const [editedDynamicTexts, setEditedDynamicTexts] = useState([...dynamicTexts,]);
+  const [editedDynamicTexts, setEditedDynamicTexts] = useState([
+    ...dynamicTexts,
+  ]);
   const [editedPackageName, setEditedPackageName] = useState(packageName);
 
-  const constantTexts = ["Annual Fee","Doctor Discount","Medicine Discount","Family Discount"];
+  const constantTexts = [
+    "Annual Fee",
+    "Doctor Discount",
+    "Medicine Discount",
+    "Family Discount",
+  ];
 
   const handleEditClick = () => {
     setIsEditing(!isEditing);
   };
 
-  const deletePackage = () => {
-    console.log("Delete package");
+  const deletePackage = (id) => {
+    console.log("Delete package", id);
   };
 
   const handleInputChange = (index, event) => {
@@ -36,9 +43,10 @@ export default function AdminPackageCard({dynamicTexts,packageName}) {
         width: "300px",
         boxShadow: "0px 4px 4px 0px #adb5bd",
         borderRadius: "3px",
+        marginBottom: "60px"
       }}
     >
-      <Card.Header className="d-flex flex-column" style={{ height: "80px" }}>
+      <Card.Header className="d-flex flex-column" style={{ height: "120px" }}>
         <div className="d-flex justify-content-end">
           {!isEditing ? (
             <FontAwesomeIcon
@@ -48,6 +56,7 @@ export default function AdminPackageCard({dynamicTexts,packageName}) {
                 color: "#099BA0 ",
                 fontSize: "20px",
                 cursor: "pointer",
+                marginBottom: "5px"
               }}
               onClick={handleEditClick}
             />
@@ -70,19 +79,20 @@ export default function AdminPackageCard({dynamicTexts,packageName}) {
               fontSize: "25px",
               marginLeft: "30px",
               border: "none",
-              width: '200px'
+              width: "200px",
             }}
             value={editedPackageName}
             onChange={(e) => setEditedPackageName(e.target.value)}
           />
         ) : (
           <Card.Title
-            className="d-flex"
+            className="d-flex justify-content-center"
             style={{
               color: "#ff6b35",
-              fontWeight: "bold",
+              fontWeight:"bold",
               fontSize: "25px",
-              marginLeft: "40px",
+              textAlign: "center",
+              marginTop:'20px',
             }}
           >
             {editedPackageName}
@@ -121,20 +131,22 @@ export default function AdminPackageCard({dynamicTexts,packageName}) {
       <Card.Body className="d-flex align-items-center justify-content-center">
         <Button
           style={{ backgroundColor: "#ff6b35" }}
-          onClick={isEditing ? handleSaveClick : () => deletePackage()}
+          onClick={isEditing ? handleSaveClick : () => deletePackage(id)}
         >
           {isEditing ? "Save Changes" : "Delete Package"}
           {/* {!isEditing && variant:"danger"} */}
-          <FontAwesomeIcon
-            icon={faTrashCan}
-            style={{
-              opacity: 1,
-              color: "#f0f0f0 ",
-              fontSize: "20px",
-              cursor: "pointer",
-              marginLeft: "5px",
-            }}
-          />
+          {!isEditing && (
+            <FontAwesomeIcon
+              icon={faTrashCan}
+              style={{
+                opacity: 1,
+                color: "#f0f0f0 ",
+                fontSize: "20px",
+                cursor: "pointer",
+                marginLeft: "5px",
+              }}
+            />
+          )}
         </Button>
       </Card.Body>
     </Card>
