@@ -16,6 +16,7 @@ import AdminAdminsPage from "./pages/Admin/AdminAdminsPage";
 import Login from "./pages/Guest/Login";
 import PatientSignup from "./pages/Guest/PatientSignup";
 import DrSignup from "./pages/Guest/DrSignup";
+import DrAppointments from "./pages/Doctor/DrAppointments";
 
 function App() {
   return (
@@ -48,6 +49,8 @@ function App() {
 
         <Route path="doctor">
           <Route index element={<DrHomePage />} />
+
+          <Route path="doctor-appointments" element={<DrAppointments/>} />
         </Route>
 
         <Route path="admin">

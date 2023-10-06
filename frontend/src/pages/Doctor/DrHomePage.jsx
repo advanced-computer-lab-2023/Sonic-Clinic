@@ -1,6 +1,6 @@
 import { Container, Row } from "react-bootstrap";
 import AppNavbar from "../../components/AppNavigation/AppNavbar";
-import HamburgerMenu from "../../components/Patient/HamburgerMenu";
+import HamburgerMenu from "../../components/Doctor/DrHamburgerMenu";
 import DrMainImg from "../../components/Doctor/DrMainImg";
 import DrMainOptions from "../../components/Doctor/DrMainOptions";
 
