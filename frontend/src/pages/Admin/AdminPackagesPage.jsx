@@ -1,16 +1,14 @@
 import React from 'react';
 import AppNavbar from "../../components/AppNavigation/AppNavbar";
 import { Container } from "react-bootstrap";
-import HamburgerMenu from "../../components/Patient/HamburgerMenu";
+import AdminBurgerMenu from "../../components/Admin/AdminBurgerMenu";
 import AdminPackageCarousel from '../../components/Admin/AdminPackageCarousel';
-import AddNewPackage from '../../forms/AddNewPackage';
 
 export default function AdminPackagesPage() {
 
-  //add button to toggle the AddNewPackageForm
   return (
     <>
-      <AppNavbar hamburgerMenu={<HamburgerMenu />} />
+      <AppNavbar hamburgerMenu={<AdminBurgerMenu />} />
       <div
         style={{
           marginTop: "50px",
@@ -32,7 +30,6 @@ export default function AdminPackagesPage() {
           marginLeft: "100px",
         }}
       >
-        {/* <AdminPackageCarousel/> */}
         <AdminPackageCarousel/>
       </Container>
     </>

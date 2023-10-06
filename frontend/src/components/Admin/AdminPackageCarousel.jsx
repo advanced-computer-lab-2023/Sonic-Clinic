@@ -9,9 +9,9 @@ import { faMinus } from "@fortawesome/free-solid-svg-icons";
 export default function AdminPackageCarousel() {
 
   const packages = [
-    { id:'1', name: "Silver Package", dynamic: ["1000LE", "5%", "10%", "20%"] },
-    { id:'2', name: "Gold Package", dynamic: ["2000LE", "10%", "15%", "25%"] },
-    { id:'3', name: "Platinum Package", dynamic: ["3000LE", "15%", "20%", "30%"] },
+    { id:'1', name: "Silver Package", annualFee: "1000LE", docDis: "10%", pharmDis:"10%", famDis:"10%"},
+    { id:'2', name: "Gold Package", annualFee: "3000LE", docDis: "20%", pharmDis:"20%", famDis:"20%"},
+    { id:'3', name: "Platinum Package", annualFee: "7000LE", docDis: "30%", pharmDis:"30%", famDis:"30%"},
   ];
 
   const [showAddPackage, setShowAddPackage] = useState(false);
@@ -20,12 +20,21 @@ export default function AdminPackageCarousel() {
         setShowAddPackage(!showAddPackage);
       };
 
+      const iconStyle={
+        opacity: 1,
+              color: "white",
+              fontSize: "20px",
+              cursor: "pointer",
+      }
+        
+      
+
   return (
-    <div className="d-flex align-items-center justify-content-center flex-row" style={{width:'100%', marginTop:'20px'}}>
-        <Carousel className="d-flex align-items-center carousel-dark" style={{ height: '400px', width: '500px', marginBottom:'5px'}}>
+    <div className="d-flex align-items-center justify-content-center flex-row" style={{width:'100%', marginTop:'0px'}}>
+        <Carousel className="d-flex align-items-center carousel-dark" style={{ height: '550px', width: '500px', marginBottom:'5px'}}>
       {packages.map((packagee, index) => (
         <Carousel.Item key={index} className="align-items-center" style={{marginLeft:'21%'}}>
-          <AdminPackageCard id ={packagee.id} dynamicTexts={packagee.dynamic} packageName={packagee.name} />
+          <AdminPackageCard id ={packagee.id} packageName={packagee.name} fee={packagee.annualFee} docDiscount={packagee.docDis} pharmacyDiscount={packagee.pharmDis} famDiscount={packagee.famDis} />
         </Carousel.Item>
       ))}
     </Carousel>
@@ -36,21 +45,11 @@ export default function AdminPackageCarousel() {
     id="newAdminForm" onClick={toggleAddPackage}>
     {showAddPackage?<FontAwesomeIcon
               icon={faMinus}
-              style={{
-                opacity: 1,
-                color: "white",
-                fontSize: "25px",
-                cursor: "pointer",
-              }}
+              style={iconStyle}
 
             />:<FontAwesomeIcon
             icon={faPlus}
-            style={{
-              opacity: 1,
-              color: "white",
-              fontSize: "25px",
-              cursor: "pointer",
-            }}
+            style={iconStyle}
 
           />
       }    
