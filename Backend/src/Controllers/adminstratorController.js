@@ -7,7 +7,14 @@ const patientModel = require('../Models/Patient.js');
 const potentialDoctorModel = require('../Models/PotentialDoctor.js');
 
 const addAdmin = async(req,res) => {
-   try{
+   const { username } = req.body;
+
+    try {
+      const existingAdmin = await administratorModel.findOne({ username });
+      if (existingAdmin) {
+          return res.status(409).send({ message: 'Admin with this username already exists.' });
+      }
+      
       const newAdmin = await administratorModel.create(req.body);
       console.log("Admin Created!")
       res.status(200).send(newAdmin);
@@ -45,7 +52,7 @@ const addPackage = async(req,res) => {
 }
    const updatePackage = async(req,res) => {
       try{
-         const id = req.body._id;
+         const id = req.query._id;
          const {type,price,sessionDiscount,medicineDiscount,packageDiscountFM}=req.body;
          const updatedPackage = await packagesModel.findByIdAndUpdate(id,{type,price,sessionDiscount,medicineDiscount,packageDiscountFM});
          if(!updatedPackage){
@@ -76,8 +83,8 @@ const viewPotentialDoctors = async (req, res) => {
  
 const deletePackage = async(req,res) => {
    try{
-      const packageType = req.body.type;
-      const deletedPackage = await packagesModel.findOneAndDelete({ type: packageType });
+      const id = req.query._id;
+      const deletedPackage = await packagesModel.findOneAndDelete({ _id: id });
 
     if (!deletedPackage) {
       return res.status(404).json({ message: 'Package not found' });
@@ -89,6 +96,7 @@ const deletePackage = async(req,res) => {
     return res.status(500).json({ message: 'Internal server error' });
    }
 }
+
 const rejectPotentialDoctor = async(req,res) => {
    try{
       const username = req.body.username;

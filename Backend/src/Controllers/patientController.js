@@ -3,6 +3,8 @@ const { default: mongoose } = require('mongoose');
 const doctorModel = require('../Models/Doctor.js');
 const familyMemberModel = require('../Models/FamilyMember.js');
 const packagesModel = require('../Models/Packages.js');
+const prescriptionModel= require('../Models/Prescription.js');
+const appointmentModel= require('../Models/Appointment.js');
 
 const doctorDetails = async (req, res) => {
   const { name } = req.body;
@@ -89,31 +91,24 @@ const filterDoctors= async (req,res)=>{
    }
 }
 
-const filterApointmentsByDateAndStatus = async (req, res) => {
+const filterApointmentsByDateOrStatus = async (req, res) => {
   const { date, status } = req.query;
-
-  const query = {};
-  if (date) {
-    query.date = date; // Assuming the date is stored as a string in the format 'YYYY-MM-DD'
-  }
-
-  if (status) {
-    query.status = status;
-  }
 
   try {
     // Retrieve username from the session
-    const username = req.session.user.username;
+    const patientID = req.session.user._id;
 
-    const patient = await patientModel.findOne({ username });
+    let query = { patientID };
 
-    if (!patient) {
-      return res.status(404).json({ message: 'Patient not found.' });
+    if (date) {
+      query.date = date;
     }
 
-    const appointments = patient.appointments.filter((appointment) => {
-      return (!query.date || appointment.date === query.date) && (!query.status || appointment.status === query.status);
-    });
+    if (status) {
+      query.status = status;
+    }
+
+    const appointments = await appointmentModel.find(query);
 
     if (!appointments || appointments.length === 0) {
       return res.status(404).json({ message: 'No appointments found.' });
@@ -126,19 +121,21 @@ const filterApointmentsByDateAndStatus = async (req, res) => {
 };
 
 
+
 const viewPrescriptions = async (req, res) => {
   try {
     // Extract the username from the session
-    const username = req.session.user.username;
+    const id = req.session.user._id;
+    console.log(id);
 
     // Check if a patient with the provided username exists
-    const patient = await patientModel.findOne({ username });
+    const prescriptions = await prescriptionModel.findOne({ patientID: id });
 
-    if (!patient) {
+    if (!prescriptions) {
       return res.status(404).json({ message: 'Patient not found.' });
     }
 
-    const prescriptions = patient.prescriptions;
+   // const prescriptions = patient.prescriptions;
 
     res.status(200).json({ prescriptions });
   } catch (error) {
@@ -146,45 +143,38 @@ const viewPrescriptions = async (req, res) => {
   }
 };
 
-module.exports = viewPrescriptions;
+
 
 
 const filterPrescriptions = async (req, res) => {
-  const { date, doctor, status } = req.query;
-
-  const query = {};
-
-  if (date) {
-    query.date = date; // Assuming the date is stored as a string in the format 'YYYY-MM-DD'
-  }
-
-  if (doctor) {
-    query.doctor = doctor; // Assuming doctor field in the prescription model
-  }
-
-  if (status) {
-    query.status = status;
-  }
+  const { doctorID ,status,date } = req.query;
 
   try {
     // Retrieve username from the session
-    const username = req.session.user.username;
+    const patientID = req.session.user._id;
 
-    const patient = await patientModel.findOne({ username });
+    let query = { patientID };
 
-    if (!patient) {
-      return res.status(404).json({ message: 'Patient not found.' });
+    if (doctorID) {
+      query.doctorID = doctorID;
     }
 
-    let filteredPrescriptions = patient.prescriptions;
-
-    if (Object.keys(query).length > 0) {
-      filteredPrescriptions = patient.prescriptions.filter((prescription) => {
-        return Object.keys(query).every((key) => prescription[key] === query[key]);
-      });
+    if (status) {
+      console.log(status);
+      query.status = status;
     }
 
-    res.status(200).json({ prescriptions: filteredPrescriptions });
+    if (date) {
+      query.date = date;
+    }
+
+    const prescriptions = await prescriptionModel.find(query);
+
+    if (!prescriptions || prescriptions.length === 0) {
+      return res.status(404).json({ message: 'No prescriptions found.' });
+    }
+
+    res.status(200).json({ prescriptions });
   } catch (error) {
     res.status(500).json({ message: 'Server Error' });
   }
@@ -219,22 +209,16 @@ const viewFamilyMembers = async (req, res) => {
 
 const selectPrescription = async (req, res) => {
   const { prescriptionId } = req.query;
-  const username = req.session.user.username;
+  const id = req.session.user._id;
 
   try {
-    const patient = await patientModel.findOne({ username });
+    const prescription = await prescriptionModel.findOne({ patientID:id });
 
-    if (!patient) {
+    if (!prescription) {
       return res.status(404).json({ message: 'Patient not found.' });
     }
 
-    const selectedPrescription = patient.prescriptions.id(prescriptionId);
-
-    if (!selectedPrescription) {
-      return res.status(404).json({ message: 'Prescription not found.' });
-    }
-
-    res.status(200).json({ selectedPrescription });
+    res.status(200).json({ prescription });
   } catch (error) {
     res.status(500).json({ message: 'Server Error' });
   }
@@ -300,6 +284,18 @@ const getDoctorsWithSessionPrice = async (req, res) => {
   }
 };
 
+const addAppointment = async (req, res) => {
+  try {
+    // Create a new appointment
+    const appointment = await appointmentModel.create(req.body);
+
+    res.status(201).json({ message: 'Appointment added successfully.', appointment });
+  } catch (error) {
+    res.status(500).json({ message: 'Server Error' });
+  }
+};
+
+
 // Dummy data for 7 doctors with photo links
 const dummyDoctors = [
   {
@@ -359,5 +355,5 @@ const viewAllDoctorsForPatients = async (req, res) => {
 
 
 module.exports = {selectPrescription,viewFamilyMembers,filterPrescriptions,
-  viewPrescriptions,filterApointmentsByDateAndStatus,filterDoctors,
-  searchDoctors,doctorDetails,addFamilyMember,viewPackages,viewAllDoctorsForPatients,getDoctorsWithSessionPrice};
+  viewPrescriptions,filterApointmentsByDateOrStatus,filterDoctors,
+  searchDoctors,doctorDetails,addFamilyMember,viewPackages,viewAllDoctorsForPatients,getDoctorsWithSessionPrice,addAppointment};

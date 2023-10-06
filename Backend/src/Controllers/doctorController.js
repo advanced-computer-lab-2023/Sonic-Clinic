@@ -2,6 +2,8 @@ const doctorModel = require('../Models/Doctor.js');
 const { default: mongoose } = require('mongoose');
 const patientModel = require('../Models/Patient.js');
 const PrescriptionModel = require('../Models/Prescription.js');
+const appointmentModel= require('../Models/Appointment.js');
+
 
 
 const searchPatientByName = async (req, res) => {
@@ -24,45 +26,38 @@ const searchPatientByName = async (req, res) => {
  
 
  const filterPatientsByAppointments = async (req, res) => {
-   try {
-     const patients = await patientModel.find({
-       'appointments.date': { $gte: new Date() }
-     });
- 
-     if (!patients || patients.length === 0) {
-       return res.status(404).json({ message: 'No patients with upcoming appointments found.' });
-     }
- 
-     res.status(200).json({ patients });
-   } catch (error) {
-     res.status(500).json({ message: 'Server Error' });
-   }
+
  };
  
 
-const filterApointmentsByDateAndStatusDoc= async(req,res) => {
-   const { date, status } = req.query;
-   const query = {};
-   if (date) {
-     query.date = date; // Assuming the date is a string in the format 'YYYY-MM-DD'
-   }
+ const filterApointmentsByDateOrStatusDoc = async (req, res) => {
+  const { date, status } = req.query;
 
-   if (status) {
-     query.status = status;
-   }
+  try {
+    // Retrieve username from the session
+    const doctorID = req.session.user._id;
 
-   try {
-     const appointments = await patientModel.find({ 'appointments.date': query.date, 'appointments.status': query.status });
+    let query = { doctorID };
 
-     if (!appointments || appointments.length === 0) {
-       return res.status(404).json({ message: 'No appointments found.' });
-     }
+    if (date) {
+      query.date = date;
+    }
 
-     res.status(200).json({ appointments });
-   } catch (error) {
-     res.status(500).json({ message: 'Server Error' });
-   }
-}
+    if (status) {
+      query.status = status;
+    }
+
+    const appointments = await appointmentModel.find(query);
+
+    if (!appointments || appointments.length === 0) {
+      return res.status(404).json({ message: 'No appointments found.' });
+    }
+
+    res.status(200).json({ appointments });
+  } catch (error) {
+    res.status(500).json({ message: 'Server Error' });
+  }
+};
 
 const updateDoctorProfile = async (req, res) => {
   const { email, hourlyRate, affiliation } = req.body;
@@ -183,5 +178,5 @@ const addPrescription = async(req,res) => {
 }
 
 module.exports = {selectPatient,viewInfoAndHealthRecord,viewPatients,
-  updateDoctorProfile,filterApointmentsByDateAndStatusDoc,
+  updateDoctorProfile,filterApointmentsByDateOrStatusDoc,
   filterPatientsByAppointments,searchPatientByName,addPrescription};

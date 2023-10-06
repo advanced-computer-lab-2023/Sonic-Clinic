@@ -13,6 +13,14 @@ const prescriptionSchema = new Schema({
   patientID: {
     type: String,
     required: true
+  },
+  status: {
+    type: String,
+    required: true
+  },
+  date: {
+    type: Date,
+    required: true
   }
 
 }, { timestamps: true });

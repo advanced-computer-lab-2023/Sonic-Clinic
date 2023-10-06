@@ -6,7 +6,14 @@ const patientModel = require('../Models/Patient.js');
 
 
 const addPotentialDoctor = async (req, res) => {
+  const { username } = req.body;
+
     try {
+      const existingDoctor = await potentialDoctorModel.findOne({ username });
+      if (existingDoctor) {
+          return res.status(409).send({ message: 'Doctor with this username already exists.' });
+      }
+
       const newPotentialDoctor = await potentialDoctorModel.create(req.body);
       console.log("Doctor Request Sent!");
       res.status(201).json(newPotentialDoctor);

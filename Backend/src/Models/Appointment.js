@@ -17,6 +17,10 @@ const appointmentSchema = new Schema({
       doctorID: {
         type: String,
         required: true,
+      },
+      status: {
+        type: String,
+        required: true,
       }
 }, { timestamps: true });
 

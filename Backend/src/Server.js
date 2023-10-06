@@ -11,12 +11,12 @@ require("dotenv").config();
 //Declare ll methods el haktbha 
 ///////////////////////////////patientController//////////////////////////////////////////
 const {selectPrescription,viewFamilyMembers,filterPrescriptions,
-  viewPrescriptions,filterApointmentsByDateAndStatus,filterDoctors,
-  searchDoctors,doctorDetails,addFamilyMember,viewPackages,viewAllDoctorsForPatients,getDoctorsWithSessionPrice} = require("./Controllers/patientController");
+  viewPrescriptions,filterApointmentsByDateOrStatus,filterDoctors,
+  searchDoctors,doctorDetails,addFamilyMember,viewPackages,viewAllDoctorsForPatients,getDoctorsWithSessionPrice,addAppointment} = require("./Controllers/patientController");
 
 /////////////////////////////////doctorController//////////////////////////////////////////
 const {selectPatient,viewInfoAndHealthRecord,viewPatients,
-  updateDoctorProfile,filterApointmentsByDateAndStatusDoc,
+  updateDoctorProfile,filterApointmentsByDateOrStatusDoc,
   filterPatientsByAppointments,searchPatientByName,addPrescription} = require("./Controllers/doctorController");
 
 ///////////////////////////////adminstratorController//////////////////////////////////////
@@ -114,6 +114,7 @@ server.post("/addPotentialDoctor",addPotentialDoctor);
 server.post("/addPrescription",addPrescription);
 //patient
 server.post("/addFamilyMember",addFamilyMember);
+server.post("/addAppointment",addAppointment);
 //////////////////////////////////////////// GET/////////////////////////////////////
 //admin
 server.get("/viewAllPatients", viewAllPatients);
@@ -127,17 +128,17 @@ server.get("/doctorDetails", doctorDetails);
  server.get("/viewFamilyMembers", viewFamilyMembers);
  server.get("/selectPrescription", selectPrescription);
  server.get("/filterPrescriptions", filterPrescriptions);
- server.get("/filterApointmentsByDateAndStatus", filterApointmentsByDateAndStatus);
+ server.get("/filterApointmentsByDateOrStatus", filterApointmentsByDateOrStatus);
  server.get("/searchDoctors", searchDoctors);
  server.get("/filterDoctors", filterPrescriptions);
  server.get("/viewPackages",viewPackages);
  server.get("/viewAllDoctorsByPatients",viewAllDoctorsForPatients);
- server.get("/getDoctorsWithSessionPrice",getDoctorsWithSessionPrice)
+ server.get("/getDoctorsWithSessionPrice",getDoctorsWithSessionPrice);
 //doctor
  server.get("/selectPatient", selectPatient);
  server.get("/viewInfoAndHealthRecord", viewInfoAndHealthRecord);
  server.get("/viewPatients", viewPatients);
- server.get("/filterApointmentsByDateAndStatusDoc", filterApointmentsByDateAndStatusDoc);
+ server.get("/filterApointmentsByDateOrStatusDoc", filterApointmentsByDateOrStatusDoc);
  server.get("/filterPatientsByAppointments", filterPatientsByAppointments);
  server.get("/searchPatientByName", searchPatientByName);
 
