@@ -19,6 +19,7 @@ import DrSignup from "./pages/Guest/DrSignup";
 import DrAppointments from "./pages/Doctor/DrAppointments";
 import DrPatients from "./pages/Doctor/DrPatients";
 
+
 function App() {
   return (
     <div className="bg-light">
@@ -53,6 +54,10 @@ function App() {
           <Route path="doctor-appointments" element={<DrAppointments/>} />
           <Route path="doctor-patients" element={<DrPatients/>} />
         </Route>
+
+        <Route path="GuestHomePage">
+          <Route index element={<GuestHomePage />} />
+          </Route>
 
         <Route path="admin">
           <Route index element={<AdminHomePage />} />
