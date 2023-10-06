@@ -178,7 +178,7 @@ const viewAllDoctors= async(req,res)=>{
       res.status(500).json({ message: 'Server Error' });
     }
 }
-const viewPackages= async(req,res)=>{
+const viewPackagesAdmin= async(req,res)=>{
    try {
      const packages = await packagesModel.find();
      if (!packages || packages.length === 0) {
@@ -209,4 +209,4 @@ const viewPackages= async(req,res)=>{
 module.exports = {addAdmin,addPackage,addDoctor,updatePackage,
    deletePackage,removeDoctor,removePatient,removeAdmin,
    viewAllPatients,viewAllDoctors,viewPotentialDoctors,
-   rejectPotentialDoctor,viewPackages,viewAllAdmins};
+   rejectPotentialDoctor,viewPackagesAdmin,viewAllAdmins};

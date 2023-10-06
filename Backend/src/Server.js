@@ -22,7 +22,7 @@ const {addAdmin,addPackage,addDoctor,
   updatePackage,deletePackage,removeDoctor,
   removePatient,removeAdmin,viewPotentialDoctors,
   rejectPotentialDoctor, viewAllDoctors,viewAllPatients,
-  viewPackages, viewAllAdmins
+  viewPackagesAdmin, viewAllAdmins
 } = require("./Controllers/adminstratorController");
 
 ////////////////////////////////guestController///////////////////////////////////////////
@@ -83,7 +83,7 @@ server.post("/addPotentialDoctor",addPotentialDoctor);
 server.get("/viewAllPatients", viewAllPatients);
 server.get("/viewAllDoctors", viewAllDoctors);
 server.get("/viewPotentialDoctors", viewPotentialDoctors);
-server.get("/viewPackges", viewPackages);
+server.get("/viewPackges", viewPackagesAdmin);
 server.get("/viewAllAdmins", viewAllAdmins);
 //patient
 server.get("/doctorDetails", doctorDetails);
