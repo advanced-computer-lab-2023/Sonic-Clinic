@@ -78,7 +78,7 @@ function DoctorFilter() {
           lineHeight: "120%",
         }}
       >
-        Filter
+        Filter Doctors
       </div>
 
       <div className="mb-2">

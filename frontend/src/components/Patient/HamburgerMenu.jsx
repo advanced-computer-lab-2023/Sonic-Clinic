@@ -189,7 +189,7 @@ function HamburgerMenu() {
           <a
             id="prescription"
             className="menu-item"
-            href="/"
+            href="/patient/view-prescriptions"
             onClick={closeMenu}
             style={{
               color: "var(--gray-600, #6C757D)",
@@ -215,7 +215,7 @@ function HamburgerMenu() {
           <a
             id="appointment"
             className="menu-item"
-            href="/"
+            href="/patient/view-appointments"
             onClick={closeMenu}
             style={{
               color: "var(--gray-600, #6C757D)",
