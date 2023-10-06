@@ -189,7 +189,7 @@ import {
             <a
               id="prescription"
               className="menu-item"
-              href="/patient/view-prescriptions"
+              href="/doctor/doctor-patients"
               onClick={closeMenu}
               style={{
                 color: "var(--gray-600, #6C757D)",
