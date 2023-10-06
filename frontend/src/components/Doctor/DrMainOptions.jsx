@@ -4,10 +4,10 @@ import { useNavigate } from "react-router";
 function DrMainOptions() {
   const navigate = useNavigate();
   const handlePatients = () => {
-    navigate("/hotel");
+    navigate("/DrPatients");
   };
   const handleAppointments = () => {
-    navigate("/transportation");
+    navigate("/doctor/doctor-appointments");
   };
 
   return (

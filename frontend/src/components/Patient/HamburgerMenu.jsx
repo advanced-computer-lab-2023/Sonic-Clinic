@@ -123,7 +123,7 @@ function HamburgerMenu() {
           <a
             id="home"
             className="menu-item"
-            href="/"
+            href="/patient"
             onClick={closeMenu}
             style={{
               color: "var(--gray-600, #6C757D)",

@@ -1,5 +1,5 @@
 import { Card, Image } from "react-bootstrap";
-import mainImg from "../../Assets/Patient/HomeImg.png";
+import mainImg from "../../Assets/Admin/AdminHome.jpg";
 function AdminImg() {
   return (
     <div>

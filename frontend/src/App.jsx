@@ -6,9 +6,6 @@ import PatientHomePage from "./pages/Patient/PatientHomePage";
 import PatientViewDoctors from "./pages/Patient/PatientViewDoctors";
 import PatientProfile from "./pages/Patient/PatientProfile";
 import AdminHomePage from "./pages/Admin/AdminHomePage";
-import AdminHomeCard from "./components/Admin/AdminHomeCard";
-import AdminViewTable from "./components/Admin/AdminViewTable";
-import AdminSearchBar from "./components/Admin/AdminSearchBar";
 import AdminPatientsPage from "./pages/Admin/AdminPatientsPage";
 import AdminDoctorsPage from "./pages/Admin/AdminDoctorsPage";
 import PatientViewPrescriptions from "./pages/Patient/PatientViewPrescriptions";
@@ -16,51 +13,67 @@ import PatientViewAppointments from "./pages/Patient/PatientViewAppointments";
 import DrHomePage from "./pages/Doctor/DrHomePage";
 import AdminPackagesPage from "./pages/Admin/AdminPackagesPage";
 import AdminAdminsPage from "./pages/Admin/AdminAdminsPage";
+
 import GuestHomePage from "./pages/Guest/GuestHomePage";
+
+import Login from "./pages/Guest/Login";
+import PatientSignup from "./pages/Guest/PatientSignup";
+import DrSignup from "./pages/Guest/DrSignup";
+import DrAppointments from "./pages/Doctor/DrAppointments";
+
 
 function App() {
   return (
     <div className="bg-light">
-      <BrowserRouter>
-        <Routes>
-          <Route path="/">
-            <Route index element={<PatientHomePage />} />
+      <Routes>
+        <Route path="/" element={<Login />} />
+        <Route path="login">
+          <Route index element={<Login />} />
+        </Route>
+        <Route path="patient-signup">
+          <Route index element={<PatientSignup />} />
+        </Route>
+        <Route path="doctor-signup">
+          <Route index element={<DrSignup />} />
+        </Route>
+
 
           
           <Route path="GuestHomePage">
           <Route index element={<GuestHomePage />} />
 
 
-          <Route path="patient">
-              <Route path="view-doctors" element={<PatientViewDoctors />} />
-              <Route
-                path="view-appointments"
-                element={<PatientViewAppointments />}
-              />
-              <Route
-                path="view-prescriptions"
-                element={<PatientViewPrescriptions />}
-              />
-              <Route path="profile" element={<PatientProfile />} />
-              <Route index element={<PatientHomePage />} />
-            </Route>
-            <Route path="doctor">
-              <Route index element={<DrHomePage />} />
-            </Route>
-            <Route index element={<AdminHomePage />} />
-          </Route>
+         
+        <Route path="patient">
+          <Route index element={<PatientHomePage />} />
+          <Route path="view-doctors" element={<PatientViewDoctors />} />
+          <Route
+            path="view-appointments"
+            element={<PatientViewAppointments />}
+          />
+          <Route
+            path="view-prescriptions"
+            element={<PatientViewPrescriptions />}
+          />
+          <Route path="profile" element={<PatientProfile />} />
+        </Route>
 
-          <Route path="admin">
-             <Route path="doctors-list" element={<AdminDoctorsPage />} /> 
-             <Route path="patients-list" element={<AdminPatientsPage />} /> 
-             <Route path="admins-list" element={<AdminAdminsPage />} /> 
-             <Route path="packages" element={<AdminPackagesPage />} /> 
-             <Route index element={<AdminHomePage />} />
-          </Route>
-          </Route>
+        <Route path="doctor">
+          <Route index element={<DrHomePage />} />
 
-        </Routes>
-      </BrowserRouter>
+
+          <Route path="doctor-appointments" element={<DrAppointments/>} />
+        </Route>
+
+        <Route path="admin">
+          <Route index element={<AdminHomePage />} />
+          <Route path="doctors-list" element={<AdminDoctorsPage />} />
+          <Route path="patients-list" element={<AdminPatientsPage />} />
+          <Route path="admins-list" element={<AdminAdminsPage />} />
+          <Route path="packages" element={<AdminPackagesPage />} />
+        </Route>
+        <Route path="*" element={<>Page not found</>} />
+      </Routes>
     </div>
   );
 }
