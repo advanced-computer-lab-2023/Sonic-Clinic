@@ -21,8 +21,7 @@ const packagesSchema = new Schema({
   packageDiscountFM: {
     type: Number,
     required: true
-  },
-
+  }
   
 
 }, { timestamps: true });
