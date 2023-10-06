@@ -4,7 +4,7 @@ import HamburgerMenu from "../../components/Patient/HamburgerMenu";
 import DrMainImg from "../../components/Doctor/DrMainImg";
 import DrMainOptions from "../../components/Doctor/DrMainOptions";
 
-function PatientHomePage() {
+function DrHomePage() {
   return (
     <div>
       <AppNavbar hamburgerMenu={<HamburgerMenu />} />
@@ -21,4 +21,4 @@ function PatientHomePage() {
     </div>
   );
 }
-export default PatientHomePage;
+export default DrHomePage;
