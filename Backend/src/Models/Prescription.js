@@ -6,11 +6,11 @@ const prescriptionSchema = new Schema({
     type: Array,
     required: true,
   },
-  doctorName: {
+  doctorID: {
     type: String,
     required: true
   },
-  patientUsername: {
+  patientID: {
     type: String,
     required: true
   }

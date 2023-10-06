@@ -176,10 +176,12 @@ const filterPrescriptions = async(req,res) => {
 }
 
 const viewFamilyMembers= async(req,res)=>{
-const patientUsername = req.user.username; 
+//const patientUsername = req.user.username;
+//const patientManual =req.body.username;
+const patientID = req.user._id;
 
 try {
-  const familyMembers = await familyMemberModel.find({ patientUsername });
+  const familyMembers = await familyMemberModel.find({ patientID });
 
   if (!familyMembers || familyMembers.length === 0) {
     return res.status(404).json({ message: 'No family members found.' });
@@ -213,6 +215,7 @@ const selectPrescription= async (req,res) => {
    }
 }
 const addFamilyMember = async(req,res) => {
+
    try{
       const newFamilyMember = await familyMemberModel.create(req.body);
       console.log("Family member Created!")

@@ -22,7 +22,7 @@ const familyMemberSchema = new Schema({
     type: String,
     required: true
   },
-  patientUsername: {
+  patientID: {
     type: String,
     required: true
   }
