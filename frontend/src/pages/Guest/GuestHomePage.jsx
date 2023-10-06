@@ -23,4 +23,6 @@ function GuestHomePage() {
     </div>
   );
 }
+
 export default GuestHomePage;
+
