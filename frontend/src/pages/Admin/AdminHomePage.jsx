@@ -3,12 +3,12 @@ import AdminHomeCard from "../../components/Admin/AdminHomeCard";
 import AppNavbar from "../../components/AppNavigation/AppNavbar";
 import { Container, Row } from "react-bootstrap";
 import AdminImg from "../../components/Admin/AdminImg";
-import HamburgerMenu from "../../components/Patient/HamburgerMenu";
+import AdminBurgerMenu from "../../components/Admin/AdminBurgerMenu";
 
 export default function AdminHomePage() {
   return (
     <>
-      <AppNavbar hamburgerMenu={<HamburgerMenu />} />
+      <AppNavbar hamburgerMenu={<AdminBurgerMenu/>} />
       <Container
         className="bg-white px-5 py-4 d-flex align-items-center justify-content-center"
         style={{

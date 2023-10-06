@@ -3,8 +3,10 @@ import { Button, Card, ListGroup, Form } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPenToSquare, faTrashCan } from "@fortawesome/free-solid-svg-icons";
 
-export default function AdminPackageCard({ dynamicTexts, packageName, id }) {
+export default function AdminPackageCard({id, packageName, fee, docDiscount, pharmacyDiscount, famDiscount,}) {
   const [isEditing, setIsEditing] = useState(false);
+  const [error, setError] = useState(null);
+  let dynamicTexts = [fee, docDiscount, pharmacyDiscount, famDiscount];
   const [editedDynamicTexts, setEditedDynamicTexts] = useState([
     ...dynamicTexts,
   ]);
@@ -15,6 +17,12 @@ export default function AdminPackageCard({ dynamicTexts, packageName, id }) {
     "Doctor Discount",
     "Medicine Discount",
     "Family Discount",
+  ];
+  const descriptions = [
+    "Amount payed per year",
+    "Discount on any doctor's session price",
+    "Discount on any medicine ordered from pharmacy platform",
+    "Discount on the subscribtion of any family member in any package",
   ];
 
   const handleEditClick = () => {
@@ -31,11 +39,50 @@ export default function AdminPackageCard({ dynamicTexts, packageName, id }) {
     setEditedDynamicTexts(updatedDynamicTexts);
   };
 
+  // const handleSaveClick = () => {
+  //   // Handle saving the edited dynamic texts, e.g., send to server or update state
+  //   console.log("Saving edited dynamic texts:", editedDynamicTexts);
+  //   setIsEditing(false);
+  // };
+
   const handleSaveClick = () => {
-    // Handle saving the edited dynamic texts, e.g., send to server or update state
-    console.log("Saving edited dynamic texts:", editedDynamicTexts);
+  const updatedValues = editedDynamicTexts.slice();
+
+  const annualFeeRegex = /^\d+(\.\d{1,2})?\s*LE$/;
+  const commonRegex = /^\d+(\.\d{1,2})?%$/;
+
+  let isValid = true;
+  let index = 0;
+  while (index < updatedValues.length && isValid) {
+    const value = updatedValues[index];
+
+    if (index === 0) {
+      isValid = annualFeeRegex.test(value);
+    } else {
+      isValid = commonRegex.test(value);
+    }
+
+    if (!isValid) {
+      setError("Please write the correct formats");
+      // return;
+    }
+    index++;
+  }
+
+  // If all values are valid, print the new values
+  if (isValid) {
+    console.log("New Values:", updatedValues);
+    //pass updated values to the backend
+    setEditedDynamicTexts(updatedValues);
+    dynamicTexts=updatedValues;
     setIsEditing(false);
-  };
+    setError(null);
+  } else {
+    console.log(error);
+    setIsEditing(false);
+    setEditedDynamicTexts(dynamicTexts);
+  }
+};
 
   return (
     <Card
@@ -43,10 +90,10 @@ export default function AdminPackageCard({ dynamicTexts, packageName, id }) {
         width: "300px",
         boxShadow: "0px 4px 4px 0px #adb5bd",
         borderRadius: "3px",
-        marginBottom: "60px"
+        marginBottom: "60px",
       }}
     >
-      <Card.Header className="d-flex flex-column" style={{ height: "120px" }}>
+      <Card.Header className="d-flex flex-column" style={{ height: "100px" }}>
         <div className="d-flex justify-content-end">
           {!isEditing ? (
             <FontAwesomeIcon
@@ -56,7 +103,7 @@ export default function AdminPackageCard({ dynamicTexts, packageName, id }) {
                 color: "#099BA0 ",
                 fontSize: "20px",
                 cursor: "pointer",
-                marginBottom: "5px"
+                marginBottom: "5px",
               }}
               onClick={handleEditClick}
             />
@@ -89,10 +136,10 @@ export default function AdminPackageCard({ dynamicTexts, packageName, id }) {
             className="d-flex justify-content-center"
             style={{
               color: "#ff6b35",
-              fontWeight:"bold",
+              fontWeight: "bold",
               fontSize: "25px",
               textAlign: "center",
-              marginTop:'20px',
+              marginTop: "20px",
             }}
           >
             {editedPackageName}
@@ -101,33 +148,43 @@ export default function AdminPackageCard({ dynamicTexts, packageName, id }) {
       </Card.Header>
       <ListGroup variant="flush">
         {constantTexts.map((constant, index) => (
-          <ListGroup.Item
-            key={index}
-            className="d-flex justify-content-between"
-          >
-            <span style={{ fontWeight: "bold", color: "#ADB5BD " }}>
-              {constant}
-            </span>
-            <span
-              style={{
-                borderLeft: "1px solid #ccc",
-                paddingLeft: "10px",
-                width: "100px",
-              }}
-            >
-              {isEditing ? (
-                <Form.Control
+          <div key={index}>
+            <ListGroup.Item className="d-flex justify-content-between">
+              <span style={{ fontWeight: "bold", color: "#ADB5BD " }}>
+                {constant}
+              </span>
+              <span
+                style={{
+                  borderLeft: "1px solid #ccc",
+                  paddingLeft: "10px",
+                  width: "100px",
+                }}
+              >
+                {isEditing ? (
+                  <Form.Control
                   type="text"
                   value={editedDynamicTexts[index] || ""}
-                  onChange={(e) => handleInputChange(index, e)}
+                  onChange={(e) => handleInputChange(index, e)} // Pass index and event here
                 />
-              ) : (
-                editedDynamicTexts[index]
-              )}
-            </span>
-          </ListGroup.Item>
+                ) : (
+                  editedDynamicTexts[index]
+                )}
+              </span>
+            </ListGroup.Item>
+            <div
+              style={{
+                fontSize: "13px",
+                margin: "5px",
+                marginLeft: "15px",
+                color: "#212529  ",
+              }}
+            >
+              {descriptions[index]}
+            </div>
+          </div>
         ))}
       </ListGroup>
+
       <Card.Body className="d-flex align-items-center justify-content-center">
         <Button
           style={{ backgroundColor: "#ff6b35" }}
@@ -153,76 +210,3 @@ export default function AdminPackageCard({ dynamicTexts, packageName, id }) {
   );
 }
 
-// import React from "react";
-// import { Button } from "react-bootstrap";
-// import Card from "react-bootstrap/Card";
-// import ListGroup from "react-bootstrap/ListGroup";
-// import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-// import { faPenToSquare } from "@fortawesome/free-solid-svg-icons";
-// import { faTrashCan } from "@fortawesome/free-solid-svg-icons";
-// import PropTypes from 'prop-types';
-
-// export default function AdminPackageCard(props) {
-//   //package as prop
-
-//   const constantTexts = ['Annual Fee', 'Doctor Disocunt', 'Medicine Discount', 'Family Discount'];
-//   const dynamicTexts = ['Dynamic 1', 'Dynamic 2', 'Dynamic 3', 'Dynamic 4', 'Dynamic 5'];
-
-//   return (
-//     <Card
-//       style={{
-//         width: "300px",
-//         boxShadow: "0px 4px 4px 0px #adb5bd",
-//         borderRadius: "3px",
-//       }}
-//     >
-//       <Card.Header className="d-flex flex-column" style={{ height: "80px" }}>
-//         <div className="d-flex justify-content-end">
-//           <FontAwesomeIcon
-//             icon={faPenToSquare}
-//             style={{
-//               opacity: 1,
-//               color: "#099BA0 ",
-//               fontSize: "20px",
-//               cursor: "pointer",
-//             }}
-//           />
-//         </div>
-//         <Card.Title
-//           className="d-flex"
-//           style={{
-//             color: "#ff6b35",
-//             fontWeight: "bold",
-//             fontSize: "25px",
-//             marginLeft: "40px",
-//           }}
-//         >
-//           Silver Package
-//         </Card.Title>
-//       </Card.Header>
-//       <ListGroup variant="flush">
-//         {constantTexts.map((constant, index) => (
-//           <ListGroup.Item key={index} className="d-flex justify-content-between">
-//             <span>{constant}</span>
-//             <span style={{ borderLeft: '1px solid #ccc', paddingLeft: '10px' }}>{dynamicTexts[index]}</span>
-//           </ListGroup.Item>
-//         ))}
-//       </ListGroup>
-//       <Card.Body className="d-flex align-items-center justify-content-center">
-//         <Button style={{ backgroundColor: "#ff6b35" }}>
-//           Delete Package
-//           <FontAwesomeIcon
-//             icon={faTrashCan}
-//             style={{
-//               opacity: 1,
-//               color: "#f0f0f0 ",
-//               fontSize: "20px",
-//               cursor: "pointer",
-//               marginLeft: "5px",
-//             }}
-//           />
-//         </Button>
-//       </Card.Body>
-//     </Card>
-//   );
-// }

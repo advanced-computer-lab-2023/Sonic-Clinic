@@ -3,12 +3,16 @@ import AdminViewTable from "../../components/Admin/AdminViewTable";
 import AdminSearchBar from "../../components/Admin/AdminSearchBar";
 import AppNavbar from "../../components/AppNavigation/AppNavbar";
 import { Container } from "react-bootstrap";
-import HamburgerMenu from "../../components/Patient/HamburgerMenu";
+import AdminBurgerMenu from "../../components/Admin/AdminBurgerMenu";
 
 export default function AdminPatientsPage() {
+  const patients = [
+    { id: 1, firstName: "Mark", lastName: "Otto", username: "@mko" },
+    { id: 2, firstName: "John", lastName: "Doe", username: "@johndoe" },
+  ];
   return (
     <>
-      <AppNavbar hamburgerMenu={<HamburgerMenu />} />
+      <AppNavbar hamburgerMenu={<AdminBurgerMenu />} />
       <div
         style={{
           marginTop: "50px",
@@ -31,7 +35,7 @@ export default function AdminPatientsPage() {
         }}
       >
         <AdminSearchBar />
-        <AdminViewTable />
+        <AdminViewTable onAdmins={false} users={patients}/>
       </Container>
     </>
   );
