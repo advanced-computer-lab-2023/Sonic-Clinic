@@ -2,10 +2,7 @@ import React, { useState } from "react";
 
 import Container from "react-bootstrap/Container";
 import Navbar from "react-bootstrap/Navbar";
-import { slide as Menu } from "react-burger-menu";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUser } from "@fortawesome/free-solid-svg-icons";
-
+import logo from "../../Assets/ClinicLogo.png";
 const AppNavbar = (props) => {
   const { hamburgerMenu } = props;
   const [menuOpen, setMenuOpen] = useState(false);
@@ -20,26 +17,25 @@ const AppNavbar = (props) => {
 
   return (
     <div>
-      <Navbar className="bg-white" sticky="top">
+      <Navbar className="bg-white" sticky="top" style={{ height: "5rem" }}>
         <Container fluid className="px-5">
-          <div className="d-flex flex-direction-row" style={{ gap: "20px" }}>
+          <div
+            className="d-flex flex-direction-row col-5"
+            style={{ gap: "20px" }}
+          >
             <Navbar.Collapse>{hamburgerMenu}</Navbar.Collapse>
-
-            <div>CLINIC</div>
           </div>
-          <Navbar.Text
+          <div
+            className="col-7"
             style={{
-              color: "var(--theme-primary, #05AFB9)",
-              fontSize: "16px",
-              fontStyle: "normal",
+              color: "#ff6b35",
+              fontSize: "3rem",
               fontWeight: "700",
-              textDecorationLine: "underline",
+              paddingLeft: "2.3rem",
             }}
           >
-            <a style={{ color: "var(--theme-primary, #05AFB9)" }} href="#">
-              USD
-            </a>
-          </Navbar.Text>
+            Clinic
+          </div>
         </Container>
       </Navbar>
     </div>

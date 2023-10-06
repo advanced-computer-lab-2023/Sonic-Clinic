@@ -1,9 +1,6 @@
 import { Card, Image } from "react-bootstrap";
-import mainImg from "../../Assets/Patient/HomeImg.png";
-import SearchCard from "./SearchCard";
-import { useSelector } from "react-redux";
-function MainImg() {
-  const name = useSelector((state) => state.patientLogin.firstName);
+import mainImg from "../../Assets/Admin/AdminHome.jpg";
+function AdminImg() {
   return (
     <div>
       <Card
@@ -28,6 +25,7 @@ function MainImg() {
         >
           <Card.Text
             style={{
+              marginTop: "570px",
               color: "#05AFB9",
               textAlign: "center",
               fontFamily: "Vibur",
@@ -37,7 +35,7 @@ function MainImg() {
               lineHeight: "120%",
             }}
           >
-            Hello {name}
+            Hello Admin
           </Card.Text>
         </Card>
       </Card>
@@ -45,4 +43,4 @@ function MainImg() {
   );
 }
 
-export default MainImg;
+export default AdminImg;

@@ -1,19 +1,8 @@
+import React from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import AppNavbar from "./components/AppNavigation/AppNavbar";
 import "bootstrap/dist/css/bootstrap.min.css";
 import PatientHomePage from "./pages/Patient/PatientHomePage";
-<<<<<<< Updated upstream
-function App() {
-  return (
-    <div className="bg-light">
-      <BrowserRouter>
-        <Routes>
-          <Route path="/">
-            <Route index element={<PatientHomePage />} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
-=======
 import PatientViewDoctors from "./pages/Patient/PatientViewDoctors";
 import PatientProfile from "./pages/Patient/PatientProfile";
 import AdminHomePage from "./pages/Admin/AdminHomePage";
@@ -60,6 +49,7 @@ function App() {
 
         <Route path="doctor">
           <Route index element={<DrHomePage />} />
+
           <Route path="doctor-appointments" element={<DrAppointments/>} />
         </Route>
 
@@ -72,7 +62,6 @@ function App() {
         </Route>
         <Route path="*" element={<>Page not found</>} />
       </Routes>
->>>>>>> Stashed changes
     </div>
   );
 }
