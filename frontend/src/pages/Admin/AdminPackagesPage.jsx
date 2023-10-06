@@ -1,11 +1,13 @@
-import React from "react";
-import AdminViewTable from "../../components/Admin/AdminViewTable";
-import AdminSearchBar from "../../components/Admin/AdminSearchBar";
+import React from 'react';
 import AppNavbar from "../../components/AppNavigation/AppNavbar";
 import { Container } from "react-bootstrap";
 import HamburgerMenu from "../../components/Patient/HamburgerMenu";
+import AdminPackageCarousel from '../../components/Admin/AdminPackageCarousel';
+import AddNewPackage from '../../forms/AddNewPackage';
 
-export default function AdminPatientsPage() {
+export default function AdminPackagesPage() {
+
+  //add button to toggle the AddNewPackageForm
   return (
     <>
       <AppNavbar hamburgerMenu={<HamburgerMenu />} />
@@ -19,7 +21,7 @@ export default function AdminPatientsPage() {
           lineHeight: "120%",
         }}
       >
-        Registered Patients
+        Availabe Health Packages
       </div>
       <Container
         className="bg-white px-5 py-4 d-flex align-items-center justify-content-center"
@@ -30,9 +32,9 @@ export default function AdminPatientsPage() {
           marginLeft: "100px",
         }}
       >
-        <AdminSearchBar />
-        <AdminViewTable />
+        {/* <AdminPackageCarousel/> */}
+        <AdminPackageCarousel/>
       </Container>
     </>
-  );
+  )
 }

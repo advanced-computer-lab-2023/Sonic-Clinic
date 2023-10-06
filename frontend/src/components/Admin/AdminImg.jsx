@@ -25,7 +25,7 @@ function AdminImg() {
         >
           <Card.Text
             style={{
-              marginTop:'570px',
+              marginTop: "570px",
               color: "#05AFB9",
               textAlign: "center",
               fontFamily: "Vibur",
