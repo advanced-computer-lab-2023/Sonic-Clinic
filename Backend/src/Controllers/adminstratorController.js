@@ -165,19 +165,122 @@ const viewAllPatients= async(req,res)=>{
     }
 }
 
-const viewAllDoctors= async(req,res)=>{
+const viewAllDoctors = async (req, res) => {
    try {
-      const doctors = await doctorModel.find();
+     // Query the database to get real doctors
+     const realDoctors = await doctorModel.find();
+ 
+     // Combine dummy doctors with real doctors
+     const allDoctors = [dummyDoctors, realDoctors];
+ 
+     if (!allDoctors || allDoctors.length === 0) {
+       return res.status(404).json({ message: 'No doctors found.' });
+     }
+ 
+     res.status(200).json({ doctors: allDoctors });
+   } catch (error) {
+     res.status(500).json({ message: 'Server Error' });
+   }
+ };
+// Dummy data for 7 doctors with full schema attributes
+const dummyDoctors = [
+   {
+     username: 'drjohnsmith',
+     name: 'Dr. John Smith',
+     email: 'john.smith@example.com',
+     password: 'password123',
+     dateOfBirth: '1980-05-15',
+     hourlyRate: 150,
+     affiliation: 'City Hospital',
+     educationalBackground: 'M.D. from University of Medical Sciences',
+     patients: [],
+     speciality: 'Cardiologist',
+     photoLink: 'https://media.licdn.com/dms/image/C4E03AQFg161EE_9n0Q/profile-displayphoto-shrink_800_800/0/1540403513741?e=2147483647&v=beta&t=zODGGNsdmZ03iwtSrHJEMR_Qxd_NkEQueFjKfd9JrOE',
+   },
+   {
+     username: 'dremljohnson',
+     name: 'Dr. Emily Johnson',
+     email: 'emily.johnson@example.com',
+     password: 'password456',
+     dateOfBirth: '1975-08-22',
+     hourlyRate: 120,
+     affiliation: 'Community Clinic',
+     educationalBackground: 'M.D. from Medical University',
+     patients: [],
+     speciality: 'Pediatrician',
+     photoLink: 'https://media.licdn.com/dms/image/C4E03AQHJ_sJIJWxHpw/profile-displayphoto-shrink_800_800/0/1529980129766?e=2147483647&v=beta&t=yH7Pz2hfrso5nXNCFilmjOnvL7OVcLML5vOsvA7nWDM',
+   },
+   {
+     username: 'drmichaelbrown',
+     name: 'Dr. Michael Brown',
+     email: 'michael.brown@example.com',
+     password: 'password789',
+     dateOfBirth: '1983-03-10',
+     hourlyRate: 170,
+     affiliation: 'General Hospital',
+     educationalBackground: 'M.D. from Health Sciences Institute',
+     patients: [],
+     speciality: 'Dermatologist',
+     photoLink: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTAi46IZubvG3_2P4upQgk2zqAqzySmQ7Yx8qmgUOuWdnth2Yoy7BXbSxHTEqpD8_11aeI&usqp=CAU',
+   },
+   {
+     username: 'drsarahwilson',
+     name: 'Dr. Sarah Wilson',
+     email: 'sarah.wilson@example.com',
+     password: 'password101',
+     dateOfBirth: '1978-11-28',
+     hourlyRate: 140,
+     affiliation: 'Medical Center',
+     educationalBackground: 'M.D. from Wellness University',
+     patients: [],
+     speciality: 'Oncologist',
+     photoLink: 'https://media.licdn.com/dms/image/C4D03AQF3MdVSGuXrDw/profile-displayphoto-shrink_800_800/0/1525397028366?e=2147483647&v=beta&t=Ai6blaPhh7JFpMGwn1ltvfk40FHEupx1txBM6Qda7AY',
+   },
+   {
+     username: 'drdavidlee',
+     name: 'Dr. David Lee',
+     email: 'david.lee@example.com',
+     password: 'password202',
+     dateOfBirth: '1985-09-03',
+     hourlyRate: 160,
+     affiliation: 'Health Clinic',
+     educationalBackground: 'M.D. from Healing Institute',
+     patients: [],
+     speciality: 'Neurologist',
+     photoLink: 'https://www.woodlandshospital.in/images/doctor-img/ravi-kant-saraogi.jpg',
+   },
+   {
+     username: 'drlisamiller',
+     name: 'Dr. Lisa Miller',
+     email: 'lisa.miller@example.com',
+     password: 'password303',
+     dateOfBirth: '1973-12-18',
+     hourlyRate: 180,
+     affiliation: 'Community Hospital',
+     educationalBackground: 'M.D. from Medical Excellence College',
+     patients: [],
+     speciality: 'Orthopedic Surgeon',
+     photoLink: 'https://media.licdn.com/dms/image/D4D03AQGtRNtcH_1kFg/profile-displayphoto-shrink_400_400/0/1688449652391?e=1700697600&v=beta&t=XeEjFVmqBXMPwoCUZtqDLzw1_eA3FAICAT2APwaBHHM',
+   },
+   {
+     username: 'drkarendavis',
+     name: 'Dr. Karen Davis',
+     email: 'karen.davis@example.com',
+     password: 'password404',
+     dateOfBirth: '1976-07-07',
+     hourlyRate: 130,
+     affiliation: 'General Medical Center',
+     educationalBackground: 'M.D. from Health Sciences Academy',
+     patients: [],
+     speciality: 'Psychiatrist',
+     photoLink: 'https://images.drlogy.com/assets/uploads/img/user/home/health/Doctors.webp',
+   },
+ ];
+ 
 
-      if (!doctors || doctors.length === 0) {
-        return res.status(404).json({ message: 'No doctors found.' });
-      }
+ 
 
-      res.status(200).json({ doctors });
-    } catch (error) {
-      res.status(500).json({ message: 'Server Error' });
-    }
-}
+ 
 const viewPackagesAdmin= async(req,res)=>{
    try {
      const packages = await packagesModel.find();

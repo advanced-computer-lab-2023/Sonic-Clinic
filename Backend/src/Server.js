@@ -10,7 +10,7 @@ require("dotenv").config();
 ///////////////////////////////patientController//////////////////////////////////////////
 const {selectPrescription,viewFamilyMembers,filterPrescriptions,
   viewPrescriptions,filterApointmentsByDateAndStatus,filterDoctors,
-  searchDoctors,doctorDetails,addFamilyMember,viewPackages} = require("./Controllers/patientController");
+  searchDoctors,doctorDetails,addFamilyMember,viewPackages,viewAllDoctorsForPatients} = require("./Controllers/patientController");
 
 /////////////////////////////////doctorController//////////////////////////////////////////
 const {selectPatient,viewInfoAndHealthRecord,viewPatients,
@@ -95,6 +95,7 @@ server.get("/doctorDetails", doctorDetails);
  server.get("/searchDoctors", searchDoctors);
  server.get("/filterDoctors", filterPrescriptions);
  server.get("/viewPackages",viewPackages);
+ server.get("/viewAllDoctorsByPatients",viewAllDoctorsForPatients);
 //doctor
  server.get("/selectPatient", selectPatient);
  server.get("/viewInfoAndHealthRecord", viewInfoAndHealthRecord);
