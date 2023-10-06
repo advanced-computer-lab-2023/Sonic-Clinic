@@ -13,11 +13,15 @@ import PatientViewAppointments from "./pages/Patient/PatientViewAppointments";
 import DrHomePage from "./pages/Doctor/DrHomePage";
 import AdminPackagesPage from "./pages/Admin/AdminPackagesPage";
 import AdminAdminsPage from "./pages/Admin/AdminAdminsPage";
+
+import GuestHomePage from "./pages/Guest/GuestHomePage";
+
 import Login from "./pages/Guest/Login";
 import PatientSignup from "./pages/Guest/PatientSignup";
 import DrSignup from "./pages/Guest/DrSignup";
 import DrAppointments from "./pages/Doctor/DrAppointments";
 import DrPatients from "./pages/Doctor/DrPatients";
+
 
 
 function App() {
@@ -35,6 +39,13 @@ function App() {
           <Route index element={<DrSignup />} />
         </Route>
 
+
+          
+          <Route path="GuestHomePage">
+          <Route index element={<GuestHomePage />} />
+
+
+         
         <Route path="patient">
           <Route index element={<PatientHomePage />} />
           <Route path="view-doctors" element={<PatientViewDoctors />} />
@@ -51,6 +62,7 @@ function App() {
 
         <Route path="doctor">
           <Route index element={<DrHomePage />} />
+
           <Route path="doctor-appointments" element={<DrAppointments/>} />
           <Route path="doctor-patients" element={<DrPatients/>} />
         </Route>
