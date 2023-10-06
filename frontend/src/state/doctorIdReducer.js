@@ -14,14 +14,14 @@ const doctorIdSlice = createSlice({
   name: "doctorId",
   initialState,
   reducers: {
-    setHotelData: (state, action) => {
-      state.doctorId = action.payload.hotelId;
-      state.doctorName = action.payload.hotelName;
-      state.doctorRegion = action.payload.hotelRegion;
-      state.doctorImages = action.payload.hotelImages;
-      state.doctorStarRating = action.payload.hotelStarRating;
-      state.doctorStartPrice = action.payload.hotelStartPrice;
-      state.doctorDescription = action.payload.hotelDescription;
+    setDoctorData: (state, action) => {
+      state.doctorId = action.payload.doctorId;
+      state.doctorName = action.payload.doctorName;
+      state.doctorRegion = action.payload.doctorRegion;
+      state.doctorImages = action.payload.doctorImages;
+      state.doctorStarRating = action.payload.doctorStarRating;
+      state.doctorStartPrice = action.payload.doctorStartPrice;
+      state.doctorDescription = action.payload.doctorDescription;
     },
   },
 });

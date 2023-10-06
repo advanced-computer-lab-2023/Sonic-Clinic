@@ -6,9 +6,6 @@ import PatientHomePage from "./pages/Patient/PatientHomePage";
 import PatientViewDoctors from "./pages/Patient/PatientViewDoctors";
 import PatientProfile from "./pages/Patient/PatientProfile";
 import AdminHomePage from "./pages/Admin/AdminHomePage";
-import AdminHomeCard from "./components/Admin/AdminHomeCard";
-import AdminViewTable from "./components/Admin/AdminViewTable";
-import AdminSearchBar from "./components/Admin/AdminSearchBar";
 import AdminPatientsPage from "./pages/Admin/AdminPatientsPage";
 import AdminDoctorsPage from "./pages/Admin/AdminDoctorsPage";
 import PatientViewPrescriptions from "./pages/Patient/PatientViewPrescriptions";
@@ -17,12 +14,23 @@ import DrHomePage from "./pages/Doctor/DrHomePage";
 import AdminPackagesPage from "./pages/Admin/AdminPackagesPage";
 import AdminAdminsPage from "./pages/Admin/AdminAdminsPage";
 import Login from "./pages/Guest/Login";
+import PatientSignup from "./pages/Guest/PatientSignup";
+import DrSignup from "./pages/Guest/DrSignup";
 
 function App() {
   return (
     <div className="bg-light">
       <Routes>
         <Route path="/" element={<Login />} />
+        <Route path="login">
+          <Route index element={<Login />} />
+        </Route>
+        <Route path="patient-signup">
+          <Route index element={<PatientSignup />} />
+        </Route>
+        <Route path="doctor-signup">
+          <Route index element={<DrSignup />} />
+        </Route>
 
         <Route path="patient">
           <Route index element={<PatientHomePage />} />

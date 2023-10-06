@@ -5,10 +5,10 @@ import { logout } from "../../state/loginPatientReducer";
 import { useDispatch } from "react-redux";
 import AppNavbar from "../../components/AppNavigation/AppNavbar";
 import RegPhoto from "../../components/Guest/RegPhoto";
-import LoginForm from "../../forms/Guest/LoginForm";
-import PatientSignupForm from "../../forms/Guest/PatientSignupForm";
 
-function PatientLogin() {
+import DrSignupForm from "../../forms/Guest/DrSignupForm";
+
+function DrSignup() {
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(logout());
@@ -24,7 +24,7 @@ function PatientLogin() {
               <RegPhoto />
             </div>
             <div className="col-12 col-lg-7 order-lg-1">
-              <LoginForm />
+              <DrSignupForm />
             </div>
           </div>
         </Container>
@@ -33,4 +33,4 @@ function PatientLogin() {
   );
 }
 
-export default PatientLogin;
+export default DrSignup;
