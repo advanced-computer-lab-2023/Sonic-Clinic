@@ -1,25 +1,33 @@
-//Di zi el main method lama bagy a run ba run el app js 3alatol
-//use nodemon badal node 3lashan ma3odsh 22fl w aftah el server kol mara 
+
 
 // External variables
 const express = require("express");
 const mongoose = require('mongoose');
 mongoose.set('strictQuery', false);
 require("dotenv").config();
+
 //Declare ll methods el haktbha 
-//patientController
-const {selectPrescription,viewFamilyMembers,filterPrescriptions,viewPrescriptions,filterApointmentsByDateAndStatus,filterDoctors,searchDoctors,doctorDetails,addFamilyMember} = require("./Controllers/patientController");
+///////////////////////////////patientController//////////////////////////////////////////
+const {selectPrescription,viewFamilyMembers,filterPrescriptions,
+  viewPrescriptions,filterApointmentsByDateAndStatus,filterDoctors,
+  searchDoctors,doctorDetails,addFamilyMember,viewPackages} = require("./Controllers/patientController");
 
-//doctorController 
-const {selectPatient,viewInfoAndHealthRecord,viewPatients,updateDoctorProfile,filterApointmentsByDateAndStatusDoc,filterPatientsByAppointments,searchPatientByName} = require("./Controllers/doctorController");
+/////////////////////////////////doctorController//////////////////////////////////////////
+const {selectPatient,viewInfoAndHealthRecord,viewPatients,
+  updateDoctorProfile,filterApointmentsByDateAndStatusDoc,
+  filterPatientsByAppointments,searchPatientByName} = require("./Controllers/doctorController");
 
-//adminstratorController
+///////////////////////////////adminstratorController//////////////////////////////////////
 const {addAdmin,addPackage,addDoctor,
-  updatePackage,deletePackage,removeDoctor,removePatient,removeAdmin,viewPotentialDoctors,rejectPotentialDoctor, viewAllDoctors,viewAllPatients
+  updatePackage,deletePackage,removeDoctor,
+  removePatient,removeAdmin,viewPotentialDoctors,
+  rejectPotentialDoctor, viewAllDoctors,viewAllPatients,viewPackages
 } = require("./Controllers/adminstratorController");
 
-//guestController
+////////////////////////////////guestController///////////////////////////////////////////
 const {addPatient,addPotentialDoctor} = require("./Controllers/guestController");
+
+
 //el link bta3 el DB
 const MongoURI = process.env.MONGO_URI ;
 
@@ -35,6 +43,8 @@ const port = process.env.PORT || "8000";
  const adminstrator = require('./Models/Adminstrator');
  const potentialDoctor = require('./Models/PotentialDoctor');
                       //////////////////////////////////////////////////////////////////////////////////////
+
+
 // configurations
 // Mongo DB
 mongoose.connect(MongoURI)
@@ -58,7 +68,7 @@ server.get("/home", (req, res) => {
 // #Routing to userController here
 server.use(express.json())
 
-///////////// POST
+////////////////////////////////////////////////POST//////////////////////////////////
 //admin
 server.post("/addAdmin",addAdmin);
 server.post("/addDoctor",addDoctor);
@@ -67,11 +77,12 @@ server.post("/addFamilyMember",addFamilyMember);
 //guest
 server.post("/addPatient",addPatient);
 server.post("/addPotentialDoctor",addPotentialDoctor);
-////////////// GET
+//////////////////////////////////////////// GET/////////////////////////////////////
 //admin
 server.get("/viewAllPatients", viewAllPatients);
 server.get("/viewAllDoctors", viewAllDoctors);
 server.get("/viewPotentialDoctors", viewPotentialDoctors);
+server.get("/viewPackges", viewPackages);
 //patient
 server.get("/doctorDetails", doctorDetails);
  server.get("/viewPrescriptions", viewPrescriptions);
@@ -81,21 +92,22 @@ server.get("/doctorDetails", doctorDetails);
  server.get("/filterApointmentsByDateAndStatus", filterApointmentsByDateAndStatus);
  server.get("/searchDoctors", searchDoctors);
  server.get("/filterDoctors", filterPrescriptions);
-// //doctor
+ server.get("/viewPackages",viewPackages);
+//doctor
  server.get("/selectPatient", selectPatient);
  server.get("/viewInfoAndHealthRecord", viewInfoAndHealthRecord);
  server.get("/viewPatients", viewPatients);
  server.get("/filterApointmentsByDateAndStatusDoc", filterApointmentsByDateAndStatusDoc);
  server.get("/filterPatientsByAppointments", filterPatientsByAppointments);
  server.get("/searchPatientByName", searchPatientByName);
- //admin
- server.get("/viewPotentialDoctors", viewPotentialDoctors);
-//////////////PUT
+
+////////////////////////////////////////////////////PUT////////////////////////////////////////
 //admin
 server.put("/updatePackage", updatePackage);
 //docotr
-// server.put("/updateDoctorProfile", updateDoctorProfile);
-///////////// DELETE
+server.put("/updateDoctorProfile", updateDoctorProfile);
+
+////////////////////////////////////////////////DELETE/////////////////////////////////////////
 //admin
 server.delete("/deletePackage", deletePackage);
 server.delete("/removeDoctor", removeDoctor);

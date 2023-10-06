@@ -151,4 +151,6 @@ const selectPatient = async(req,res) =>{
    }
 }
 
-module.exports = {selectPatient,viewInfoAndHealthRecord,viewPatients,updateDoctorProfile,filterApointmentsByDateAndStatusDoc,filterPatientsByAppointments,searchPatientByName};
+module.exports = {selectPatient,viewInfoAndHealthRecord,viewPatients,
+  updateDoctorProfile,filterApointmentsByDateAndStatusDoc,
+  filterPatientsByAppointments,searchPatientByName};

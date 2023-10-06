@@ -2,6 +2,7 @@ const patientModel = require('../Models/Patient.js');
 const { default: mongoose } = require('mongoose');
 const doctorModel = require('../Models/Doctor.js');
 const familyMemberModel = require('../Models/FamilyMember.js');
+const packagesModel = require('../Models/Packages.js');
 
 const doctorDetails = async (req, res) => {
   const { name: doctorName } = req.query;
@@ -223,6 +224,20 @@ const addFamilyMember = async(req,res) => {
 
    }
 }
+const viewPackages= async(req,res)=>{
+  try {
+    const packages = await packagesModel.find();
+    if (!packages || packages.length === 0) {
+      return res.status(404).json({ message: 'No packages found.' });
+    }
+    res.status(200).json(packages);
+    
+  }
+  catch (error) {
+    res.status(500).json({ message: 'Server Error' });
+  }
+}
 
-module.exports = {selectPrescription,viewFamilyMembers,filterPrescriptions,viewPrescriptions,filterApointmentsByDateAndStatus,filterDoctors,searchDoctors,doctorDetails
-,addFamilyMember};
+module.exports = {selectPrescription,viewFamilyMembers,filterPrescriptions,
+  viewPrescriptions,filterApointmentsByDateAndStatus,filterDoctors,
+  searchDoctors,doctorDetails,addFamilyMember,viewPackages};
