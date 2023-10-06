@@ -6,14 +6,19 @@ import { Container } from "react-bootstrap";
 import Tab from "react-bootstrap/Tab";
 import Tabs from "react-bootstrap/Tabs";
 import AdminDocReqs from "../../components/Admin/AdminDocReqs";
-import HamburgerMenu from "../../components/Patient/HamburgerMenu";
+import AdminBurgerMenu from "../../components/Admin/AdminBurgerMenu";
 
 export default function AdminDoctorsPage() {
   const [tab, setTab] = useState("registered");
 
+  const doctors = [
+    { id: 1, firstName: "Robin", lastName: "Otto", username: "@rno" },
+    { id: 2, firstName: "Joe", lastName: "Doe", username: "@joedoe" },
+  ];
+
   return (
     <>
-      <AppNavbar hamburgerMenu={<HamburgerMenu />} />
+      <AppNavbar hamburgerMenu={<AdminBurgerMenu />} />
       <div
         style={{
           marginTop: "50px",
@@ -53,7 +58,7 @@ export default function AdminDoctorsPage() {
             }}
           >
             <AdminSearchBar />
-            <AdminViewTable />
+            <AdminViewTable onAdmins={false} users={doctors} />
           </Container>
         </Tab>
         <Tab eventKey="requests" title="Requests">

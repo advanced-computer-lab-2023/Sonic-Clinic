@@ -2,8 +2,19 @@ import { faArrowRight, faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
 import { Card, Button, Dropdown } from "react-bootstrap";
+import { useNavigate } from "react-router";
 
 function GuestBox() {
+  const navigate = useNavigate();
+  const handleLogin = () => {
+    navigate("/login");
+  };
+  const handleDrSignUp = () => {
+    navigate("/doctor-signup");
+  };
+  const handlePatientSignup = () => {
+    navigate("patient-signup");
+  };
   return (
     <div
       className="d-flex flex-column align-items-center"
@@ -43,6 +54,7 @@ function GuestBox() {
               height: "3rem",
               marginBottom: "1rem",
             }}
+            onClick={handleLogin}
           >
             Login
           </Button>
@@ -51,15 +63,18 @@ function GuestBox() {
               variant="primary"
               style={{
                 width: "300px",
-                height: "3rem",             
-
+                height: "3rem",
               }}
             >
               Sign Up
             </Dropdown.Toggle>
-            <Dropdown.Menu style={{ width: "300px",}}>
-              <Dropdown.Item>Sign Up as Doctor</Dropdown.Item>
-              <Dropdown.Item>Sign Up as Patient</Dropdown.Item>
+            <Dropdown.Menu style={{ width: "300px" }}>
+              <Dropdown.Item onClick={handleDrSignUp}>
+                Sign Up as Doctor
+              </Dropdown.Item>
+              <Dropdown.Item onClick={handlePatientSignup}>
+                Sign Up as Patient
+              </Dropdown.Item>
             </Dropdown.Menu>
           </Dropdown>
         </div>
@@ -72,8 +87,7 @@ function GuestBox() {
             fontSize: "1rem",
             fontWeight: "600",
           }}
-        >
-        </div>
+        ></div>
       </Card>
     </div>
   );

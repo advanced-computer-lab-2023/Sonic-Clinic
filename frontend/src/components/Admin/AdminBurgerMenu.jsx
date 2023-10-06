@@ -1,15 +1,15 @@
 import {
-    faCalendarCheck,
-    faPrescription,
-    faPrescriptionBottle,
-    faPrescriptionBottleAlt,
+    faHospitalUser,
+    faUserDoctor,
+    faUsers,
+    faBriefcaseMedical,
     faRightFromBracket,
     faUser,
   } from "@fortawesome/free-solid-svg-icons";
   import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
   import { useState } from "react";
   import { slide as Menu } from "react-burger-menu";
-  function DrHamburgerMenu() {
+  function HamburgerMenu() {
     const [menuOpen, setMenuOpen] = useState(false);
   
     const handleMenuClick = () => {
@@ -123,7 +123,7 @@ import {
             <a
               id="home"
               className="menu-item"
-              href="/doctor"
+              href="/admin"
               onClick={closeMenu}
               style={{
                 color: "var(--gray-600, #6C757D)",
@@ -164,9 +164,9 @@ import {
             {/* Add a line between menu items */}
             <hr className="menu-line" />
             <a
-              id="profile"
+              id="patients"
               className="menu-item"
-              href="/patient/profile"
+              href="/admin/patients-list"
               onClick={closeMenu}
               style={{
                 color: "var(--gray-600, #6C757D)",
@@ -181,15 +181,15 @@ import {
                 padding: "0.5rem 0",
               }}
             >
-              <FontAwesomeIcon icon={faUser} style={{ marginRight: "0.5rem" }} />
-              My Profile
+              <FontAwesomeIcon icon={faHospitalUser} style={{ marginRight: "0.5rem" }} />
+              Patients
             </a>
   
             <hr className="menu-line" />
             <a
-              id="prescription"
+              id="doctors"
               className="menu-item"
-              href="/doctor/doctor-patients"
+              href="/admin/doctors-list"
               onClick={closeMenu}
               style={{
                 color: "var(--gray-600, #6C757D)",
@@ -205,17 +205,17 @@ import {
               }}
             >
               <FontAwesomeIcon
-                icon={faPrescriptionBottle}
+                icon={faUserDoctor}
                 style={{ marginRight: "0.5rem" }}
               />
-              My Patients
+              Doctors
             </a>
   
             <hr className="menu-line" />
             <a
-              id="appointment"
+              id="admins"
               className="menu-item"
-              href="/doctor/doctor-appointments"
+              href="/admin/admins-list"
               onClick={closeMenu}
               style={{
                 color: "var(--gray-600, #6C757D)",
@@ -231,11 +231,37 @@ import {
               }}
             >
               <FontAwesomeIcon
-                icon={faCalendarCheck}
+                icon={faUsers}
                 style={{ marginRight: "0.5rem" }}
               />
-              My Appointments
+              Admins
             </a>
+            <hr className="menu-line" />
+            <a
+              id="packages"
+              className="menu-item"
+              href="/admin/packages"
+              onClick={closeMenu}
+              style={{
+                color: "var(--gray-600, #6C757D)",
+                fontFamily: "Roboto",
+                fontSize: "0.9375rem",
+                fontStyle: "normal",
+                fontWeight: 400,
+                lineHeight: "1rem" /* 106.667% */,
+                display: "flex",
+                alignItems: "center",
+                textDecoration: "none", // To remove underlines
+                padding: "0.5rem 0",
+              }}
+            >
+              <FontAwesomeIcon
+                icon={faBriefcaseMedical}
+                style={{ marginRight: "0.5rem" }}
+              />
+              Health Packages
+            </a>
+
             <hr className="menu-line" />
             <a
               id="logout"
@@ -267,5 +293,5 @@ import {
       </div>
     );
   }
-  export default DrHamburgerMenu;
+  export default HamburgerMenu;
   

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Button, Container, Form } from "react-bootstrap";
 
-function AppointmentFilter({ onFilter }) {
+function DrPatientFilter({ onFilter }) {
   const [selectedDate, setSelectedDate] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("");
 
@@ -45,7 +45,7 @@ function AppointmentFilter({ onFilter }) {
           lineHeight: "120%",
         }}
       >
-        Filter Appointments
+        Filter Patients
       </div>
 
       <div className="mb-2">
@@ -68,7 +68,7 @@ function AppointmentFilter({ onFilter }) {
         />
       </div>
 
-      <div className="mb-2">
+     {/*  <div className="mb-2">
         <div
           style={{
             color: "#000",
@@ -87,7 +87,7 @@ function AppointmentFilter({ onFilter }) {
           <option value="pending">Pending</option>
           <option value="canceled">Canceled</option>
         </Form.Control>
-      </div>
+      </div> */}
 
       <Container
         fluid
@@ -101,4 +101,4 @@ function AppointmentFilter({ onFilter }) {
   );
 }
 
-export default AppointmentFilter;
+export default DrPatientFilter;
