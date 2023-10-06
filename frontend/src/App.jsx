@@ -14,6 +14,8 @@ import AdminDoctorsPage from "./pages/Admin/AdminDoctorsPage";
 import PatientViewPrescriptions from "./pages/Patient/PatientViewPrescriptions";
 import PatientViewAppointments from "./pages/Patient/PatientViewAppointments";
 import DrHomePage from "./pages/Doctor/DrHomePage";
+import AdminPackagesPage from "./pages/Admin/AdminPackagesPage";
+import AdminAdminsPage from "./pages/Admin/AdminAdminsPage";
 
 function App() {
   return (
