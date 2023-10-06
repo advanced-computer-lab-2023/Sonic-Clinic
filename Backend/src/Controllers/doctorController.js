@@ -1,6 +1,7 @@
 const doctorModel = require('../Models/Doctor.js');
 const { default: mongoose } = require('mongoose');
 const patientModel = require('../Models/Patient.js');
+const PrescriptionModel = require('../Models/Prescription.js');
 
 
 const searchPatientByName = async (req, res) => {
@@ -150,7 +151,19 @@ const selectPatient = async(req,res) =>{
      res.status(500).json({ message: 'Server Error' });
    }
 }
+const addPrescription = async(req,res) => {
+  try{
+     const newPrescription = await PrescriptionModel.create(req.body);
+     console.log("Prescription Created!")
+     res.status(200).send(newPrescription);
+
+  }
+  catch(error){
+     res.status(400).send({error:error.message});
+
+  }
+}
 
 module.exports = {selectPatient,viewInfoAndHealthRecord,viewPatients,
   updateDoctorProfile,filterApointmentsByDateAndStatusDoc,
-  filterPatientsByAppointments,searchPatientByName};
+  filterPatientsByAppointments,searchPatientByName,addPrescription};
