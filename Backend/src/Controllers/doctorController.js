@@ -64,93 +64,111 @@ const filterApointmentsByDateAndStatusDoc= async(req,res) => {
    }
 }
 
-const updateDoctorProfile= async(req,res)=>{
-   const { email, hourlyRate, affiliation } = req.body;
+const updateDoctorProfile = async (req, res) => {
+  const { email, hourlyRate, affiliation } = req.body;
+  const username = req.session.user.username;
 
-    try {
-      const doctor = await doctorModel.findOne({ username: req.user.username }); 
+  try {
+    const doctor = await doctorModel.findOne({ username });
 
-      if (!doctor) {
-        return res.status(404).json({ message: 'Doctor not found.' });
-      }
-
-      // Update the specified fields
-      if (email) doctor.email = email;
-      if (hourlyRate) doctor.hourlyRate = hourlyRate;
-      if (affiliation) doctor.affiliation = affiliation;
-
-      // Save the updated doctor profile
-      await doctor.save();
-
-      res.status(200).json({ message: 'Doctor profile updated successfully.' });
-    } catch (error) {
-      res.status(500).json({ message: 'Server Error' });
+    if (!doctor) {
+      return res.status(404).json({ message: 'Doctor not found.' });
     }
-}
 
-const viewPatients= async(req,res)=>{
-   try {
-      const doctor = await doctorModel.findOne({ username: req.user.username }).populate('patients');
+    // Update the specified fields
+    if (email) doctor.email = email;
+    if (hourlyRate) doctor.hourlyRate = hourlyRate;
+    if (affiliation) doctor.affiliation = affiliation;
 
-      if (!doctor) {
-        return res.status(404).json({ message: 'Doctor not found.' });
-      }
+    // Save the updated doctor profile
+    await doctor.save();
 
-      const patients = doctor.patients;
+    res.status(200).json({ message: 'Doctor profile updated successfully.' });
+  } catch (error) {
+    res.status(500).json({ message: 'Server Error' });
+  }
+};
 
-      res.status(200).json({ patients });
-    } catch (error) {
-      res.status(500).json({ message: 'Server Error' });
+
+const viewPatients = async (req, res) => {
+  try {
+    const username = req.session.user.username;
+
+    const doctor = await doctorModel.findOne({ username }).populate('patients');
+
+    if (!doctor) {
+      return res.status(404).json({ message: 'Doctor not found.' });
     }
-}
 
-const viewInfoAndHealthRecord= async(req,res) =>{
-   const { patientUsername } = req.query;
+    const patients = doctor.patients;
 
-   try {
-     const patient = await patientModel.findOne({ username: patientUsername });
+    res.status(200).json({ patients });
+  } catch (error) {
+    res.status(500).json({ message: 'Server Error' });
+  }
+};
 
-     if (!patient) {
-       return res.status(404).json({ message: 'Patient not found.' });
-     }
 
-     // Extract relevant information and health records
-     const { username, name, email, dateOfBirth, gender, mobileNumber, emergencyFullName, emergencyMobileNumber, package, prescriptions, healthRecords } = patient;
+const viewInfoAndHealthRecord = async (req, res) => {
+  const { patientUsername } = req.body;
 
-     res.status(200).json({ 
-       username, 
-       name, 
-       email, 
-       dateOfBirth, 
-       gender, 
-       mobileNumber, 
-       emergencyFullName, 
-       emergencyMobileNumber, 
-       package, 
-       prescriptions, 
-       healthRecords 
-     });
-   } catch (error) {
-     res.status(500).json({ message: 'Server Error' });
-   }
-}
+  try {
+    const patient = await patientModel.findOne({ username: patientUsername });
 
-const selectPatient = async(req,res) =>{
-   const { patientUsername } = req.query;
+    if (!patient) {
+      return res.status(404).json({ message: 'Patient not found.' });
+    }
 
-   try {
-     const doctor = await doctorModel.findOne({ username: req.user.username }).populate('patients');
-     const selectedPatient = doctor.patients.find(patient => patient.username === patientUsername);
+    // Extract relevant information and health records
+    const {
+      username,
+      name,
+      email,
+      dateOfBirth,
+      gender,
+      mobileNumber,
+      emergencyFullName,
+      emergencyMobileNumber,
+      package,
+      prescriptions,
+      healthRecords,
+    } = patient;
 
-     if (!selectedPatient) {
-       return res.status(404).json({ message: 'Patient not found or not registered with this doctor.' });
-     }
+    res.status(200).json({
+      username,
+      name,
+      email,
+      dateOfBirth,
+      gender,
+      mobileNumber,
+      emergencyFullName,
+      emergencyMobileNumber,
+      package,
+      prescriptions,
+      healthRecords,
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Server Error' });
+  }
+};
 
-     res.status(200).json({ selectedPatient });
-   } catch (error) {
-     res.status(500).json({ message: 'Server Error' });
-   }
-}
+
+const selectPatient = async (req, res) => {
+  try {
+    const doctor = await doctorModel.findOne({ username: req.session.user.username }).populate('patients');
+    const { patientUsername } = req.body;
+    const selectedPatient = doctor.patients.find(patient => patient.username === patientUsername);
+
+    if (!selectedPatient) {
+      return res.status(404).json({ message: 'Patient not found or not registered with this doctor.' });
+    }
+
+    res.status(200).json({ selectedPatient });
+  } catch (error) {
+    res.status(500).json({ message: 'Server Error' });
+  }
+};
+
 const addPrescription = async(req,res) => {
   try{
      const newPrescription = await PrescriptionModel.create(req.body);

@@ -1,8 +1,10 @@
-
-
 // External variables
 const express = require("express");
 const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
+const { MongoClient } = require('mongodb');
+const session = require('express-session');
+
 mongoose.set('strictQuery', false);
 require("dotenv").config();
 
@@ -10,7 +12,7 @@ require("dotenv").config();
 ///////////////////////////////patientController//////////////////////////////////////////
 const {selectPrescription,viewFamilyMembers,filterPrescriptions,
   viewPrescriptions,filterApointmentsByDateAndStatus,filterDoctors,
-  searchDoctors,doctorDetails,addFamilyMember,viewPackages,viewAllDoctorsForPatients} = require("./Controllers/patientController");
+  searchDoctors,doctorDetails,addFamilyMember,viewPackages,viewAllDoctorsForPatients,getDoctorsWithSessionPrice} = require("./Controllers/patientController");
 
 /////////////////////////////////doctorController//////////////////////////////////////////
 const {selectPatient,viewInfoAndHealthRecord,viewPatients,
@@ -39,12 +41,42 @@ const server = express();
 //3lashan lw i am running haga fi el port el awlani yb2a fi option tany 
 const port = process.env.PORT || "8000";
 //require el models (schema) basamih kol ma aktb user refer to el schema user model 
- const patient = require('./Models/Patient');
- const doctor = require('./Models/Doctor');
+ const patient = require('./Models/Patient.js');
+ const doctor = require('./Models/Doctor.js');
  const adminstrator = require('./Models/Adminstrator');
  const potentialDoctor = require('./Models/PotentialDoctor');
                       //////////////////////////////////////////////////////////////////////////////////////
 
+//login
+
+server.use(bodyParser.json());
+server.use(session({ secret: 'your-secret-key', resave: true, saveUninitialized: true }));
+
+server.post('/login', async (req, res) => {
+  const { username, password } = req.body;
+
+  try {
+    const doctor1 = await doctor.findOne({ username, password });
+    const patient1 = await patient.findOne({ username, password });
+
+    if (doctor1) {
+      // Save user data in session
+      req.session.user = doctor1;
+      return res.status(200).json({ message: 'Doctor login successful', user: doctor1 });
+    }
+
+    if (patient1) {
+      // Save user data in session
+      req.session.user = patient1;
+      return res.status(200).json({ message: 'Patient login successful', user: patient1 });
+    }
+
+    return res.status(401).json({ message: 'Invalid credentials' });
+  } catch (error) {
+    console.error('Error:', error);
+    return res.status(500).json({ message: 'Server Error' });
+  }
+});
 
 // configurations
 // Mongo DB
@@ -100,6 +132,7 @@ server.get("/doctorDetails", doctorDetails);
  server.get("/filterDoctors", filterPrescriptions);
  server.get("/viewPackages",viewPackages);
  server.get("/viewAllDoctorsByPatients",viewAllDoctorsForPatients);
+ server.get("/getDoctorsWithSessionPrice",getDoctorsWithSessionPrice)
 //doctor
  server.get("/selectPatient", selectPatient);
  server.get("/viewInfoAndHealthRecord", viewInfoAndHealthRecord);

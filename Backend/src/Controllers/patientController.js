@@ -5,18 +5,19 @@ const familyMemberModel = require('../Models/FamilyMember.js');
 const packagesModel = require('../Models/Packages.js');
 
 const doctorDetails = async (req, res) => {
-  const { name: doctorName } = req.query;
+  const { name } = req.body;
 
   try {
-    const doctor = await doctorModel.findOne({ name: doctorName });
+    const doctor = await doctorModel.findOne({name});
 
     if (!doctor) {
       return res.status(404).json({ message: 'Doctor not found.' });
     }
 
-    res.status(200).json({ doctor });
+    return res.status(200).json({ doctor });
   } catch (error) {
-    res.status(500).json({ message: 'Server Error' });
+    console.error('Error:', error);
+    return res.status(500).json({ message: 'Server Error' });
   }
 };
 
@@ -88,132 +89,157 @@ const filterDoctors= async (req,res)=>{
    }
 }
 
-const filterApointmentsByDateAndStatus= async(req,res)=>{
-   const { date, status } = req.query;
+const filterApointmentsByDateAndStatus = async (req, res) => {
+  const { date, status } = req.query;
 
-   const query = {};
-   if (date) {
-     query.date = date; // Assuming the date is stored as a string in the format 'YYYY-MM-DD'
-   }
-
-   if (status) {
-     query.status = status;
-   }
-
-   try {
-     const patient = await patientModel.findOne({ username: req.user.username }); // Assuming you're using authentication to get the patient's username
-
-     if (!patient) {
-       return res.status(404).json({ message: 'Patient not found.' });
-     }
-
-     const appointments = patient.appointments.filter((appointment) => {
-       return (!query.date || appointment.date === query.date) && (!query.status || appointment.status === query.status);
-     });
-
-     if (!appointments || appointments.length === 0) {
-       return res.status(404).json({ message: 'No appointments found.' });
-     }
-
-     res.status(200).json({ appointments });
-   } catch (error) {
-     res.status(500).json({ message: 'Server Error' });
-   }
-}
-
-const viewPrescriptions = async(req,res) =>{
-   try {
-      const patient = await patientModel.findOne({ username: req.user.username });
-
-      if (!patient) {
-        return res.status(404).json({ message: 'Patient not found.' });
-      }
-
-      const prescriptions = patient.prescriptions;
-
-      res.status(200).json({ prescriptions });
-    } catch (error) {
-      res.status(500).json({ message: 'Server Error' });
-    }
-}
-
-const filterPrescriptions = async(req,res) => {
-   const { date, doctor, status } = req.query;
-
-    const query = {};
-
-    if (date) {
-      query.date = date; // Assuming the date is stored as a string in the format 'YYYY-MM-DD'
-    }
-
-    if (doctor) {
-      query.doctor = doctor; // Assuming doctor field in the prescription model
-    }
-
-    if (status) {
-      query.status = status;
-    }
-
-    try {
-      const patient = await patientModel.findOne({ username: req.user.username });
-
-      if (!patient) {
-        return res.status(404).json({ message: 'Patient not found.' });
-      }
-
-      let filteredPrescriptions = patient.prescriptions;
-
-      if (Object.keys(query).length > 0) {
-        filteredPrescriptions = patient.prescriptions.filter((prescription) => {
-          return Object.keys(query).every((key) => prescription[key] === query[key]);
-        });
-      }
-
-      res.status(200).json({ prescriptions: filteredPrescriptions });
-    } catch (error) {
-      res.status(500).json({ message: 'Server Error' });
-    }
-}
-
-const viewFamilyMembers= async(req,res)=>{
-//const patientUsername = req.user.username;
-//const patientManual =req.body.username;
-const patientID = req.user._id;
-
-try {
-  const familyMembers = await familyMemberModel.find({ patientID });
-
-  if (!familyMembers || familyMembers.length === 0) {
-    return res.status(404).json({ message: 'No family members found.' });
+  const query = {};
+  if (date) {
+    query.date = date; // Assuming the date is stored as a string in the format 'YYYY-MM-DD'
   }
 
-  res.status(200).json({ familyMembers });
-} catch (error) {
-  res.status(500).json({ message: 'Server Error' });
-}
-}
+  if (status) {
+    query.status = status;
+  }
 
-const selectPrescription= async (req,res) => {
-   const { prescriptionId } = req.query;
+  try {
+    // Retrieve username from the session
+    const username = req.session.user.username;
 
-   try {
-     const patient = await patientModel.findOne({ username: req.user.username });
+    const patient = await patientModel.findOne({ username });
 
-     if (!patient) {
-       return res.status(404).json({ message: 'Patient not found.' });
-     }
+    if (!patient) {
+      return res.status(404).json({ message: 'Patient not found.' });
+    }
 
-     const selectedPrescription = patient.prescriptions.id(prescriptionId);
+    const appointments = patient.appointments.filter((appointment) => {
+      return (!query.date || appointment.date === query.date) && (!query.status || appointment.status === query.status);
+    });
 
-     if (!selectedPrescription) {
-       return res.status(404).json({ message: 'Prescription not found.' });
-     }
+    if (!appointments || appointments.length === 0) {
+      return res.status(404).json({ message: 'No appointments found.' });
+    }
 
-     res.status(200).json({ selectedPrescription });
-   } catch (error) {
-     res.status(500).json({ message: 'Server Error' });
-   }
-}
+    res.status(200).json({ appointments });
+  } catch (error) {
+    res.status(500).json({ message: 'Server Error' });
+  }
+};
+
+
+const viewPrescriptions = async (req, res) => {
+  try {
+    // Extract the username from the session
+    const username = req.session.user.username;
+
+    // Check if a patient with the provided username exists
+    const patient = await patientModel.findOne({ username });
+
+    if (!patient) {
+      return res.status(404).json({ message: 'Patient not found.' });
+    }
+
+    const prescriptions = patient.prescriptions;
+
+    res.status(200).json({ prescriptions });
+  } catch (error) {
+    res.status(500).json({ message: 'Server Error' });
+  }
+};
+
+module.exports = viewPrescriptions;
+
+
+const filterPrescriptions = async (req, res) => {
+  const { date, doctor, status } = req.query;
+
+  const query = {};
+
+  if (date) {
+    query.date = date; // Assuming the date is stored as a string in the format 'YYYY-MM-DD'
+  }
+
+  if (doctor) {
+    query.doctor = doctor; // Assuming doctor field in the prescription model
+  }
+
+  if (status) {
+    query.status = status;
+  }
+
+  try {
+    // Retrieve username from the session
+    const username = req.session.user.username;
+
+    const patient = await patientModel.findOne({ username });
+
+    if (!patient) {
+      return res.status(404).json({ message: 'Patient not found.' });
+    }
+
+    let filteredPrescriptions = patient.prescriptions;
+
+    if (Object.keys(query).length > 0) {
+      filteredPrescriptions = patient.prescriptions.filter((prescription) => {
+        return Object.keys(query).every((key) => prescription[key] === query[key]);
+      });
+    }
+
+    res.status(200).json({ prescriptions: filteredPrescriptions });
+  } catch (error) {
+    res.status(500).json({ message: 'Server Error' });
+  }
+};
+
+
+const viewFamilyMembers = async (req, res) => {
+
+  const username = req.session.user.username;
+
+  try {
+    const patient = await patientModel.findOne({ username });
+
+    if (!patient) {
+      return res.status(404).json({ message: 'Patient not found.' });
+    }
+
+    const patientID = patient._id;
+
+    const familyMembers = await familyMemberModel.find({ patientID });
+
+    if (!familyMembers || familyMembers.length === 0) {
+      return res.status(404).json({ message: 'No family members found.' });
+    }
+
+    res.status(200).json({ familyMembers });
+  } catch (error) {
+    res.status(500).json({ message: 'Server Error' });
+  }
+};
+
+
+const selectPrescription = async (req, res) => {
+  const { prescriptionId } = req.query;
+  const username = req.session.user.username;
+
+  try {
+    const patient = await patientModel.findOne({ username });
+
+    if (!patient) {
+      return res.status(404).json({ message: 'Patient not found.' });
+    }
+
+    const selectedPrescription = patient.prescriptions.id(prescriptionId);
+
+    if (!selectedPrescription) {
+      return res.status(404).json({ message: 'Prescription not found.' });
+    }
+
+    res.status(200).json({ selectedPrescription });
+  } catch (error) {
+    res.status(500).json({ message: 'Server Error' });
+  }
+};
+
 const addFamilyMember = async(req,res) => {
 
    try{
@@ -240,6 +266,40 @@ const viewPackages= async(req,res)=>{
     res.status(500).json({ message: 'Server Error' });
   }
 }
+
+const calculateSessionPrice = (hourlyRate, patientPackage) => {
+  const discountPercentages = {
+    silver: 0.4,
+    gold: 0.6,
+    platinum: 0.8,
+  };
+
+  const discount = discountPercentages[patientPackage.toLowerCase()] || 0;
+  return hourlyRate * 1.1 * (1 - discount);
+};
+
+const getDoctorsWithSessionPrice = async (req, res) => {
+  try {
+    // Fetch all doctors from the database
+    const doctors = await doctorModel.find();
+
+    // Calculate session price for each doctor
+    const doctorsWithSessionPrice = doctors.map(doctor => {
+      const sessionPrice = calculateSessionPrice(doctor.hourlyRate, req.session.user.package);
+
+      return {
+        name: doctor.name,
+        speciality: doctor.speciality,
+        sessionPrice: sessionPrice,
+      };
+    });
+
+    res.status(200).json({ doctorsWithSessionPrice });
+  } catch (error) {
+    res.status(500).json({ message: 'Server Error' });
+  }
+};
+
 // Dummy data for 7 doctors with photo links
 const dummyDoctors = [
   {
@@ -300,4 +360,4 @@ const viewAllDoctorsForPatients = async (req, res) => {
 
 module.exports = {selectPrescription,viewFamilyMembers,filterPrescriptions,
   viewPrescriptions,filterApointmentsByDateAndStatus,filterDoctors,
-  searchDoctors,doctorDetails,addFamilyMember,viewPackages,viewAllDoctorsForPatients};
+  searchDoctors,doctorDetails,addFamilyMember,viewPackages,viewAllDoctorsForPatients,getDoctorsWithSessionPrice};
