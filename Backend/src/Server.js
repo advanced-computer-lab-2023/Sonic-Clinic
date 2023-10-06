@@ -21,7 +21,8 @@ const {selectPatient,viewInfoAndHealthRecord,viewPatients,
 const {addAdmin,addPackage,addDoctor,
   updatePackage,deletePackage,removeDoctor,
   removePatient,removeAdmin,viewPotentialDoctors,
-  rejectPotentialDoctor, viewAllDoctors,viewAllPatients,viewPackages
+  rejectPotentialDoctor, viewAllDoctors,viewAllPatients,
+  viewPackages, viewAllAdmins
 } = require("./Controllers/adminstratorController");
 
 ////////////////////////////////guestController///////////////////////////////////////////
@@ -83,6 +84,7 @@ server.get("/viewAllPatients", viewAllPatients);
 server.get("/viewAllDoctors", viewAllDoctors);
 server.get("/viewPotentialDoctors", viewPotentialDoctors);
 server.get("/viewPackges", viewPackages);
+server.get("/viewAllAdmins", viewAllAdmins);
 //patient
 server.get("/doctorDetails", doctorDetails);
  server.get("/viewPrescriptions", viewPrescriptions);

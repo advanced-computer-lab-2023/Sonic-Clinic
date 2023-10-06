@@ -191,9 +191,22 @@ const viewPackages= async(req,res)=>{
      res.status(500).json({ message: 'Server Error' });
    }
  }
+ const viewAllAdmins= async(req,res)=>{
+   try {
+      const admins = await administratorModel.find();
+
+      if (!admins || admins.length === 0) {
+        return res.status(404).json({ message: 'No admins found.' });
+      }
+
+      res.status(200).json({ admins });
+    } catch (error) {
+      res.status(500).json({ message: 'Server Error' });
+    }
+}
  
 
 module.exports = {addAdmin,addPackage,addDoctor,updatePackage,
    deletePackage,removeDoctor,removePatient,removeAdmin,
    viewAllPatients,viewAllDoctors,viewPotentialDoctors,
-   rejectPotentialDoctor,viewPackages};
+   rejectPotentialDoctor,viewPackages,viewAllAdmins};
