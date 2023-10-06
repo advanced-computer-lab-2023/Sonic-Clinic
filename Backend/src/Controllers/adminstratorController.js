@@ -8,7 +8,7 @@ const potentialDoctorModel = require('../Models/PotentialDoctor.js');
 
 const addAdmin = async(req,res) => {
    try{
-      const newAdmin = await adminstratorModel.create(req.body);
+      const newAdmin = await administratorModel.create(req.body);
       console.log("Admin Created!")
       res.status(200).send(newAdmin);
 

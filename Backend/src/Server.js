@@ -15,7 +15,7 @@ const {selectPrescription,viewFamilyMembers,filterPrescriptions,
 /////////////////////////////////doctorController//////////////////////////////////////////
 const {selectPatient,viewInfoAndHealthRecord,viewPatients,
   updateDoctorProfile,filterApointmentsByDateAndStatusDoc,
-  filterPatientsByAppointments,searchPatientByName} = require("./Controllers/doctorController");
+  filterPatientsByAppointments,searchPatientByName,addPrescription} = require("./Controllers/doctorController");
 
 ///////////////////////////////adminstratorController//////////////////////////////////////
 const {addAdmin,addPackage,addDoctor,
@@ -74,16 +74,20 @@ server.use(express.json())
 server.post("/addAdmin",addAdmin);
 server.post("/addDoctor",addDoctor);
 server.post("/addPackage",addPackage);
-server.post("/addFamilyMember",addFamilyMember);
+
 //guest
 server.post("/addPatient",addPatient);
 server.post("/addPotentialDoctor",addPotentialDoctor);
+//doctor
+server.post("/addPrescription",addPrescription);
+//patient
+server.post("/addFamilyMember",addFamilyMember);
 //////////////////////////////////////////// GET/////////////////////////////////////
 //admin
 server.get("/viewAllPatients", viewAllPatients);
 server.get("/viewAllDoctors", viewAllDoctors);
 server.get("/viewPotentialDoctors", viewPotentialDoctors);
-server.get("/viewPackges", viewPackagesAdmin);
+server.get("/viewPackgesAdmin", viewPackagesAdmin);
 server.get("/viewAllAdmins", viewAllAdmins);
 //patient
 server.get("/doctorDetails", doctorDetails);
