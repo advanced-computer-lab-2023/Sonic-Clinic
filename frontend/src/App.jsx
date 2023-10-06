@@ -20,7 +20,11 @@ import Login from "./pages/Guest/Login";
 import PatientSignup from "./pages/Guest/PatientSignup";
 import DrSignup from "./pages/Guest/DrSignup";
 import DrAppointments from "./pages/Doctor/DrAppointments";
+
+import ProfilePage from "./pages/Doctor/DrProfile";
+
 import DrPatients from "./pages/Doctor/DrPatients";
+
 
 function App() {
   return (
@@ -54,9 +58,20 @@ function App() {
         <Route path="doctor">
           <Route index element={<DrHomePage />} />
 
+
+     
+
+          <Route path="doctor-profile" element={<ProfilePage/>} />
+          
+
           <Route path="doctor-appointments" element={<DrAppointments />} />
           <Route path="doctor-patients" element={<DrPatients />} />
+
         </Route>
+
+        
+        
+      
 
         <Route path="GuestHomePage">
           <Route index element={<GuestHomePage />} />
