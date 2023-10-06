@@ -5,11 +5,12 @@ import GuestMainImg from "../../components/Guest/GuestMainImg";
 import HamburgerMenu from "../../components/Patient/HamburgerMenu";
 //import SearchCard from "../../components/Patient/SearchCard";
 import GuestBox from "../../components/Guest/GuestBox";
+import GuestBurgerMenu from "../../components/Guest/GuestBurgerMenu";
 
 function GuestHomePage() {
   return (
     <div>
-      <AppNavbar hamburgerMenu={<HamburgerMenu />} />
+      <AppNavbar hamburgerMenu={<GuestBurgerMenu />} />
       <Container fluid className="bg-light pt-3 mt-2">
         <Container className="bg-white px-5 py-4 d-flex align-items-center justify-content-center">
           <Row className="row-sub-container">
@@ -25,4 +26,3 @@ function GuestHomePage() {
 }
 
 export default GuestHomePage;
-

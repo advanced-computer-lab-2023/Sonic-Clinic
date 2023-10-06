@@ -6,6 +6,7 @@ import { useDispatch } from "react-redux";
 import AppNavbar from "../../components/AppNavigation/AppNavbar";
 import RegPhoto from "../../components/Guest/RegPhoto";
 import PatientSignupForm from "../../forms/Guest/PatientSignupForm";
+import GuestBurgerMenu from "../../components/Guest/GuestBurgerMenu";
 
 function PatientSignup() {
   const dispatch = useDispatch();
@@ -15,7 +16,7 @@ function PatientSignup() {
 
   return (
     <div>
-      <AppNavbar />
+      <AppNavbar hamburgerMenu={<GuestBurgerMenu />} />
       <Container fluid className="bg-light pt-3 mt-2">
         <Container className="bg-white px-5 py-4 d-flex align-items-center justify-content-center">
           <div className="d-flex w-100 align-items-center">

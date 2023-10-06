@@ -22,13 +22,11 @@ import DrSignup from "./pages/Guest/DrSignup";
 import DrAppointments from "./pages/Doctor/DrAppointments";
 import DrPatients from "./pages/Doctor/DrPatients";
 
-
-
 function App() {
   return (
     <div className="bg-light">
       <Routes>
-        <Route path="/" element={<Login />} />
+        <Route path="/" element={<GuestHomePage />} />
         <Route path="login">
           <Route index element={<Login />} />
         </Route>
@@ -39,13 +37,6 @@ function App() {
           <Route index element={<DrSignup />} />
         </Route>
 
-
-          
-          <Route path="GuestHomePage">
-          <Route index element={<GuestHomePage />} />
-
-
-         
         <Route path="patient">
           <Route index element={<PatientHomePage />} />
           <Route path="view-doctors" element={<PatientViewDoctors />} />
@@ -63,13 +54,13 @@ function App() {
         <Route path="doctor">
           <Route index element={<DrHomePage />} />
 
-          <Route path="doctor-appointments" element={<DrAppointments/>} />
-          <Route path="doctor-patients" element={<DrPatients/>} />
+          <Route path="doctor-appointments" element={<DrAppointments />} />
+          <Route path="doctor-patients" element={<DrPatients />} />
         </Route>
 
         <Route path="GuestHomePage">
           <Route index element={<GuestHomePage />} />
-          </Route>
+        </Route>
 
         <Route path="admin">
           <Route index element={<AdminHomePage />} />
