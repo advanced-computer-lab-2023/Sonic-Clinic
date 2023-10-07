@@ -10,8 +10,8 @@ import FormPassword from "../FormPassword";
 import FormInput from "../FormInput";
 
 const PatientSignupForm = () => {
-  const [firstName, setFirstname] = useState("");
-  const [lastName, setLastname] = useState("");
+  const [name, setName] = useState("");
+
   const [birthdate, setBirthdate] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -46,8 +46,7 @@ const PatientSignupForm = () => {
     isLoading(true);
 
     if (
-      !firstName ||
-      !lastName ||
+      !name ||
       !email ||
       !password ||
       !confirmPassword ||
@@ -64,7 +63,7 @@ const PatientSignupForm = () => {
       return;
     }
     if (!username.trim()) {
-      setError("Nationality is required.");
+      setError("Username is required.");
       isLoading(false);
       return;
     }
@@ -113,32 +112,32 @@ const PatientSignupForm = () => {
     const languageRegex = /[^\x00-\x7F]/;
     const nameRegex = /^[^\s]+(\s[^\s]+)?$/;
 
-    if ((lastName.length || firstName.length) < 2) {
+    if (name.length < 2) {
       setError("name must be at least 2 characters.");
       isLoading(false);
       return;
     }
-    if (emojiRegex.test(lastName) || emojiRegex.test(firstName)) {
+    if (emojiRegex.test(name)) {
       setError(" name cannot contain emojis.");
       isLoading(false);
       return;
     }
-    if (numberRegex.test(lastName) || numberRegex.test(firstName)) {
+    if (numberRegex.test(name)) {
       setError("name cannot contain numbers.");
       isLoading(false);
       return;
     }
-    if (symbolRegex.test(lastName) || symbolRegex.test(firstName)) {
+    if (symbolRegex.test(name)) {
       setError(" name cannot contain symbols.");
       isLoading(false);
       return;
     }
-    if (languageRegex.test(lastName) || languageRegex.test(firstName)) {
+    if (languageRegex.test(name)) {
       setError("Last name cannot contain characters from multiple languages.");
       isLoading(false);
       return;
     }
-    if (!nameRegex.test(firstName) || !nameRegex.test(lastName)) {
+    if (!nameRegex.test(name)) {
       setError(
         "Name must contain either one name or two names with only one space between them."
       );
@@ -187,8 +186,8 @@ const PatientSignupForm = () => {
       return;
     } else {
       const user = {
-        firstName,
-        lastName,
+        name,
+
         username,
         email,
         password,
@@ -200,8 +199,7 @@ const PatientSignupForm = () => {
       dispatch(
         setCredentials({
           userName: username,
-          firstName: firstName,
-          lastName: lastName,
+          name: name,
           userEmail: email,
           password: password,
           birthdate: birthdate,
@@ -280,27 +278,18 @@ const PatientSignupForm = () => {
       <div className="form-title">Hello!</div>
       <div className="form-title">SignUp to Get Started</div>
       <form className="rounded-3" onSubmit={handleSubmit}>
-        <div className="row">
-          <div className="col">
-            <div className="form-group">
-              <FormInput
-                name="First Name"
-                type="text"
-                placeholder="Elina"
-                onChange={(e) => setFirstname(e.target.value)}
-                value={firstName}
-              />
-            </div>
-          </div>
-          <div className="col">
+        <div className="col">
+          <div className="form-group">
             <FormInput
-              name="Last Name"
+              name="Full Name"
               type="text"
-              placeholder="John"
-              onChange={(e) => setLastname(e.target.value)}
+              placeholder="Jogn Doe"
+              onChange={(e) => setName(e.target.value)}
+              value={name}
             />
           </div>
         </div>
+
         <div className="row">
           <div className="col">
             <FormInput
