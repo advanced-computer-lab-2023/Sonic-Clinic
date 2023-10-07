@@ -91,7 +91,7 @@ server.post("/login", async (req, res) => {
   try {
     const doctor1 = await doctor.findOne({ username, password });
     const patient1 = await patient.findOne({ username, password });
-    const admin1 = await patient.findOne({ username, password });
+    const admin1 = await adminstrator.findOne({ username, password });
 
     if (doctor1) {
       // Save user data in session
