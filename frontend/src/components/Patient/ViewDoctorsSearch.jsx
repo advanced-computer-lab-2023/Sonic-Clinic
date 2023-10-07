@@ -1,4 +1,4 @@
-import { faArrowRight, faUser } from "@fortawesome/free-solid-svg-icons";
+import { faArrowRight, faUser, faSearch } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
 import { Card, Form, Button } from "react-bootstrap";
@@ -43,13 +43,22 @@ function ViewDoctorsSearch() {
                 </Form.Group>
               </div>
               <div className="col-2">
-                <Button
-                  variant="primary"
-                  type="submit"
-                  style={{ width: "100%", height: "3rem" }}
-                >
-                  Search
-                </Button>
+              <Button
+                variant="primary"
+                type="submit"
+                style={{ width: "150px", height: "40px", marginTop:"30px"}}
+              >
+                S e a r c h
+                <FontAwesomeIcon
+            icon={faSearch}
+            style={{
+              opacity: 1,
+              color: "white",
+              fontSize: "15px",
+              marginLeft: "10px"
+            }}
+          />
+              </Button>
               </div>
             </div>
           </Form>

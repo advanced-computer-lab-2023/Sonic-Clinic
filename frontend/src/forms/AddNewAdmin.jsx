@@ -83,7 +83,7 @@ export default function AddNewAdmin() {
           onChange={handleChange}
           required
         />
-        <Button type="submit" style={{ width: "200px", marginBottom: "20px" }}>
+        <Button type="submit" style={{ width: "200px", margin:"20px"}}>
         Create
       </Button>
       </Form>

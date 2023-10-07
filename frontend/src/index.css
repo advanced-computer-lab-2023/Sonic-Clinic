@@ -44,7 +44,7 @@ code {
     transform: translateY(0);
   }
   50% {
-    transform: translateY(-10px); /* Adjust the distance to move */
+    transform: translateY(-5px); /* Adjust the distance to move */
   }
 }
 @keyframes arrowAnimation2 {
@@ -52,6 +52,6 @@ code {
     transform: translateX(0);
   }
   50% {
-    transform: translateX(-10px); /* Adjust the distance to move */
+    transform: translateX(-5px); /* Adjust the distance to move */
   }
 }

@@ -41,8 +41,10 @@ export default function AdminAdminsPage() {
       style={{
         marginTop: "50px",
         color: "var(--body-text-body-color, #212529)",
-        fontSize: "2rem",
+        // fontSize: "35px",
+        fontSize:"2rem",
         fontWeight: "600",
+        // fontFamily: "Vibur",
         textAlign: "center",
         lineHeight: "120%",
       }}

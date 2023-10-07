@@ -50,11 +50,16 @@ function PrescriptionFilter({ onFilter }) {
     >
       <div
         style={{
-          color: "var(--theme-dark, #212529)",
-          fontSize: "2rem",
+          // color: "var(--theme-dark, #212529)",
+          // fontSize: "2rem",
+          // fontStyle: "normal",
+          // fontWeight: 700,
+          // lineHeight: "120%",
+          fontSize: "30px",
           fontStyle: "normal",
           fontWeight: 700,
           lineHeight: "120%",
+          marginBottom: "1rem"
         }}
       >
         Filter Prescriptions
@@ -63,17 +68,24 @@ function PrescriptionFilter({ onFilter }) {
       <div className="mb-2">
         <div
           style={{
-            color: "#000",
-            fontSize: "1.25rem",
+            // color: "#000",
+            // fontSize: "1.25rem",
+            // fontStyle: "normal",
+            // fontWeight: 700,
+            // lineHeight: "100%",
+            // marginBottom: "1.4rem",
+            color: "#099BA0 ",
+            fontSize: "1.1rem",
             fontStyle: "normal",
-            fontWeight: 700,
+            fontWeight: 500,
             lineHeight: "100%",
-            marginBottom: "1.4rem",
+            marginBottom: "1rem",
           }}
         >
           Date
         </div>
         <Form.Control
+          style={{marginBottom:'1rem'}}
           type="date"
           value={selectedDate}
           onChange={handleDateChange}
@@ -83,17 +95,24 @@ function PrescriptionFilter({ onFilter }) {
       <div className="mb-2">
         <div
           style={{
-            color: "#000",
-            fontSize: "1.25rem",
+            // color: "#000",
+            // fontSize: "1.25rem",
+            // fontStyle: "normal",
+            // fontWeight: 700,
+            // lineHeight: "100%",
+            // marginBottom: "1.4rem",
+            color: "#099BA0 ",
+            fontSize: "1.1rem",
             fontStyle: "normal",
-            fontWeight: 700,
+            fontWeight: 500,
             lineHeight: "100%",
-            marginBottom: "1.4rem",
+            marginBottom: "1rem",
           }}
         >
           Doctor
         </div>
         <Form.Control
+          style={{marginBottom:'1rem'}}
           type="text"
           value={selectedDoctor}
           onChange={handleDoctorChange}
@@ -103,17 +122,23 @@ function PrescriptionFilter({ onFilter }) {
       <div className="mb-2">
         <div
           style={{
-            color: "#000",
-            fontSize: "1.25rem",
+            // color: "#000",
+            // fontSize: "1.25rem",
+            // fontStyle: "normal",
+            // fontWeight: 700,
+            // lineHeight: "100%",
+            // marginBottom: "1.4rem",
+            color: "#099BA0 ",
+            fontSize: "1.1rem",
             fontStyle: "normal",
-            fontWeight: 700,
+            fontWeight: 500,
             lineHeight: "100%",
-            marginBottom: "1.4rem",
+            marginBottom: "1rem",
           }}
         >
           Status
         </div>
-        <Form.Control as="select" onChange={handleStatusChange}>
+        <Form.Control as="select" style={{marginBottom:'1rem'}} onChange={handleStatusChange}>
           <option value="">Select status</option>
           <option value="filled">Filled</option>
           <option value="unfilled">Unfilled</option>

@@ -26,8 +26,8 @@ function FamilyMembersList() {
         style={{
           fontSize: "2rem",
           fontWeight: "600",
-          color: "#ff6b35 ",
-          textDecoration: "underline",
+          color: "#212529  ",
+          // textDecoration: "underline",
         }}
       >
         Family Members
@@ -35,8 +35,9 @@ function FamilyMembersList() {
       <ListGroup variant="flush">
         {familyMembers.map((member, index) => (
           <ListGroup.Item key={index}>
-            <strong>Name:</strong> {member.name}
-            <br />
+            {/* <strong style ={{color:}}>Name:</strong> {member.name} */}
+            <div style= {{color: '#099BA0  ', fontSize:'20px', fontWeight:'600', marginBottom:'10px'}}>{member.name}</div>
+            {/* <br /> */}
             <strong>National ID:</strong> {member.nationalId}
             <br />
             <strong>Age:</strong> {member.age}
