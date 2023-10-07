@@ -91,13 +91,14 @@ server.post("/login", async (req, res) => {
   try {
     const doctor1 = await doctor.findOne({ username, password });
     const patient1 = await patient.findOne({ username, password });
+    const admin1 = await patient.findOne({ username, password });
 
     if (doctor1) {
       // Save user data in session
       req.session.user = doctor1;
       return res
         .status(200)
-        .json({ message: "Doctor login successful", user: doctor1 });
+        .json({ message: "Doctor", user: doctor1 });
     }
 
     if (patient1) {
@@ -105,7 +106,15 @@ server.post("/login", async (req, res) => {
       req.session.user = patient1;
       return res
         .status(200)
-        .json({ message: "Patient login successful", user: patient1 });
+        .json({ message: "Patient", user: patient1 });
+    }
+
+    if (admin1) {
+      // Save user data in session
+      req.session.user = admin1;
+      return res
+        .status(200)
+        .json({ message: "Admin", user: admin1 });
     }
 
     return res.status(401).json({ message: "Invalid credentials" });
