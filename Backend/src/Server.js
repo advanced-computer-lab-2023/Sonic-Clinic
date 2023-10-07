@@ -98,7 +98,7 @@ server.post("/login", async (req, res) => {
       req.session.user = doctor1;
       return res
         .status(200)
-        .json({ message: "Doctor login successful", user: doctor1 });
+        .json({ message: "Doctor", user: doctor1 });
     }
 
     if (patient1) {
@@ -106,7 +106,7 @@ server.post("/login", async (req, res) => {
       req.session.user = patient1;
       return res
         .status(200)
-        .json({ message: "Patient login successful", user: patient1 });
+        .json({ message: "Patient", user: patient1 });
     }
 
     if (admin1) {
@@ -114,7 +114,7 @@ server.post("/login", async (req, res) => {
       req.session.user = admin1;
       return res
         .status(200)
-        .json({ message: "Admin login successful", user: admin1 });
+        .json({ message: "Admin", user: admin1 });
     }
 
     return res.status(401).json({ message: "Invalid credentials" });
