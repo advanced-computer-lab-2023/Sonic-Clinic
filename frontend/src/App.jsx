@@ -18,6 +18,7 @@ import PatientSignup from "./pages/Guest/PatientSignup";
 import DrSignup from "./pages/Guest/DrSignup";
 import DrAppointments from "./pages/Doctor/DrAppointments";
 import GuestHomePage from "./pages/Guest/GuestHomePage";
+import ProfilePage from "./pages/Doctor/DrProfile";
 
 function App() {
   return (
@@ -52,7 +53,14 @@ function App() {
           <Route index element={<DrHomePage />} />
 
           <Route path="doctor-appointments" element={<DrAppointments/>} />
+
+          <Route path="doctor-profile" element={<ProfilePage/>} />
+          
         </Route>
+
+        
+        
+      
 
         <Route path="GuestHomePage">
           <Route index element={<GuestHomePage />} />
