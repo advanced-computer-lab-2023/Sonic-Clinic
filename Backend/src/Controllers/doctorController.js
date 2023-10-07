@@ -26,7 +26,29 @@ const searchPatientByName = async (req, res) => {
  
 
  const filterPatientsByAppointments = async (req, res) => {
+  try {
+    const doctor = req.session.user; 
+    if (!doctor) {
+      return res.status(401).json({ error: 'Doctor not authenticated' });
+    }
 
+    const today = new Date();
+    // Find upcoming appointments for the doctor
+    const upcomingAppointments = await appointmentModel.find({
+      doctorID: doctor._id,
+      date: { $gte: today },
+    });
+
+    // Extract patient IDs from upcoming appointments
+    const patientIDs = upcomingAppointments.map(appointment => appointment.patientID);
+
+    // Fetch patient information for the extracted IDs
+    const patients = await patientModel.find({ _id: { $in: patientIDs } });
+
+    res.status(200).json({ patients });
+  } catch (error) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
  };
  
 

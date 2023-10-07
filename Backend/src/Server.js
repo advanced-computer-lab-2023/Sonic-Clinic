@@ -130,7 +130,7 @@ server.get("/doctorDetails", doctorDetails);
  server.get("/filterPrescriptions", filterPrescriptions);
  server.get("/filterApointmentsByDateOrStatus", filterApointmentsByDateOrStatus);
  server.get("/searchDoctors", searchDoctors);
- server.get("/filterDoctors", filterPrescriptions);
+ server.get("/filterDoctors", filterDoctors);
  server.get("/viewPackages",viewPackages);
  server.get("/viewAllDoctorsByPatients",viewAllDoctorsForPatients);
  server.get("/getDoctorsWithSessionPrice",getDoctorsWithSessionPrice);

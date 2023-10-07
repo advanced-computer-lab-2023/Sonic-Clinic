@@ -55,40 +55,34 @@ const searchDoctors = async (req, res) => {
 
 
 const filterDoctors= async (req,res)=>{
-   const { speciality, date, time } = req.query;
-   let query = {};
+  const { speciality ,date,time } = req.query;
 
-   if (speciality) {
-     query.speciality = { $regex: new RegExp(speciality, 'i') }; 
-   }
+  query = { date, time };
 
-   try {
-     // Find doctors based on speciality
-     let doctors = await doctorModel.find(query);
+  try {
+    const doctors = await doctorModel.find(speciality);
 
-     if (!doctors || doctors.length === 0) {
-       return res.status(404).json({ message: 'No doctors found.' });
-     }
+    if (!doctors || doctors.length === 0) {
+      return res.status(404).json({ message: 'No doctors found.' });
+    }
+ 
+    const appointments= await appointmentModel.find(query);
 
-     // Filter doctors based on availability for the given date and time
-     doctors = doctors.filter((doctor) => {
-       const availableSlots = doctor.availability[date];
+    if (!appointments || appointments.length === 0) {
+      return res.status(404).json({ message: 'No appointments found.' });
+    }
 
-       if (!availableSlots) {
-         return false;
-       }
+    const availableAppointments = appointments.filter(appointment => appointment.status !== "filled");
+const availableDoctors = doctors.filter(doctor =>
+  availableAppointments.some(appointment => appointment.doctorID.toString() === doctor._id.toString())
+);
 
-       return availableSlots.includes(time);
-     });
 
-     if (doctors.length === 0) {
-       return res.status(404).json({ message: 'No doctors available for the given date and time.' });
-     }
 
-     res.status(200).json({ doctors });
-   } catch (error) {
-     res.status(500).json({ message: 'Server Error' });
-   }
+    res.status(200).json({ availableDoctors });
+  } catch (error) {
+    res.status(500).json({ message: 'Server Error' });
+  }
 }
 
 const filterApointmentsByDateOrStatus = async (req, res) => {
