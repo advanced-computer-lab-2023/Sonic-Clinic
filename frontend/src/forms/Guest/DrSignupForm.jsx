@@ -10,8 +10,7 @@ import FormInput from "../FormInput";
 import { setCredentials } from "../../state/loginDoctorReducer";
 
 const DrSignupForm = () => {
-  const [firstName, setFirstname] = useState("");
-  const [lastName, setLastname] = useState("");
+  const [name, setName] = useState("");
   const [birthdate, setBirthdate] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -45,8 +44,7 @@ const DrSignupForm = () => {
     isLoading(true);
 
     if (
-      !firstName ||
-      !lastName ||
+      !name ||
       !email ||
       !password ||
       !confirmPassword ||
@@ -62,7 +60,7 @@ const DrSignupForm = () => {
       return;
     }
     if (!username.trim()) {
-      setError("Nationality is required.");
+      setError("Username is required.");
       isLoading(false);
       return;
     }
@@ -90,10 +88,6 @@ const DrSignupForm = () => {
       isLoading(false);
       return;
     }
-    // } if (/\d/.test(email)) {
-    //   setError("Email cannot contain numeric characters.");
-    //   isLoading(false);
-    //   return;
     if (/[^\x00-\x7F]/.test(email)) {
       setError("Email cannot contain emojis or special characters.");
       isLoading(false);
@@ -111,32 +105,13 @@ const DrSignupForm = () => {
     const languageRegex = /[^\x00-\x7F]/;
     const nameRegex = /^[^\s]+(\s[^\s]+)?$/;
 
-    if ((lastName.length || firstName.length) < 2) {
+    if (name.length < 2) {
       setError("name must be at least 2 characters.");
       isLoading(false);
       return;
     }
-    if (emojiRegex.test(lastName) || emojiRegex.test(firstName)) {
-      setError(" name cannot contain emojis.");
-      isLoading(false);
-      return;
-    }
-    if (numberRegex.test(lastName) || numberRegex.test(firstName)) {
-      setError("name cannot contain numbers.");
-      isLoading(false);
-      return;
-    }
-    if (symbolRegex.test(lastName) || symbolRegex.test(firstName)) {
-      setError(" name cannot contain symbols.");
-      isLoading(false);
-      return;
-    }
-    if (languageRegex.test(lastName) || languageRegex.test(firstName)) {
-      setError("Last name cannot contain characters from multiple languages.");
-      isLoading(false);
-      return;
-    }
-    if (!nameRegex.test(firstName) || !nameRegex.test(lastName)) {
+
+    if (!nameRegex.test(name)) {
       setError(
         "Name must contain either one name or two names with only one space between them."
       );
@@ -185,8 +160,7 @@ const DrSignupForm = () => {
       return;
     } else {
       const user = {
-        firstName,
-        lastName,
+        name,
         username,
         email,
         password,
@@ -198,8 +172,7 @@ const DrSignupForm = () => {
       dispatch(
         setCredentials({
           userName: username,
-          firstName: firstName,
-          lastName: lastName,
+          firstName: name,
           userEmail: email,
           password: password,
           birthdate: birthdate,
@@ -277,27 +250,18 @@ const DrSignupForm = () => {
       <div className="form-title">Hello!</div>
       <div className="form-title">Submit a Request to Get Started</div>
       <form className="rounded-3" onSubmit={handleSubmit}>
-        <div className="row">
-          <div className="col">
-            <div className="form-group">
-              <FormInput
-                name="First Name"
-                type="text"
-                placeholder="Elina"
-                onChange={(e) => setFirstname(e.target.value)}
-                value={firstName}
-              />
-            </div>
-          </div>
-          <div className="col">
+        <div className="col">
+          <div className="form-group">
             <FormInput
-              name="Last Name"
+              name="Full Name"
               type="text"
-              placeholder="John"
-              onChange={(e) => setLastname(e.target.value)}
+              placeholder="John Doe"
+              onChange={(e) => name(e.target.value)}
+              value={name}
             />
           </div>
         </div>
+
         <div className="row">
           <div className="col">
             <FormInput

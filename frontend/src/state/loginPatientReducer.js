@@ -1,10 +1,9 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-
 const initialState = {
   userName: "",
-  firstName: "",
-  lastName: "",
+  name: "",
+  packages: "",
   userEmail: "",
   password: "",
   birthdate: "",
@@ -12,7 +11,6 @@ const initialState = {
   phoneNumber: "",
   emergencyName: "",
   emergencyNumber: "",
-  token: "",
   userId: "",
   isLoggedIn: false,
 };
@@ -22,12 +20,12 @@ const loginSlice = createSlice({
   initialState,
   reducers: {
     setCredentials: (state, action) => {
-      state.token = action.payload.token;
       state.password = action.payload.password;
+      state.userName = action.payload.userName;
       state.birthdate = action.payload.birthdate;
       state.userEmail = action.payload.userEmail;
-      state.firstName = action.payload.firstName;
-      state.lastName = action.payload.lastName;
+      state.name = action.payload.name;
+      state.packages = action.payload.packages;
       state.gender = action.payload.gender;
       state.phoneNumber = action.payload.phoneNumber;
       state.userId = action.payload.userId;
@@ -37,8 +35,8 @@ const loginSlice = createSlice({
     },
     logout: (state, action) => {
       state.userName = "";
-      state.firstName = "";
-      state.lastName = "";
+      state.name = "";
+      state.packages = "";
       state.userEmail = "";
       state.password = "";
       state.birthdate = "";
@@ -46,7 +44,6 @@ const loginSlice = createSlice({
       state.phoneNumber = "";
       state.emergencyName = "";
       state.emergencyNumber = "";
-      state.token = "";
       state.userId = "";
       state.isLoggedIn = false;
     },

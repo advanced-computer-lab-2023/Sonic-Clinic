@@ -7,12 +7,13 @@ import { useDispatch } from "react-redux";
 import FormPassword from "../FormPassword";
 import FormInput from "../FormInput";
 import { setCredentials } from "../../state/loginPatientReducer";
+import { baseUrl } from "../../state/baseUrl";
 
 const LoginForm = () => {
   // console.log(baseUrl);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error1, setError] = useState(null);
   const [message, setMessage] = useState(null);
@@ -29,92 +30,59 @@ const LoginForm = () => {
     e.preventDefault();
     setError(null);
     isLoading(true);
-    if (!email || !password) {
+
+    if (!username || !password) {
       setError("Please fill in all the required fields");
       isLoading(false);
       return;
     }
-    const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
-    if (!email.match(emailRegex)) {
-      setError("Invalid email format.");
-      console.log(error1);
-      isLoading(false);
-      return;
-    }
-    dispatch(
-      setCredentials({
-        token: "1234",
-        password: password,
-        birthdate: "18/05/2002",
-        userEmail: email,
-        firstName: "Youssef",
-        lastName: "Bassem",
-        gender: "Male",
-        phoneNumber: "01018874155",
-        userId: "1",
-        emergencyName: "bbb",
-        emergencyNumber: "2222",
-        isLoggedIn: true,
-      })
-    );
-    isLoading(false);
-    navigate("/patient");
-    // const config = {
-    //   headers: {
-    //     "Access-Control-Allow-Origin": "*",
-    //     "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS",
-    //   },
-    // };
 
-    // try {
-    //   isLoading(true);
-    //   await axios
-    //     .post(
-    //       baseUrl + "/auth/login",
-    //       {
-    //         email: email,
-    //         password: password,
-    //       },
-    //       config
-    //     )
-    //     .then((response) => {
-    //       if (response.status !== 200) {
-    //         console.log("Authentication failed");
-    //         console.log(response);
-    //       } else {
-    //         console.log("Headers: " + response.headers);
-    //         console.log(response);
-    //         const user = response.data.user;
-    //         const token = response.data.token;
-    //         console.log("User");
-    //         console.log(user);
-    //         dispatch(
-    //           setCredentials({
-    //             userEmail: email,
-    //             token: token,
-    //             firstName: user.firstName,
-    //             lastName: user.lastName,
-    //             nationality: user.nationality,
-    //             userId: user.userId,
-    //             phoneNumber: user.phoneNumber,
-    //             isLoggedIn: true,
-    //           })
-    //         );
-    //         isLoading(false);
-    //         navigate("/home");
-    //       }
-    //     })
-    //     .catch((error) => {
-    //       console.error("Error:", error);
-    //       if (error.response) {
-    //         if (error.response.status === 400) {
-    //           console.log("Authentication error");
-    //         }
-    //       }
-    //     });
-    // } catch (error) {
-    //   console.log(error);
-    // }
+    try {
+      const response = await axios.post("/login", {
+        username: username,
+        password: password,
+      });
+
+      if (response.status === 200) {
+        const user = response.data.user;
+        console.log("User:", user);
+
+        dispatch(
+          setCredentials({
+            password: password,
+            userName: username,
+            birthdate: user.dateOfBirth,
+            userEmail: user.email,
+            name: user.name,
+            packages: user.package,
+            gender: user.gender,
+            phoneNumber: user.mobileNumber,
+            userId: user._id,
+            emergencyName: user.emergencyFullName,
+            emergencyNumber: user.emergencyMobileNumber,
+            isLoggedIn: true,
+          })
+        );
+
+        isLoading(false);
+        navigate("/patient");
+      } else {
+        console.error("Login failed:", response.data);
+        setError("Login failed. Please check your credentials.");
+        isLoading(false);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+
+      if (error.response && error.response.status === 400) {
+        console.log("Authentication error");
+        setError("Authentication error. Please check your credentials.");
+      } else {
+        setError("An error occurred while logging in. Please try again later.");
+      }
+
+      isLoading(false);
+    }
   };
 
   return (
@@ -122,10 +90,10 @@ const LoginForm = () => {
       <div className="form-title">Welcome Back!</div>
       <Form className="rounded-3" onSubmit={handleSubmit}>
         <FormInput
-          name="Email Address"
-          type="email"
-          placeholder="john.doe@ibm.com"
-          onChange={(e) => setEmail(e.target.value)}
+          name="Username"
+          type="text"
+          placeholder="john.doe"
+          onChange={(e) => setUsername(e.target.value)}
         />
         <FormPassword
           name="Password"
