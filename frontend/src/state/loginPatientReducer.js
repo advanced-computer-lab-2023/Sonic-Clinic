@@ -19,7 +19,7 @@ const loginSlice = createSlice({
   name: "loginPatient",
   initialState,
   reducers: {
-    setCredentials: (state, action) => {
+    setCredentialsPatient: (state, action) => {
       state.password = action.payload.password;
       state.userName = action.payload.userName;
       state.birthdate = action.payload.birthdate;
@@ -47,9 +47,6 @@ const loginSlice = createSlice({
       state.userId = "";
       state.isLoggedIn = false;
     },
-    setToken: (state, action) => {
-      state.token = action.payload.token;
-    },
     clearPassword: (state, action) => {
       state = {
         ...state,
@@ -65,6 +62,11 @@ const loginSlice = createSlice({
   },
 });
 
-export const { setCredentials, logout, clearPassword, setToken, setUserId } =
-  loginSlice.actions;
+export const {
+  setCredentialsPatient,
+  logout,
+  clearPassword,
+
+  setUserId,
+} = loginSlice.actions;
 export default loginSlice.reducer;

@@ -12,6 +12,8 @@ import {
   REGISTER,
 } from "redux-persist";
 import storage from "redux-persist/lib/storage";
+import loginDoctorReducer from "./loginDoctorReducer";
+import loginAdminReducer from "./loginAdminReducer";
 
 const persistConfig = {
   key: "root",
@@ -21,7 +23,9 @@ const persistConfig = {
 
 const rootReducer = combineReducers({
   patientLogin: loginPatientReducer,
-  doctorData: doctorIdReducer,
+  selectedDoctorData: doctorIdReducer,
+  doctorLogin: loginDoctorReducer,
+  adminLogin: loginAdminReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

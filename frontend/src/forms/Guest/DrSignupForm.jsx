@@ -7,7 +7,7 @@ import { useDispatch } from "react-redux";
 
 import FormPassword from "../FormPassword";
 import FormInput from "../FormInput";
-import { setCredentials } from "../../state/loginDoctorReducer";
+import { setCredentialsDoctor } from "../../state/loginDoctorReducer";
 
 const DrSignupForm = () => {
   const [name, setName] = useState("");
@@ -19,6 +19,7 @@ const DrSignupForm = () => {
   const [rate, setRate] = useState("");
   const [affiliation, setAffiliation] = useState("");
   const [education, setEducation] = useState("");
+  const [speciality, setSpeciality] = useState("");
   const [error1, setError] = useState(null);
   const [message, setMessage] = useState(null);
   const [loading, isLoading] = useState(null);
@@ -52,6 +53,7 @@ const DrSignupForm = () => {
       !username ||
       !education ||
       !affiliation ||
+      !speciality ||
       !rate
     ) {
       setError("Please fill in all fields");
@@ -167,78 +169,44 @@ const DrSignupForm = () => {
         birthdate,
         rate,
         affiliation,
+        speciality,
         education,
       };
-      dispatch(
-        setCredentials({
-          userName: username,
-          firstName: name,
-          userEmail: email,
+      try {
+        const response = await axios.post("/addDoctor", {
+          username: username,
+          name: name,
+          email: email,
           password: password,
-          birthdate: birthdate,
-          userId: "123",
+          dateOfBirth: birthdate,
           hourlyRate: rate,
           affiliation: affiliation,
-          education: education,
-        })
-      );
-      isLoading(false);
-      navigate("/signup/email-verification");
+          educationalBackground: education,
+          speciality: speciality,
+        });
 
-      //   const config = {
-      //     headers: {
-      //       "Access-Control-Allow-Origin": "*",
-      //       "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS",
-      //       "Content-Type": "application/json",
-      //     },
-      //   };
-      //   try {
-      //     isLoading(true);
-      //     await axios
-      //       .post(
-      //         baseUrl + "/otp/signUp/generateOTP",
-      //         {
-      //           email: email,
-      //         },
-      //         config
-      //       )
-      //       .then((response) => {
-      //         if (response.status !== 200) {
-      //           console.log("Server error");
-      //           console.log(response);
-      //         } else {
-      //           console.log(response);
-      //           dispatch(
-      //             setCredentials({
-      //               birthdate: birthdate,
-      //               password: password,
-      //               userEmail: email,
-      //               firstName: firstName,
-      //               lastName: lastName,
-      //               nationality: nationality,
-      //               phoneNumber: phoneNumber,
-      //             })
-      //           );
-      //           isLoading(false);
-      //           navigate("/signup/email-verification");
-      //         }
-      //       })
-      //       .catch((error) => {
-      //         console.error("Error:", error);
-      //         if (error.response) {
-      //           setMessage(null);
-      //           setOkay(false);
-      //           if (error.response.status === 400) {
-      //             console.log(email);
-      //             console.log("Authentication error");
-      //           }
-      //         }
-      //       });
-      //   } catch (error) {
-      //     setMessage(null);
-      //     setOkay(false);
-      //     console.log(error);
-      //   }
+        if (response.status === 200) {
+          isLoading(false);
+          navigate("/login");
+        } else {
+          setError("Signup failed");
+          isLoading(false);
+        }
+      } catch (error) {
+        console.error("Error:", error);
+
+        if (error.response && error.response.status === 409) {
+          setError("Username taken!");
+        } else if (error.response && error.response.status !== 200) {
+          setError("Signup failed");
+        } else {
+          setError(
+            "An error occurred while signing up. Please try again later."
+          );
+        }
+
+        isLoading(false);
+      }
     }
   };
   const checkboxHandler = () => {
@@ -256,7 +224,7 @@ const DrSignupForm = () => {
               name="Full Name"
               type="text"
               placeholder="John Doe"
-              onChange={(e) => name(e.target.value)}
+              onChange={(e) => setName(e.target.value)}
               value={name}
             />
           </div>
@@ -297,16 +265,31 @@ const DrSignupForm = () => {
             />
           </div>
         </div>
+        <div className="row">
+          <div className="col">
+            <FormInput
+              name="Educational Background"
+              type="text"
+              placeholder="MBA"
+              onChange={
+                (e) => setEducation(e.target.value)
+                // validateEmail();
+              }
+            />
+          </div>
+          <div className="col">
+            <FormInput
+              name="Speciality"
+              type="text"
+              placeholder="Eyes"
+              onChange={
+                (e) => setSpeciality(e.target.value)
+                // validateEmail();
+              }
+            />
+          </div>
+        </div>
 
-        <FormInput
-          name="Educational Background"
-          type="text"
-          placeholder="MBA"
-          onChange={
-            (e) => setEducation(e.target.value)
-            // validateEmail();
-          }
-        />
         <FormInput
           name="email"
           type="email"
@@ -347,7 +330,20 @@ const DrSignupForm = () => {
             Login
           </div>
         </div>
-        {error1 && <div className="error">{error1}</div>}
+        {error1 && (
+          <div
+            style={{
+              marginTop: "2rem",
+              backgroundColor: "#f44336", // Red background color
+              color: "white", // White text color
+              padding: "10px", // Padding around the message
+              borderRadius: "5px", // Rounded corners
+              boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.2)", // Box shadow for a subtle effect
+            }}
+          >
+            {error1}
+          </div>
+        )}
       </form>
     </div>
   );

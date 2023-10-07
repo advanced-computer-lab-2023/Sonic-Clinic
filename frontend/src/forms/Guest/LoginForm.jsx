@@ -8,6 +8,9 @@ import FormPassword from "../FormPassword";
 import FormInput from "../FormInput";
 import { setCredentials } from "../../state/loginPatientReducer";
 import { baseUrl } from "../../state/baseUrl";
+import { setCredentialsPatient } from "../../state/loginPatientReducer";
+import { setCredentialsAdmin } from "../../state/loginAdminReducer";
+import { setCredentialsDoctor } from "../../state/loginDoctorReducer";
 
 const LoginForm = () => {
   // console.log(baseUrl);
@@ -45,38 +48,75 @@ const LoginForm = () => {
 
       if (response.status === 200) {
         const user = response.data.user;
-        console.log("User:", user);
+        const type = response.data.message;
 
-        dispatch(
-          setCredentials({
-            password: password,
-            userName: username,
-            birthdate: user.dateOfBirth,
-            userEmail: user.email,
-            name: user.name,
-            packages: user.package,
-            gender: user.gender,
-            phoneNumber: user.mobileNumber,
-            userId: user._id,
-            emergencyName: user.emergencyFullName,
-            emergencyNumber: user.emergencyMobileNumber,
-            isLoggedIn: true,
-          })
-        );
+        if (type === "Patient") {
+          dispatch(
+            setCredentialsPatient({
+              password: password,
+              userName: username,
+              birthdate: user.dateOfBirth,
+              userEmail: user.email,
+              name: user.name,
+              packages: user.package,
+              gender: user.gender,
+              phoneNumber: user.mobileNumber,
+              userId: user._id,
+              emergencyName: user.emergencyFullName,
+              emergencyNumber: user.emergencyMobileNumber,
+              isLoggedIn: true,
+            })
+          );
 
-        isLoading(false);
-        navigate("/patient");
+          isLoading(false);
+          navigate("/patient");
+        }
+        if (type === "Doctor") {
+          dispatch(
+            setCredentialsDoctor({
+              password: password,
+              userName: username,
+              birthdate: user.dateOfBirth,
+              userEmail: user.email,
+              name: user.name,
+              hourlyRate: user.hourlyRate,
+              affiliation: user.affiliation,
+              education: user.educationalBackground,
+              patients: user.patients,
+              speciality: user.speciality,
+              userId: user._id,
+              isLoggedIn: true,
+            })
+          );
+
+          isLoading(false);
+          navigate("/doctor");
+        }
+        if (type === "Admin") {
+          dispatch(
+            setCredentialsAdmin({
+              password: password,
+              userName: username,
+              userId: user._id,
+            })
+          );
+
+          navigate("/admin");
+          isLoading(false);
+        }
       } else {
         console.error("Login failed:", response.data);
-        setError("Login failed. Please check your credentials.");
+        setError("Login failed");
         isLoading(false);
       }
     } catch (error) {
       console.error("Error:", error);
 
-      if (error.response && error.response.status === 400) {
+      if (error.response && error.response.status === 401) {
         console.log("Authentication error");
-        setError("Authentication error. Please check your credentials.");
+        setError("Invalid Credentials");
+      } else if (error.response && error.response.status === 500) {
+        setError("Server Error");
       } else {
         setError("An error occurred while logging in. Please try again later.");
       }

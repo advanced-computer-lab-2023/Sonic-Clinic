@@ -2,17 +2,17 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   userName: "",
-  firstName: "",
-  lastName: "",
-  userEmail: "",
+  name: "",
+  email: "",
   password: "",
   birthdate: "",
   hourlyRate: 0,
   affiliation: "",
   education: "",
-  token: "",
   phoneNumber: "",
   userId: "",
+  patients: [],
+  speciality: "",
   isLoggedIn: false,
 };
 
@@ -20,40 +20,44 @@ const loginSlice = createSlice({
   name: "loginDoctor",
   initialState,
   reducers: {
-    setCredentials: (state, action) => {
-      state.token = action.payload.token;
+    setCredentialsDoctor: (state, action) => {
       state.userName = action.payload.userName;
       state.password = action.payload.password;
       state.birthdate = action.payload.birthdate;
-      state.userEmail = action.payload.userEmail;
+      state.email = action.payload.email;
       state.hourlyRate = action.payload.hourlyRate;
       state.affiliation = action.payload.affiliation;
       state.education = action.payload.education;
-      state.firstName = action.payload.firstName;
-      state.lastName = action.payload.lastName;
+      state.name = action.payload.name;
       state.phoneNumber = action.payload.phoneNumber;
       state.userId = action.payload.userId;
+      state.patients = action.payload.patients;
+      state.speciality = action.payload.speciality;
       state.isLoggedIn = action.payload.isLoggedIn;
     },
     logout: (state, action) => {
-      state.token = "";
-      state.firstName = "";
-      state.isLoggedIn = false;
-      state.lastName = "";
-      state.nationality = "";
+      state.userName = "";
+      state.name = "";
+      state.email = "";
+      state.password = "";
+      state.birthdate = "";
+      state.hourlyRate = 0;
+      state.affiliation = "";
+      state.education = "";
       state.phoneNumber = "";
       state.userId = "";
+      state.patients = [];
+      state.speciality = "";
+      state.isLoggedIn = false;
     },
-    setToken: (state, action) => {
-      state.token = action.payload.token;
-    },
-    clearPassword: (state, action) => {
+
+    clearPasswordDoctor: (state, action) => {
       state = {
         ...state,
         password: "",
       };
     },
-    setUserId: (state, action) => {
+    setUserIdDoctor: (state, action) => {
       state = {
         ...state,
         userId: action.payload.userId,
@@ -62,6 +66,10 @@ const loginSlice = createSlice({
   },
 });
 
-export const { setCredentials, logout, clearPassword, setToken, setUserId } =
-  loginSlice.actions;
+export const {
+  setCredentialsDoctor,
+  logout,
+  clearPasswordDoctor,
+  setUserIdDoctor,
+} = loginSlice.actions;
 export default loginSlice.reducer;

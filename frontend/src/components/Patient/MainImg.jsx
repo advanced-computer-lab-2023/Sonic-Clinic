@@ -20,7 +20,7 @@ function MainImg() {
         <Card
           className="position-absolute text-center bg-transparent"
           style={{
-            top: "18%",
+            top: "40%",
             left: "50%",
             transform: "translate(-50%, -50%)",
             border: "none",

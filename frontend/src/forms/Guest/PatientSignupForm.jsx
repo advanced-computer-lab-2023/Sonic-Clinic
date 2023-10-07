@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { useDispatch } from "react-redux";
-import { setCredentials } from "../../state/loginPatientReducer";
+import { setCredentialsPatient } from "../../state/loginPatientReducer";
 
 import FormPassword from "../FormPassword";
 import FormInput from "../FormInput";
@@ -187,86 +187,50 @@ const PatientSignupForm = () => {
     } else {
       const user = {
         name,
-
         username,
         email,
+        gender,
         password,
         phoneNumber,
         birthdate,
         emergencyName,
         emergencyPhone,
       };
-      dispatch(
-        setCredentials({
-          userName: username,
+      try {
+        const response = await axios.post("/addPatient", {
+          username: username,
           name: name,
-          userEmail: email,
+          email: email,
           password: password,
-          birthdate: birthdate,
+          dateOfBirth: birthdate,
           gender: gender,
-          phoneNumber: phoneNumber,
-          emergencyName: emergencyName,
-          emergencyNumber: emergencyPhone,
-          userId: "123",
-        })
-      );
-      isLoading(false);
-      navigate("/signup/email-verification");
+          mobileNumber: phoneNumber,
+          emergencyFullName: emergencyName,
+          emergencyMobileNumber: emergencyPhone,
+        });
 
-      //   const config = {
-      //     headers: {
-      //       "Access-Control-Allow-Origin": "*",
-      //       "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS",
-      //       "Content-Type": "application/json",
-      //     },
-      //   };
-      //   try {
-      //     isLoading(true);
-      //     await axios
-      //       .post(
-      //         baseUrl + "/otp/signUp/generateOTP",
-      //         {
-      //           email: email,
-      //         },
-      //         config
-      //       )
-      //       .then((response) => {
-      //         if (response.status !== 200) {
-      //           console.log("Server error");
-      //           console.log(response);
-      //         } else {
-      //           console.log(response);
-      //           dispatch(
-      //             setCredentials({
-      //               birthdate: birthdate,
-      //               password: password,
-      //               userEmail: email,
-      //               firstName: firstName,
-      //               lastName: lastName,
-      //               nationality: nationality,
-      //               phoneNumber: phoneNumber,
-      //             })
-      //           );
-      //           isLoading(false);
-      //           navigate("/signup/email-verification");
-      //         }
-      //       })
-      //       .catch((error) => {
-      //         console.error("Error:", error);
-      //         if (error.response) {
-      //           setMessage(null);
-      //           setOkay(false);
-      //           if (error.response.status === 400) {
-      //             console.log(email);
-      //             console.log("Authentication error");
-      //           }
-      //         }
-      //       });
-      //   } catch (error) {
-      //     setMessage(null);
-      //     setOkay(false);
-      //     console.log(error);
-      //   }
+        if (response.status === 200) {
+          isLoading(false);
+          navigate("/login");
+        } else {
+          setError("Signup failed");
+          isLoading(false);
+        }
+      } catch (error) {
+        console.error("Error:", error);
+
+        if (error.response && error.response.status === 409) {
+          setError("Username taken!");
+        } else if (error.response && error.response.status !== 200) {
+          setError("Signup failed");
+        } else {
+          setError(
+            "An error occurred while signing up. Please try again later."
+          );
+        }
+
+        isLoading(false);
+      }
     }
   };
   const checkboxHandler = () => {
@@ -384,7 +348,20 @@ const PatientSignupForm = () => {
             Login
           </div>
         </div>
-        {error1 && <div className="error">{error1}</div>}
+        {error1 && (
+          <div
+            style={{
+              marginTop: "2rem",
+              backgroundColor: "#f44336", // Red background color
+              color: "white", // White text color
+              padding: "10px", // Padding around the message
+              borderRadius: "5px", // Rounded corners
+              boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.2)", // Box shadow for a subtle effect
+            }}
+          >
+            {error1}
+          </div>
+        )}
       </form>
     </div>
   );
