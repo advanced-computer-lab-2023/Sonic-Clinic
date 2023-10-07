@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
 import { faX } from "@fortawesome/free-solid-svg-icons";
 
-export default function AdminDocReqDetails({ props }) {
+export default function AdminDocReqDetails({ docEmail, docRate, docEducation, docAffiliation, docBirthDate }) {
   const rowStyle = {
     display: "flex",
     flexDirection: "row",
@@ -68,7 +68,7 @@ export default function AdminDocReqDetails({ props }) {
               <span style={titleStyle}>
                 Email:
               </span>
-              hello
+              {docEmail}
             </div>
             <div
               style={rowStyle}
@@ -76,7 +76,7 @@ export default function AdminDocReqDetails({ props }) {
               <span style={titleStyle}>
                 Date of Birth:
               </span>
-              Hi
+              {docBirthDate}
             </div>
             <div
               style={rowStyle}
@@ -84,7 +84,7 @@ export default function AdminDocReqDetails({ props }) {
               <span style={titleStyle}>
                 Hourly Rate:
               </span>
-              Hi
+              {docRate}
             </div>
             <div
               style={rowStyle}
@@ -92,7 +92,7 @@ export default function AdminDocReqDetails({ props }) {
               <span style={titleStyle}>
                 Affiliation:
               </span>
-              HI
+              {docAffiliation}
             </div>
             <div
               style={rowStyle}
@@ -100,7 +100,7 @@ export default function AdminDocReqDetails({ props }) {
               <span style={titleStyle}>
                 Educational Background:
               </span>
-              HI
+              {docEducation}
             </div>
           </div>
         </Card.Text>

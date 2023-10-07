@@ -1,12 +1,14 @@
 import React from "react";
-import { Card, Col, Row } from "react-bootstrap";
+import { Card, Col, Row, Image } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faCalendar,
   faFileAlt,
+  faCapsules,
   faCheckCircle,
 } from "@fortawesome/free-solid-svg-icons";
+import prescriptionImg from "../../Assets/Prescription.jpg";
 
 function ShowPrescriptions() {
   const prescriptions = [
@@ -31,14 +33,21 @@ function ShowPrescriptions() {
         <Link
           to={`/prescription/${prescription.prescriptionId}`}
           key={prescription.prescriptionId}
+          className="text-decoration-none"
         >
           <Card className="mb-4 mx-3~ bg-light" style={{ cursor: "pointer" }}>
             <Row>
               <Col lg={4}>
                 <div className="prescription-icon-container">
-                  <FontAwesomeIcon
-                    icon={faFileAlt}
+                  {/* <FontAwesomeIcon
+                    icon={faCapsules}
                     className="prescription-icon"
+                  /> */}
+                  {/* crop the image correctly */}
+                  <Image
+                    src={prescriptionImg}
+                    fluid
+                    className="doctor-image"
                   />
                 </div>
               </Col>

@@ -72,10 +72,12 @@ function DoctorFilter() {
       <div
         style={{
           color: "var(--theme-dark, #212529)",
-          fontSize: "2rem",
+          // fontSize: "2rem",
+          fontSize: "30px",
           fontStyle: "normal",
           fontWeight: 700,
           lineHeight: "120%",
+          marginBottom: "1rem"
         }}
       >
         Filter Doctors
@@ -84,12 +86,12 @@ function DoctorFilter() {
       <div className="mb-2">
         <div
           style={{
-            color: "#000",
-            fontSize: "1.25rem",
+            color: "#099BA0 ",
+            fontSize: "1.1rem",
             fontStyle: "normal",
-            fontWeight: 700,
+            fontWeight: 500,
             lineHeight: "100%",
-            marginBottom: "1.4rem",
+            marginBottom: "1rem",
           }}
         >
           Specialty
@@ -111,17 +113,18 @@ function DoctorFilter() {
       <div className="mb-2">
         <div
           style={{
-            color: "#000",
-            fontSize: "1.25rem",
+            color: "#099BA0 ",
+            fontSize: "1.1rem",
             fontStyle: "normal",
-            fontWeight: 700,
+            fontWeight: 500,
             lineHeight: "100%",
-            marginBottom: "1.4rem",
+            marginBottom: "1rem",
           }}
         >
           Date
         </div>
         <Form.Control
+          style={{marginBottom:'1rem'}}
           type="date"
           value={selectedDate}
           onChange={handleDateChange}
@@ -133,17 +136,18 @@ function DoctorFilter() {
       <div className="mb-2">
         <div
           style={{
-            color: "#000",
-            fontSize: "1.25rem",
+            color: "#099BA0 ",
+            fontSize: "1.1rem",
             fontStyle: "normal",
-            fontWeight: 700,
+            fontWeight: 500,
             lineHeight: "100%",
-            marginBottom: "1.4rem",
+            marginBottom: "1rem",
           }}
         >
           Time
         </div>
         <Form.Control
+          style={{marginBottom:'1rem'}}
           type="time"
           value={selectedTime}
           onChange={handleTimeChange}

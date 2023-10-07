@@ -5,7 +5,7 @@ import { Accordion, Button, Col, Container, Row } from "react-bootstrap";
 import AccordionBody from "react-bootstrap/esm/AccordionBody";
 import AdminDocReqDetails from "./AdminDocReqDetails";
 
-export default function AdminDocReqCard(props) {
+export default function AdminDocReqCard({docName, docSpecialty, docEmail, docRate, docEducation, docAffiliation, docBirthDate}) {
   return (
     <Container style={{ width: "1000px", padding: "0px" }}>
       <Accordion defaultactiveKey={1} className="acc mt-4">
@@ -20,15 +20,15 @@ export default function AdminDocReqCard(props) {
                   color: "#212529",
                 }}
               >
-                {props.docName}
+                {docName}
               </div>
               <div style={{ fontSize: "15px", color: "#05afb9" }}>
-                {props.docSpecialty}
+                {docSpecialty}
               </div>
             </div>
           </Accordion.Header>
           <AccordionBody>
-            <AdminDocReqDetails />
+            <AdminDocReqDetails docEmail={docEmail} docBirthDate={docBirthDate} docRate={docRate} docAffiliation={docAffiliation} docEducation={docEducation}/>
           </AccordionBody>
         </Accordion.Item>
       </Accordion>

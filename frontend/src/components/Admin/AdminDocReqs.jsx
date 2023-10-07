@@ -5,8 +5,9 @@ import AdminDocReqCard from "./AdminDocReqCard";
 
 export default function AdminDocReqs() {
   const users = [
-    { name: "Mark", specialty: "Neurosurgery"},
-    { name: "John", specialty: "OB" },
+    { name: "Mark Brown", specialty: "Neurosurgery", email:"bla@bla", dateOfBirth: "10/12/1990", rate: "100/hr", affiliation: "St Jose", education: "GUC"},
+    { name: "John Doe", specialty: "Physiotherapy", email:"bla@bla", dateOfBirth: "10/12/1990", rate: "100/hr", affiliation: "St Jose", education: "GUC" },
+    { name: "Audrey Lim", specialty: "Psychology", email:"bla@bla", dateOfBirth: "10/12/1990", rate: "100/hr", affiliation: "St Jose", education: "GUC" },
   ];
 
   return (
@@ -26,11 +27,11 @@ export default function AdminDocReqs() {
           key={index}
           docName={user.name}
           docSpecialty={user.specialty}
-          // docEmail = {user.name}
-          // docBirthDate = {user.name}
-          // docRate = {user.name}
-          // docAffiliation = {user.name}
-          // docEducation = {user.name}
+          docEmail = {user.email}
+          docBirthDate = {user.dateOfBirth}
+          docRate = {user.rate}
+          docAffiliation = {user.affiliation}
+          docEducation = {user.education}
         />
       ))}
     </Container>
