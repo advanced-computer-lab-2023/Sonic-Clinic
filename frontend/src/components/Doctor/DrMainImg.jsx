@@ -1,7 +1,9 @@
 import { Card, Image } from "react-bootstrap";
 import mainImg from "../../Assets/Patient/HomeImg.png";
+import { useSelector } from "react-redux";
 
 function DrMainImg() {
+  const name = useSelector((state) => state.doctorLogin.name);
   return (
     <div>
       <Card
@@ -18,7 +20,7 @@ function DrMainImg() {
         <Card
           className="position-absolute text-center bg-transparent"
           style={{
-            top: "18%",
+            top: "50%",
             left: "50%",
             transform: "translate(-50%, -50%)",
             border: "none",
@@ -35,7 +37,7 @@ function DrMainImg() {
               lineHeight: "120%",
             }}
           >
-            Hello Dr.
+            Hello Dr. {name}
           </Card.Text>
         </Card>
       </Card>

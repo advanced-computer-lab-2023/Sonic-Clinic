@@ -1,13 +1,14 @@
 import { createSlice } from "@reduxjs/toolkit";
-// fix change : file name and anything with hotelId name and replace with hotelData
 const initialState = {
-  doctorId: "",
-  doctorName: "",
-  doctorRegion: "",
-  doctorImages: [],
-  doctorStarRating: 0,
-  doctorStartPrice: 0,
-  doctorDescription: "",
+  username: "",
+  name: "",
+  email: "",
+  dateOfBirth: "",
+  hourlyRate: 0,
+  affiliation: "",
+  educationalBackground: "",
+  speciality: "",
+  photoLink: "",
 };
 
 const doctorIdSlice = createSlice({
@@ -15,13 +16,15 @@ const doctorIdSlice = createSlice({
   initialState,
   reducers: {
     setDoctorData: (state, action) => {
-      state.doctorId = action.payload.doctorId;
-      state.doctorName = action.payload.doctorName;
-      state.doctorRegion = action.payload.doctorRegion;
-      state.doctorImages = action.payload.doctorImages;
-      state.doctorStarRating = action.payload.doctorStarRating;
-      state.doctorStartPrice = action.payload.doctorStartPrice;
-      state.doctorDescription = action.payload.doctorDescription;
+      state.username = action.payload.username;
+      state.name = action.payload.name;
+      state.email = action.payload.email;
+      state.dateOfBirth = action.payload.dateOfBirth;
+      state.hourlyRate = action.payload.hourlyRate;
+      state.affiliation = action.payload.affiliation;
+      state.educationalBackground = action.payload.educationalBackground;
+      state.speciality = action.payload.speciality;
+      state.photoLink = action.payload.photoLink;
     },
   },
 });

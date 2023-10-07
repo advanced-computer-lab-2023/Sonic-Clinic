@@ -1,56 +1,82 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Card, Col, Row, Image } from "react-bootstrap";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import doctorImg from "../../Assets/Patient/Doctor.jpg";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import axios from "axios";
 import {
   faLocation,
   faLocationDot,
   faStar,
 } from "@fortawesome/free-solid-svg-icons";
+import { useDispatch } from "react-redux";
+import { setDoctorData } from "../../state/doctorIdReducer";
 
 function ShowDoctors() {
   const [loading, setLoading] = useState(true);
   const [responseData, setResponseData] = useState([]);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const [error1, setError] = useState(null);
 
   const handleCard = (doctor) => {
-    // Handle card click action here
-    navigate("/");
+    dispatch(
+      setDoctorData({
+        username: doctor.username,
+        name: doctor.name,
+        email: doctor.email,
+        dateOfBirth: doctor.dateOfBirth,
+        hourlyRate: doctor.hourlyRate,
+        affiliation: doctor.affiliation,
+        educationalBackground: doctor.educationalBackground,
+        speciality: doctor.speciality,
+        photoLink: doctor.photoLink,
+      })
+    );
+    navigate("/patient");
   };
 
-  const NeededData = [
-    {
-      doctorId: 1,
-      Name: "Dr. John Doe",
-      specialty: "Cardiologist",
-      location: "New York",
-      rating: 4.5,
-      Price: 150,
-    },
-    {
-      doctorId: 2,
-      Name: "Dr. Jane Smith",
-      specialty: "Dermatologist",
-      location: "Los Angeles",
-      rating: 4.0,
-      Price: 120,
-    },
-    // Add more doctor objects as needed
-  ];
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const fetchData = async () => {
+    try {
+      const response = await axios.get("/viewAllDoctors");
+      if (response.status === 200) {
+        console.log("RESPONSE:", response.data);
+        setResponseData(response.data.doctors[0]);
+      } else {
+        console.log("Server error");
+      }
+      setLoading(false);
+    } catch (error) {
+      if (error.response && error.response.status === 404) {
+        setError("No doctors found.");
+      } else if (error.response && error.response.status === 500) {
+        setError("Server Error");
+      } else {
+        setError("An error occurred while logging in. Please try again later.");
+      }
+      setLoading(false);
+    }
+  };
+
+  const NeededData = responseData;
 
   return (
     <div>
+      {error1 && <div>{error1}</div>}
       {NeededData.map((doctor) => (
-        <a onClick={() => handleCard(doctor)} key={doctor.doctorId}>
+        <a onClick={() => handleCard(doctor)} key={doctor._id}>
           <Card className="mb-4 mx-3~ bg-light" style={{ cursor: "pointer" }}>
             <Row>
               <Col lg={4}>
                 <div className="doctor-image-container">
                   <Image
-                    src={doctorImg}
-                    alt={`Dr. ${doctor.Name}`}
+                    src={doctor.photoLink}
+                    alt={`Dr. ${doctor.name}`}
                     fluid
                     className="doctor-image"
                   />
@@ -59,28 +85,12 @@ function ShowDoctors() {
               <Col lg={8}>
                 <Card.Body className="p-4">
                   <Card.Title className="show-more-title">
-                    {doctor.Name}
+                    {doctor.name}
                   </Card.Title>
                   <Card.Text>
-                    <div className="show-more-loc">{doctor.specialty}</div>
-                    <div className="show-more-loc">
-                      {" "}
-                      <FontAwesomeIcon
-                        icon={faLocationDot}
-                        style={{ marginRight: "0.5rem" }}
-                      />
-                      {doctor.location}
-                    </div>
-                    <div className="show-more-rating">
-                      {" "}
-                      <FontAwesomeIcon
-                        icon={faStar}
-                        style={{ marginRight: "0.5rem" }}
-                      />
-                      {doctor.rating}
-                    </div>
+                    <div className="show-more-loc">{doctor.speciality}</div>
                     <div className="show-more-price">
-                      ${doctor.Price} / Session
+                      ${doctor.hourlyRate} / Session
                     </div>
                   </Card.Text>
                 </Card.Body>

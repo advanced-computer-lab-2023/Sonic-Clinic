@@ -1,9 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  userName: "admino",
+  userName: "",
   password: "",
-  token: "",
   userId: "",
   isLoggedIn: false,
 };
@@ -12,30 +11,27 @@ const loginSlice = createSlice({
   name: "loginAdmin",
   initialState,
   reducers: {
-    setCredentials: (state, action) => {
-      state.token = action.payload.token;
+    setCredentialsAdmin: (state, action) => {
       state.password = action.payload.password;
       state.userName = action.payload.userName;
       state.userId = action.payload.userId;
       state.isLoggedIn = action.payload.isLoggedIn;
     },
-    logout: (state, action) => {
-        state.userName= "admin";
-        state.password= "";
-        state.token= "";
-        state.userId= "";
-        state.isLoggedIn= false;
+    logoutAdmin: (state, action) => {
+      state.userName = "";
+      state.password = "";
+      state.token = "";
+      state.userId = "";
+      state.isLoggedIn = false;
     },
-    setToken: (state, action) => {
-      state.token = action.payload.token;
-    },
-    clearPassword: (state, action) => {
+
+    clearPasswordAdmin: (state, action) => {
       state = {
         ...state,
         password: "",
       };
     },
-    setUserId: (state, action) => {
+    setUserIdAdmin: (state, action) => {
       state = {
         ...state,
         userId: action.payload.userId,
@@ -44,6 +40,10 @@ const loginSlice = createSlice({
   },
 });
 
-export const { setCredentials, logout, clearPassword, setToken, setUserId } =
-  loginSlice.actions;
+export const {
+  setCredentialsAdmin,
+  logoutAdmin,
+  clearPasswordAdmin,
+  setUserIdAdmin,
+} = loginSlice.actions;
 export default loginSlice.reducer;
