@@ -91,7 +91,7 @@ server.post("/login", async (req, res) => {
   try {
     const doctor1 = await doctor.findOne({ username, password });
     const patient1 = await patient.findOne({ username, password });
-    const admin1 = await patient.findOne({ username, password });
+    const admin1 = await adminstrator.findOne({ username, password });
 
     if (doctor1) {
       // Save user data in session
@@ -158,6 +158,7 @@ server.post("/addPatient", addPatient);
 server.post("/addPotentialDoctor", addPotentialDoctor);
 //doctor
 server.post("/addPrescription", addPrescription);
+
 //patient
 server.post("/addFamilyMember", addFamilyMember);
 server.post("/addAppointment", addAppointment);
@@ -194,7 +195,7 @@ server.get("/searchPatientByName", searchPatientByName);
 ////////////////////////////////////////////////////PUT////////////////////////////////////////
 //admin
 server.put("/updatePackage", updatePackage);
-//docotr
+//doctor
 server.put("/updateDoctorProfile", updateDoctorProfile);
 
 ////////////////////////////////////////////////DELETE/////////////////////////////////////////
