@@ -17,5 +17,8 @@
     "mongoose": "^7.5.4",
     "node": "^20.7.0",
     "nodemon": "^3.0.1"
+  },
+  "devDependencies": {
+    "prettier": "^3.0.3"
   }
 }
