@@ -37,7 +37,7 @@ const doctorSchema = new Schema(
     },
     patients: {
       type: Array,
-      required: true,
+      required: false,
     },
     speciality: {
       type: String,
