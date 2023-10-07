@@ -82,6 +82,7 @@ const updateDoctorProfile = async (req, res) => {
   const username = req.session.user.username;
 
   try {
+    
     const doctor = await doctorModel.findOne({ username });
 
     if (!doctor) {
@@ -98,7 +99,7 @@ const updateDoctorProfile = async (req, res) => {
 
     res.status(200).json({ message: "Doctor profile updated successfully." });
   } catch (error) {
-    res.status(500).json({ message: "Server Error" });
+    res.status(500).json({ message: "Server Error" ,error});
   }
 };
 

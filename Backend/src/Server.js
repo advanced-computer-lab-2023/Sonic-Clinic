@@ -158,6 +158,7 @@ server.post("/addPatient", addPatient);
 server.post("/addPotentialDoctor", addPotentialDoctor);
 //doctor
 server.post("/addPrescription", addPrescription);
+
 //patient
 server.post("/addFamilyMember", addFamilyMember);
 server.post("/addAppointment", addAppointment);
@@ -194,7 +195,7 @@ server.get("/searchPatientByName", searchPatientByName);
 ////////////////////////////////////////////////////PUT////////////////////////////////////////
 //admin
 server.put("/updatePackage", updatePackage);
-//docotr
+//doctor
 server.put("/updateDoctorProfile", updateDoctorProfile);
 
 ////////////////////////////////////////////////DELETE/////////////////////////////////////////
