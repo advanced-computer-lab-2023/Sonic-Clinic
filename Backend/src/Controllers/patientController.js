@@ -81,7 +81,7 @@ const filterDoctors = async (req, res) => {
     console.log(appointments);
 
     if (!appointments || appointments.length === 0) {
-      return res.status(404).json({ message: "No appointments found." });
+      return res.status(404).json({ message: "No doctors found." });
     }
 
     const availableAppointments = appointments.filter(
@@ -255,7 +255,7 @@ const calculateSessionPrice = (hourlyRate, patientPackage) => {
   };
 
   const discount = discountPercentages[patientPackage.toLowerCase()] || 0;
-  return hourlyRate * 1.1 * (1 - discount);
+  return hourlyRate * 1.1 * (1- discount);
 };
 
 const getDoctorsWithSessionPrice = async (req, res) => {
