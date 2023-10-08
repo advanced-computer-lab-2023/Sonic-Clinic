@@ -3,7 +3,7 @@ import { useNavigate } from "react-router";
 import AdminHomeCard from "../Admin/AdminHomeCard";
 import {
   faHospitalUser,
-  faCalendarCheck
+  faCalendarCheck,
 } from "@fortawesome/free-solid-svg-icons";
 
 function DrMainOptions() {
@@ -17,8 +17,18 @@ function DrMainOptions() {
 
   return (
     <div className="d-flex flex-row justify-content-center">
-      <AdminHomeCard location="/doctor/doctor-patients" cardText="Patients" cardDetails="View my patients" icon={faHospitalUser}  />
-      <AdminHomeCard ocation="/doctor/doctor-appointments" cardText="Appointments" cardDetails="View my appointments" icon={faCalendarCheck}/>
+      <AdminHomeCard
+        location="/doctor/doctor-patients"
+        cardText="Patients"
+        cardDetails="View my patients"
+        icon={faHospitalUser}
+      />
+      <AdminHomeCard
+        location="/doctor/doctor-appointments"
+        cardText="Appointments"
+        cardDetails="View my appointments"
+        icon={faCalendarCheck}
+      />
     </div>
     // <div
     //   className="d-flex align-items-center justify-content-between gap-3"
