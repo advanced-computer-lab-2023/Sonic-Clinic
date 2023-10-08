@@ -6,7 +6,6 @@ const { MongoClient } = require("mongodb");
 const session = require("express-session");
 const jwt = require("jsonwebtoken");
 
-
 mongoose.set("strictQuery", false);
 require("dotenv").config();
 
@@ -183,7 +182,7 @@ server.get("/viewPackages", viewPackages);
 server.get("/viewAllDoctorsByPatients", viewAllDoctorsForPatients);
 server.post("/getDoctorsWithSessionPrice", getDoctorsWithSessionPrice);
 server.post("/filterDoctorsAfterSearch", filterDoctorsAfterSearch);
-server.get("/viewAllAppointments", viewAllAppointments);
+server.post("/viewAllAppointments", viewAllAppointments);
 //doctor
 server.post("/selectPatient", selectPatient);
 server.post("/viewInfoAndHealthRecord", viewInfoAndHealthRecord);

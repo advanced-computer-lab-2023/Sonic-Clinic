@@ -67,9 +67,9 @@ function DoctorFilter() {
         time: selectedTime,
       };
       const response = await axios.post(
-        "/filterDoctors",
+        "/filterDoctorsAfterSearch",
         {
-          id: "your-id-value", // Replace with your actual id value
+          array: filteredDoctors, // Replace with your actual id value
         },
         {
           speciality: currentSpecialties
