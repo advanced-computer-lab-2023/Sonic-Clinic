@@ -1,9 +1,8 @@
-import { faCommentsDollar } from "@fortawesome/free-solid-svg-icons";
 import React, { useState } from "react";
 import { Button, Form } from "react-bootstrap";
 import axios from "axios";
 
-export default function AddNewPackage() {
+export default function AddNewPackage({ fetchData }) {
   const [type, setType] = useState("");
   const [price, setPrice] = useState(null);
   const [sessionDiscount, setSessionDiscount] = useState(null);
@@ -21,13 +20,6 @@ export default function AddNewPackage() {
     fontWeight: "bold",
     color: "#ADB5BD ",
   };
-  // const [formData, setFormData] = useState({
-  //   name: "",
-  //   fee: "",
-  //   docDiscount: "",
-  //   pharmacyDiscount: "",
-  //   famDiscount: "",
-  // });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -70,6 +62,10 @@ export default function AddNewPackage() {
 
       if (response.status === 200) {
         setSuccess(true);
+        setTimeout(() => {
+          setSuccess(false); // Clear the error after 5 seconds
+        }, 5000);
+        fetchData();
       } else if (response.status === 404) {
         setError("Package not found");
       } else {
@@ -85,6 +81,9 @@ export default function AddNewPackage() {
         );
       }
     }
+    setTimeout(() => {
+      setError(null); // Clear the error after 5 seconds
+    }, 5000);
 
     setType("");
     setPrice(null);

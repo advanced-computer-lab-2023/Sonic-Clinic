@@ -51,7 +51,7 @@ export default function AdminPackageCarousel() {
   return (
     <div
       className="d-flex align-items-center justify-content-center flex-row"
-      style={{ width: "100%", marginTop: "0px" }}
+      style={{ width: "100%", marginTop: "3rem" }}
     >
       <Carousel
         className="d-flex align-items-center carousel-dark"
@@ -70,6 +70,7 @@ export default function AdminPackageCarousel() {
               docDiscount={packagee.sessionDiscount}
               pharmacyDiscount={packagee.medicineDiscount}
               famDiscount={packagee.packageDiscountFM}
+              fetchData={fetchData}
             />
           </Carousel.Item>
         ))}
@@ -89,7 +90,7 @@ export default function AdminPackageCarousel() {
             <FontAwesomeIcon icon={faPlus} style={iconStyle} />
           )}
         </Button>
-        {showAddPackage && <AddNewPackage />}
+        {showAddPackage && <AddNewPackage fetchData={fetchData} />}
       </div>
     </div>
   );

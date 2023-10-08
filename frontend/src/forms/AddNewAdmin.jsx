@@ -3,7 +3,7 @@ import Form from "react-bootstrap/Form";
 import { Button } from "react-bootstrap";
 import axios from "axios";
 
-export default function AddNewAdmin() {
+export default function AddNewAdmin({ fetchData, closeForm }) {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [username, setUsername] = useState("");
@@ -40,6 +40,14 @@ export default function AddNewAdmin() {
 
       if (response.status === 200) {
         setSuccess(true);
+        setTimeout(() => {
+          setSuccess(false); // Clear the error after 5 seconds
+        }, 5000);
+        setUsername("");
+        setPassword("");
+        setConfirmPassword("");
+        closeForm();
+        fetchData();
       } else if (response.status === 409) {
         setError("Admin with this username already exists");
       } else {
@@ -55,9 +63,9 @@ export default function AddNewAdmin() {
         );
       }
     }
-    setUsername("");
-    setPassword("");
-    setConfirmPassword("");
+    setTimeout(() => {
+      setError(null); // Clear the error after 5 seconds
+    }, 5000);
   };
 
   return (
@@ -71,6 +79,7 @@ export default function AddNewAdmin() {
           type="text"
           name="username"
           placeholder="Enter username"
+          value={username}
           onChange={(e) => setUsername(e.target.value)}
           required
         />
@@ -79,6 +88,7 @@ export default function AddNewAdmin() {
           type="password"
           name="pass"
           placeholder="Enter password"
+          value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
         />
@@ -87,6 +97,7 @@ export default function AddNewAdmin() {
           type="password"
           name="confirmPass"
           placeholder="Confirm Password"
+          value={confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)}
           required
         />
