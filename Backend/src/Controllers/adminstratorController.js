@@ -173,23 +173,7 @@ const viewAllPatients= async(req,res)=>{
     }
 }
 
-const viewAllDoctors = async (req, res) => {
-   try {
-     // Query the database to get real doctors
-     const realDoctors = await doctorModel.find();
- 
-     // Combine dummy doctors with real doctors
-     const allDoctors = [dummyDoctors, realDoctors];
- 
-     if (!allDoctors || allDoctors.length === 0) {
-       return res.status(404).json({ message: 'No doctors found.' });
-     }
- 
-     res.status(200).json({ doctors: allDoctors });
-   } catch (error) {
-     res.status(500).json({ message: 'Server Error' });
-   }
- };
+
 // Dummy data for 7 doctors with full schema attributes
 const dummyDoctors = [
    {
@@ -285,6 +269,23 @@ const dummyDoctors = [
    },
  ];
  
+ const viewAllDoctors = async (req, res) => {
+  try {
+    // Query the database to get real doctors
+    const realDoctors = await doctorModel.find();
+
+   
+    const allDoctors = dummyDoctors.concat(realDoctors);
+
+    if (!allDoctors || allDoctors.length === 0) {
+      return res.status(404).json({ message: 'No doctors found.' });
+    }
+
+    res.status(200).json({ doctors: allDoctors });
+  } catch (error) {
+    res.status(500).json({ message: 'Server Error' });
+  }
+};
 
  
 
