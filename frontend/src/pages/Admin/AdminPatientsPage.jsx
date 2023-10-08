@@ -6,10 +6,6 @@ import { Container } from "react-bootstrap";
 import AdminBurgerMenu from "../../components/Admin/AdminBurgerMenu";
 
 export default function AdminPatientsPage() {
-  const patients = [
-    { id: 1, firstName: "Mark", lastName: "Otto", username: "@mko" },
-    { id: 2, firstName: "John", lastName: "Doe", username: "@johndoe" },
-  ];
   return (
     <>
       <AppNavbar hamburgerMenu={<AdminBurgerMenu />} />
@@ -35,7 +31,7 @@ export default function AdminPatientsPage() {
         }}
       >
         <AdminSearchBar />
-        <AdminViewTable onAdmins={false} users={patients}/>
+        <AdminViewTable onAdmins={false} api={"/viewAllPatients"}/>
       </Container>
     </>
   );

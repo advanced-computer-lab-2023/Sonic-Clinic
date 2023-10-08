@@ -3,16 +3,7 @@ import { Form, Button } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
 
-export default function AdminSearchBar(props) {
-  const [isHovered, setIsHovered] = useState(false);
-
-  const iconStyle = {
-    opacity: 1,
-    color: "#f0f0f0",
-    fontSize: isHovered ? "19px" : "18px",
-    cursor: "pointer",
-  };
-
+export default function AdminSearchBar() {
   return (
     <div
       className="justify-content-between"
@@ -20,20 +11,29 @@ export default function AdminSearchBar(props) {
         display: "flex",
         flexDirection: "row",
         width: "1000px",
-        marginBottom: "30px",
+        marginBottom: "1rem",
       }}
     >
-      <Form.Control type="Text" placeholder="Search" />
+      <Form.Control
+        type="Text"
+        placeholder="Search"
+        style={{ height: "2.5rem" }}
+      />
       <Button
-        style={{
-          backgroundColor: "#f0f0f0",
-          marginLeft: "20px",
-          borderColor: "#f0f0f0",
-        }}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
+        variant="primary"
+        type="submit"
+        style={{ width: "10rem", height: "2.5rem", marginLeft: "1rem" }}
       >
-        <FontAwesomeIcon icon={faSearch} id="searchIcon" style={iconStyle} />
+        S e a r c h
+        <FontAwesomeIcon
+          icon={faSearch}
+          style={{
+            opacity: 1,
+            color: "white",
+            fontSize: "15px",
+            marginLeft: "10px",
+          }}
+        />
       </Button>
     </div>
   );
