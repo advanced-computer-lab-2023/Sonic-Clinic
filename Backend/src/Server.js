@@ -27,6 +27,7 @@ const {
   getDoctorsWithSessionPrice,
   addAppointment,
   filterDoctorsAfterSearch,
+  viewAllAppointments,
 } = require("./Controllers/patientController");
 
 /////////////////////////////////doctorController//////////////////////////////////////////
@@ -182,6 +183,7 @@ server.get("/viewPackages", viewPackages);
 server.get("/viewAllDoctorsByPatients", viewAllDoctorsForPatients);
 server.post("/getDoctorsWithSessionPrice", getDoctorsWithSessionPrice);
 server.post("/filterDoctorsAfterSearch", filterDoctorsAfterSearch);
+server.get("/viewAllAppointments", viewAllAppointments);
 //doctor
 server.post("/selectPatient", selectPatient);
 server.post("/viewInfoAndHealthRecord", viewInfoAndHealthRecord);
