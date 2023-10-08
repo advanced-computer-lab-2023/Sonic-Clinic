@@ -1,18 +1,20 @@
 import React, { useEffect } from "react";
 import Container from "react-bootstrap/Container";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { logout } from "../../state/loginPatientReducer";
+import { logoutPatient } from "../../state/loginPatientReducer";
 import { useDispatch } from "react-redux";
 import AppNavbar from "../../components/AppNavigation/AppNavbar";
 import RegPhoto from "../../components/Guest/RegPhoto";
 import LoginForm from "../../forms/Guest/LoginForm";
 import PatientSignupForm from "../../forms/Guest/PatientSignupForm";
 import GuestBurgerMenu from "../../components/Guest/GuestBurgerMenu";
+import { logoutDoctor } from "../../state/loginDoctorReducer";
+import { logoutAdmin } from "../../state/loginAdminReducer";
 
 function PatientLogin() {
   const dispatch = useDispatch();
   useEffect(() => {
-    dispatch(logout());
+    dispatch(logoutDoctor(), logoutAdmin(), logoutPatient());
   }, []);
 
   return (
