@@ -106,7 +106,7 @@ const filterApointmentsByDateOrStatus = async (req, res) => {
 
   try {
     // Retrieve username from the session
-    const patientID = req.session.user._id;
+    const patientID = req.body._id;
 
     let query = { patientID };
 
@@ -133,7 +133,7 @@ const filterApointmentsByDateOrStatus = async (req, res) => {
 const viewPrescriptions = async (req, res) => {
   try {
     // Extract the username from the session
-    const id = req.session.user._id;
+    const id = req.body._id;
     console.log(id);
 
     // Check if a patient with the provided username exists
@@ -156,7 +156,7 @@ const filterPrescriptions = async (req, res) => {
 
   try {
     // Retrieve username from the session
-    const patientID = req.session.user._id;
+    const patientID = req.body._id;
 
     let query = { patientID };
 
@@ -186,7 +186,7 @@ const filterPrescriptions = async (req, res) => {
 };
 
 const viewFamilyMembers = async (req, res) => {
-  const username = req.session.user.username;
+  const username = req.body.username;
 
   try {
     const patient = await patientModel.findOne({ username });
@@ -211,7 +211,7 @@ const viewFamilyMembers = async (req, res) => {
 
 const selectPrescription = async (req, res) => {
   const { prescriptionId } = req.query;
-  const id = req.session.user._id;
+  const id = req.body._id;
 
   try {
     const prescription = await prescriptionModel.findOne({ patientID: id });
@@ -271,7 +271,7 @@ const getDoctorsWithSessionPrice = async (req, res) => {
     const doctorsWithSessionPrice = doctors.map((doctor) => {
       const sessionPrice = calculateSessionPrice(
         doctor.hourlyRate,
-        req.session.user.package
+        req.body.package
       );
 
       return {
