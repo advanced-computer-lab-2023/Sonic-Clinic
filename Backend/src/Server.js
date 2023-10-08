@@ -165,30 +165,30 @@ server.get("/viewPotentialDoctors", viewPotentialDoctors);
 server.get("/viewPackagesAdmin", viewPackagesAdmin);
 server.get("/viewAllAdmins", viewAllAdmins);
 //patient
-server.get("/doctorDetails", doctorDetails);
-server.get("/viewPrescriptions", viewPrescriptions);
-server.get("/viewFamilyMembers", viewFamilyMembers);
-server.get("/selectPrescription", selectPrescription);
-server.get("/filterPrescriptions", filterPrescriptions);
-server.get(
+server.post("/doctorDetails", doctorDetails);
+server.post("/viewPrescriptions", viewPrescriptions);
+server.post("/viewFamilyMembers", viewFamilyMembers);
+server.post("/selectPrescription", selectPrescription);
+server.post("/filterPrescriptions", filterPrescriptions);
+server.post(
   "/filterAppointmentsByDateOrStatus",
   filterAppointmentsByDateOrStatus
 );
-server.get("/searchDoctors", searchDoctors);
+server.post("/searchDoctors", searchDoctors);
 server.get("/filterDoctors", filterDoctors);
 server.get("/viewPackages", viewPackages);
 server.get("/viewAllDoctorsByPatients", viewAllDoctorsForPatients);
-server.get("/getDoctorsWithSessionPrice", getDoctorsWithSessionPrice);
-server.get("/filterDoctorsAfterSearch", filterDoctorsAfterSearch);
+server.post("/getDoctorsWithSessionPrice", getDoctorsWithSessionPrice);
+server.post("/filterDoctorsAfterSearch", filterDoctorsAfterSearch);
 //doctor
-server.get("/selectPatient", selectPatient);
-server.get("/viewInfoAndHealthRecord", viewInfoAndHealthRecord);
-server.get("/viewPatients", viewPatients);
-server.get(
+server.post("/selectPatient", selectPatient);
+server.post("/viewInfoAndHealthRecord", viewInfoAndHealthRecord);
+server.post("/viewPatients", viewPatients);
+server.post(
   "/filterApointmentsByDateOrStatusDoc",
   filterApointmentsByDateOrStatusDoc
 );
-server.get("/filterPatientsByAppointments", filterPatientsByAppointments);
+server.post("/filterPatientsByAppointments", filterPatientsByAppointments);
 server.get("/searchPatientByName", searchPatientByName);
 
 ////////////////////////////////////////////////////PUT////////////////////////////////////////
