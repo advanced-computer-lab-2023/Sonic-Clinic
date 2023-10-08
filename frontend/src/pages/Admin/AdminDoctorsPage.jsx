@@ -58,7 +58,7 @@ export default function AdminDoctorsPage() {
             }}
           >
             <AdminSearchBar />
-            <AdminViewTable onAdmins={false} users={doctors} />
+            <AdminViewTable onAdmins={false} api={"/viewAllDoctors"} />
           </Container>
         </Tab>
         <Tab eventKey="requests" title="Requests">
