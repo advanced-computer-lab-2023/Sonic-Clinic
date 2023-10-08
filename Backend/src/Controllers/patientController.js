@@ -134,10 +134,9 @@ const viewPrescriptions = async (req, res) => {
   try {
     // Extract the username from the session
     const id = req.body._id;
-    console.log(id);
 
     // Check if a patient with the provided username exists
-    const prescriptions = await prescriptionModel.findOne({ patientID: id });
+    const prescriptions = await prescriptionModel.find({ patientID: id });
 
     if (!prescriptions) {
       return res.status(404).json({ message: "Patient not found." });
@@ -145,7 +144,7 @@ const viewPrescriptions = async (req, res) => {
 
     // const prescriptions = patient.prescriptions;
 
-    res.status(200).json({ prescriptions });
+    res.status(200).json(prescriptions);
   } catch (error) {
     res.status(500).json({ message: "Server Error" });
   }
@@ -189,7 +188,7 @@ const viewFamilyMembers = async (req, res) => {
   const patientID = req.body._id;
 
   try {
-    const patient = await patientModel.findOne({ _id:patientID });
+    const patient = await patientModel.findOne({ _id: patientID });
 
     if (!patient) {
       return res.status(404).json({ message: "Patient not found." });
@@ -208,11 +207,14 @@ const viewFamilyMembers = async (req, res) => {
 };
 
 const selectPrescription = async (req, res) => {
-  const prescriptionId  = req.body._id;
+  const prescriptionId = req.body._id;
   const id = req.body.patientID;
 
   try {
-    const prescription = await prescriptionModel.findOne({ patientID: id , _id:prescriptionId});
+    const prescription = await prescriptionModel.findOne({
+      patientID: id,
+      _id: prescriptionId,
+    });
 
     if (!prescription) {
       return res.status(404).json({ message: "Patient not found." });
@@ -365,8 +367,8 @@ const filterDoctorsAfterSearch = async (req, res) => {
   const doctors = req.body;
   const { date, time } = req.query;
 
-  query = {date, time, status: "not filled" };
-  try{
+  query = { date, time, status: "not filled" };
+  try {
     if (!date && !time) {
       res.status(200).json({ doctors });
     }
@@ -395,14 +397,10 @@ const filterDoctorsAfterSearch = async (req, res) => {
     );
 
     res.status(200).json({ availableDoctors });
-
-  }
-
-    catch (error) {
+  } catch (error) {
     res.status(500).json({ message: "Server Error" });
   }
 };
-
 
 module.exports = {
   selectPrescription,
