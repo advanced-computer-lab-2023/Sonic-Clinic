@@ -27,7 +27,7 @@ const searchPatientByName = async (req, res) => {
 
 const filterPatientsByAppointments = async (req, res) => {
   try {
-    const doctor = req.session.user;
+    const doctor = await doctorModel.find(req.body);
     if (!doctor) {
       return res.status(401).json({ error: "Doctor not authenticated" });
     }
@@ -58,7 +58,7 @@ const filterApointmentsByDateOrStatusDoc = async (req, res) => {
 
   try {
     // Retrieve username from the session
-    const doctorID = req.session.user._id;
+    const doctorID = req.body._id
 
     let query = { doctorID };
 
@@ -83,13 +83,13 @@ const filterApointmentsByDateOrStatusDoc = async (req, res) => {
 };
 
 const updateDoctorProfile = async (req, res) => {
-  const { email, hourlyRate, affiliation } = req.body;
-  const username = req.session.user.username;
+  const {email, hourlyRate, affiliation } = req.body;
+  
+  const id = req.query._id;
 
   try {
-    
-    const doctor = await doctorModel.findOne({ username });
-
+    const doctor = await doctorModel.findOne({ _id: id });
+  
     if (!doctor) {
       return res.status(404).json({ message: "Doctor not found." });
     }
@@ -109,15 +109,14 @@ const updateDoctorProfile = async (req, res) => {
 };
 
 const viewPatients = async (req, res) => {
+  const id = req.body._id;
+
   try {
-    const username = req.session.user.username;
-
-    const doctor = await doctorModel.findOne({ username }).populate("patients");
-
+    const doctor = await doctorModel.findOne({ _id: id });
     if (!doctor) {
       return res.status(404).json({ message: "Doctor not found." });
     }
-
+    
     const patients = doctor.patients;
 
     res.status(200).json({ patients });
@@ -170,13 +169,20 @@ const viewInfoAndHealthRecord = async (req, res) => {
 };
 
 const selectPatient = async (req, res) => {
+  const doctorId = req.query._id;
+  const { patientUsername } = req.body;
+
   try {
     const doctor = await doctorModel
-      .findOne({ username: req.session.user.username })
+      .findOne({ _id: doctorId })
       .populate("patients");
-    const { patientUsername } = req.body;
+
+    if (!doctor) {
+      return res.status(404).json({ message: "Doctor not found." });
+    }
+
     const selectedPatient = doctor.patients.find(
-      (patient) => patient.username === patientUsername
+      (patientId) => patientId.username === patientUsername
     );
 
     if (!selectedPatient) {
@@ -187,9 +193,10 @@ const selectPatient = async (req, res) => {
 
     res.status(200).json({ selectedPatient });
   } catch (error) {
-    res.status(500).json({ message: "Server Error" });
+    res.status(500).json({ message: "Server Error", error });
   }
 };
+
 
 const addPrescription = async (req, res) => {
   try {
