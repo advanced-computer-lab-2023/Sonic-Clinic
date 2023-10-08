@@ -15,7 +15,7 @@ const {
   viewFamilyMembers,
   filterPrescriptions,
   viewPrescriptions,
-  filterApointmentsByDateOrStatus,
+  filterAppointmentsByDateOrStatus,
   filterDoctors,
   searchDoctors,
   doctorDetails,
@@ -175,7 +175,7 @@ server.get("/viewPrescriptions", viewPrescriptions);
 server.get("/viewFamilyMembers", viewFamilyMembers);
 server.get("/selectPrescription", selectPrescription);
 server.get("/filterPrescriptions", filterPrescriptions);
-server.get("/filterApointmentsByDateOrStatus", filterApointmentsByDateOrStatus);
+server.get("/filterAppointmentsByDateOrStatus", filterAppointmentsByDateOrStatus);
 server.get("/searchDoctors", searchDoctors);
 server.get("/filterDoctors", filterDoctors);
 server.get("/viewPackages", viewPackages);

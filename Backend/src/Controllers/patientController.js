@@ -33,14 +33,14 @@ const searchDoctors = async (req, res) => {
   try {
     let query = {};
 
-    if (name && speciality) {
-      query = { name, speciality };
-    } else if (name) {
-      query.name = name;
-      query.speciality = { $exists: true };
-    } else if (speciality) {
+    // Use regex for partial name search
+    if (name) {
+      const nameRegex = new RegExp(name, "i");
+      query.name = { $regex: nameRegex };
+    }
+
+    if (speciality) {
       query.speciality = speciality;
-      query.name = { $exists: true };
     }
 
     const doctors = await doctorModel.find(query);
@@ -81,7 +81,7 @@ const filterDoctors = async (req, res) => {
     console.log(appointments);
 
     if (!appointments || appointments.length === 0) {
-      return res.status(404).json({ message: "No appointments found." });
+      return res.status(404).json({ message: "No doctors found." });
     }
 
     const availableAppointments = appointments.filter(
@@ -101,12 +101,12 @@ const filterDoctors = async (req, res) => {
   }
 };
 
-const filterApointmentsByDateOrStatus = async (req, res) => {
+const filterAppointmentsByDateOrStatus = async (req, res) => {
   const { date, status } = req.query;
 
   try {
     // Retrieve username from the session
-    const patientID = req.session.user._id;
+    const patientID = req.body._id;
 
     let query = { patientID };
 
@@ -133,7 +133,7 @@ const filterApointmentsByDateOrStatus = async (req, res) => {
 const viewPrescriptions = async (req, res) => {
   try {
     // Extract the username from the session
-    const id = req.session.user._id;
+    const id = req.body._id;
     console.log(id);
 
     // Check if a patient with the provided username exists
@@ -156,7 +156,7 @@ const filterPrescriptions = async (req, res) => {
 
   try {
     // Retrieve username from the session
-    const patientID = req.session.user._id;
+    const patientID = req.body.patientID;
 
     let query = { patientID };
 
@@ -186,16 +186,14 @@ const filterPrescriptions = async (req, res) => {
 };
 
 const viewFamilyMembers = async (req, res) => {
-  const username = req.session.user.username;
+  const patientID = req.body._id;
 
   try {
-    const patient = await patientModel.findOne({ username });
+    const patient = await patientModel.findOne({ _id:patientID });
 
     if (!patient) {
       return res.status(404).json({ message: "Patient not found." });
     }
-
-    const patientID = patient._id;
 
     const familyMembers = await familyMemberModel.find({ patientID });
 
@@ -210,11 +208,11 @@ const viewFamilyMembers = async (req, res) => {
 };
 
 const selectPrescription = async (req, res) => {
-  const { prescriptionId } = req.query;
-  const id = req.session.user._id;
+  const prescriptionId  = req.body._id;
+  const id = req.body.patientID;
 
   try {
-    const prescription = await prescriptionModel.findOne({ patientID: id });
+    const prescription = await prescriptionModel.findOne({ patientID: id , _id:prescriptionId});
 
     if (!prescription) {
       return res.status(404).json({ message: "Patient not found." });
@@ -261,13 +259,18 @@ const calculateSessionPrice = (hourlyRate, patientPackage) => {
 const getDoctorsWithSessionPrice = async (req, res) => {
   try {
     // Fetch all doctors from the database
+    const patient = await patientModel.findById(req.body);
     const doctors = await doctorModel.find();
+
+    if (!doctors) {
+      return res.status(404).json({ message: "No doctors found." });
+    }
 
     // Calculate session price for each doctor
     const doctorsWithSessionPrice = doctors.map((doctor) => {
       const sessionPrice = calculateSessionPrice(
         doctor.hourlyRate,
-        req.session.user.package
+        patient.package
       );
 
       return {
@@ -344,9 +347,10 @@ const dummyDoctors = [
 
 const viewAllDoctorsForPatients = async (req, res) => {
   try {
+    // Query the database to get real doctors
     const realDoctors = await doctorModel.find({}, { name: 1, speciality: 1 });
 
-    const allDoctors = [dummyDoctors, realDoctors];
+    const allDoctors = dummyDoctors.concat(realDoctors);
 
     if (!allDoctors || allDoctors.length === 0) {
       return res.status(404).json({ message: "No doctors found." });
@@ -363,7 +367,7 @@ module.exports = {
   viewFamilyMembers,
   filterPrescriptions,
   viewPrescriptions,
-  filterApointmentsByDateOrStatus,
+  filterAppointmentsByDateOrStatus,
   filterDoctors,
   searchDoctors,
   doctorDetails,
