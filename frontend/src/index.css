@@ -1,13 +1,57 @@
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Vibur&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Vibur&display=swap");
+.btn-primary {
+  border-radius: 0.25rem !important;
+  border: 1px solid var(--theme-primary, #05afb9) !important;
+  background: var(--theme-primary, #05afb9) !important;
+}
+
+/* Customize Bootstrap 5 button hover effect */
+.btn-primary:hover {
+  background: var(
+    --theme-primary,
+    #048087cd
+  ) !important; /* Change the color on hover */
+}
+.btn-secondary {
+  border-radius: 0.25rem !important;
+  border: 1px solid var(--theme-secondary, #ff6b35) !important;
+  background: var(--theme-secondary, #ff6b35) !important;
+}
+
+/* Customize Bootstrap 5 button hover effect */
+.btn-secondary:hover {
+  background: var(
+    --theme-secondary,
+    #ea5b27
+  ) !important; /* Change the color on hover */
+}
 
 body {
   margin: 0;
-  font-family: 'Roboto', sans-serif;
+  font-family: "Roboto", sans-serif !important;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
+}
+
+@keyframes arrowAnimation {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px); /* Adjust the distance to move */
+  }
+}
+@keyframes arrowAnimation2 {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(-5px); /* Adjust the distance to move */
+  }
 }
