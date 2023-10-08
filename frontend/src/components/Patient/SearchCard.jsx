@@ -1,10 +1,14 @@
-import { faArrowRight, faUser, faSearch, faAnglesRight } from "@fortawesome/free-solid-svg-icons";
+import {
+  faArrowRight,
+  faUser,
+  faSearch,
+  faAnglesRight,
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
 import { Card, Form, Button } from "react-bootstrap";
 
 function SearchCard() {
-
   return (
     <div
       className="d-flex justify-content-center"
@@ -40,12 +44,20 @@ function SearchCard() {
             <div className="d-flex align-items-center justify-content-between">
               <Form.Group className="mr-2">
                 <Form.Label>Doctor Name</Form.Label>
-                <Form.Control type="text" style={{width:'200px', marginRight:'10px'}} placeholder="Enter doctor's name" />
+                <Form.Control
+                  type="text"
+                  style={{ width: "200px", marginRight: "10px" }}
+                  placeholder="Enter doctor's name"
+                />
               </Form.Group>
 
               <Form.Group className="mr-2">
                 <Form.Label>Location</Form.Label>
-                <Form.Control type="text" style={{width:'200px'}} placeholder="Enter location" />
+                <Form.Control
+                  type="text"
+                  style={{ width: "200px" }}
+                  placeholder="Enter location"
+                />
               </Form.Group>
 
               <Form.Group className="m-2" style={{ flex: "2" }}>
@@ -64,18 +76,18 @@ function SearchCard() {
               <Button
                 variant="primary"
                 type="submit"
-                style={{ width: "20%", height: "3rem", marginTop:"30px"}}
+                style={{ width: "20%", height: "3rem", marginTop: "30px" }}
               >
                 S e a r c h
                 <FontAwesomeIcon
-            icon={faSearch}
-            style={{
-              opacity: 1,
-              color: "white",
-              fontSize: "15px",
-              marginLeft: "10px"
-            }}
-          />
+                  icon={faSearch}
+                  style={{
+                    opacity: 1,
+                    color: "white",
+                    fontSize: "15px",
+                    marginLeft: "10px",
+                  }}
+                />
               </Button>
             </div>
           </Form>
@@ -90,7 +102,7 @@ function SearchCard() {
               textDecoration: "none",
               fontSize: "1rem",
               fontWeight: "600",
-              marginRight: "20px"
+              marginRight: "20px",
             }}
           >
             View All Doctors
