@@ -118,8 +118,16 @@ const viewPatients = async (req, res) => {
     }
     
     const patients = doctor.patients;
+    const actualPatients = [];
 
-    res.status(200).json({ patients });
+    for (const patientId of patients) {
+      const patient = await patientModel.findOne({ _id: patientId });
+      if (patient) {
+        actualPatients.push(patient);
+      }
+    }
+
+    res.status(200).json({ patients: actualPatients });
   } catch (error) {
     res.status(500).json({ message: "Server Error" });
   }
