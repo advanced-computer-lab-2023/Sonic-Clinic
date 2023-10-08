@@ -409,7 +409,7 @@ const viewAllAppointments = async (req, res) => {
       return res.status(404).json({ message: "No appointments found." });
     }
 
-    res.status(200).json({ appointments });
+    res.status(200).json( appointments );
   } catch (error) {
     res.status(500).json({ message: "Server Error" });
   }
