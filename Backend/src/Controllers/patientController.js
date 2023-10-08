@@ -33,14 +33,14 @@ const searchDoctors = async (req, res) => {
   try {
     let query = {};
 
-    if (name && speciality) {
-      query = { name, speciality };
-    } else if (name) {
-      query.name = name;
-      query.speciality = { $exists: true };
-    } else if (speciality) {
+    // Use regex for partial name search
+    if (name) {
+      const nameRegex = new RegExp(name, 'i');
+      query.name = { $regex: nameRegex };
+    }
+
+    if (speciality) {
       query.speciality = speciality;
-      query.name = { $exists: true };
     }
 
     const doctors = await doctorModel.find(query);
@@ -54,6 +54,7 @@ const searchDoctors = async (req, res) => {
     res.status(500).json({ message: "Server Error" });
   }
 };
+
 
 const filterDoctors = async (req, res) => {
   const { speciality, date, time } = req.query;

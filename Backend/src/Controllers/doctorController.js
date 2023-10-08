@@ -57,7 +57,7 @@ const filterApointmentsByDateOrStatusDoc = async (req, res) => {
   const { date, status } = req.query;
 
   try {
-    // Retrieve username from the session
+   
     const doctorID = req.body._id
 
     let query = { doctorID };
