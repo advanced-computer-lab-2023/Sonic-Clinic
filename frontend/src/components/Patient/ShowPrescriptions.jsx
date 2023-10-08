@@ -1,14 +1,12 @@
 import React from "react";
-import { Card, Col, Row, Image } from "react-bootstrap";
+import { Card, Col, Row } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faCalendar,
   faFileAlt,
-  faCapsules,
   faCheckCircle,
 } from "@fortawesome/free-solid-svg-icons";
-import prescriptionImg from "../../Assets/Prescription.jpg";
 
 function ShowPrescriptions() {
   const prescriptions = [
@@ -39,19 +37,13 @@ function ShowPrescriptions() {
             <Row>
               <Col lg={4}>
                 <div className="prescription-icon-container">
-                  {/* <FontAwesomeIcon
-                    icon={faCapsules}
+                  <FontAwesomeIcon
+                    icon={faFileAlt}
                     className="prescription-icon"
-                  /> */}
-                  {/* crop the image correctly */}
-                  <Image
-                    src={prescriptionImg}
-                    fluid
-                    className="doctor-image"
                   />
                 </div>
               </Col>
-              <Col lg={8}>
+              <Col lg={8}> 
                 <Card.Body className="p-4">
                   <Card.Title className="show-more-title">
                     Prescription {prescription.prescriptionId}

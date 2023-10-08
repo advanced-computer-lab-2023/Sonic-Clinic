@@ -73,7 +73,7 @@ export default function AdminAdminsPage() {
       {showAddNewAdmin && <AddNewAdmin />}
 
       <AdminSearchBar/>
-      <AdminViewTable onAdmins={true} users={admins}/>
+      <AdminViewTable onAdmins={true} api={"/viewAllAdmins"}/>
     </Container>
   </>
   )

@@ -2,15 +2,29 @@ import React, { useState } from "react";
 import { Button, Card, ListGroup, Form } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPenToSquare, faTrashCan } from "@fortawesome/free-solid-svg-icons";
+import axios from "axios";
 
-export default function AdminPackageCard({id, packageName, fee, docDiscount, pharmacyDiscount, famDiscount,}) {
+export default function AdminPackageCard({
+  id,
+  packageName,
+  fee,
+  docDiscount,
+  pharmacyDiscount,
+  famDiscount,
+}) {
   const [isEditing, setIsEditing] = useState(false);
   const [error, setError] = useState(null);
   let dynamicTexts = [fee, docDiscount, pharmacyDiscount, famDiscount];
   const [editedDynamicTexts, setEditedDynamicTexts] = useState([
     ...dynamicTexts,
   ]);
-  const [editedPackageName, setEditedPackageName] = useState(packageName);
+  // const [editedPackageName, setEditedPackageName] = useState(packageName);
+  const [_id, set_Id] = useState(id);
+  const [type, setType] = useState(packageName);
+  const [price, setPrice] = useState(fee);
+  const [sessionDiscount, setSessionDiscount] = useState(docDiscount);
+  const [medicineDiscount, setMedicineDiscount] = useState(pharmacyDiscount);
+  const [packageDiscountFM, setPackageDiscountFM] = useState(famDiscount);
 
   const constantTexts = [
     "Annual Fee",
@@ -45,44 +59,73 @@ export default function AdminPackageCard({id, packageName, fee, docDiscount, pha
   //   setIsEditing(false);
   // };
 
-  const handleSaveClick = () => {
-  const updatedValues = editedDynamicTexts.slice();
+  const handleSaveClick = async () => {
+    const updatedValues = editedDynamicTexts.slice();
 
-  const annualFeeRegex = /^\d+(\.\d{1,2})?\s*LE$/;
-  const commonRegex = /^\d+(\.\d{1,2})?%$/;
+    const annualFeeRegex = /^\d+(\.\d+)?$/;
+    const commonRegex = /^(?:\d{1,2}|100)$/;
 
-  let isValid = true;
-  let index = 0;
-  while (index < updatedValues.length && isValid) {
-    const value = updatedValues[index];
+    let isValid = true;
+    let index = 0;
+    while (index < updatedValues.length && isValid) {
+      const value = updatedValues[index];
 
-    if (index === 0) {
-      isValid = annualFeeRegex.test(value);
+      if (index === 0) {
+        isValid = annualFeeRegex.test(value);
+      } else {
+        isValid = commonRegex.test(value);
+      }
+
+      if (!isValid) {
+        setError("Please write the correct formats");
+        // return;
+      }
+      index++;
+    }
+
+    // If all values are valid, print the new values
+    if (isValid) {
+      setEditedDynamicTexts(updatedValues);
+      dynamicTexts = updatedValues;
+      //THE VALUES ARE NOT GETTING SET WHYYYYYYYYY
+      setType(dynamicTexts[0]);
+      setPrice(dynamicTexts[1]);
+      setSessionDiscount(dynamicTexts[2]);
+      setMedicineDiscount(dynamicTexts[3]);
+      setPackageDiscountFM(dynamicTexts[4]);
+      try {
+        const response = await axios.post("/updatePackage", {
+          type: type,
+          price: price,
+          sessionDiscount: sessionDiscount,
+          medicineDiscount: medicineDiscount,
+          packageDiscountFM: packageDiscountFM,
+        });
+
+        if (response.status === 200) {
+          console.log("tmam");
+        } else if (response.status === 404) {
+          setError("Package not found");
+        } else {
+          setError("Error");
+        }
+      } catch (error) {
+        if (error.response && error.response.status === 404) {
+          setError("Package not found");
+        } else {
+          setError(
+            "An error occurred while updating package. Please try again later"
+          );
+        }
+      }
+      setIsEditing(false);
+      setError(null);
     } else {
-      isValid = commonRegex.test(value);
+      console.log(error);
+      setIsEditing(false);
+      setEditedDynamicTexts(dynamicTexts);
     }
-
-    if (!isValid) {
-      setError("Please write the correct formats");
-      // return;
-    }
-    index++;
-  }
-
-  // If all values are valid, print the new values
-  if (isValid) {
-    console.log("New Values:", updatedValues);
-    //pass updated values to the backend
-    setEditedDynamicTexts(updatedValues);
-    dynamicTexts=updatedValues;
-    setIsEditing(false);
-    setError(null);
-  } else {
-    console.log(error);
-    setIsEditing(false);
-    setEditedDynamicTexts(dynamicTexts);
-  }
-};
+  };
 
   return (
     <Card
@@ -128,8 +171,8 @@ export default function AdminPackageCard({id, packageName, fee, docDiscount, pha
               border: "none",
               width: "200px",
             }}
-            value={editedPackageName}
-            onChange={(e) => setEditedPackageName(e.target.value)}
+            value={type}
+            onChange={(e) => setType(e.target.value)}
           />
         ) : (
           <Card.Title
@@ -142,7 +185,7 @@ export default function AdminPackageCard({id, packageName, fee, docDiscount, pha
               marginTop: "20px",
             }}
           >
-            {editedPackageName}
+            {type}
           </Card.Title>
         )}
       </Card.Header>
@@ -162,12 +205,14 @@ export default function AdminPackageCard({id, packageName, fee, docDiscount, pha
               >
                 {isEditing ? (
                   <Form.Control
-                  type="text"
-                  value={editedDynamicTexts[index] || ""}
-                  onChange={(e) => handleInputChange(index, e)} // Pass index and event here
-                />
+                    type="text"
+                    value={editedDynamicTexts[index] || ""}
+                    onChange={(e) => handleInputChange(index, e)} // Pass index and event here
+                  />
                 ) : (
-                  editedDynamicTexts[index]
+                  <>
+                    {editedDynamicTexts[index]} {index === 0 ? "LE" : "%"}
+                  </>
                 )}
               </span>
             </ListGroup.Item>
@@ -209,4 +254,3 @@ export default function AdminPackageCard({id, packageName, fee, docDiscount, pha
     </Card>
   );
 }
-
