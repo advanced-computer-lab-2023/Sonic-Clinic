@@ -5,6 +5,7 @@ import Row from "react-bootstrap/Row";
 import Tab from "react-bootstrap/Tab";
 import AddFamilyMember from "./AddFamilyMember";
 import FamilyMembersList from "./FamilyMembersList";
+import ViewPersonalInfo from "./viewPersonalInfo";
 
 function ProfileTabs() {
   const [activeKey, setActiveKey] = useState("first");
@@ -62,7 +63,9 @@ function ProfileTabs() {
           </Col>
           <Col lg={9}>
             <Tab.Content>
-              <Tab.Pane eventKey="first">First tab content</Tab.Pane>
+              <Tab.Pane eventKey="first">
+                <ViewPersonalInfo />
+              </Tab.Pane>
               <Tab.Pane eventKey="second">
                 <div>
                   <FamilyMembersList />

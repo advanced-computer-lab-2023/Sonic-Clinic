@@ -3,7 +3,6 @@ import AppNavbar from "../../components/AppNavigation/AppNavbar";
 //import MainImg from "../../components/Patient/MainImg";
 import GuestMainImg from "../../components/Guest/GuestMainImg";
 import HamburgerMenu from "../../components/Patient/HamburgerMenu";
-//import SearchCard from "../../components/Patient/SearchCard";
 import GuestBox from "../../components/Guest/GuestBox";
 import GuestBurgerMenu from "../../components/Guest/GuestBurgerMenu";
 

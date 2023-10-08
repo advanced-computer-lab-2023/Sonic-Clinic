@@ -3,29 +3,22 @@ import { Button, Container, Form } from "react-bootstrap";
 import "./DoctorFilter.css";
 function DoctorFilter() {
   const Specialties = [
-    { title: "Cardiologist", id: "1", selected: false },
-    { title: "Dermatologist", id: "2", selected: false },
-    { title: "Pediatrician", id: "3", selected: false },
-    { title: "Orthopedic Surgeon", id: "4", selected: false },
-    { title: "Ophthalmologist", id: "5", selected: false },
-    { title: "Gynecologist", id: "6", selected: false },
-    { title: "Urologist", id: "7", selected: false },
-    { title: "Neurologist", id: "8", selected: false },
-    { title: "Dentist", id: "9", selected: false },
-    { title: "Psychiatrist", id: "10", selected: false },
-    { title: "Endocrinologist", id: "11", selected: false },
-    { title: "Rheumatologist", id: "12", selected: false },
-    { title: "Allergist", id: "13", selected: false },
-    { title: "Oncologist", id: "14", selected: false },
-    { title: "Pulmonologist", id: "15", selected: false },
+    { title: "Cardiology", id: "1", selected: false },
+    { title: "Orthopedics", id: "2", selected: false },
+    { title: "Oncology", id: "3", selected: false },
+    { title: "Neurology", id: "4", selected: false },
+    { title: "Pediatrics", id: "5", selected: false },
   ];
 
   const [currentSpecialties, setSelectedSpecialties] = useState(Specialties);
 
   const toggleSpecialty = (specialtyItem, index) => {
-    const copyCurrentSpecialties = [...currentSpecialties];
-    copyCurrentSpecialties[index].selected =
-      !copyCurrentSpecialties[index].selected;
+    const copyCurrentSpecialties = currentSpecialties.map(
+      (item, i) =>
+        i === index
+          ? { ...item, selected: !item.selected } // Toggle the selected state of the clicked specialty
+          : { ...item, selected: false } // Deselect all other specialties
+    );
     setSelectedSpecialties(copyCurrentSpecialties);
   };
 
@@ -77,7 +70,7 @@ function DoctorFilter() {
           fontStyle: "normal",
           fontWeight: 700,
           lineHeight: "120%",
-          marginBottom: "1rem"
+          marginBottom: "1rem",
         }}
       >
         Filter Doctors
@@ -124,7 +117,7 @@ function DoctorFilter() {
           Date
         </div>
         <Form.Control
-          style={{marginBottom:'1rem'}}
+          style={{ marginBottom: "1rem" }}
           type="date"
           value={selectedDate}
           onChange={handleDateChange}
@@ -147,7 +140,7 @@ function DoctorFilter() {
           Time
         </div>
         <Form.Control
-          style={{marginBottom:'1rem'}}
+          style={{ marginBottom: "1rem" }}
           type="time"
           value={selectedTime}
           onChange={handleTimeChange}
