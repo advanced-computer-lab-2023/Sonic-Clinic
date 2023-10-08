@@ -1,11 +1,17 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Container, Row } from "react-bootstrap";
 import AppNavbar from "../../components/AppNavigation/AppNavbar";
 import HamburgerMenu from "../../components/Patient/HamburgerMenu";
 import PrescriptionFilter from "../../components/Patient/PrescriptionFilter";
 import ShowPrescriptions from "../../components/Patient/ShowPrescriptions";
+import { useDispatch } from "react-redux";
+import { deleteSearchData } from "../../state/Patient/SearchDoctor";
 
 function PatientViewPrescriptions() {
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(deleteSearchData());
+  }, []);
   return (
     <div>
       <AppNavbar hamburgerMenu={<HamburgerMenu />} />

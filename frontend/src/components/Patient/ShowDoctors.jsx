@@ -5,14 +5,18 @@ import axios from "axios";
 import { useDispatch } from "react-redux";
 import { setDoctorData } from "../../state/doctorIdReducer";
 import defaultPfp from "../../Assets/Patient/DefaultPfp.png";
+import { useSelector } from "react-redux";
+import { setSearchData } from "../../state/Patient/SearchDoctor";
 
-function ShowDoctors({ nameQuery, specQuery }) {
+function ShowDoctors() {
   const [loading, setLoading] = useState(true);
   const [responseData, setResponseData] = useState([]);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [error1, setError] = useState(null);
 
+  const searchDataName = useSelector((state) => state.searchDoctor.name); // Assuming 'searchDoctor' is the slice name
+  const searchDataSpec = useSelector((state) => state.searchDoctor.specialty); // Assuming 'searchDoctor' is the slice name
   const handleCard = (doctor) => {
     dispatch(
       setDoctorData({
@@ -32,7 +36,7 @@ function ShowDoctors({ nameQuery, specQuery }) {
 
   useEffect(() => {
     fetchData();
-  }, {});
+  }, {}); // Fetch data when searchData changes
 
   const fetchData = async () => {
     try {
@@ -59,8 +63,8 @@ function ShowDoctors({ nameQuery, specQuery }) {
   const NeededData = responseData;
   const filteredDoctors = NeededData.filter(
     (doctor) =>
-      doctor.name.toLowerCase().includes(nameQuery.toLowerCase()) &&
-      doctor.speciality.toLowerCase().includes(specQuery.toLowerCase())
+      doctor.name.toLowerCase().includes(searchDataName.toLowerCase()) &&
+      doctor.speciality.toLowerCase().includes(searchDataSpec.toLowerCase())
   );
 
   return (
@@ -117,10 +121,10 @@ function ShowDoctors({ nameQuery, specQuery }) {
                   <Card.Body>
                     <Card.Title
                       style={{
-                        color: "#05afb9", // Doctor's name color
+                        color: "#05afb9",
                         fontSize: "2rem",
                         fontWeight: "600",
-                        marginBottom: "1rem", // Doctor's name font size
+                        marginBottom: "1rem",
                       }}
                     >
                       {doctor.name}
@@ -128,9 +132,9 @@ function ShowDoctors({ nameQuery, specQuery }) {
                     <Card.Text>
                       <div
                         style={{
-                          fontSize: "1.2rem", // Speciality font size
+                          fontSize: "1.2rem",
                           color: "#333",
-                          marginBottom: "4rem", // Speciality color
+                          marginBottom: "4rem",
                         }}
                       >
                         {doctor.speciality}
@@ -138,9 +142,9 @@ function ShowDoctors({ nameQuery, specQuery }) {
                       <div
                         style={{
                           fontSize: "1.2rem",
-                          fontWeight: "600", // Hourly rate font size
+                          fontWeight: "600",
                           color: "#555",
-                          marginRight: "1rem", // Hourly rate color
+                          marginRight: "1rem",
                         }}
                         className="d-flex align-items-center justify-content-end"
                       >

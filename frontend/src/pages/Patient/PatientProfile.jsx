@@ -4,8 +4,15 @@ import AppNavbar from "../../components/AppNavigation/AppNavbar";
 import HamburgerMenu from "../../components/Patient/HamburgerMenu";
 
 import ProfileTabs from "../../components/Patient/ProfileTabs";
+import { useDispatch } from "react-redux";
+import { useEffect } from "react";
+import { deleteSearchData } from "../../state/Patient/SearchDoctor";
 
 function PatientProfile() {
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(deleteSearchData());
+  }, []);
   return (
     <div>
       <AppNavbar hamburgerMenu={<HamburgerMenu />} />

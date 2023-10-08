@@ -1,13 +1,24 @@
 import React, { useState } from "react";
 import { Card, Form, Button } from "react-bootstrap";
+import { useDispatch } from "react-redux";
+import { setSearchData } from "../../state/Patient/SearchDoctor";
+import { useNavigate } from "react-router";
 
 function ViewDoctorsSearch({ setNameQuery, setSpecQuery }) {
   const [doctorName, setDoctorName] = useState("");
   const [doctorSpecialty, setDoctorSpecialty] = useState("");
+  const dispatch = useDispatch();
 
   const handleSearch = () => {
-    setNameQuery(doctorName);
-    setSpecQuery(doctorSpecialty);
+    dispatch(
+      setSearchData({
+        name: doctorName,
+        specialty: doctorSpecialty,
+      })
+    );
+    // Uncomment these lines if you want to set the query locally
+    // setNameQuery(doctorName);
+    // setSpecQuery(doctorSpecialty);
   };
 
   const handleSubmit = (e) => {
@@ -34,8 +45,6 @@ function ViewDoctorsSearch({ setNameQuery, setSpecQuery }) {
       >
         <Card.Body>
           <Form onSubmit={handleSubmit}>
-            {" "}
-            {/* Add onSubmit handler */}
             <div className="d-flex align-items-center justify-content-between">
               <div className="col-5">
                 <Form.Group className="mr-2">
