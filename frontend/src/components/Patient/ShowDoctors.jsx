@@ -7,6 +7,7 @@ import { setDoctorData } from "../../state/doctorIdReducer";
 import defaultPfp from "../../Assets/Patient/DefaultPfp.png";
 import { useSelector } from "react-redux";
 import { setSearchData } from "../../state/Patient/SearchDoctor";
+import { setFilterArray } from "../../state/Patient/filteredDoctors";
 
 function ShowDoctors() {
   const [loading, setLoading] = useState(true);
@@ -14,6 +15,9 @@ function ShowDoctors() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [error1, setError] = useState(null);
+  const updateFilteredDoctors = (filteredArray) => {
+    dispatch(setFilterArray({ filterArray: filteredDoctors }));
+  };
 
   const searchDataName = useSelector((state) => state.searchDoctor.name); // Assuming 'searchDoctor' is the slice name
   const searchDataSpec = useSelector((state) => state.searchDoctor.specialty); // Assuming 'searchDoctor' is the slice name
@@ -70,6 +74,7 @@ function ShowDoctors() {
       speciality.includes(searchDataSpec.toLowerCase())
     );
   });
+  updateFilteredDoctors(filteredDoctors);
 
   return (
     <div>

@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { Button, Container, Form } from "react-bootstrap";
 import "./DoctorFilter.css";
+import axios from "axios";
+import { useSelector } from "react-redux";
 function DoctorFilter() {
   const Specialties = [
     { title: "Cardiology", id: "1", selected: false },
@@ -28,6 +30,9 @@ function DoctorFilter() {
   const handleDateChange = (e) => {
     setSelectedDate(e.target.value);
   };
+  // const handleApply = (e) => {
+  //   // console.log("FILTER", filterArray);
+  // };
 
   const handleTimeChange = (e) => {
     setSelectedTime(e.target.value);
@@ -48,6 +53,39 @@ function DoctorFilter() {
 
     return `${yyyy}-${mm}-${dd}`;
   }
+  const filteredDoctors = useSelector(
+    (state) => state.filterDoctor.filterArray
+  );
+  const handleApplyClick = async () => {
+    try {
+      // Create an object to hold the filters
+      const filters = {
+        specialties: currentSpecialties
+          .filter((specialty) => specialty.selected)
+          .map((specialty) => specialty.title),
+        date: selectedDate,
+        time: selectedTime,
+      };
+      const response = await axios.post(
+        "/filterDoctors",
+        {
+          id: "your-id-value", // Replace with your actual id value
+        },
+        {
+          speciality: currentSpecialties
+            .filter((specialty) => specialty.selected)
+            .map((specialty) => specialty.title),
+          date: selectedDate,
+          time: selectedTime, // Send filters as request parameters
+        }
+      );
+
+      // Handle the response as needed
+      console.log("API response:", response.data);
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
 
   return (
     <Container
@@ -151,7 +189,9 @@ function DoctorFilter() {
         fluid
         className="d-flex align-items-center justify-content-center"
       >
-        <Button className="custom-button">Apply</Button>
+        <Button className="custom-button" onClick={handleApplyClick}>
+          Apply
+        </Button>
       </Container>
     </Container>
   );

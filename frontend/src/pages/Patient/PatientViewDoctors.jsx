@@ -7,6 +7,8 @@ import ShowDoctors from "../../components/Patient/ShowDoctors";
 import ViewDoctorsSearch from "../../components/Patient/ViewDoctorsSearch";
 
 function PatientViewDoctors() {
+  // const [filteredDoctors, setFilteredDoctors] = useState([]);
+
   return (
     <div>
       <AppNavbar hamburgerMenu={<HamburgerMenu />} />

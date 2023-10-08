@@ -9,10 +9,16 @@ import ViewPersonalInfo from "./viewPersonalInfo";
 
 function ProfileTabs() {
   const [activeKey, setActiveKey] = useState("first");
+  const [refreshFlag, setRefreshFlag] = useState(false);
 
   const handleSelect = (selectedKey) => {
     setActiveKey(selectedKey);
   };
+
+  const handleRefresh = () => {
+    setRefreshFlag(!refreshFlag); // Toggle the refreshFlag to trigger a refresh
+  };
+
   return (
     <div className="w-100 mt-5">
       <Tab.Container id="left-tabs-example" defaultActiveKey="first">
@@ -68,8 +74,8 @@ function ProfileTabs() {
               </Tab.Pane>
               <Tab.Pane eventKey="second">
                 <div>
-                  <FamilyMembersList />
-                  <AddFamilyMember />
+                  <FamilyMembersList refreshFlag={refreshFlag} />
+                  <AddFamilyMember onRefresh={handleRefresh} />
                 </div>
               </Tab.Pane>
             </Tab.Content>

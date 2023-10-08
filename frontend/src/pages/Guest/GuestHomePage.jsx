@@ -5,8 +5,19 @@ import GuestMainImg from "../../components/Guest/GuestMainImg";
 import HamburgerMenu from "../../components/Patient/HamburgerMenu";
 import GuestBox from "../../components/Guest/GuestBox";
 import GuestBurgerMenu from "../../components/Guest/GuestBurgerMenu";
+import { useDispatch } from "react-redux";
+import { useEffect } from "react";
+import { logoutDoctor } from "../../state/loginDoctorReducer";
+import { logoutAdmin } from "../../state/loginAdminReducer";
+import { logoutPatient } from "../../state/loginPatientReducer";
 
 function GuestHomePage() {
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(logoutDoctor());
+    dispatch(logoutAdmin());
+    dispatch(logoutPatient());
+  }, []);
   return (
     <div>
       <AppNavbar hamburgerMenu={<GuestBurgerMenu />} />

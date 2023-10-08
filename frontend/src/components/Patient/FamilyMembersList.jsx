@@ -3,25 +3,23 @@ import React, { useEffect, useState } from "react";
 import { Card, ListGroup } from "react-bootstrap";
 import { useSelector } from "react-redux";
 
-function FamilyMembersList() {
+function FamilyMembersList({ refreshFlag }) {
   const [loading, setLoading] = useState(true);
   const [responseData, setResponseData] = useState([]);
   const [error1, setError] = useState(null);
   const id = useSelector((state) => state.patientLogin.userId);
   useEffect(() => {
     fetchData();
-  }, {}); // Fetch data when searchData changes
+  }, [refreshFlag]); // Fetch data when searchData changes
 
   const fetchData = async () => {
     try {
-      const response = await axios.get("/viewFamilyMembers", {
-        data: {
-          _id: id,
-        },
+      const response = await axios.post("/viewFamilyMembers", {
+        _id: id,
       });
 
       if (response.status === 200) {
-        console.log("RESPONSE:", response.familyMembers);
+        setResponseData(response.data.familyMembers);
       } else {
         console.log("Server error");
       }
@@ -35,22 +33,6 @@ function FamilyMembersList() {
   };
 
   const NeededData = responseData;
-  const familyMembers = [
-    {
-      name: "John Doe",
-      nationalId: "1234567890123456",
-      age: 30,
-      gender: "Male",
-      relation: "Spouse",
-    },
-    {
-      name: "Jane Doe",
-      nationalId: "9876543210987654",
-      age: 28,
-      gender: "Female",
-      relation: "Spouse",
-    },
-  ];
 
   return (
     <div>
