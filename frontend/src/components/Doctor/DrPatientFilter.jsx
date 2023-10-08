@@ -39,10 +39,12 @@ function DrPatientFilter({ onFilter }) {
       <div
         style={{
           color: "var(--theme-dark, #212529)",
-          fontSize: "2rem",
+          // fontSize: "2rem",
+          fontSize: "30px",
           fontStyle: "normal",
           fontWeight: 700,
           lineHeight: "120%",
+          marginBottom: "1rem",
         }}
       >
         Filter Patients
@@ -51,15 +53,15 @@ function DrPatientFilter({ onFilter }) {
       <div className="mb-2">
         <div
           style={{
-            color: "#000",
-            fontSize: "1.25rem",
+            color: "#099BA0 ",
+            fontSize: "1.1rem",
             fontStyle: "normal",
-            fontWeight: 700,
+            fontWeight: 500,
             lineHeight: "100%",
-            marginBottom: "1.4rem",
+            marginBottom: "1rem",
           }}
         >
-          Date
+          Appointment Date
         </div>
         <Form.Control
           type="date"
@@ -68,7 +70,7 @@ function DrPatientFilter({ onFilter }) {
         />
       </div>
 
-     {/*  <div className="mb-2">
+      {/*  <div className="mb-2">
         <div
           style={{
             color: "#000",

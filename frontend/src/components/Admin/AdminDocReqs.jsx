@@ -1,14 +1,38 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import AdminSearchBar from "../../components/Admin/AdminSearchBar";
 import { Container } from "react-bootstrap";
 import AdminDocReqCard from "./AdminDocReqCard";
+import axios from "axios";
 
 export default function AdminDocReqs() {
-  const users = [
-    { name: "Mark Brown", specialty: "Neurosurgery", email:"bla@bla", dateOfBirth: "10/12/1990", rate: "100/hr", affiliation: "St Jose", education: "GUC"},
-    { name: "John Doe", specialty: "Physiotherapy", email:"bla@bla", dateOfBirth: "10/12/1990", rate: "100/hr", affiliation: "St Jose", education: "GUC" },
-    { name: "Audrey Lim", specialty: "Psychology", email:"bla@bla", dateOfBirth: "10/12/1990", rate: "100/hr", affiliation: "St Jose", education: "GUC" },
-  ];
+  const [loading, setLoading] = useState(true);
+  const [responseData, setResponseData] = useState([]);
+  const [error1, setError] = useState(null);
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+  
+  const fetchData = async () => {
+    try {
+      const response = await axios.get("/viewPotentialDoctors");
+      if (response.status === 200) {
+           setResponseData(response.data.potentialDoctors);
+      } else {
+        console.log("Server error");
+      }
+      setLoading(false);
+    } catch (error) {
+      if (error.response && error.response.status === 404) {
+        setError("No potential doctors found.");
+      } else if (error.response && error.response.status === 500) {
+        setError("Server Error");
+      }
+      setLoading(false);
+    }
+  };
+
+  const users = responseData;
 
   return (
     <Container
