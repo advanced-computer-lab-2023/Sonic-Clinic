@@ -263,6 +263,10 @@ const getDoctorsWithSessionPrice = async (req, res) => {
     // Fetch all doctors from the database
     const doctors = await doctorModel.find();
 
+    if(!doctors){
+      return res.status(404).json({ message: "No doctors found." });
+    }
+
     // Calculate session price for each doctor
     const doctorsWithSessionPrice = doctors.map((doctor) => {
       const sessionPrice = calculateSessionPrice(
