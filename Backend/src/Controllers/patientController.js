@@ -35,7 +35,7 @@ const searchDoctors = async (req, res) => {
 
     // Use regex for partial name search
     if (name) {
-      const nameRegex = new RegExp(name, 'i');
+      const nameRegex = new RegExp(name, "i");
       query.name = { $regex: nameRegex };
     }
 
@@ -54,7 +54,6 @@ const searchDoctors = async (req, res) => {
     res.status(500).json({ message: "Server Error" });
   }
 };
-
 
 const filterDoctors = async (req, res) => {
   const { speciality, date, time } = req.query;
@@ -102,7 +101,7 @@ const filterDoctors = async (req, res) => {
   }
 };
 
-const filterApointmentsByDateOrStatus = async (req, res) => {
+const filterAppointmentsByDateOrStatus = async (req, res) => {
   const { date, status } = req.query;
 
   try {
@@ -157,7 +156,7 @@ const filterPrescriptions = async (req, res) => {
 
   try {
     // Retrieve username from the session
-    const patientID = req.body._id;
+    const patientID = req.body.patientID;
 
     let query = { patientID };
 
@@ -187,16 +186,14 @@ const filterPrescriptions = async (req, res) => {
 };
 
 const viewFamilyMembers = async (req, res) => {
-  const username = req.body.username;
+  const patientID = req.body._id;
 
   try {
-    const patient = await patientModel.findOne({ username });
+    const patient = await patientModel.findOne({ _id:patientID });
 
     if (!patient) {
       return res.status(404).json({ message: "Patient not found." });
     }
-
-    const patientID = patient._id;
 
     const familyMembers = await familyMemberModel.find({ patientID });
 
@@ -211,11 +208,11 @@ const viewFamilyMembers = async (req, res) => {
 };
 
 const selectPrescription = async (req, res) => {
-  const { prescriptionId } = req.query;
-  const id = req.body._id;
+  const prescriptionId  = req.body._id;
+  const id = req.body.patientID;
 
   try {
-    const prescription = await prescriptionModel.findOne({ patientID: id });
+    const prescription = await prescriptionModel.findOne({ patientID: id , _id:prescriptionId});
 
     if (!prescription) {
       return res.status(404).json({ message: "Patient not found." });
@@ -256,15 +253,16 @@ const calculateSessionPrice = (hourlyRate, patientPackage) => {
   };
 
   const discount = discountPercentages[patientPackage.toLowerCase()] || 0;
-  return hourlyRate * 1.1 * (1- discount);
+  return hourlyRate * 1.1 * (1 - discount);
 };
 
 const getDoctorsWithSessionPrice = async (req, res) => {
   try {
     // Fetch all doctors from the database
+    const patient = await patientModel.findById(req.body);
     const doctors = await doctorModel.find();
 
-    if(!doctors){
+    if (!doctors) {
       return res.status(404).json({ message: "No doctors found." });
     }
 
@@ -272,7 +270,7 @@ const getDoctorsWithSessionPrice = async (req, res) => {
     const doctorsWithSessionPrice = doctors.map((doctor) => {
       const sessionPrice = calculateSessionPrice(
         doctor.hourlyRate,
-        req.body.package
+        patient.package
       );
 
       return {
@@ -348,32 +346,28 @@ const dummyDoctors = [
 ];
 
 const viewAllDoctorsForPatients = async (req, res) => {
+  try {
+    // Query the database to get real doctors
+    const realDoctors = await doctorModel.find({}, { name: 1, speciality: 1 });
 
-   
-    try {
-      // Query the database to get real doctors
-      const realDoctors = await doctorModel.find({}, { name: 1, speciality: 1 });
-  
-     
-      const allDoctors = dummyDoctors.concat(realDoctors);
-  
-      if (!allDoctors || allDoctors.length === 0) {
-        return res.status(404).json({ message: 'No doctors found.' });
-      }
-  
-      res.status(200).json({ doctors: allDoctors });
-    } catch (error) {
-      res.status(500).json({ message: 'Server Error' });
+    const allDoctors = dummyDoctors.concat(realDoctors);
+
+    if (!allDoctors || allDoctors.length === 0) {
+      return res.status(404).json({ message: "No doctors found." });
     }
-  };
-  
+
+    res.status(200).json({ doctors: allDoctors });
+  } catch (error) {
+    res.status(500).json({ message: "Server Error" });
+  }
+};
 
 module.exports = {
   selectPrescription,
   viewFamilyMembers,
   filterPrescriptions,
   viewPrescriptions,
-  filterApointmentsByDateOrStatus,
+  filterAppointmentsByDateOrStatus,
   filterDoctors,
   searchDoctors,
   doctorDetails,
