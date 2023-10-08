@@ -4,6 +4,8 @@ const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const { MongoClient } = require("mongodb");
 const session = require("express-session");
+const jwt = require("jsonwebtoken");
+
 
 mongoose.set("strictQuery", false);
 require("dotenv").config();
