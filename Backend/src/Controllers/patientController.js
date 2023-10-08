@@ -401,6 +401,19 @@ const filterDoctorsAfterSearch = async (req, res) => {
     res.status(500).json({ message: "Server Error" });
   }
 };
+const viewAllAppointments = async (req, res) => {
+  try {
+    const appointments = await appointmentModel.find();
+
+    if (!appointments || appointments.length === 0) {
+      return res.status(404).json({ message: "No appointments found." });
+    }
+
+    res.status(200).json({ appointments });
+  } catch (error) {
+    res.status(500).json({ message: "Server Error" });
+  }
+};
 
 module.exports = {
   selectPrescription,
@@ -417,4 +430,5 @@ module.exports = {
   getDoctorsWithSessionPrice,
   addAppointment,
   filterDoctorsAfterSearch,
+  viewAllAppointments,
 };
