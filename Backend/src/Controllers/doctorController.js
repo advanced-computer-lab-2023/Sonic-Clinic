@@ -5,20 +5,25 @@ const PrescriptionModel = require("../Models/Prescription.js");
 const appointmentModel = require("../Models/Appointment.js");
 
 const searchPatientByName = async (req, res) => {
-  const name = req.query;
+  const { name } = req.query;
 
   try {
-    const patient = await patientModel.findOne(name);
+    // Create a regular expression to match partial names (case insensitive)
+    const nameRegex = new RegExp(name, 'i');
 
-    if (!patient) {
+    // Find patients where the name matches partially
+    const patients = await patientModel.find({ name: { $regex: nameRegex } });
+
+    if (patients.length === 0) {
       return res.status(404).json({ message: "No patients found." });
     }
 
-    res.status(200).json({ patient });
+    res.status(200).json({ patients });
   } catch (error) {
     res.status(500).json({ message: "Server Error" });
   }
 };
+
 
 const filterPatientsByAppointments = async (req, res) => {
   try {
