@@ -32,6 +32,7 @@ function DrShowAppointments() {
         <Link
           to={`/appointment/${appointment.appointmentId}`}
           key={appointment.appointmentId}
+          className="text-decoration-none"
         >
           <Card className="mb-4 mx-3~ bg-light" style={{ cursor: "pointer" }}>
             <Row>

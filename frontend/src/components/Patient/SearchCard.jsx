@@ -12,6 +12,7 @@ import { setSearchData } from "../../state/Patient/SearchDoctor";
 import { useNavigate } from "react-router";
 
 function SearchCard() {
+
   const [doctorName, setDoctorName] = useState("");
   const [doctorSpecialty, setDoctorSpecialty] = useState("");
   const dispatch = useDispatch();
@@ -34,6 +35,7 @@ function SearchCard() {
     handleSearch();
     navigate("/patient/view-doctors"); // Call your search function here
   };
+
   return (
     <div
       className="d-flex justify-content-center"
@@ -71,6 +73,17 @@ function SearchCard() {
                 <Form.Label>Doctor Name</Form.Label>
                 <Form.Control
                   type="text"
+                  style={{ width: "200px", marginRight: "10px" }}
+                  placeholder="Enter doctor's name"
+                />
+              </Form.Group>
+
+              <Form.Group className="mr-2">
+                <Form.Label>Location</Form.Label>
+                <Form.Control
+                  type="text"
+                  style={{ width: "200px" }}
+                  placeholder="Enter location"
                   style={{ width: "100%", marginRight: "10px" }}
                   placeholder="Enter doctor's name"
                   value={doctorName}

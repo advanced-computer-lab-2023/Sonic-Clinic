@@ -38,11 +38,11 @@ function AppointmentFilter({ onFilter }) {
     >
       <div
         style={{
-          color: "var(--theme-dark, #212529)",
-          fontSize: "2rem",
+          fontSize: "30px",
           fontStyle: "normal",
           fontWeight: 700,
           lineHeight: "120%",
+          marginBottom: "1rem",
         }}
       >
         Filter Appointments
@@ -51,12 +51,12 @@ function AppointmentFilter({ onFilter }) {
       <div className="mb-2">
         <div
           style={{
-            color: "#000",
-            fontSize: "1.25rem",
+            color: "#099BA0 ",
+            fontSize: "1.1rem",
             fontStyle: "normal",
-            fontWeight: 700,
+            fontWeight: 500,
             lineHeight: "100%",
-            marginBottom: "1.4rem",
+            marginBottom: "1rem",
           }}
         >
           Date
@@ -71,12 +71,12 @@ function AppointmentFilter({ onFilter }) {
       <div className="mb-2">
         <div
           style={{
-            color: "#000",
-            fontSize: "1.25rem",
+            color: "#099BA0 ",
+            fontSize: "1.1rem",
             fontStyle: "normal",
-            fontWeight: 700,
+            fontWeight: 500,
             lineHeight: "100%",
-            marginBottom: "1.4rem",
+            marginBottom: "1rem",
           }}
         >
           Status
@@ -85,7 +85,7 @@ function AppointmentFilter({ onFilter }) {
           <option value="">Select status</option>
           <option value="confirmed">Confirmed</option>
           <option value="pending">Pending</option>
-          <option value="canceled">Canceled</option>
+          <option value="cancelled">Cancelled</option>
         </Form.Control>
       </div>
 

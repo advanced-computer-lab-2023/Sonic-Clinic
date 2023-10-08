@@ -1,9 +1,14 @@
+
 import React, { useEffect, useState } from "react";
 import { Card, Col, Row, Image, Spinner } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faCalendar,
+
+  faFileAlt,
+  faCheckCircle,
+
   faCapsules,
   faCheckCircle,
 } from "@fortawesome/free-solid-svg-icons";
