@@ -4,7 +4,7 @@ import { useDispatch } from "react-redux";
 import { setSearchData } from "../../state/Patient/SearchDoctor";
 import { useNavigate } from "react-router";
 
-function ViewDoctorsSearch({ setNameQuery, setSpecQuery }) {
+function ViewDoctorsSearch() {
   const [doctorName, setDoctorName] = useState("");
   const [doctorSpecialty, setDoctorSpecialty] = useState("");
   const dispatch = useDispatch();

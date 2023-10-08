@@ -17,7 +17,7 @@ function ShowDoctors() {
 
   const searchDataName = useSelector((state) => state.searchDoctor.name); // Assuming 'searchDoctor' is the slice name
   const searchDataSpec = useSelector((state) => state.searchDoctor.specialty); // Assuming 'searchDoctor' is the slice name
-  const handleCard = (doctor) => {
+  const handleCard = (doctor, index) => {
     dispatch(
       setDoctorData({
         username: doctor.username,
@@ -31,7 +31,7 @@ function ShowDoctors() {
         photoLink: doctor.photoLink,
       })
     );
-    navigate("/patient");
+    navigate(`/patient/view-doctors/${index}`);
   };
 
   useEffect(() => {
@@ -43,7 +43,7 @@ function ShowDoctors() {
       const response = await axios.get("/viewAllDoctors");
       if (response.status === 200) {
         console.log("RESPONSE:", response.data);
-        setResponseData(response.data.doctors[0]);
+        setResponseData(response.data.doctors);
       } else {
         console.log("Server error");
       }
@@ -61,11 +61,15 @@ function ShowDoctors() {
   };
 
   const NeededData = responseData;
-  const filteredDoctors = NeededData.filter(
-    (doctor) =>
-      doctor.name.toLowerCase().includes(searchDataName.toLowerCase()) &&
-      doctor.speciality.toLowerCase().includes(searchDataSpec.toLowerCase())
-  );
+  const filteredDoctors = NeededData.filter((doctor) => {
+    const name = doctor.name ? doctor.name.toLowerCase() : ""; // Check if doctor.name is defined
+    const speciality = doctor.speciality ? doctor.speciality.toLowerCase() : ""; // Check if doctor.speciality is defined
+
+    return (
+      name.includes(searchDataName.toLowerCase()) &&
+      speciality.includes(searchDataSpec.toLowerCase())
+    );
+  });
 
   return (
     <div>
@@ -85,10 +89,10 @@ function ShowDoctors() {
       )}
       {error1 && <div style={{ color: "red" }}>{error1}</div>}
       {!loading &&
-        filteredDoctors.map((doctor) => (
+        filteredDoctors.map((doctor, index) => (
           <a
-            onClick={() => handleCard(doctor)}
-            key={doctor._id}
+            onClick={() => handleCard(doctor, index + 1)}
+            key={index}
             style={{ textDecoration: "none", color: "inherit" }}
           >
             <Card
