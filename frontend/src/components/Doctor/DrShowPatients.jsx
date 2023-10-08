@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Card, Col, Row, Form, Button } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -11,10 +11,10 @@ import {
   faSearch,
 } from "@fortawesome/free-solid-svg-icons";
 import { useSelector } from "react-redux";
+import axios from "axios";
 
 function DrShowPatients() {
-  const patients = useSelector((state) => state.doctorLogin.patients);
-  console.log(patients);
+  // const patients = useSelector((state) => state.doctorLogin.patients);
   // const Patients = [
   //   {
   //     PatientName: "Ahmed",
@@ -52,6 +52,36 @@ function DrShowPatients() {
   // ];
 
   const [searchTerm, setSearchTerm] = useState("");
+  const [responseData, setResponseData] = useState([]);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const fetchData = async () => {
+    try {
+      const response = await axios.get("/viewPatients");
+      if (response.status === 200) {
+        setResponseData(response.data.patients);
+        print();
+      } else {
+        console.log("Server error");
+      }
+    } catch (error) {
+      if (error.response && error.response.status === 404) {
+        setError("No data found.");
+      } else if (error.response && error.response.status === 500) {
+        setError("Server Error");
+      }
+    }
+  };
+
+  const patients = responseData;
+
+  const print = () => {
+    console.log(patients);
+  };
 
   const handleSearch = (event) => {
     setSearchTerm(event.target.value);
@@ -128,7 +158,7 @@ function DrShowPatients() {
           {expandedPatient === index && (
             <Card.Body>
               <Row>
-                {/* <Col lg={4}>
+                <Col lg={4}>
                   <div
                     className={`appointment-icon-container ${
                       patient.status === "Confirmed" ? "confirmed" : "cancelled"
@@ -143,7 +173,7 @@ function DrShowPatients() {
                       className="appointment-icon"
                     />
                   </div>
-                </Col> */}
+                </Col>
                 <Col lg={8}>
                   <Card.Text>
                     <div className="show-more-date">
@@ -151,17 +181,17 @@ function DrShowPatients() {
                         icon={faCalendar}
                         style={{ marginRight: "0.5rem" }}
                       />
-                      {/* {patient.date} */}
+                      {patient.appointments}
                       Date
                     </div>
-                    <div className="show-more-time">
+                    {/* <div className="show-more-time">
                       <FontAwesomeIcon
                         icon={faClock}
                         style={{ marginRight: "0.5rem" }}
                       />
-                      {/* {patient.time} */}
+                      {patient.time}
                       Time
-                    </div>
+                    </div> */}
                     {/* <div
                       className={`show-more-status ${
                         patient.status === "Confirmed"
@@ -189,12 +219,12 @@ function DrShowPatients() {
                       )}
                     </div> */}
                     <hr />
-                    {/* <div className="patient-info">
+                    <div className="patient-info">
                       <h5>Patient Information</h5>
-                      <p>Age: {patient.age}</p>
+                      <p>Date of birth: {patient.dateOfBirth}</p>
                       <p>Gender: {patient.gender}</p>
-                      <p>Medical History: {patient.medicalHistory}</p>
-                    </div> */}
+                      <p>Medical History: {patient.prescriptions}</p>
+                    </div>
                   </Card.Text>
                 </Col>
               </Row>
