@@ -156,7 +156,11 @@ const filterPrescriptions = async (req, res) => {
 
   try {
     // Retrieve username from the session
+<<<<<<< Updated upstream
     const patientID = req.body.patientID;
+=======
+    const patientID = req.body._id;
+>>>>>>> Stashed changes
 
     let query = { patientID };
 
@@ -186,7 +190,11 @@ const filterPrescriptions = async (req, res) => {
 };
 
 const viewFamilyMembers = async (req, res) => {
+<<<<<<< Updated upstream
   const patientID = req.body._id;
+=======
+  const username = req.body.username;
+>>>>>>> Stashed changes
 
   try {
     const patient = await patientModel.findOne({ _id:patientID });
@@ -208,8 +216,13 @@ const viewFamilyMembers = async (req, res) => {
 };
 
 const selectPrescription = async (req, res) => {
+<<<<<<< Updated upstream
   const prescriptionId  = req.body._id;
   const id = req.body.patientID;
+=======
+  const { prescriptionId } = req.query;
+  const id = req.body._id;
+>>>>>>> Stashed changes
 
   try {
     const prescription = await prescriptionModel.findOne({ patientID: id , _id:prescriptionId});
@@ -270,7 +283,11 @@ const getDoctorsWithSessionPrice = async (req, res) => {
     const doctorsWithSessionPrice = doctors.map((doctor) => {
       const sessionPrice = calculateSessionPrice(
         doctor.hourlyRate,
+<<<<<<< Updated upstream
         patient.package
+=======
+        req.body.package
+>>>>>>> Stashed changes
       );
 
       return {
