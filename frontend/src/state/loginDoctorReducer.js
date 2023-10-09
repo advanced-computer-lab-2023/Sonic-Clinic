@@ -36,6 +36,11 @@ const loginSlice = createSlice({
       state.speciality = action.payload.speciality;
       state.isLoggedIn = action.payload.isLoggedIn;
     },
+    setUpdatesDoctor: (state, action) => {
+      state.email = action.payload.email;
+      state.hourlyRate = action.payload.hourlyRate;
+      state.affiliation = action.payload.affiliation;
+    },
     logoutDoctor: (state, action) => {
       state.userName = "";
       state.name = "";
@@ -69,6 +74,7 @@ const loginSlice = createSlice({
 
 export const {
   setCredentialsDoctor,
+  setUpdatesDoctor,
   logoutDoctor,
   clearPasswordDoctor,
   setUserIdDoctor,

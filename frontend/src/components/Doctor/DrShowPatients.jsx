@@ -14,7 +14,6 @@ import { useSelector } from "react-redux";
 import axios from "axios";
 
 function DrShowPatients() {
-  // const patients = useSelector((state) => state.doctorLogin.patients);
   // const Patients = [
   //   {
   //     PatientName: "Ahmed",
@@ -54,17 +53,23 @@ function DrShowPatients() {
   const [searchTerm, setSearchTerm] = useState("");
   const [responseData, setResponseData] = useState([]);
   const [error, setError] = useState(null);
+  const _id = useSelector((state) => state.doctorLogin.userId);
 
   useEffect(() => {
     fetchData();
   }, []);
 
   const fetchData = async () => {
+    const config = {
+      headers: {
+        _id: _id,
+      },
+    };
+    console.log(_id);
     try {
-      const response = await axios.get("/viewPatients");
+      const response = await axios.post("/viewPatients", { _id: _id }, config);
       if (response.status === 200) {
         setResponseData(response.data.patients);
-        print();
       } else {
         console.log("Server error");
       }
@@ -79,17 +84,13 @@ function DrShowPatients() {
 
   const patients = responseData;
 
-  const print = () => {
-    console.log(patients);
-  };
-
   const handleSearch = (event) => {
     setSearchTerm(event.target.value);
   };
 
-  const filteredPatients = patients.filter((patient) =>
-    patient.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // const filteredPatients = patients.filter((patient) =>
+  //   patient.toLowerCase().includes(searchTerm.toLowerCase())
+  // );
 
   const [expandedPatient, setExpandedPatient] = useState(null);
 
@@ -143,14 +144,14 @@ function DrShowPatients() {
           />
         </Button> */}
       </div>
-      {filteredPatients.map((patient, index) => (
+      {patients.map((patient, index) => (
         <Card className="mb-4 mx-3 bg-light" key={patient}>
           <Card.Header
             className="d-flex align-items-center justify-content-between"
             onClick={() => toggleExpand(index)}
             style={{ cursor: "pointer" }}
           >
-            <span>{patient}</span>
+            <span>{patient.name}</span>
             <FontAwesomeIcon
               icon={expandedPatient === index ? faChevronUp : faChevronDown}
             />
@@ -158,7 +159,7 @@ function DrShowPatients() {
           {expandedPatient === index && (
             <Card.Body>
               <Row>
-                <Col lg={4}>
+                {/* <Col lg={4}>
                   <div
                     className={`appointment-icon-container ${
                       patient.status === "Confirmed" ? "confirmed" : "cancelled"
@@ -173,7 +174,7 @@ function DrShowPatients() {
                       className="appointment-icon"
                     />
                   </div>
-                </Col>
+                </Col> */}
                 <Col lg={8}>
                   <Card.Text>
                     <div className="show-more-date">
@@ -181,7 +182,7 @@ function DrShowPatients() {
                         icon={faCalendar}
                         style={{ marginRight: "0.5rem" }}
                       />
-                      {patient.appointments}
+                      {/* {patient.appointments} */}
                       Date
                     </div>
                     {/* <div className="show-more-time">
@@ -223,7 +224,7 @@ function DrShowPatients() {
                       <h5>Patient Information</h5>
                       <p>Date of birth: {patient.dateOfBirth}</p>
                       <p>Gender: {patient.gender}</p>
-                      <p>Medical History: {patient.prescriptions}</p>
+                      {/* <p>Medical History: {patient.prescriptions}</p> */}
                     </div>
                   </Card.Text>
                 </Col>

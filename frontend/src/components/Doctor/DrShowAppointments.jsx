@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Card, Col, Row } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -8,45 +8,64 @@ import {
   faCheckCircle,
   faTimesCircle,
 } from "@fortawesome/free-solid-svg-icons";
+import { useSelector } from "react-redux";
+import axios from "axios";
 
 function DrShowAppointments() {
-  const appointments = [
-    {
-      appointmentId: 1,
-      date: "2023-10-15",
-      time: "10:00 AM",
-      status: "Confirmed",
-    },
-    {
-      appointmentId: 2,
-      date: "2023-10-16",
-      time: "2:30 PM",
-      status: "Cancelled",
-    },
-    // Add more appointment objects as needed
-  ];
+  const [responseData, setResponseData] = useState([]);
+  const [error, setError] = useState(null);
+  const _id = useSelector((state) => state.doctorLogin.userId);
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const fetchData = async () => {
+    const config = {
+      headers: {
+        _id: _id,
+      },
+    };
+    console.log(_id);
+    try {
+      const response = await axios.post("/viewDocApp", { _id: _id }, config);
+      if (response.status === 200) {
+        setResponseData(response.data);
+      } else {
+        console.log("Server error");
+      }
+    } catch (error) {
+      if (error.response && error.response.status === 404) {
+        setError("No data found.");
+      } else if (error.response && error.response.status === 500) {
+        setError("Server Error");
+      }
+    }
+  };
+
+  const appointments = responseData;
 
   return (
     <div>
       {appointments.map((appointment) => (
         <Link
-          to={`/appointment/${appointment.appointmentId}`}
-          key={appointment.appointmentId}
+          // to={`/appointment/${appointment.appointmentId}`}
+          // key={appointment.appointmentId}
           className="text-decoration-none"
         >
           <Card className="mb-4 mx-3~ bg-light" style={{ cursor: "pointer" }}>
             <Row>
               <Col lg={4}>
                 <div
-                  className={`appointment-icon-container ${
-                    appointment.status === "Confirmed"
-                      ? "confirmed"
-                      : "cancelled"
-                  }`}
+                // className={`appointment-icon-container
+                // ${ appointment.status === "Filled"
+                //     ? "confirmed"
+                //     : "cancelled"
+                // }`}
                 >
                   <FontAwesomeIcon
                     icon={
-                      appointment.status === "Confirmed"
+                      appointment.status === "Filled"
                         ? faCheckCircle
                         : faTimesCircle
                     }
@@ -57,7 +76,7 @@ function DrShowAppointments() {
               <Col lg={8}>
                 <Card.Body className="p-4">
                   <Card.Title className="show-more-title">
-                    Appointment {appointment.appointmentId}
+                    Patient: {appointment.patient.name}
                   </Card.Title>
                   <Card.Text>
                     <div className="show-more-date">
@@ -76,7 +95,7 @@ function DrShowAppointments() {
                     </div>
                     <div
                       className={`show-more-status ${
-                        appointment.status === "Confirmed"
+                        appointment.status === "Filled"
                           ? "confirmed"
                           : "cancelled"
                       }`}

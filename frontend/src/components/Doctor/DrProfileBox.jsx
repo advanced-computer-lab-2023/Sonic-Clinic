@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPenToSquare } from "@fortawesome/free-solid-svg-icons";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
-import { setCredentialsDoctor } from "../../state/loginDoctorReducer";
+import { setUpdatesDoctor } from "../../state/loginDoctorReducer";
 import defaultImg from "../../Assets/doctor/UnknownUser.jpg";
 import axios from "axios";
 
@@ -58,6 +58,8 @@ function DrProfileBox() {
     email: useSelector((state) => state.doctorLogin.email),
     affiliation: useSelector((state) => state.doctorLogin.affiliation),
     hourlyRate: useSelector((state) => state.doctorLogin.hourlyRate),
+    birthDate: useSelector((state) => state.doctorLogin.birthdate),
+    phoneNumber: useSelector((state) => state.doctorLogin.phoneNumber),
     educationalBackground: useSelector(
       (state) => state.doctorLogin.educationalBackground
     ),
@@ -81,7 +83,7 @@ function DrProfileBox() {
 
   const handleSaveChanges = async () => {
     dispatch(
-      setCredentialsDoctor({
+      setUpdatesDoctor({
         email: profileData.email,
         hourlyRate: profileData.hourlyRate,
         affiliation: profileData.affiliation,
