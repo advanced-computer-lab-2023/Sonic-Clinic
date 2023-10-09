@@ -77,7 +77,7 @@ const LoginForm = () => {
               password: password,
               userName: username,
               birthdate: user.dateOfBirth,
-              userEmail: user.email,
+              email: user.email,
               name: user.name,
               hourlyRate: user.hourlyRate,
               affiliation: user.affiliation,
