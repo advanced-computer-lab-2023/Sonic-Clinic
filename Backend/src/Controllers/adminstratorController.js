@@ -120,7 +120,7 @@ const deletePackage = async (req, res) => {
 
 const rejectPotentialDoctor = async(req,res) => {
    try{
-      const username = req.body.username;
+      const username = req.query.username;
       const rejectedDoctor = await potentialDoctorModel.findOneAndDelete({ username: username });
 
     if (!rejectedDoctor) {
@@ -135,7 +135,7 @@ const rejectPotentialDoctor = async(req,res) => {
 
 const removeDoctor = async(req,res) => {
    try{
-      const username = req.body.username;
+      const username = req.query.username;
       const removedDoctor = await doctorModel.findOneAndDelete({ username: username });
 
     if (!removedDoctor) {
@@ -150,7 +150,7 @@ const removeDoctor = async(req,res) => {
 }
 const removePatient = async(req,res) => {
    try{
-      const username = req.body.username;
+      const username = req.query.username;
       const removedPatient = await patientModel.findOneAndDelete({ username: username });
 
     if (!removedPatient) {
@@ -165,7 +165,7 @@ const removePatient = async(req,res) => {
 }
 const removeAdmin = async(req,res) => {
    try{
-      const username = req.body.username;
+      const username = req.query.username;
       const removedAdmin = await administratorModel.findOneAndDelete({ username: username });
 
     if (!removedAdmin) {
