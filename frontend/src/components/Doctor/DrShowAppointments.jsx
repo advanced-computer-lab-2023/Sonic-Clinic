@@ -15,6 +15,10 @@ function DrShowAppointments() {
   const [responseData, setResponseData] = useState([]);
   const [error, setError] = useState(null);
   const _id = useSelector((state) => state.doctorLogin.userId);
+  const filterDate = useSelector((state) => state.filterDrAppointments?.date);
+  const filterStatus = useSelector(
+    (state) => state.filterDrAppointments?.status
+  );
 
   useEffect(() => {
     fetchData();
@@ -45,38 +49,52 @@ function DrShowAppointments() {
 
   const appointments = responseData;
 
+  const filteredAppointments = appointments.filter((appointment) => {
+    // const isoDate = appointment.date; // Assuming appointment.date is in ISO format like "2023-10-05T14:30:00.000Z"
+    // const dateObj = new Date(isoDate);
+    // const yyyy = dateObj.getFullYear();
+    // const mm = String(dateObj.getMonth() + 1).padStart(2, "0"); // Adding 1 to the month because it's zero-based
+    // const dd = String(dateObj.getDate()).padStart(2, "0");
+    // const formattedDate = `${yyyy}-${mm}-${dd}`;
+    // const status = appointment.status ? appointment.status.toLowerCase() : "";
+    // console.log("formattedDate", formattedDate);
+    // console.log("filterDate", filterDate.toLowerCase());
+    return (
+      appointment.date.includes(filterDate) &&
+      appointment.status.includes(filterStatus)
+    );
+  });
+
   return (
     <div>
+      {/* change to filterAppointments */}
       {appointments.map((appointment) => (
         <Link
           // to={`/appointment/${appointment.appointmentId}`}
-          // key={appointment.appointmentId}
+          key={appointment._Id}
           className="text-decoration-none"
         >
           <Card className="mb-4 mx-3~ bg-light" style={{ cursor: "pointer" }}>
             <Row>
               <Col lg={4}>
                 <div
-                // className={`appointment-icon-container
-                // ${ appointment.status === "Filled"
-                //     ? "confirmed"
-                //     : "cancelled"
-                // }`}
+                  className={`appointment-icon-container
+                ${appointment.status === "filled" ? "confirmed" : "cancelled"}`}
                 >
                   <FontAwesomeIcon
                     icon={
-                      appointment.status === "Filled"
+                      appointment.status === "filled"
                         ? faCheckCircle
                         : faTimesCircle
                     }
-                    className="appointment-icon"
+                    style={{ height: "2rem" }}
                   />
                 </div>
               </Col>
               <Col lg={8}>
                 <Card.Body className="p-4">
                   <Card.Title className="show-more-title">
-                    Patient: {appointment.patient.name}
+                    {appointment.patient.name}
                   </Card.Title>
                   <Card.Text>
                     <div className="show-more-date">

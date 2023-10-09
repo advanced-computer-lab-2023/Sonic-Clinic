@@ -7,12 +7,11 @@ function AppointmentFilter() {
   const [selectedDate, setSelectedDate] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("");
   const dispatch = useDispatch();
-  // Handler to update filter state when date changes
+
   const handleDateChange = (e) => {
     setSelectedDate(e.target.value);
   };
 
-  // Handler to update filter state when status changes
   const handleStatusChange = (e) => {
     setSelectedStatus(e.target.value);
   };

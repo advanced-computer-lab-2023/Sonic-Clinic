@@ -11,7 +11,7 @@ function DrPatients() {
     <div>
       <AppNavbar hamburgerMenu={<DrHamburgerMenu />} />
       <Container fluid className="bg-light pt-3 mt-2">
-        <Container className="bg-white px-5 py-4 d-flex align-items-center justify-content-center">
+        <Container className="bg-white px-5 py-4 d-flex flex-row align-items-center justify-content-center">
           <div className="col-5">
             <DrPatientFilter />
           </div>

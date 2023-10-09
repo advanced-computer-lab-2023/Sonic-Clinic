@@ -3,7 +3,7 @@ import { Container, Row } from "react-bootstrap";
 import AppNavbar from "../../components/AppNavigation/AppNavbar";
 import DrHamburgerMenu from "../../components/Doctor/DrHamburgerMenu";
 import DrShowAppointments from "../../components/Doctor/DrShowAppointments";
-import DrAppointmentFilter from "../../components/Doctor/DrAppointmenntFilter";
+import DrAppointmentFilter from "../../components/Doctor/DrAppointmentFilter";
 
 function DrAppointments() {
   return (
