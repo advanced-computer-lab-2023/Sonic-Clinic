@@ -27,7 +27,6 @@ const {
   addAppointment,
   filterDoctorsAfterSearch,
   viewAllAppointments,
-
   filterDoctorsAfterSearchDocName,
 } = require("./Controllers/patientController");
 
@@ -185,7 +184,6 @@ server.get("/viewAllDoctorsByPatients", viewAllDoctorsForPatients);
 server.post("/getDoctorsWithSessionPrice", getDoctorsWithSessionPrice);
 server.post("/filterDoctorsAfterSearch", filterDoctorsAfterSearch);
 server.get("/viewAllAppointments", viewAllAppointments);
-
 server.post("/filterDoctorsAfterSearchDocName", filterDoctorsAfterSearchDocName);
 //doctor
 server.post("/selectPatient", selectPatient);

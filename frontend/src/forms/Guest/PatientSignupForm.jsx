@@ -168,6 +168,15 @@ const PatientSignupForm = () => {
       isLoading(false);
       return;
     }
+    const tenYearsAgo = new Date();
+    tenYearsAgo.setFullYear(tenYearsAgo.getFullYear() - 10);
+
+    // Check if the selected birthdate is greater than 20 years ago
+    if (new Date(birthdate) > tenYearsAgo) {
+      setError("You must be at least 10 years old to sign up.");
+      isLoading(false);
+      return;
+    }
 
     if (!digitRegex.test(password)) {
       setError("Password must contain at least one digit");

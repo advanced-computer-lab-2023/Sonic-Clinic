@@ -1,7 +1,13 @@
+import axios from "axios";
 import React, { useState } from "react";
 import { Form, Button, Col } from "react-bootstrap";
+import { useSelector } from "react-redux";
 
-function AddFamilyMemberForm({ onAddFamilyMember }) {
+function AddFamilyMemberForm({ onRefresh }) {
+  const [error1, setError] = useState(null);
+  const [message, setMessage] = useState(null);
+  const [loading, isLoading] = useState(null);
+  const id = useSelector((state) => state.patientLogin.userId);
   const [formData, setFormData] = useState({
     name: "",
     nationalId: "",
@@ -17,11 +23,100 @@ function AddFamilyMemberForm({ onAddFamilyMember }) {
       [name]: value,
     });
   };
+  const handleClick = async (e) => {
+    e.preventDefault();
+    setError(null);
+    isLoading(true);
+
+    if (
+      !formData.name ||
+      !formData.nationalId ||
+      !formData.age ||
+      !formData.gender ||
+      !formData.relation
+    ) {
+      setError("Please fill in all fields");
+      console.log(error1);
+      isLoading(false);
+      return;
+    }
+
+    const emojiRegex = /[\u{1F300}-\u{1F6FF}]/u;
+    const numberRegex = /\d/;
+    const symbolRegex = /[!@#$%^&*(),.?":{}|<>]/;
+    const languageRegex = /[^\x00-\x7F]/;
+    const nameRegex = /^[^\s]+(\s[^\s]+)?$/;
+
+    if (formData.name.length < 2) {
+      setError("name must be at least 2 characters.");
+      isLoading(false);
+      return;
+    }
+    if (emojiRegex.test(formData.name)) {
+      setError(" name cannot contain emojis.");
+      isLoading(false);
+      return;
+    }
+    if (numberRegex.test(formData.name)) {
+      setError("name cannot contain numbers.");
+      isLoading(false);
+      return;
+    }
+    if (symbolRegex.test(formData.name)) {
+      setError(" name cannot contain symbols.");
+      isLoading(false);
+      return;
+    }
+    if (languageRegex.test(formData.name)) {
+      setError("Last name cannot contain characters from multiple languages.");
+      isLoading(false);
+      return;
+    }
+    if (!nameRegex.test(formData.name)) {
+      setError(
+        "Name must contain either one name or two names with only one space between them."
+      );
+      isLoading(false);
+      return;
+    } else {
+      try {
+        const response = await axios.post("/addFamilyMember", {
+          name: formData.name,
+          nationalID: formData.nationalId,
+          age: formData.age,
+          gender: formData.gender,
+          relationToPatient: formData.relation,
+          patientID: id,
+        });
+
+        if (response.status === 200) {
+          isLoading(false);
+          onRefresh();
+        } else {
+          setError("Signup failed");
+          isLoading(false);
+        }
+      } catch (error) {
+        console.error("Error:", error);
+
+        if (error.response && error.response.status === 409) {
+          setError("Username taken!");
+        } else if (error.response && error.response.status !== 200) {
+          setError("Signup failed");
+        } else {
+          setError(
+            "An error occurred while signing up. Please try again later."
+          );
+        }
+
+        isLoading(false);
+      }
+    }
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     // Call a function to add the family member with formData
-    onAddFamilyMember(formData);
 
     // Clear the form fields
     setFormData({
@@ -98,12 +193,16 @@ function AddFamilyMemberForm({ onAddFamilyMember }) {
         >
           <option>Husband</option>
           <option>Wife</option>
-          <option>Son</option>
-          <option>Daughter</option>
+          <option>Child</option>
         </Form.Control>
       </Form.Group>
 
-      <Button variant="primary" type="submit">
+      <Button
+        variant="primary"
+        type="submit"
+        style={{ marginTop: "1rem", width: "100%" }}
+        onClick={handleClick}
+      >
         Add Family Member
       </Button>
     </Form>
