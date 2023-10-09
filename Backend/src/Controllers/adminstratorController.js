@@ -35,40 +35,60 @@ const addDoctor = async (req, res) => {
   }
 };
 
-const addPackage = async (req, res) => {
-  try {
-    const newPackage = await packagesModel.create(req.body);
-    console.log("Package Created!");
-    res.status(200).send(newPackage);
-  } catch (error) {
-    res.status(400).send({ error: error.message });
-  }
+const addPackage = async(req,res) => {
+   try{
+      const newPackage = await packagesModel.create(req.body);
+      console.log("Package Created!")
+      res.status(200).send(newPackage);
+   } catch(error){
+      res.status(400).send({error:error.message});
+   }
 };
 const updatePackage = async (req, res) => {
-  try {
-    const id = req.query._id;
-    const {
-      type,
-      price,
-      sessionDiscount,
-      medicineDiscount,
-      packageDiscountFM,
-    } = req.body;
-    const updatedPackage = await packagesModel.findByIdAndUpdate(id, {
-      type,
-      price,
-      sessionDiscount,
-      medicineDiscount,
-      packageDiscountFM,
-    });
-    if (!updatedPackage) {
-      return res.status(404).json({ message: "Package not found" });
-    }
-    return res.status(200).json(updatedPackage);
-  } catch (error) {
-    return res.status(500).send({ error: error.message });
-  }
-};
+   try {
+     const id = req.query._id;
+     const {
+       type,
+       price,
+       sessionDiscount,
+       medicineDiscount,
+       packageDiscountFM,
+     } = req.query; // Extract fields from req.query
+ 
+     const updatedPackage = await packagesModel.findByIdAndUpdate(
+       id,
+       {
+         type,
+         price,
+         sessionDiscount,
+         medicineDiscount,
+         packageDiscountFM,
+       },
+       { new: true, runValidators: true } // Use { new: true } to return the updated package
+     );
+ 
+     if (!updatedPackage) {
+       return res.status(404).json({ message: 'Package not found' });
+     }
+ 
+     return res.status(200).json(updatedPackage);
+   } catch (error) {
+     return res.status(500).send({ error: error.message });
+   }
+ };
+ 
+
+
+
+
+
+
+
+
+
+
+
+
 const viewPotentialDoctors = async (req, res) => {
   try {
     const potentialDoctors = await potentialDoctorModel.find({});
@@ -98,12 +118,10 @@ const deletePackage = async (req, res) => {
   }
 };
 
-const rejectPotentialDoctor = async (req, res) => {
-  try {
-    const username = req.body.username;
-    const rejectedDoctor = await potentialDoctorModel.findOneAndDelete({
-      username: username,
-    });
+const rejectPotentialDoctor = async(req,res) => {
+   try{
+      const username = req.body.username;
+      const rejectedDoctor = await potentialDoctorModel.findOneAndDelete({ username: username });
 
     if (!rejectedDoctor) {
       return res.status(404).json({ message: "Potential Doctor not found" });
@@ -115,44 +133,40 @@ const rejectPotentialDoctor = async (req, res) => {
   }
 };
 
-const removeDoctor = async (req, res) => {
-  try {
-    const username = req.body.username;
-    const removedDoctor = await doctorModel.findOneAndDelete({
-      username: username,
-    });
+const removeDoctor = async(req,res) => {
+   try{
+      const username = req.body.username;
+      const removedDoctor = await doctorModel.findOneAndDelete({ username: username });
 
     if (!removedDoctor) {
       return res.status(404).json({ message: "Doctor not found" });
     }
-    return res.status(200).json({ message: "Doctor removed successfully" });
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({ message: "Internal server error" });
-  }
-};
-const removePatient = async (req, res) => {
-  try {
-    const username = req.body.username;
-    const removedPatient = await patientModel.findOneAndDelete({
-      username: username,
-    });
+    return res.status(200).json({ message: 'Doctor removed successfully' });
+   }
+   catch(error){
+   console.error(error);
+    return res.status(500).json({ message: 'Internal server error' });
+   }
+}
+const removePatient = async(req,res) => {
+   try{
+      const username = req.body.username;
+      const removedPatient = await patientModel.findOneAndDelete({ username: username });
 
     if (!removedPatient) {
       return res.status(404).json({ message: "Patient not found" });
     }
-    return res.status(200).json({ message: "Patient removed successfully" });
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({ message: "Internal server error" });
-  }
-};
-const removeAdmin = async (req, res) => {
-  try {
-    const username = req.body.username;
-    const removedAdmin = await administratorModel.findOneAndDelete({
-      username: username,
-    });
+    return res.status(200).json({ message: 'Patient removed successfully' });
+   }
+   catch(error){
+   console.error(error);
+    return res.status(500).json({ message: 'Internal server error' });
+   }
+}
+const removeAdmin = async(req,res) => {
+   try{
+      const username = req.body.username;
+      const removedAdmin = await administratorModel.findOneAndDelete({ username: username });
 
     if (!removedAdmin) {
       return res.status(404).json({ message: "Admin not found" });
