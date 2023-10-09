@@ -6,11 +6,13 @@ import PrescriptionFilter from "../../components/Patient/PrescriptionFilter";
 import ShowPrescriptions from "../../components/Patient/ShowPrescriptions";
 import { useDispatch } from "react-redux";
 import { deleteSearchData } from "../../state/Patient/SearchDoctor";
+import { deleteFilterPrescription } from "../../state/Patient/filterPrescriptions";
 
 function PatientViewPrescriptions() {
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(deleteSearchData());
+    dispatch(deleteFilterPrescription());
   }, []);
   return (
     <div>

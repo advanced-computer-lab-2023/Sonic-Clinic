@@ -1,10 +1,13 @@
 import React, { useState } from "react";
 import { Button, Container, Form } from "react-bootstrap";
+import { useDispatch } from "react-redux";
+import { setFilterPrescriptions } from "../../state/Patient/filterPrescriptions";
 
-function PrescriptionFilter({ onFilter }) {
+function PrescriptionFilter() {
   const [selectedDate, setSelectedDate] = useState("");
   const [selectedDoctor, setSelectedDoctor] = useState("");
-  const [isFilled, setIsFilled] = useState(null);
+  const [isFilled, setIsFilled] = useState("");
+  const dispatch = useDispatch();
 
   const handleDateChange = (e) => {
     setSelectedDate(e.target.value);
@@ -15,24 +18,17 @@ function PrescriptionFilter({ onFilter }) {
   };
 
   const handleStatusChange = (e) => {
-    const status =
-      e.target.value === "filled"
-        ? true
-        : e.target.value === "unfilled"
-        ? false
-        : null;
-    setIsFilled(status);
+    setIsFilled(e.target.value);
   };
 
-  const handleFilter = () => {
-    const filterData = {
-      date: selectedDate,
-      doctor: selectedDoctor,
-      isFilled: isFilled,
-    };
-
-    // Call the callback function with the filter data
-    onFilter(filterData);
+  const handleSearch = () => {
+    dispatch(
+      setFilterPrescriptions({
+        date: selectedDate,
+        doctor: selectedDoctor,
+        status: isFilled,
+      })
+    );
   };
 
   return (
@@ -59,7 +55,7 @@ function PrescriptionFilter({ onFilter }) {
           fontStyle: "normal",
           fontWeight: 700,
           lineHeight: "120%",
-          marginBottom: "1rem"
+          marginBottom: "1rem",
         }}
       >
         Filter Prescriptions
@@ -85,7 +81,7 @@ function PrescriptionFilter({ onFilter }) {
           Date
         </div>
         <Form.Control
-          style={{marginBottom:'1rem'}}
+          style={{ marginBottom: "1rem" }}
           type="date"
           value={selectedDate}
           onChange={handleDateChange}
@@ -112,7 +108,7 @@ function PrescriptionFilter({ onFilter }) {
           Doctor
         </div>
         <Form.Control
-          style={{marginBottom:'1rem'}}
+          style={{ marginBottom: "1rem" }}
           type="text"
           value={selectedDoctor}
           onChange={handleDoctorChange}
@@ -138,7 +134,12 @@ function PrescriptionFilter({ onFilter }) {
         >
           Status
         </div>
-        <Form.Control as="select" style={{marginBottom:'1rem'}} onChange={handleStatusChange}>
+        <Form.Control
+          as="select"
+          style={{ marginBottom: "1rem" }}
+          onChange={handleStatusChange}
+          value={isFilled}
+        >
           <option value="">Select status</option>
           <option value="filled">Filled</option>
           <option value="unfilled">Unfilled</option>
@@ -149,7 +150,7 @@ function PrescriptionFilter({ onFilter }) {
         fluid
         className="d-flex align-items-center justify-content-center"
       >
-        <Button className="custom-button" onClick={handleFilter}>
+        <Button className="custom-button" onClick={handleSearch}>
           Apply
         </Button>
       </Container>

@@ -459,6 +459,7 @@ const filterDoctorsAfterSearchDocName = async (req, res) => {
     );
 
     res.status(200).json({ availableDoctors });
+    res.status(200).json(appointments);
   } catch (error) {
     res.status(500).json({ message: "Server Error" });
   }
