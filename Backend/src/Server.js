@@ -27,6 +27,7 @@ const {
   addAppointment,
   filterDoctorsAfterSearch,
   viewAllAppointments,
+  filterDoctorsAfterSearchDocName,
 } = require("./Controllers/patientController");
 
 /////////////////////////////////doctorController//////////////////////////////////////////
