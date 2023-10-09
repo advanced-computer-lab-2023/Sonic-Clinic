@@ -1,26 +1,28 @@
 import React, { useState } from "react";
 import { Button, Container, Form } from "react-bootstrap";
+import { useDispatch } from "react-redux";
+import { setFilterAppointments } from "../../state/Patient/filterAppointments";
 
-function AppointmentFilter({ onFilter }) {
+function AppointmentFilter() {
   const [selectedDate, setSelectedDate] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("");
-
+  const dispatch = useDispatch();
+  // Handler to update filter state when date changes
   const handleDateChange = (e) => {
     setSelectedDate(e.target.value);
   };
 
+  // Handler to update filter state when status changes
   const handleStatusChange = (e) => {
     setSelectedStatus(e.target.value);
   };
-
-  const handleFilter = () => {
-    const filterData = {
-      date: selectedDate,
-      status: selectedStatus,
-    };
-
-    // Call the callback function with the filter data
-    onFilter(filterData);
+  const handleSearch = () => {
+    dispatch(
+      setFilterAppointments({
+        date: selectedDate,
+        status: selectedStatus,
+      })
+    );
   };
 
   return (
@@ -81,11 +83,16 @@ function AppointmentFilter({ onFilter }) {
         >
           Status
         </div>
-        <Form.Control as="select" onChange={handleStatusChange}>
+        <Form.Control
+          as="select"
+          value={selectedStatus}
+          onChange={handleStatusChange}
+        >
           <option value="">Select status</option>
           <option value="confirmed">Confirmed</option>
           <option value="pending">Pending</option>
           <option value="canceled">Canceled</option>
+          <option value="filled">Filled</option>
         </Form.Control>
       </div>
 
@@ -93,7 +100,7 @@ function AppointmentFilter({ onFilter }) {
         fluid
         className="d-flex align-items-center justify-content-center"
       >
-        <Button className="custom-button" onClick={handleFilter}>
+        <Button className="custom-button" onClick={handleSearch}>
           Apply
         </Button>
       </Container>
