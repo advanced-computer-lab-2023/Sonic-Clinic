@@ -215,6 +215,16 @@ const addPrescription = async (req, res) => {
     res.status(400).send({ error: error.message });
   }
 };
+const viewDocApp = async (req, res) => {
+  try {
+    const appointments = await appointmentModel.find({doctorID:req.body._id}).populate("patient");
+    res.status(200).json(appointments);
+   
+  } catch (error) {
+    res.status(400).send({ error: error.message });
+  }
+};
+
 
 module.exports = {
   selectPatient,
@@ -225,4 +235,5 @@ module.exports = {
   filterPatientsByAppointments,
   searchPatientByName,
   addPrescription,
+  viewDocApp,
 };

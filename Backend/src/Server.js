@@ -40,6 +40,7 @@ const {
   filterPatientsByAppointments,
   searchPatientByName,
   addPrescription,
+  viewDocApp,
 } = require("./Controllers/doctorController");
 
 ///////////////////////////////adminstratorController//////////////////////////////////////
@@ -187,7 +188,10 @@ server.get("/viewAllDoctorsByPatients", viewAllDoctorsForPatients);
 server.post("/getDoctorsWithSessionPrice", getDoctorsWithSessionPrice);
 server.post("/filterDoctorsAfterSearch", filterDoctorsAfterSearch);
 server.get("/viewAllAppointments", viewAllAppointments);
-server.post("/filterDoctorsAfterSearchDocName", filterDoctorsAfterSearchDocName);
+server.post(
+  "/filterDoctorsAfterSearchDocName",
+  filterDoctorsAfterSearchDocName
+);
 //doctor
 server.post("/selectPatient", selectPatient);
 server.post("/viewInfoAndHealthRecord", viewInfoAndHealthRecord);
@@ -198,6 +202,7 @@ server.post(
 );
 server.post("/filterPatientsByAppointments", filterPatientsByAppointments);
 server.get("/searchPatientByName", searchPatientByName);
+server.post("/viewDocApp", viewDocApp);
 
 ////////////////////////////////////////////////////PUT////////////////////////////////////////
 //admin

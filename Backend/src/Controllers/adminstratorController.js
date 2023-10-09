@@ -325,7 +325,7 @@ const viewAllAdmins = async (req, res) => {
 const viewAllDocApp =async(req, res) =>{
   try {
 
-  const docApp = await doctorModel.find();
+  //const docApp = await doctorModel.find();
   const docPop = await doctorModel.find().populate("appointment");
 
     // const doctorsWithAppointments = await doctorModel.aggregate([
