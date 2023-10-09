@@ -260,33 +260,38 @@ const calculateSessionPrice = (hourlyRate, patientPackage) => {
 
 const getDoctorsWithSessionPrice = async (req, res) => {
   try {
-    // Fetch all doctors from the database
-    const patient = await patientModel.findById(req.body);
-    const doctors = await doctorModel.find();
+    const { _id } = req.body; // Assuming _id is in the request body
+    const patient = await patientModel.findById(_id);
+    if (!patient) {
+      return res.status(404).json({ message: "Patient not found." });
+    }
 
-    if (!doctors) {
+    const doctors = await doctorModel.find();
+    if (!doctors || doctors.length === 0) {
       return res.status(404).json({ message: "No doctors found." });
     }
 
-    // Calculate session price for each doctor
+    
     const doctorsWithSessionPrice = doctors.map((doctor) => {
       const sessionPrice = calculateSessionPrice(
         doctor.hourlyRate,
         patient.package
       );
 
+      // Include all fields from the doctor object along with sessionPrice
       return {
-        name: doctor.name,
-        speciality: doctor.speciality,
+        ...doctor.toObject(),
         sessionPrice: sessionPrice,
       };
     });
 
     res.status(200).json({ doctorsWithSessionPrice });
   } catch (error) {
-    res.status(500).json({ message: "Server Error" });
+    res.status(500).json({ message: "Server Error", error: error.message });
   }
 };
+
+
 
 const addAppointment = async (req, res) => {
   try {
