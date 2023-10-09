@@ -50,23 +50,39 @@ const addPackage = async(req,res) => {
 
    }
 }
-   const updatePackage = async(req,res) => {
-      try{
-         const id = req.query._id;
-         const {type,price,sessionDiscount,medicineDiscount,packageDiscountFM}=req.body;
-         const updatedPackage = await packagesModel.findByIdAndUpdate(id,{type,price,sessionDiscount,medicineDiscount,packageDiscountFM});
-         if(!updatedPackage){
-            return res.status(404).json({ message: 'Package not found' });
-         }
-         return res.status(200).json(updatedPackage);
-   
-      }
-      catch(error){
-         return res.status(500).send({error:error.message});
-   
-      }
-
-}
+const updatePackage = async (req, res) => {
+   try {
+     const id = req.query._id;
+     const {
+       type,
+       price,
+       sessionDiscount,
+       medicineDiscount,
+       packageDiscountFM,
+     } = req.query; // Extract fields from req.query
+ 
+     const updatedPackage = await packagesModel.findByIdAndUpdate(
+       id,
+       {
+         type,
+         price,
+         sessionDiscount,
+         medicineDiscount,
+         packageDiscountFM,
+       },
+       { new: true, runValidators: true } // Use { new: true } to return the updated package
+     );
+ 
+     if (!updatedPackage) {
+       return res.status(404).json({ message: 'Package not found' });
+     }
+ 
+     return res.status(200).json(updatedPackage);
+   } catch (error) {
+     return res.status(500).send({ error: error.message });
+   }
+ };
+ 
 const viewPotentialDoctors = async (req, res) => {
    try {
      const potentialDoctors = await potentialDoctorModel.find({});
@@ -99,7 +115,7 @@ const deletePackage = async(req,res) => {
 
 const rejectPotentialDoctor = async(req,res) => {
    try{
-      const username = req.body.username;
+      const username = req.query.username;
       const rejectedDoctor = await potentialDoctorModel.findOneAndDelete({ username: username });
 
     if (!rejectedDoctor) {
@@ -115,7 +131,7 @@ const rejectPotentialDoctor = async(req,res) => {
 
 const removeDoctor = async(req,res) => {
    try{
-      const username = req.body.username;
+      const username = req.query.username;
       const removedDoctor = await doctorModel.findOneAndDelete({ username: username });
 
     if (!removedDoctor) {
@@ -130,7 +146,7 @@ const removeDoctor = async(req,res) => {
 }
 const removePatient = async(req,res) => {
    try{
-      const username = req.body.username;
+      const username = req.query.username;
       const removedPatient = await patientModel.findOneAndDelete({ username: username });
 
     if (!removedPatient) {
@@ -145,7 +161,7 @@ const removePatient = async(req,res) => {
 }
 const removeAdmin = async(req,res) => {
    try{
-      const username = req.body.username;
+      const username = req.query.username;
       const removedAdmin = await administratorModel.findOneAndDelete({ username: username });
 
     if (!removedAdmin) {
