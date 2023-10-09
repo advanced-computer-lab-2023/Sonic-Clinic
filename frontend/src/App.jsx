@@ -24,6 +24,7 @@ import DrAppointments from "./pages/Doctor/DrAppointments";
 import DrProfile from "./pages/Doctor/DrProfile";
 
 import DrPatients from "./pages/Doctor/DrPatients";
+import PatientOneDoctor from "./pages/Patient/PatientOneDoctor";
 
 function App() {
   return (
@@ -42,7 +43,11 @@ function App() {
 
         <Route path="patient">
           <Route index element={<PatientHomePage />} />
-          <Route path="view-doctors" element={<PatientViewDoctors />} />
+          <Route path="view-doctors">
+            <Route index element={<PatientViewDoctors />} />
+            <Route path=":index" element={<PatientOneDoctor />} />
+          </Route>
+
           <Route
             path="view-appointments"
             element={<PatientViewAppointments />}
@@ -56,9 +61,7 @@ function App() {
 
         <Route path="doctor">
           <Route index element={<DrHomePage />} />
-
           <Route path="doctor-profile" element={<DrProfile />} />
-
           <Route path="doctor-appointments" element={<DrAppointments />} />
           <Route path="doctor-patients" element={<DrPatients />} />
         </Route>

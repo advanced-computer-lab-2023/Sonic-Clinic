@@ -20,7 +20,6 @@ const loginSlice = createSlice({
     logoutAdmin: (state, action) => {
       state.userName = "";
       state.password = "";
-      state.token = "";
       state.userId = "";
       state.isLoggedIn = false;
     },

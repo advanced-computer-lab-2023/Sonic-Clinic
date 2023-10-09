@@ -33,7 +33,7 @@ const loginSlice = createSlice({
       state.emergencyNumber = action.payload.emergencyNumber;
       state.isLoggedIn = action.payload.isLoggedIn;
     },
-    logout: (state, action) => {
+    logoutPatient: (state, action) => {
       state.userName = "";
       state.name = "";
       state.packages = "";
@@ -64,7 +64,7 @@ const loginSlice = createSlice({
 
 export const {
   setCredentialsPatient,
-  logout,
+  logoutPatient,
   clearPassword,
 
   setUserId,

@@ -3,8 +3,17 @@ import AppNavbar from "../../components/AppNavigation/AppNavbar";
 import MainImg from "../../components/Patient/MainImg";
 import HamburgerMenu from "../../components/Patient/HamburgerMenu";
 import SearchCard from "../../components/Patient/SearchCard";
+import { useDispatch } from "react-redux";
+import { useEffect } from "react";
+import { deleteSearchData } from "../../state/Patient/SearchDoctor";
+import { deleteFilterAppointments } from "../../state/Patient/filterAppointments";
 
 function PatientHomePage() {
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(deleteSearchData());
+    dispatch(deleteFilterAppointments());
+  }, []);
   return (
     <div>
       <AppNavbar hamburgerMenu={<HamburgerMenu />} />

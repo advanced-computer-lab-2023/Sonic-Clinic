@@ -5,10 +5,36 @@ import {
   faAnglesRight,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React from "react";
+import React, { useState } from "react";
 import { Card, Form, Button } from "react-bootstrap";
+import { useDispatch } from "react-redux";
+import { setSearchData } from "../../state/Patient/SearchDoctor";
+import { useNavigate } from "react-router";
 
 function SearchCard() {
+  const [doctorName, setDoctorName] = useState("");
+  const [doctorSpecialty, setDoctorSpecialty] = useState("");
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const handleSearch = () => {
+    dispatch(
+      setSearchData({
+        name: doctorName,
+        specialty: doctorSpecialty,
+      })
+    );
+    // Uncomment these lines if you want to set the query locally
+    // setNameQuery(doctorName);
+    // setSpecQuery(doctorSpecialty);
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault(); // Prevent the form from submitting and page refresh
+    handleSearch();
+    navigate("/patient/view-doctors"); // Call your search function here
+  };
+
   return (
     <div
       className="d-flex justify-content-center"
@@ -40,36 +66,37 @@ function SearchCard() {
         </div>
         <hr />
         <Card.Body>
-          <Form>
-            <div className="d-flex align-items-center justify-content-between">
-              <Form.Group className="mr-2">
+          <Form onSubmit={handleSubmit}>
+            <div className="d-flex align-items-center justify-content-between w-100">
+              <Form.Group className="mr-2" style={{ flex: 2 }}>
                 <Form.Label>Doctor Name</Form.Label>
                 <Form.Control
                   type="text"
-                  style={{ width: "200px", marginRight: "10px" }}
+                  style={{ width: "100%" }}
                   placeholder="Enter doctor's name"
                 />
               </Form.Group>
 
-              <Form.Group className="mr-2">
-                <Form.Label>Location</Form.Label>
-                <Form.Control
-                  type="text"
-                  style={{ width: "200px" }}
-                  placeholder="Enter location"
-                />
-              </Form.Group>
-
-              <Form.Group className="m-2" style={{ flex: "2" }}>
+              <Form.Group className="m-2" style={{ flex: 2 }}>
                 <Form.Label>Specialty</Form.Label>
                 <Form.Control
                   as="select"
-                  style={{ width: "200px", cursor: "pointer" }}
+                  style={{ width: "100%", cursor: "pointer" }}
+                  onChange={(e) => {
+                    const selectedSpecialty = e.target.value;
+                    setDoctorSpecialty(
+                      selectedSpecialty === "Select specialty"
+                        ? ""
+                        : selectedSpecialty
+                    );
+                  }}
                 >
                   <option>Select specialty</option>
-                  <option>Specialty 1</option>
-                  <option>Specialty 2</option>
-                  <option>Specialty 3</option>
+                  <option>Cardiologist</option>
+                  <option>Pediatrician</option>
+                  <option>Dermatologist</option>
+                  <option>Oncologist</option>
+                  <option>Neurologist</option>
                 </Form.Control>
               </Form.Group>
 
