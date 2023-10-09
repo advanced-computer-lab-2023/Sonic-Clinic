@@ -154,7 +154,7 @@ function DrProfileBox() {
             />
           )}
         </div>
-        <img src={defaultImg} style={profileImageStyle} />
+        <img src={profileData.photo || defaultImg} style={profileImageStyle} />
         <h2 style={{ marginBottom: "1rem" }}>
           <strong>Dr. {profileData.name}</strong>
         </h2>

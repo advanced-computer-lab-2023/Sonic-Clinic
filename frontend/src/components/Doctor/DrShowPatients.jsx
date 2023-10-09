@@ -14,46 +14,12 @@ import { useSelector } from "react-redux";
 import axios from "axios";
 
 function DrShowPatients() {
-  // const Patients = [
-  //   {
-  //     PatientName: "Ahmed",
-  //     date: "2023-10-15",
-  //     time: "10:00 AM",
-  //     status: "Confirmed",
-  //     upcomingAppointments: [
-  //       {
-  //         date: "2023-10-20",
-  //         time: "9:30 AM",
-  //         status: "Confirmed",
-  //       },
-  //       {
-  //         date: "2023-10-25",
-  //         time: "11:00 AM",
-  //         status: "Confirmed",
-  //       },
-  //     ],
-  //     age: 35,
-  //     gender: "Male",
-  //     medicalHistory:
-  //       "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce auctor euismod lacus, non cursus nunc fringilla ut.",
-  //   },
-  //   {
-  //     PatientName: "Lola",
-  //     date: "2023-10-16",
-  //     time: "2:30 PM",
-  //     status: "Cancelled",
-  //     upcomingAppointments: [],
-  //     age: 28,
-  //     gender: "Female",
-  //     medicalHistory:
-  //       "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce auctor euismod lacus, non cursus nunc fringilla ut.",
-  //   },
-  // ];
-
   const [searchTerm, setSearchTerm] = useState("");
   const [responseData, setResponseData] = useState([]);
+  const [patients, setPatients] = useState([]);
   const [error, setError] = useState(null);
   const _id = useSelector((state) => state.doctorLogin.userId);
+  const [expandedPatient, setExpandedPatient] = useState(null);
 
   useEffect(() => {
     fetchData();
@@ -70,6 +36,7 @@ function DrShowPatients() {
       const response = await axios.post("/viewPatients", { _id: _id }, config);
       if (response.status === 200) {
         setResponseData(response.data.patients);
+        setPatients(responseData);
       } else {
         console.log("Server error");
       }
@@ -82,17 +49,13 @@ function DrShowPatients() {
     }
   };
 
-  const patients = responseData;
-
-  const handleSearch = (event) => {
-    setSearchTerm(event.target.value);
+  const handleSearch = () => {
+    setPatients(
+      responseData.filter((patient) =>
+        patient.name.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    );
   };
-
-  // const filteredPatients = patients.filter((patient) =>
-  //   patient.toLowerCase().includes(searchTerm.toLowerCase())
-  // );
-
-  const [expandedPatient, setExpandedPatient] = useState(null);
 
   const toggleExpand = (index) => {
     if (expandedPatient === index) {
@@ -104,14 +67,6 @@ function DrShowPatients() {
 
   return (
     <div>
-      {/* <Form className="my-4 mx-3">
-        <Form.Control
-          type="text"
-          placeholder="Search Patients"
-          value={searchTerm}
-          onChange={handleSearch}
-        />
-      </Form> */}
       <div
         className="d-flex justify-content-center align-items-center flex-row"
         style={{
@@ -124,13 +79,14 @@ function DrShowPatients() {
           type="text"
           placeholder="Search Patients"
           value={searchTerm}
-          onChange={handleSearch}
+          onChange={(e) => setSearchTerm(e.target.value)}
           style={{ height: "2.5rem" }}
         />
-        {/* <Button
+        <Button
           variant="primary"
           type="submit"
           style={{ width: "10rem", height: "2.5rem", marginLeft: "1rem" }}
+          onClick={handleSearch}
         >
           S e a r c h
           <FontAwesomeIcon
@@ -142,7 +98,7 @@ function DrShowPatients() {
               marginLeft: "10px",
             }}
           />
-        </Button> */}
+        </Button>
       </div>
       {patients.map((patient, index) => (
         <Card className="mb-4 mx-3 bg-light" key={patient}>

@@ -1,9 +1,12 @@
 import React, { useState } from "react";
 import { Button, Container, Form } from "react-bootstrap";
+import { setFilterDrAppointments } from "../../state/Doctor/filterDrAppointments";
+import { useDispatch } from "react-redux";
 
-function AppointmentFilter({ onFilter }) {
+function AppointmentFilter() {
   const [selectedDate, setSelectedDate] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("");
+  const dispatch = useDispatch();
 
   const handleDateChange = (e) => {
     setSelectedDate(e.target.value);
@@ -14,13 +17,12 @@ function AppointmentFilter({ onFilter }) {
   };
 
   const handleFilter = () => {
-    const filterData = {
-      date: selectedDate,
-      status: selectedStatus,
-    };
-
-    // Call the callback function with the filter data
-    onFilter(filterData);
+    dispatch(
+      setFilterDrAppointments({
+        date: selectedDate,
+        status: selectedStatus,
+      })
+    );
   };
 
   return (
@@ -83,7 +85,7 @@ function AppointmentFilter({ onFilter }) {
         </div>
         <Form.Control as="select" onChange={handleStatusChange}>
           <option value="">Select status</option>
-          <option value="confirmed">Confirmed</option>
+          <option value="filled">Confirmed</option>
           <option value="pending">Pending</option>
           <option value="cancelled">Cancelled</option>
         </Form.Control>

@@ -19,7 +19,7 @@ function ShowAppointments() {
   const [responseData, setResponseData] = useState([]);
   const [error1, setError] = useState(null);
   const id = useSelector((state) => state.patientLogin.userId);
-  const filterDate = useSelector((state) => state.filterAppointments.date); // Assuming 'searchDoctor' is the slice name
+  const filterDate = useSelector((state) => state.filterAppointments.date);
   const filterStatus = useSelector((state) => state.filterAppointments.status);
 
   useEffect(() => {
@@ -49,6 +49,7 @@ function ShowAppointments() {
     }
   };
   const NeededData = responseData;
+
   const filteredAppointments = NeededData.filter((appointment) => {
     const isoDate = appointment.date; // Assuming appointment.date is in ISO format like "2023-10-05T14:30:00.000Z"
     const dateObj = new Date(isoDate);
