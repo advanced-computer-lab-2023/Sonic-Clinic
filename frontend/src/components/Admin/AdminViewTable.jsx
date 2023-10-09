@@ -71,14 +71,24 @@ export default function AdminViewTable({ onAdmins, api }) {
 
   const actuallyDelete = async () => {
     console.log("el khara aho", username);
+    const config = {
+      headers: {
+        username: username,
+      },
+    };
     try {
       let method = "";
       if (api === "/viewAllDoctors") method = "/removeDoctor";
       if (api === "/viewAllPatients") method = "/removePatient";
       if (api === "/viewAllAdmins") method = "/removeAdmin";
-      const response = await axios.delete(method, {
-        username: username,
-      });
+
+      const response = await axios.delete(
+        method,
+        {
+          username: username,
+        },
+        config
+      );
       if (response.status === 200) {
         console.log("Successful");
         fetchData();

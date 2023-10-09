@@ -36,10 +36,19 @@ export default function AdminPackageCard({
   };
 
   const actuallyDelete = async () => {
-    try {
-      const response = await axios.delete("/deletePackage", {
+    const config = {
+      headers: {
         _id: _id,
-      });
+      },
+    };
+    try {
+      const response = await axios.delete(
+        "/deletePackage",
+        {
+          _id: _id,
+        },
+        config
+      );
       if (response.status === 200) {
         console.log("Successful");
         fetchData();
@@ -85,6 +94,11 @@ export default function AdminPackageCard({
     const config = {
       headers: {
         _id: _id,
+        type: type,
+        price: price,
+        sessionDiscount: sessionDiscount,
+        medicineDiscount: medicineDiscount,
+        packageDiscountFM: packageDiscountFM,
       },
     };
     try {

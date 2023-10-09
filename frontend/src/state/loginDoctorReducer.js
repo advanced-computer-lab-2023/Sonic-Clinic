@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-
+import defaultImg from "../Assets/doctor/UnknownUser.jpg";
 const initialState = {
   userName: "",
   name: "",
@@ -13,6 +13,7 @@ const initialState = {
   userId: "",
   patients: [],
   speciality: "",
+  photo: { defaultImg },
   isLoggedIn: false,
 };
 

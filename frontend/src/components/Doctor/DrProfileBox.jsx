@@ -4,12 +4,15 @@ import { Button } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPenToSquare } from "@fortawesome/free-solid-svg-icons";
 import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+import { setCredentialsDoctor } from "../../state/loginDoctorReducer";
+import defaultImg from "../../Assets/doctor/UnknownUser.jpg";
+import axios from "axios";
 
 function DrProfileBox() {
   const profileBoxStyle = {
-    width: "80%",
-    maxWidth: "500px",
-    padding: "20px",
+    width: "28rem",
+    padding: "1rem",
     backgroundColor: "#ffffff",
     textAlign: "center",
   };
@@ -31,7 +34,7 @@ function DrProfileBox() {
   };
 
   const inputStyle = {
-    width: "20rem",
+    width: "18rem",
     padding: "8px",
     borderRadius: "8px",
     border: "1px solid #ADB5BD",
@@ -48,13 +51,22 @@ function DrProfileBox() {
 
   // Initial profile data
   const [profileData, setProfileData] = useState({
+    photo: useSelector((state) => state.doctorLogin.photo),
     name: useSelector((state) => state.doctorLogin.name),
+    username: useSelector((state) => state.doctorLogin.userName),
+    speciality: useSelector((state) => state.doctorLogin.speciality),
     email: useSelector((state) => state.doctorLogin.email),
     affiliation: useSelector((state) => state.doctorLogin.affiliation),
     hourlyRate: useSelector((state) => state.doctorLogin.hourlyRate),
+    educationalBackground: useSelector(
+      (state) => state.doctorLogin.educationalBackground
+    ),
   });
 
   const [isEditing, setIsEditing] = useState(false);
+  const [error, setError] = useState(null);
+  const _id = useSelector((state) => state.doctorLogin._id);
+  const dispatch = useDispatch();
 
   const handleInputChange = (e, field) => {
     setProfileData((prevData) => ({
@@ -67,10 +79,50 @@ function DrProfileBox() {
     setIsEditing(!isEditing);
   };
 
-  const handleSaveChanges = () => {
-    // Save the profile data (you can send it to the server if needed)
-    // For now, we'll just log it to the console
-    console.log("Saving profile data:", profileData);
+  const handleSaveChanges = async () => {
+    dispatch(
+      setCredentialsDoctor({
+        email: profileData.email,
+        hourlyRate: profileData.hourlyRate,
+        affiliation: profileData.affiliation,
+      })
+    );
+    const config = {
+      headers: {
+        _id: _id,
+        email: profileData.email,
+        hourlyRate: profileData.hourlyRate,
+        affiliation: profileData.affiliation,
+      },
+    };
+    try {
+      const response = await axios.put(
+        "/updateDoctorProfile",
+        {
+          _id: _id,
+          email: profileData.email,
+          hourlyRate: profileData.hourlyRate,
+          affiliation: profileData.affiliation,
+        },
+        config
+      );
+
+      if (response.status === 200) {
+        console.log("tmam");
+      } else if (response.status === 404) {
+        setError("Doctor not found");
+      } else {
+        setError("Error");
+      }
+    } catch (error) {
+      if (error.response && error.response.status === 404) {
+        setError("Doctor not found");
+      } else {
+        setError(
+          "An error occurred while updating doctor. Please try again later"
+        );
+      }
+    }
     setIsEditing(false);
   };
 
@@ -100,16 +152,25 @@ function DrProfileBox() {
             />
           )}
         </div>
-        <img src={doctorImg} alt="Profile Image" style={profileImageStyle} />
-        <h2 style={{ marginBottom: "2rem" }}>
-          <strong>{profileData.name}</strong>
+        <img src={defaultImg} style={profileImageStyle} />
+        <h2 style={{ marginBottom: "1rem" }}>
+          <strong>Dr. {profileData.name}</strong>
+        </h2>
+        <h2
+          style={{ marginBottom: "2rem", fontSize: "20px", color: "#05afb9 " }}
+        >
+          <strong>{profileData.speciality}</strong>
         </h2>
         <div className="d-flex flex-column align-items-start">
+          <p class="d-flex flex-row">
+            <div style={inputLabel}>Username:</div>
+            <span>{profileData.username}</span>
+          </p>
           <p class="d-flex flex-row">
             <div style={inputLabel}>Email: </div>
             {isEditing ? (
               <input
-                type="text"
+                type="email"
                 value={profileData.email}
                 onChange={(e) => handleInputChange(e, "email")}
                 style={inputStyle}
@@ -135,13 +196,13 @@ function DrProfileBox() {
             <div style={inputLabel}>Hourly Rate:</div>
             {isEditing ? (
               <input
-                type="text"
+                type="number"
                 value={profileData.hourlyRate}
                 onChange={(e) => handleInputChange(e, "hourlyRate")}
                 style={inputStyle}
               />
             ) : (
-              <span>{profileData.hourlyRate}</span>
+              <span>{profileData.hourlyRate} LE/hr</span>
             )}
           </p>
         </div>
