@@ -12,7 +12,9 @@ function ShowPrescriptions() {
   const [responseData, setResponseData] = useState([]);
   const [error1, setError] = useState(null);
   const id = useSelector((state) => state.patientLogin.userId);
-
+  const filterDate = useSelector((state) => state.filterPrescriptions.date); // Assuming 'searchDoctor' is the slice name
+  const filterDoctor = useSelector((state) => state.filterAppointments.doctor);
+  const filterStatus = useSelector((state) => state.filterAppointments.status);
   useEffect(() => {
     fetchData();
   }, {});
@@ -40,7 +42,26 @@ function ShowPrescriptions() {
       setLoading(false);
     }
   };
+  const NeededData = responseData;
+  const filteredPrescriptions = NeededData.filter((prescription) => {
+    const isoDate = prescription.date; // Assuming appointment.date is in ISO format like "2023-10-05T14:30:00.000Z"
+    const dateObj = new Date(isoDate);
+    const yyyy = dateObj.getFullYear();
+    const mm = String(dateObj.getMonth() + 1).padStart(2, "0"); // Adding 1 to the month because it's zero-based
+    const dd = String(dateObj.getDate()).padStart(2, "0");
 
+    const formattedDate = `${yyyy}-${mm}-${dd}`;
+    const status = prescription.status ? prescription.status.toLowerCase() : "";
+    const doctor = prescription.doctorName
+      ? prescription.status.toLowerCase()
+      : "";
+    // Check if the formattedDate includes the filterDate and the status includes filterStatus, both in lowercase
+    return (
+      formattedDate.includes(filterDate.toLowerCase()) &&
+      status.includes(filterStatus.toLowerCase())
+      // doctor.includes(filterDoctor.toLowerCase())
+    );
+  });
   return (
     <div>
       {loading && (
@@ -58,13 +79,13 @@ function ShowPrescriptions() {
         </div>
       )}
       {error1 && <div style={{ color: "red" }}>{error1}</div>}
-      {responseData.length === 0 && !loading && (
+      {filteredPrescriptions.length === 0 && !loading && (
         <div style={{ textAlign: "center", marginTop: "20px" }}>
           You don't have any prescriptions.
         </div>
       )}
       {!loading &&
-        responseData.map((prescription, index) => {
+        filteredPrescriptions.map((prescription, index) => {
           // Parse the date string into a Date object
           const prescriptionDate = new Date(prescription.date);
 

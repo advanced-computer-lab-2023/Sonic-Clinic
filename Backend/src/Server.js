@@ -183,6 +183,10 @@ server.get("/viewAllDoctorsByPatients", viewAllDoctorsForPatients);
 server.post("/getDoctorsWithSessionPrice", getDoctorsWithSessionPrice);
 server.post("/filterDoctorsAfterSearch", filterDoctorsAfterSearch);
 server.post("/viewAllAppointments", viewAllAppointments);
+server.post(
+  "/filterDoctorsAfterSearchDocName",
+  filterDoctorsAfterSearchDocName
+);
 //doctor
 server.post("/selectPatient", selectPatient);
 server.post("/viewInfoAndHealthRecord", viewInfoAndHealthRecord);

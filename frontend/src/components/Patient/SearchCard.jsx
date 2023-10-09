@@ -12,7 +12,6 @@ import { setSearchData } from "../../state/Patient/SearchDoctor";
 import { useNavigate } from "react-router";
 
 function SearchCard() {
-
   const [doctorName, setDoctorName] = useState("");
   const [doctorSpecialty, setDoctorSpecialty] = useState("");
   const dispatch = useDispatch();
@@ -68,30 +67,17 @@ function SearchCard() {
         <hr />
         <Card.Body>
           <Form onSubmit={handleSubmit}>
-            <div className="d-flex align-items-center justify-content-between">
-              <Form.Group className="mr-2" style={{ flex: 1 }}>
+            <div className="d-flex align-items-center justify-content-between w-100">
+              <Form.Group className="mr-2" style={{ flex: 2 }}>
                 <Form.Label>Doctor Name</Form.Label>
                 <Form.Control
                   type="text"
-                  style={{ width: "200px", marginRight: "10px" }}
+                  style={{ width: "100%" }}
                   placeholder="Enter doctor's name"
                 />
               </Form.Group>
 
-              <Form.Group className="mr-2">
-                <Form.Label>Location</Form.Label>
-                <Form.Control
-                  type="text"
-                  style={{ width: "200px" }}
-                  placeholder="Enter location"
-                  style={{ width: "100%", marginRight: "10px" }}
-                  placeholder="Enter doctor's name"
-                  value={doctorName}
-                  onChange={(e) => setDoctorName(e.target.value)}
-                />
-              </Form.Group>
-
-              <Form.Group className="m-2" style={{ flex: 1 }}>
+              <Form.Group className="m-2" style={{ flex: 2 }}>
                 <Form.Label>Specialty</Form.Label>
                 <Form.Control
                   as="select"

@@ -23,8 +23,7 @@ export default function AdminViewTable({ onAdmins, api }) {
     try {
       const response = await axios.get(api);
       if (response.status === 200) {
-        if (api === "/viewAllDoctors")
-          setResponseData(response.data.doctors[0]);
+        if (api === "/viewAllDoctors") setResponseData(response.data.doctors);
         if (api === "/viewAllPatients") setResponseData(response.data.patients);
         if (api === "/viewAllAdmins") setResponseData(response.data.admins);
       } else {
@@ -130,24 +129,25 @@ export default function AdminViewTable({ onAdmins, api }) {
           </tr>
         </thead>
         <tbody>
-          {users.map((user) => (
-            <tr key={user._id}>
-              {!onAdmins && <td>{user.name}</td>}
-              <td>{user.username} </td>
-              <td>
-                <FontAwesomeIcon
-                  icon={faTrashCan}
-                  onClick={() => deleteUser(user.username)}
-                  style={{
-                    opacity: 1,
-                    color: "#ff6b35",
-                    fontSize: "20px",
-                    cursor: "pointer",
-                  }}
-                />
-              </td>
-            </tr>
-          ))}
+          {Array.isArray(users) &&
+            users.map((user) => (
+              <tr key={user._id}>
+                {!onAdmins && <td>{user.name}</td>}
+                <td>{user.username} </td>
+                <td>
+                  <FontAwesomeIcon
+                    icon={faTrashCan}
+                    onClick={() => deleteUser(user.username)}
+                    style={{
+                      opacity: 1,
+                      color: "#ff6b35",
+                      fontSize: "20px",
+                      cursor: "pointer",
+                    }}
+                  />
+                </td>
+              </tr>
+            ))}
         </tbody>
       </Table>
     </>

@@ -16,6 +16,8 @@ import loginDoctorReducer from "./loginDoctorReducer";
 import loginAdminReducer from "./loginAdminReducer";
 import SearchDoctor from "./Patient/SearchDoctor";
 import filteredDoctors from "./Patient/filteredDoctors";
+import filterAppointments from "./Patient/filterAppointments";
+import filterPrescriptions from "./Patient/filterPrescriptions";
 
 const persistConfig = {
   key: "root",
@@ -30,6 +32,8 @@ const rootReducer = combineReducers({
   adminLogin: loginAdminReducer,
   searchDoctor: SearchDoctor,
   filterDoctor: filteredDoctors,
+  filterAppointments: filterAppointments,
+  filterPrescriptions: filterPrescriptions,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
