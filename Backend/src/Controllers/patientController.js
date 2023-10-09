@@ -409,11 +409,107 @@ const viewAllAppointments = async (req, res) => {
       return res.status(404).json({ message: "No appointments found." });
     }
 
-    res.status(200).json( appointments );
+    res.status(200).json(appointments);
   } catch (error) {
     res.status(500).json({ message: "Server Error" });
   }
 };
+
+const filterDoctorsAfterSearchDocName = async (req, res) => {
+  const { name, speciality, date, time } = req.query;
+
+  query = { date, time, status: "not filled" };
+
+  try {
+    const doctors = await doctorModel.find({
+      speciality: speciality,
+      name: name,
+    });
+
+    if (!doctors || doctors.length === 0) {
+      return res.status(404).json({ message: "No doctors found." });
+    }
+
+    if (!date && !time) {
+      res.status(200).json({ doctors });
+    }
+    if (date && !time) {
+      return res.status(405).json({ message: "Please enter time" });
+    }
+    if (!date && time) {
+      return res.status(406).json({ message: "Please enter date" });
+    }
+
+    const appointments = await appointmentModel.find(query);
+    console.log(appointments);
+
+    if (!appointments || appointments.length === 0) {
+      return res.status(404).json({ message: "No doctors found." });
+    }
+
+    const availableAppointments = appointments.filter(
+      (appointment) => appointment.status !== "filled"
+    );
+    const availableDoctors = doctors.filter((doctor) =>
+      availableAppointments.some(
+        (appointment) =>
+          appointment.doctorID.toString() === doctor._id.toString() &&
+          doctor.speciality.toString() === speciality.toString()
+      )
+    );
+
+    res.status(200).json({ availableDoctors });
+  } catch (error) {
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+
+const filterDoctorsAfterSearchDocName = async (req, res) => {
+  const { name,speciality, date, time } = req.query;
+
+  query = { date, time, status: "not filled" };
+
+  try {
+    const doctors = await doctorModel.find({ speciality: speciality , name:name});
+
+    if (!doctors || doctors.length === 0) {
+      return res.status(404).json({ message: "No doctors found." });
+    }
+
+    if (!date && !time) {
+      res.status(200).json({ doctors });
+    }
+    if (date && !time) {
+      return res.status(405).json({ message: "Please enter time" });
+    }
+    if (!date && time) {
+      return res.status(406).json({ message: "Please enter date" });
+    }
+
+    const appointments = await appointmentModel.find(query);
+    console.log(appointments);
+
+    if (!appointments || appointments.length === 0) {
+      return res.status(404).json({ message: "No doctors found." });
+    }
+
+    const availableAppointments = appointments.filter(
+      (appointment) => appointment.status !== "filled"
+    );
+    const availableDoctors = doctors.filter((doctor) =>
+      availableAppointments.some(
+        (appointment) =>
+          appointment.doctorID.toString() === doctor._id.toString() &&
+          doctor.speciality.toString() === speciality.toString()
+      )
+    );
+
+    res.status(200).json({ availableDoctors });
+  } catch (error) {
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+
 
 module.exports = {
   selectPrescription,
@@ -431,4 +527,5 @@ module.exports = {
   addAppointment,
   filterDoctorsAfterSearch,
   viewAllAppointments,
+  filterDoctorsAfterSearchDocName,
 };

@@ -132,6 +132,14 @@ const DrSignupForm = () => {
       isLoading(false);
       return;
     }
+    const twentyYearsAgo = new Date();
+    twentyYearsAgo.setFullYear(twentyYearsAgo.getFullYear() - 20);
+
+    if (new Date(birthdate) > twentyYearsAgo) {
+      setError("You must be at least 20 years old to sign up.");
+      isLoading(false);
+      return;
+    }
 
     if (!uppercaseRegex.test(password)) {
       setError("Password must contain at least one uppercase letter");

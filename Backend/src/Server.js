@@ -6,7 +6,6 @@ const { MongoClient } = require("mongodb");
 const session = require("express-session");
 const jwt = require("jsonwebtoken");
 
-
 mongoose.set("strictQuery", false);
 require("dotenv").config();
 
@@ -28,6 +27,7 @@ const {
   addAppointment,
   filterDoctorsAfterSearch,
   viewAllAppointments,
+  filterDoctorsAfterSearchDocName,
 } = require("./Controllers/patientController");
 
 /////////////////////////////////doctorController//////////////////////////////////////////
@@ -184,6 +184,7 @@ server.get("/viewAllDoctorsByPatients", viewAllDoctorsForPatients);
 server.post("/getDoctorsWithSessionPrice", getDoctorsWithSessionPrice);
 server.post("/filterDoctorsAfterSearch", filterDoctorsAfterSearch);
 server.get("/viewAllAppointments", viewAllAppointments);
+server.post("/filterDoctorsAfterSearchDocName", filterDoctorsAfterSearchDocName);
 //doctor
 server.post("/selectPatient", selectPatient);
 server.post("/viewInfoAndHealthRecord", viewInfoAndHealthRecord);
