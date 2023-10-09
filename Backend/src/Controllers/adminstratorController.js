@@ -44,20 +44,39 @@ const addPackage = async(req,res) => {
       res.status(400).send({error:error.message});
    }
 };
-   const updatePackage = async(req,res) => {
-      try{
-         const id = req.query._id;
-         const {type,price,sessionDiscount,medicineDiscount,packageDiscountFM}=req.body;
-         const updatedPackage = await packagesModel.findByIdAndUpdate(id,{type,price,sessionDiscount,medicineDiscount,packageDiscountFM});
-         if(!updatedPackage){
-            return res.status(404).json({ message: 'Package not found' });
-         }
-         return res.status(200).json(updatedPackage);
-      }
-      catch(error){
-         return res.status(500).send({error:error.message});
-      }
-}
+const updatePackage = async (req, res) => {
+   try {
+     const id = req.query._id;
+     const {
+       type,
+       price,
+       sessionDiscount,
+       medicineDiscount,
+       packageDiscountFM,
+     } = req.query; // Extract fields from req.query
+ 
+     const updatedPackage = await packagesModel.findByIdAndUpdate(
+       id,
+       {
+         type,
+         price,
+         sessionDiscount,
+         medicineDiscount,
+         packageDiscountFM,
+       },
+       { new: true, runValidators: true } // Use { new: true } to return the updated package
+     );
+ 
+     if (!updatedPackage) {
+       return res.status(404).json({ message: 'Package not found' });
+     }
+ 
+     return res.status(200).json(updatedPackage);
+   } catch (error) {
+     return res.status(500).send({ error: error.message });
+   }
+ };
+ 
 
 
 
