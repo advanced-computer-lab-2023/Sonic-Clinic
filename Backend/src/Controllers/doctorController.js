@@ -237,4 +237,6 @@ module.exports = {
   searchPatientByName,
   addPrescription,
   viewDocApp,
+
+  
 };
