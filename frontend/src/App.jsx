@@ -21,7 +21,7 @@ import PatientSignup from "./pages/Guest/PatientSignup";
 import DrSignup from "./pages/Guest/DrSignup";
 import DrAppointments from "./pages/Doctor/DrAppointments";
 
-import ProfilePage from "./pages/Doctor/DrProfile";
+import DrProfile from "./pages/Doctor/DrProfile";
 
 import DrPatients from "./pages/Doctor/DrPatients";
 import PatientOneDoctor from "./pages/Patient/PatientOneDoctor";
@@ -61,9 +61,7 @@ function App() {
 
         <Route path="doctor">
           <Route index element={<DrHomePage />} />
-
-          <Route path="doctor-profile" element={<ProfilePage />} />
-
+          <Route path="doctor-profile" element={<DrProfile />} />
           <Route path="doctor-appointments" element={<DrAppointments />} />
           <Route path="doctor-patients" element={<DrPatients />} />
         </Route>
