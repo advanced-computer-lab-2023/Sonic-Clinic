@@ -58,6 +58,7 @@ const {
   viewAllPatients,
   viewPackagesAdmin,
   viewAllAdmins,
+  viewAllDocApp,
 } = require("./Controllers/adminstratorController");
 
 ////////////////////////////////guestController///////////////////////////////////////////
@@ -80,6 +81,7 @@ const patient = require("./Models/Patient.js");
 const doctor = require("./Models/Doctor.js");
 const adminstrator = require("./Models/Adminstrator");
 const potentialDoctor = require("./Models/PotentialDoctor");
+const appointment = require("./Models/Appointment");
 //////////////////////////////////////////////////////////////////////////////////////
 
 //login
@@ -167,6 +169,7 @@ server.get("/viewAllDoctors", viewAllDoctors);
 server.get("/viewPotentialDoctors", viewPotentialDoctors);
 server.get("/viewPackagesAdmin", viewPackagesAdmin);
 server.get("/viewAllAdmins", viewAllAdmins);
+server.get("/viewAllDocApp", viewAllDocApp);
 //patient
 server.post("/doctorDetails", doctorDetails);
 server.post("/viewPrescriptions", viewPrescriptions);
