@@ -415,7 +415,7 @@ const viewAllAppointments = async (req, res) => {
   }
 };
 
-const filterDoctorsSearchDocName = async (req, res) => {
+const filterDoctorsAfterSearchDocName = async (req, res) => {
   const { name, speciality, date, time } = req.query;
 
   query = { date, time, status: "not filled" };
@@ -480,5 +480,5 @@ module.exports = {
   addAppointment,
   filterDoctorsAfterSearch,
   viewAllAppointments,
-  filterDoctorsSearchDocName,
+  filterDoctorsAfterSearchDocName,
 };
