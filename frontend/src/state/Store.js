@@ -18,6 +18,8 @@ import SearchDoctor from "./Patient/SearchDoctor";
 import filteredDoctors from "./Patient/filteredDoctors";
 import filterAppointments from "./Patient/filterAppointments";
 import filterPrescriptions from "./Patient/filterPrescriptions";
+import filterDrAppointments from "./Doctor/filterDrAppointments";
+import prescriptionIdReducer from "./prescriptionIdReducer";
 
 const persistConfig = {
   key: "root",
@@ -28,12 +30,14 @@ const persistConfig = {
 const rootReducer = combineReducers({
   patientLogin: loginPatientReducer,
   selectedDoctorData: doctorIdReducer,
+  selectedPrescriptionData: prescriptionIdReducer,
   doctorLogin: loginDoctorReducer,
   adminLogin: loginAdminReducer,
   searchDoctor: SearchDoctor,
   filterDoctor: filteredDoctors,
   filterAppointments: filterAppointments,
   filterPrescriptions: filterPrescriptions,
+  filterDrAppointments: filterDrAppointments,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

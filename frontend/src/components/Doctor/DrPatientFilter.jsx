@@ -3,25 +3,20 @@ import { Button, Container, Form } from "react-bootstrap";
 import { useSelector } from "react-redux";
 import axios from "axios";
 
-function DrPatientFilter({ onFilter }) {
+function DrPatientFilter({ setPatients, responseData }) {
   const [selectedStatus, setSelectedStatus] = useState("");
   const [error, setError] = useState(null);
   const _id = useSelector((state) => state.doctorLogin._id);
-  //get id mn redux
-  //get fetchData from DrShowPatients
-  //ahot responseData wla fakes
 
-  // Call the callback function with the filter data
   const handleFilter = async () => {
-    if (selectedStatus === "Upcoming") {
+    if (selectedStatus === "upcoming") {
       try {
-        const response = await axios.get("/filterPatientsByAppointments", {
+        const response = await axios.post("/filterPatientsByAppointments", {
           _id: _id,
         });
         if (response.status === 200) {
           console.log("yay");
-          // setResponseData(response.data.patients);
-          // print();
+          setPatients(response.data.patients);
         } else {
           console.log("Server error");
         }
@@ -35,6 +30,8 @@ function DrPatientFilter({ onFilter }) {
           );
         }
       }
+    } else {
+      setPatients(responseData);
     }
   };
 

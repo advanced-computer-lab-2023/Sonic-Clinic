@@ -25,24 +25,29 @@ import DrProfile from "./pages/Doctor/DrProfile";
 
 import DrPatients from "./pages/Doctor/DrPatients";
 import PatientOneDoctor from "./pages/Patient/PatientOneDoctor";
+import PatientOnePrescription from "./pages/Patient/PatientOnePrescription";
 
 function App() {
   return (
     <div className="bg-light">
       <Routes>
         <Route path="/" element={<GuestHomePage />} />
+
         <Route path="login">
           <Route index element={<Login />} />
         </Route>
+
         <Route path="patient-signup">
           <Route index element={<PatientSignup />} />
         </Route>
+
         <Route path="doctor-signup">
           <Route index element={<DrSignup />} />
         </Route>
 
         <Route path="patient">
           <Route index element={<PatientHomePage />} />
+
           <Route path="view-doctors">
             <Route index element={<PatientViewDoctors />} />
             <Route path=":index" element={<PatientOneDoctor />} />
@@ -52,10 +57,12 @@ function App() {
             path="view-appointments"
             element={<PatientViewAppointments />}
           />
-          <Route
-            path="view-prescriptions"
-            element={<PatientViewPrescriptions />}
-          />
+
+          <Route path="view-prescriptions">
+            <Route index element={<PatientViewPrescriptions />} />
+            <Route path=":index" element={<PatientOnePrescription />} />
+          </Route>
+
           <Route path="profile" element={<PatientProfile />} />
         </Route>
 
@@ -66,7 +73,7 @@ function App() {
           <Route path="doctor-patients" element={<DrPatients />} />
         </Route>
 
-        <Route path="GuestHomePage">
+        <Route path="guest-home-page">
           <Route index element={<GuestHomePage />} />
         </Route>
 
