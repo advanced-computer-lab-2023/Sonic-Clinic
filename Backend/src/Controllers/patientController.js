@@ -56,12 +56,24 @@ const searchDoctors = async (req, res) => {
 };
 
 const filterDoctors = async (req, res) => {
-  const { speciality, date, time } = req.query;
+  const { specialties, date, time } = req.query;
 
   query = { date, time, status: "not filled" };
+  console.log(specialties);
 
   try {
-    const doctors = await doctorModel.find({ speciality: speciality });
+     if (specialties.length === 0) {
+       return res
+         .status(405)
+         .json({ message: "Please select at least one specialty" });
+     }
+      //  const doctorTrial = await doctorModel.find({speciality: "Neurology"});
+      //  console.log(doctorTrial);
+
+      const doctors = await doctorModel.find({ speciality: { $in: specialties } });
+      console.log(doctors);
+
+    //const doctors = await doctorModel.find({ speciality: speciality });
 
     if (!doctors || doctors.length === 0) {
       return res.status(404).json({ message: "No doctors found." });
