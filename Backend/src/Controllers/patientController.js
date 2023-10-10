@@ -6,6 +6,7 @@ const packagesModel = require("../Models/Packages.js");
 const prescriptionModel = require("../Models/Prescription.js");
 const appointmentModel = require("../Models/Appointment.js");
 
+
 const doctorDetails = async (req, res) => {
   const { name } = req.body;
 
@@ -62,16 +63,18 @@ const filterDoctors = async (req, res) => {
   console.log(specialties);
 
   try {
-     if (specialties.length === 0) {
-       return res
-         .status(405)
-         .json({ message: "Please select at least one specialty" });
-     }
-      //  const doctorTrial = await doctorModel.find({speciality: "Neurology"});
-      //  console.log(doctorTrial);
+    if (specialties.length === 0) {
+      return res
+        .status(405)
+        .json({ message: "Please select at least one specialty" });
+    }
+    //  const doctorTrial = await doctorModel.find({speciality: "Neurology"});
+    //  console.log(doctorTrial);
 
-      const doctors = await doctorModel.find({ speciality: { $in: specialties } });
-      console.log(doctors);
+    const doctors = await doctorModel.find({
+      speciality: { $in: specialties },
+    });
+    console.log(doctors);
 
     //const doctors = await doctorModel.find({ speciality: speciality });
 
@@ -259,51 +262,58 @@ const viewPackages = async (req, res) => {
   }
 };
 
-const calculateSessionPrice = (hourlyRate, patientPackage) => {
-  const discountPercentages = {
-    silver: 0.4,
-    gold: 0.6,
-    platinum: 0.8,
-  };
+const calculateSessionPrice = async (hourlyRate, patientPackage) => {
+  try {
+    // Fetch the package information based on the patient's package
+    const packageInfo = await packagesModel.findOne({ type: patientPackage });
 
-  const discount = discountPercentages[patientPackage.toLowerCase()] || 0;
-  return hourlyRate * 1.1 * (1 - discount);
+    
+
+    // Calculate the session price based on the package discount
+    const sessionPrice = (hourlyRate*1.1) * (1 - (packageInfo.sessionDiscount)*0.01);
+
+    return sessionPrice;
+  } catch (error) {
+    // Handle any errors that occur during database query
+    throw error;
+  }
 };
 
 const getDoctorsWithSessionPrice = async (req, res) => {
   try {
     const { _id } = req.body; // Assuming _id is in the request body
     const patient = await patientModel.findById(_id);
+
     if (!patient) {
       return res.status(404).json({ message: "Patient not found." });
     }
 
     const doctors = await doctorModel.find();
+
     if (!doctors || doctors.length === 0) {
       return res.status(404).json({ message: "No doctors found." });
     }
 
-    
-    const doctorsWithSessionPrice = doctors.map((doctor) => {
-      const sessionPrice = calculateSessionPrice(
-        doctor.hourlyRate,
-        patient.package
-      );
+    const doctorsWithSessionPrice = await Promise.all(
+      doctors.map(async (doctor) => {
+        const sessionPrice = await calculateSessionPrice(
+          doctor.hourlyRate,
+          patient.package
+        );
 
-      // Include all fields from the doctor object along with sessionPrice
-      return {
-        ...doctor.toObject(),
-        sessionPrice: sessionPrice,
-      };
-    });
+        // Include all fields from the doctor object along with sessionPrice
+        return {
+          ...doctor.toObject(),
+          sessionPrice: sessionPrice,
+        };
+      })
+    );
 
     res.status(200).json({ doctorsWithSessionPrice });
   } catch (error) {
     res.status(500).json({ message: "Server Error", error: error.message });
   }
 };
-
-
 
 const addAppointment = async (req, res) => {
   try {
