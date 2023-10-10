@@ -1,27 +1,26 @@
 import React, { useEffect, useState } from "react";
 import { Card, Col, Row, Image, Spinner } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
-import axios from "axios";
-import { useDispatch } from "react-redux";
-import { setDoctorData } from "../../state/doctorIdReducer";
 import defaultPfp from "../../Assets/Patient/DefaultPfp.png";
-import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { setDoctorData } from "../../state/doctorIdReducer";
 import { setSearchData } from "../../state/Patient/SearchDoctor";
 import { setFilterArray } from "../../state/Patient/filteredDoctors";
+import axios from "axios";
 
 function ShowDoctors() {
   const [loading, setLoading] = useState(true);
   const [responseData, setResponseData] = useState([]);
+  const [error1, setError] = useState(null);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [error1, setError] = useState(null);
   const updateFilteredDoctors = (filteredArray) => {
     dispatch(setFilterArray({ filterArray: filteredDoctors }));
   };
   const _id = useSelector((state) => state.patientLogin.userId);
-
   const searchDataName = useSelector((state) => state.searchDoctor.name); // Assuming 'searchDoctor' is the slice name
   const searchDataSpec = useSelector((state) => state.searchDoctor.specialty); // Assuming 'searchDoctor' is the slice name
+
   const handleCard = (doctor, index) => {
     dispatch(
       setDoctorData({

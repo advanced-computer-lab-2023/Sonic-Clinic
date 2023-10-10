@@ -10,44 +10,43 @@ import {
   faChevronUp,
   faSearch,
 } from "@fortawesome/free-solid-svg-icons";
-import { useSelector } from "react-redux";
-import axios from "axios";
 
-function DrShowPatients() {
+function DrShowPatients({ patients, setPatients, responseData }) {
   const [searchTerm, setSearchTerm] = useState("");
-  const [responseData, setResponseData] = useState([]);
-  const [patients, setPatients] = useState([]);
-  const [error, setError] = useState(null);
-  const _id = useSelector((state) => state.doctorLogin.userId);
+
+  // const [responseData, setResponseData] = useState([]);
+  // const [patients, setPatients] = useState([]);
+  // const [error, setError] = useState(null);
+  // const _id = useSelector((state) => state.doctorLogin.userId);
   const [expandedPatient, setExpandedPatient] = useState(null);
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+  // useEffect(() => {
+  //   fetchData();
+  // }, []);
 
-  const fetchData = async () => {
-    const config = {
-      headers: {
-        _id: _id,
-      },
-    };
-    console.log(_id);
-    try {
-      const response = await axios.post("/viewPatients", { _id: _id }, config);
-      if (response.status === 200) {
-        setResponseData(response.data.patients);
-        setPatients(responseData);
-      } else {
-        console.log("Server error");
-      }
-    } catch (error) {
-      if (error.response && error.response.status === 404) {
-        setError("No data found.");
-      } else if (error.response && error.response.status === 500) {
-        setError("Server Error");
-      }
-    }
-  };
+  // const fetchData = async () => {
+  //   const config = {
+  //     headers: {
+  //       _id: _id,
+  //     },
+  //   };
+  //   try {
+  //     const response = await axios.post("/viewPatients", { _id: _id }, config);
+  //     if (response.status === 200) {
+  //       setResponseData(response.data.patients);
+  //       setPatients(responseData);
+  //       console.log("ba set aho", patients);
+  //     } else {
+  //       console.log("Server error");
+  //     }
+  //   } catch (error) {
+  //     if (error.response && error.response.status === 404) {
+  //       setError("No data found.");
+  //     } else if (error.response && error.response.status === 500) {
+  //       setError("Server Error");
+  //     }
+  //   }
+  // };
 
   const handleSearch = () => {
     setPatients(
@@ -100,7 +99,8 @@ function DrShowPatients() {
           />
         </Button>
       </div>
-      {patients.map((patient, index) => (
+      {/* SHOULD BE PATIENTS BAS BETALA3 RUNTIME ERROR!!!! */}
+      {responseData.map((patient, index) => (
         <Card className="mb-4 mx-3 bg-light" key={patient}>
           <Card.Header
             className="d-flex align-items-center justify-content-between"
@@ -115,72 +115,31 @@ function DrShowPatients() {
           {expandedPatient === index && (
             <Card.Body>
               <Row>
-                {/* <Col lg={4}>
-                  <div
-                    className={`appointment-icon-container ${
-                      patient.status === "Confirmed" ? "confirmed" : "cancelled"
-                    }`}
-                  >
-                    <FontAwesomeIcon
-                      icon={
-                        patient.status === "Confirmed"
-                          ? faCheckCircle
-                          : faTimesCircle
-                      }
-                      className="appointment-icon"
-                    />
-                  </div>
-                </Col> */}
                 <Col lg={8}>
                   <Card.Text>
-                    <div className="show-more-date">
-                      <FontAwesomeIcon
-                        icon={faCalendar}
-                        style={{ marginRight: "0.5rem" }}
-                      />
-                      {/* {patient.appointments} */}
-                      Date
-                    </div>
-                    {/* <div className="show-more-time">
-                      <FontAwesomeIcon
-                        icon={faClock}
-                        style={{ marginRight: "0.5rem" }}
-                      />
-                      {patient.time}
-                      Time
-                    </div> */}
-                    {/* <div
-                      className={`show-more-status ${
-                        patient.status === "Confirmed"
-                          ? "confirmed"
-                          : "cancelled"
-                      }`}
-                    >
-                      {patient.status}
-                    </div> */}
-                    <hr />
-                    {/* <div className="upcoming-appointments">
-                      <h5>Upcoming Appointments</h5>
-                      {patient.upcomingAppointments.length === 0 ? (
-                        <p>No upcoming appointments</p>
-                      ) : (
-                        <ul>
-                          {patient.upcomingAppointments.map((appointment) => (
-                            <li key={appointment.date}>
-                              <div>{appointment.date}</div>
-                              <div>{appointment.time}</div>
-                              <div>{appointment.status}</div>
-                            </li>
-                          ))}
-                        </ul>
-                      )}
-                    </div> */}
-                    <hr />
                     <div className="patient-info">
                       <h5>Patient Information</h5>
                       <p>Date of birth: {patient.dateOfBirth}</p>
                       <p>Gender: {patient.gender}</p>
-                      {/* <p>Medical History: {patient.prescriptions}</p> */}
+                      <p>Medical History:</p>
+                      {patient.prescriptions != null ? (
+                        patient.prescriptions.map((prescription, index) => (
+                          <div key={index}>
+                            <p>
+                              Prescription {index + 1}: {prescription.date}
+                            </p>
+                            <ul>
+                              {prescription.medicine.map(
+                                (medicine, medIndex) => (
+                                  <li key={medIndex}>{medicine.name}</li>
+                                )
+                              )}
+                            </ul>
+                          </div>
+                        ))
+                      ) : (
+                        <div>No previous history found</div>
+                      )}
                     </div>
                   </Card.Text>
                 </Col>
