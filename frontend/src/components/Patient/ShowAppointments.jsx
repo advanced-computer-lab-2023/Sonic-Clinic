@@ -39,7 +39,7 @@ function ShowAppointments() {
       setLoading(false);
     } catch (error) {
       if (error.response && error.response.status === 404) {
-        setError("No Prescriptions Found");
+        setError(" You don't have any appointments.");
       } else if (error.response && error.response.status === 500) {
         setError("Server Error");
       } else {
@@ -85,11 +85,9 @@ function ShowAppointments() {
           </Spinner>
         </div>
       )}
-      {error1 && <div style={{ color: "red" }}>{error1}</div>}
+      {/* {error1 && <div style={{ color: "red" }}>{error1}</div>} */}
       {filteredAppointments.length === 0 && !loading && (
-        <div style={{ textAlign: "center", marginTop: "20px" }}>
-          You don't have any prescriptions.
-        </div>
+        <div style={{ textAlign: "center", marginTop: "20px" }}>{error1}</div>
       )}
       {!loading &&
         filteredAppointments.map((appointment, index) => {

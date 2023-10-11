@@ -5,9 +5,16 @@ import HamburgerMenu from "../../components/Patient/HamburgerMenu";
 import DoctorFilter from "../../components/Patient/DoctorFilter";
 import ShowDoctors from "../../components/Patient/ShowDoctors";
 import ViewDoctorsSearch from "../../components/Patient/ViewDoctorsSearch";
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { deleteSearchData } from "../../state/Patient/SearchDoctor";
 
 function PatientViewDoctors() {
   // const [filteredDoctors, setFilteredDoctors] = useState([]);
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(deleteSearchData());
+  }, []);
 
   return (
     <div>

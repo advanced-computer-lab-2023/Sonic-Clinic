@@ -35,59 +35,47 @@ const addDoctor = async (req, res) => {
   }
 };
 
-const addPackage = async(req,res) => {
-   try{
-      const newPackage = await packagesModel.create(req.body);
-      console.log("Package Created!")
-      res.status(200).send(newPackage);
-   } catch(error){
-      res.status(400).send({error:error.message});
-   }
+const addPackage = async (req, res) => {
+  try {
+    const newPackage = await packagesModel.create(req.body);
+    console.log("Package Created!");
+    res.status(200).send(newPackage);
+  } catch (error) {
+    res.status(400).send({ error: error.message });
+  }
 };
 const updatePackage = async (req, res) => {
-   try {
-     const id = req.query._id;
-     const {
-       type,
-       price,
-       sessionDiscount,
-       medicineDiscount,
-       packageDiscountFM,
-     } = req.query; // Extract fields from req.query
- 
-     const updatedPackage = await packagesModel.findByIdAndUpdate(
-       id,
-       {
-         type,
-         price,
-         sessionDiscount,
-         medicineDiscount,
-         packageDiscountFM,
-       },
-       { new: true, runValidators: true } // Use { new: true } to return the updated package
-     );
- 
-     if (!updatedPackage) {
-       return res.status(404).json({ message: 'Package not found' });
-     }
- 
-     return res.status(200).json(updatedPackage);
-   } catch (error) {
-     return res.status(500).send({ error: error.message });
-   }
- };
- 
+  try {
+    const id = req.query._id;
+    const {
+      type,
+      price,
+      sessionDiscount,
+      medicineDiscount,
+      packageDiscountFM,
+    } = req.query; // Extract fields from req.query
 
+    const updatedPackage = await packagesModel.findByIdAndUpdate(
+      id,
+      {
+        type,
+        price,
+        sessionDiscount,
+        medicineDiscount,
+        packageDiscountFM,
+      },
+      { new: true, runValidators: true } // Use { new: true } to return the updated package
+    );
 
+    if (!updatedPackage) {
+      return res.status(404).json({ message: "Package not found" });
+    }
 
-
-
-
-
-
-
-
-
+    return res.status(200).json(updatedPackage);
+  } catch (error) {
+    return res.status(500).send({ error: error.message });
+  }
+};
 
 const viewPotentialDoctors = async (req, res) => {
   try {
@@ -118,10 +106,12 @@ const deletePackage = async (req, res) => {
   }
 };
 
-const rejectPotentialDoctor = async(req,res) => {
-   try{
-      const username = req.query.username;
-      const rejectedDoctor = await potentialDoctorModel.findOneAndDelete({ username: username });
+const rejectPotentialDoctor = async (req, res) => {
+  try {
+    const username = req.query.username;
+    const rejectedDoctor = await potentialDoctorModel.findOneAndDelete({
+      username: username,
+    });
 
     if (!rejectedDoctor) {
       return res.status(404).json({ message: "Potential Doctor not found" });
@@ -133,40 +123,44 @@ const rejectPotentialDoctor = async(req,res) => {
   }
 };
 
-const removeDoctor = async(req,res) => {
-   try{
-      const username = req.query.username;
-      const removedDoctor = await doctorModel.findOneAndDelete({ username: username });
+const removeDoctor = async (req, res) => {
+  try {
+    const username = req.query.username;
+    const removedDoctor = await doctorModel.findOneAndDelete({
+      username: username,
+    });
 
     if (!removedDoctor) {
       return res.status(404).json({ message: "Doctor not found" });
     }
-    return res.status(200).json({ message: 'Doctor removed successfully' });
-   }
-   catch(error){
-   console.error(error);
-    return res.status(500).json({ message: 'Internal server error' });
-   }
-}
-const removePatient = async(req,res) => {
-   try{
-      const username = req.query.username;
-      const removedPatient = await patientModel.findOneAndDelete({ username: username });
+    return res.status(200).json({ message: "Doctor removed successfully" });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+const removePatient = async (req, res) => {
+  try {
+    const username = req.query.username;
+    const removedPatient = await patientModel.findOneAndDelete({
+      username: username,
+    });
 
     if (!removedPatient) {
       return res.status(404).json({ message: "Patient not found" });
     }
-    return res.status(200).json({ message: 'Patient removed successfully' });
-   }
-   catch(error){
-   console.error(error);
-    return res.status(500).json({ message: 'Internal server error' });
-   }
-}
-const removeAdmin = async(req,res) => {
-   try{
-      const username = req.query.username;
-      const removedAdmin = await administratorModel.findOneAndDelete({ username: username });
+    return res.status(200).json({ message: "Patient removed successfully" });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+const removeAdmin = async (req, res) => {
+  try {
+    const username = req.query.username;
+    const removedAdmin = await administratorModel.findOneAndDelete({
+      username: username,
+    });
 
     if (!removedAdmin) {
       return res.status(404).json({ message: "Admin not found" });
@@ -201,6 +195,7 @@ const dummyDoctors = [
     password: "password123",
     dateOfBirth: "1980-05-15",
     hourlyRate: 150,
+    sessionPrice: 400,
     affiliation: "City Hospital",
     educationalBackground: "M.D. from University of Medical Sciences",
     patients: [],
@@ -215,6 +210,7 @@ const dummyDoctors = [
     password: "password456",
     dateOfBirth: "1975-08-22",
     hourlyRate: 120,
+    sessionPrice: 120,
     affiliation: "Community Clinic",
     educationalBackground: "M.D. from Medical University",
     patients: [],
@@ -229,6 +225,7 @@ const dummyDoctors = [
     password: "password789",
     dateOfBirth: "1983-03-10",
     hourlyRate: 170,
+    sessionPrice: 170,
     affiliation: "General Hospital",
     educationalBackground: "M.D. from Health Sciences Institute",
     patients: [],
@@ -243,6 +240,7 @@ const dummyDoctors = [
     password: "password101",
     dateOfBirth: "1978-11-28",
     hourlyRate: 140,
+    sessionPrice: 140,
     affiliation: "Medical Center",
     educationalBackground: "M.D. from Wellness University",
     patients: [],
@@ -257,6 +255,7 @@ const dummyDoctors = [
     password: "password202",
     dateOfBirth: "1985-09-03",
     hourlyRate: 160,
+    sessionPrice: 160,
     affiliation: "Health Clinic",
     educationalBackground: "M.D. from Healing Institute",
     patients: [],
@@ -271,6 +270,7 @@ const dummyDoctors = [
     password: "password303",
     dateOfBirth: "1973-12-18",
     hourlyRate: 180,
+    sessionPrice: 180,
     affiliation: "Community Hospital",
     educationalBackground: "M.D. from Medical Excellence College",
     patients: [],
@@ -285,6 +285,7 @@ const dummyDoctors = [
     password: "password404",
     dateOfBirth: "1976-07-07",
     hourlyRate: 130,
+    sessionPrice: 130,
     affiliation: "General Medical Center",
     educationalBackground: "M.D. from Health Sciences Academy",
     patients: [],
@@ -336,11 +337,10 @@ const viewAllAdmins = async (req, res) => {
   }
 };
 
-const viewAllDocApp =async(req, res) =>{
+const viewAllDocApp = async (req, res) => {
   try {
-
-  //const docApp = await doctorModel.find();
-  const docPop = await doctorModel.find().populate("appointment");
+    //const docApp = await doctorModel.find();
+    const docPop = await doctorModel.find().populate("appointment");
 
     // const doctorsWithAppointments = await doctorModel.aggregate([
     //   {
@@ -374,7 +374,7 @@ const viewAllDocApp =async(req, res) =>{
     console.error("Error fetching doctors with appointments:", error);
     res.status(500).json({ error: "Internal server error" });
   }
-}
+};
 
 module.exports = {
   addAdmin,

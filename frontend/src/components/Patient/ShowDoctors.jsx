@@ -14,12 +14,17 @@ function ShowDoctors() {
   const [error1, setError] = useState(null);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const updateFilteredDoctors = (filteredArray) => {
-    dispatch(setFilterArray({ filterArray: filteredDoctors }));
-  };
+  // const updateFilteredDoctors = (filteredArray) => {
+  //   dispatch(setFilterArray({ filterArray: filteredDoctors }));
+  // };
   const _id = useSelector((state) => state.patientLogin.userId);
   const searchDataName = useSelector((state) => state.searchDoctor.name); // Assuming 'searchDoctor' is the slice name
   const searchDataSpec = useSelector((state) => state.searchDoctor.specialty); // Assuming 'searchDoctor' is the slice name
+  const searchDataFilterSpec = useSelector(
+    (state) => state.searchDoctor.filterSpecialty
+  ); // Assuming 'searchDoctor' is the slice name
+  const searchDataDate = useSelector((state) => state.searchDoctor.date); // Assuming 'searchDoctor' is the slice name
+  const searchDataTime = useSelector((state) => state.searchDoctor.time); // Assuming 'searchDoctor' is the slice name
 
   const handleCard = (doctor, index) => {
     dispatch(
@@ -56,7 +61,7 @@ function ShowDoctors() {
       );
       if (response.status === 200) {
         console.log("RESPONSE:", response.data);
-        setResponseData(response.data.doctorsWithSessionPrice);
+        setResponseData(response.data.allDoctors);
       } else {
         console.log("Server error");
       }
@@ -75,15 +80,38 @@ function ShowDoctors() {
 
   const NeededData = responseData;
   const filteredDoctors = NeededData.filter((doctor) => {
-    const name = doctor.name ? doctor.name.toLowerCase() : ""; // Check if doctor.name is defined
-    const speciality = doctor.speciality ? doctor.speciality.toLowerCase() : ""; // Check if doctor.speciality is defined
+    const name = doctor.name ? doctor.name.toLowerCase() : "";
+    const speciality = doctor.speciality ? doctor.speciality.toLowerCase() : "";
+    // const filterSpeciality = doctor.speciality
+    //   ? doctor.speciality.toLowerCase()
+    //   : "";
+
+    const date =
+      doctor.appointment && Array.isArray(doctor.appointment)
+        ? doctor.appointment.map((appointment) =>
+            appointment.date ? appointment.date : ""
+          )
+        : [];
+    const time =
+      doctor.appointment && Array.isArray(doctor.appointment)
+        ? doctor.appointment.map((appointment) =>
+            appointment.time ? appointment.time : ""
+          )
+        : [];
 
     return (
-      name.includes(searchDataName.toLowerCase()) &&
-      speciality.includes(searchDataSpec.toLowerCase())
+      (searchDataName === "" || name.includes(searchDataName.toLowerCase())) &&
+      (searchDataSpec === "" ||
+        speciality.includes(searchDataSpec.toLowerCase()))
+      // (searchDataFilterSpec === "" ||
+      //   filterSpeciality.includes(searchDataFilterSpec))
+      // date.includes(searchDataDate.toLowerCase()) &&
+      // time.includes(searchDataTime.toLowerCase())
     );
   });
-  updateFilteredDoctors(filteredDoctors);
+  console.log("NEEDEDDATA", NeededData);
+  console.log("filterDAya", filteredDoctors);
+  // updateFilteredDoctors(filteredDoctors);
 
   return (
     <div>
