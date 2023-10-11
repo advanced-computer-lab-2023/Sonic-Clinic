@@ -22,22 +22,46 @@ const addPotentialDoctor = async (req, res) => {
   }
 };
 const addPatient = async (req, res) => {
-  const { username } = req.body;
+  const {
+    username,
+    name,
+    email,
+    password,
+    dateOfBirth,
+    gender,
+    mobileNumber,
+    emergencyFullName,
+    emergencyMobileNumber,
+  } = req.body;
+
+  // Set default values for non-required fields
+  const package = req.body.package || ' ';
 
   try {
     const existingPatient = await patientModel.findOne({ username });
     if (existingPatient) {
-      return res
-        .status(409)
-        .send({ message: "Patient with this username already exists." });
+      return res.status(409).send({ message: "Patient with this username already exists." });
     }
 
-    const newPatient = await patientModel.create(req.body);
+    const newPatient = await patientModel.create({
+      username,
+      name,
+      email,
+      password,
+      dateOfBirth,
+      gender,
+      mobileNumber,
+      emergencyFullName,
+      emergencyMobileNumber,
+      package,  // Set the default value for package
+    });
+
     console.log("Patient Created!");
     res.status(200).send(newPatient);
   } catch (error) {
     res.status(400).send({ error: error.message });
   }
 };
+
 
 module.exports = { addPotentialDoctor, addPatient };
