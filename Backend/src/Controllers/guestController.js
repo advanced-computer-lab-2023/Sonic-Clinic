@@ -37,6 +37,7 @@ const addPatient = async (req, res) => {
   // Set default values for non-required fields
   const package = req.body.package || ' ';
 
+
   try {
     const existingPatient = await patientModel.findOne({ username });
     if (existingPatient) {

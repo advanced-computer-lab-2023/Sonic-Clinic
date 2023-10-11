@@ -3,6 +3,8 @@ import { Card, Form, Button } from "react-bootstrap";
 import { useDispatch } from "react-redux";
 import { setSearchData } from "../../state/Patient/SearchDoctor";
 import { useNavigate } from "react-router";
+import { faSearch } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 function ViewDoctorsSearch() {
   const [doctorName, setDoctorName] = useState("");
@@ -74,11 +76,11 @@ function ViewDoctorsSearch() {
                     value={doctorSpecialty}
                   >
                     <option>Select specialty</option>
-                    <option>Cardiologist</option>
-                    <option>Pediatrician</option>
-                    <option>Dermatologist</option>
-                    <option>Oncologist</option>
-                    <option>Neurologist</option>
+                    <option>Cardiology</option>
+                    <option>Orthopedics</option>
+                    <option>Oncology</option>
+                    <option>Neurology</option>
+                    <option>Pediatrics</option>
                   </Form.Control>
                 </Form.Group>
               </div>
@@ -89,6 +91,15 @@ function ViewDoctorsSearch() {
                   style={{ width: "150px", height: "40px", marginTop: "30px" }}
                 >
                   S e a r c h
+                  <FontAwesomeIcon
+                    icon={faSearch}
+                    style={{
+                      opacity: 1,
+                      color: "white",
+                      fontSize: "15px",
+                      marginLeft: "10px",
+                    }}
+                  />
                 </Button>
               </div>
             </div>

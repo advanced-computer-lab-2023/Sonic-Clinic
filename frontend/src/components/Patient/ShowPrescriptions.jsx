@@ -1,20 +1,38 @@
 import React, { useEffect, useState } from "react";
 import { Card, Col, Row, Image, Spinner } from "react-bootstrap";
-import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCalendar, faCheckCircle } from "@fortawesome/free-solid-svg-icons";
 import prescriptionImg from "../../Assets/Prescription.jpg";
+import { useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { setPrescriptionData } from "../../state/prescriptionIdReducer";
 import axios from "axios";
-import { useSelector } from "react-redux";
 
 function ShowPrescriptions() {
   const [loading, setLoading] = useState(true);
   const [responseData, setResponseData] = useState([]);
   const [error1, setError] = useState(null);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
   const id = useSelector((state) => state.patientLogin.userId);
   const filterDate = useSelector((state) => state.filterPrescriptions.date); // Assuming 'searchDoctor' is the slice name
   const filterDoctor = useSelector((state) => state.filterAppointments.doctor);
   const filterStatus = useSelector((state) => state.filterAppointments.status);
+
+  const handleCard = (prescription, index) => {
+    dispatch(
+      setPrescriptionData({
+        _id: prescription._id,
+        date: prescription.date,
+        description: prescription.description,
+        patientID: prescription.patientID,
+        doctorID: prescription.doctorID,
+        status: prescription.status,
+      })
+    );
+    navigate(`/patient/view-prescriptions/${index}`);
+  };
+
   useEffect(() => {
     fetchData();
   }, {});
@@ -98,8 +116,8 @@ function ShowPrescriptions() {
             .padStart(2, "0")}/${prescriptionDate.getFullYear()}`;
 
           return (
-            <Link
-              to={`/prescription/${prescription._id}`}
+            <a
+              onClick={() => handleCard(prescription, index + 1)}
               key={prescription.prescriptionId}
               className="text-decoration-none"
             >
@@ -151,7 +169,7 @@ function ShowPrescriptions() {
                   </Col>
                 </Row>
               </Card>
-            </Link>
+            </a>
           );
         })}
     </div>

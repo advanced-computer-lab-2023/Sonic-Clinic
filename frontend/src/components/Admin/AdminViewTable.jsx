@@ -22,6 +22,7 @@ export default function AdminViewTable({ onAdmins, api }) {
   const fetchData = async () => {
     try {
       const response = await axios.get(api);
+
       if (response.status === 200) {
         if (api === "/viewAllDoctors") setResponseData(response.data.doctors);
         if (api === "/viewAllPatients") setResponseData(response.data.patients);
@@ -70,17 +71,15 @@ export default function AdminViewTable({ onAdmins, api }) {
   const handleClose = () => setShowModal(false);
 
   const actuallyDelete = async () => {
-    console.log("el khara aho", username);
     try {
       let method = "";
       if (api === "/viewAllDoctors") method = "/removeDoctor";
       if (api === "/viewAllPatients") method = "/removePatient";
       if (api === "/viewAllAdmins") method = "/removeAdmin";
-      const response = await axios.delete(method, {
-        username: username,
-      });
+
+      const response = await axios.delete(`${method}?username=${username}`);
+
       if (response.status === 200) {
-        console.log("Successful");
         fetchData();
       }
     } catch (error) {
@@ -88,6 +87,7 @@ export default function AdminViewTable({ onAdmins, api }) {
       setError("Error");
       isLoading(false);
     }
+
     setTimeout(() => {
       setError(null); // Clear the error after 5 seconds
     }, 5000);
@@ -117,6 +117,7 @@ export default function AdminViewTable({ onAdmins, api }) {
           )}
         </Button>
       )}
+
       {showAddNewAdmin && (
         <AddNewAdmin fetchData={fetchData} closeForm={toggleAddNewAdmin} />
       )}
@@ -129,7 +130,7 @@ export default function AdminViewTable({ onAdmins, api }) {
           </tr>
         </thead>
         <tbody>
-          {Array.isArray(users) &&
+          {users &&
             users.map((user) => (
               <tr key={user._id}>
                 {!onAdmins && <td>{user.name}</td>}
