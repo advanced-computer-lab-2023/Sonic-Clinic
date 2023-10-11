@@ -141,8 +141,7 @@ const LoginForm = () => {
           placeholder="**************"
           onChange={(e) => setPassword(e.target.value)}
         />
-        <Container className="forgot-password-container">
-          {/* <div className="form-comment"> */}
+        {/* <Container className="forgot-password-container">
           <div
             className="forgot-password text-decoration-none"
             style={{ cursor: "pointer" }}
@@ -150,7 +149,7 @@ const LoginForm = () => {
           >
             Forgot Password?
           </div>
-        </Container>
+        </Container> */}
         <button
           className="w-100 btn-sm custom-button"
           disabled={loading}
@@ -159,7 +158,7 @@ const LoginForm = () => {
         >
           Login
         </button>
-        <div className="form-comment" style={{ cursor: "default" }}>
+        {/* <div className="form-comment" style={{ cursor: "default" }}>
           Don't have an account?{" "}
           <div
             className="text-decoration-none  link-decoration "
@@ -168,7 +167,7 @@ const LoginForm = () => {
           >
             Sign Up
           </div>
-        </div>
+        </div> */}
         {error1 && (
           <div
             style={{

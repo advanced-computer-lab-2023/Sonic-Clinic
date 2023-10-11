@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import { Button, Container, Form } from "react-bootstrap";
 import "./DoctorFilter.css";
 import axios from "axios";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { setSearchData } from "../../state/Patient/SearchDoctor";
 function DoctorFilter() {
   const Specialties = [
     { title: "Cardiology", id: "1", selected: false },
@@ -15,17 +16,32 @@ function DoctorFilter() {
   const [currentSpecialties, setSelectedSpecialties] = useState(Specialties);
 
   const toggleSpecialty = (specialtyItem, index) => {
-    const copyCurrentSpecialties = currentSpecialties.map(
-      (item, i) =>
-        i === index
-          ? { ...item, selected: !item.selected } // Toggle the selected state of the clicked specialty
-          : { ...item, selected: false } // Deselect all other specialties
-    );
+    const copyCurrentSpecialties = currentSpecialties.map((item, i) => {
+      if (i === index) {
+        // Toggle the selected state of the clicked specialty
+        return { ...item, selected: !item.selected };
+      } else {
+        return { ...item, selected: false }; // Deselect all other specialties
+      }
+    });
+
     setSelectedSpecialties(copyCurrentSpecialties);
+
+    const selectedSpecialtyItem = copyCurrentSpecialties.find(
+      (specialty) => specialty.selected === true
+    );
+
+    if (selectedSpecialtyItem) {
+      setSelectedSpecialty(selectedSpecialtyItem.title);
+    } else {
+      // If no specialty is selected, you can set the selectedSpecialty to a default value or handle it as needed.
+      setSelectedSpecialty(""); // Example: Set to an empty string
+    }
   };
 
   const [selectedDate, setSelectedDate] = useState("");
   const [selectedTime, setSelectedTime] = useState("");
+  const [selectedSpecialty, setSelectedSpecialty] = useState("");
 
   const handleDateChange = (e) => {
     setSelectedDate(e.target.value);
@@ -53,39 +69,49 @@ function DoctorFilter() {
 
     return `${yyyy}-${mm}-${dd}`;
   }
-  const filteredDoctors = useSelector(
-    (state) => state.filterDoctor.filterArray
-  );
-  const handleApplyClick = async () => {
-    try {
-      // Create an object to hold the filters
-      const filters = {
-        specialties: currentSpecialties
-          .filter((specialty) => specialty.selected)
-          .map((specialty) => specialty.title),
+  const dispatch = useDispatch();
+  const handleSearch = () => {
+    dispatch(
+      setSearchData({
+        filterSpecialty: selectedSpecialty,
         date: selectedDate,
         time: selectedTime,
-      };
-      const response = await axios.post(
-        "/filterDoctorsAfterSearch",
-        {
-          array: filteredDoctors, // Replace with your actual id value
-        },
-        {
-          speciality: currentSpecialties
-            .filter((specialty) => specialty.selected)
-            .map((specialty) => specialty.title),
-          date: selectedDate,
-          time: selectedTime, // Send filters as request parameters
-        }
-      );
-
-      // Handle the response as needed
-      console.log("API response:", response.data);
-    } catch (error) {
-      console.error("Error:", error);
-    }
+      })
+    );
   };
+  // const filteredDoctors = useSelector(
+  //   (state) => state.filterDoctor.filterArray
+  // );
+  // const handleApplyClick = async () => {
+  //   try {
+  //     // Create an object to hold the filters
+  //     const filters = {
+  //       specialties: currentSpecialties
+  //         .filter((specialty) => specialty.selected)
+  //         .map((specialty) => specialty.title),
+  //       date: selectedDate,
+  //       time: selectedTime,
+  //     };
+  //     const response = await axios.post(
+  //       "/filterDoctorsAfterSearch",
+  //       {
+  //         array: filteredDoctors, // Replace with your actual id value
+  //       },
+  //       {
+  //         speciality: currentSpecialties
+  //           .filter((specialty) => specialty.selected)
+  //           .map((specialty) => specialty.title),
+  //         date: selectedDate,
+  //         time: selectedTime, // Send filters as request parameters
+  //       }
+  //     );
+
+  //     // Handle the response as needed
+  //     console.log("API response:", response.data);
+  //   } catch (error) {
+  //     console.error("Error:", error);
+  //   }
+  // };
 
   return (
     <Container
@@ -189,7 +215,7 @@ function DoctorFilter() {
         fluid
         className="d-flex align-items-center justify-content-center"
       >
-        <Button className="custom-button" onClick={handleApplyClick}>
+        <Button className="custom-button" onClick={handleSearch}>
           Apply
         </Button>
       </Container>

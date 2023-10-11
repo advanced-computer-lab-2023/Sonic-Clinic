@@ -8,6 +8,7 @@ import { useDispatch } from "react-redux";
 import FormPassword from "../FormPassword";
 import FormInput from "../FormInput";
 import { setCredentialsDoctor } from "../../state/loginDoctorReducer";
+import { Form } from "react-bootstrap";
 
 const DrSignupForm = () => {
   const [name, setName] = useState("");
@@ -286,15 +287,33 @@ const DrSignupForm = () => {
             />
           </div>
           <div className="col">
-            <FormInput
-              name="Speciality"
-              type="text"
-              placeholder="Eyes"
-              onChange={
-                (e) => setSpeciality(e.target.value)
-                // validateEmail();
-              }
-            />
+            <Form.Group controlId="genderSelect">
+              <Form.Label
+                style={{
+                  width: "7.75rem",
+                  height: "1.1875rem",
+                  flexShrink: 0,
+                  color: "var(--flowkit-charcoal, #222)",
+                  fontSize: "0.75rem",
+                  fontStyle: "normal",
+                  fontWeight: 700,
+                  lineHeight: "normal",
+                }}
+              >
+                Gender
+              </Form.Label>
+              <Form.Control
+                as="select"
+                value={speciality}
+                onChange={(e) => setSpeciality(e.target.value)}
+              >
+                <option value="Cardiology">Cardiology</option>
+                <option value="Orthopedics">Orthopedics</option>
+                <option value="Oncology">Oncology</option>
+                <option value="Neurology">Neurology</option>
+                <option value="Pediatrics">Pediatrics</option>
+              </Form.Control>
+            </Form.Group>
           </div>
         </div>
 

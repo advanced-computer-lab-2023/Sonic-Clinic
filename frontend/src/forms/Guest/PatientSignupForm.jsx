@@ -8,6 +8,7 @@ import { setCredentialsPatient } from "../../state/loginPatientReducer";
 
 import FormPassword from "../FormPassword";
 import FormInput from "../FormInput";
+import { Col, Form, Row } from "react-bootstrap";
 
 const PatientSignupForm = () => {
   const [name, setName] = useState("");
@@ -290,12 +291,45 @@ const PatientSignupForm = () => {
             />
           </div>
           <div className="col">
-            <FormInput
-              name="Gender"
-              placeholder="Male"
-              type="select"
-              onChange={(e) => setGender(e.target.value)}
-            />
+            {/* <Form.Group as={Row} className="mb-3">
+              <Col sm={12}>
+                <Form.Label htmlFor={name} className="form-input-label">
+                  {name}
+                </Form.Label>
+                <Form.Control
+                  type={}
+                  id={name}
+                  placeholder={placeholder}
+                  className="form-control"
+                  value={value}
+                  onChange={onChange}
+                />
+              </Col>
+            </Form.Group> */}
+            <Form.Group controlId="genderSelect">
+              <Form.Label
+                style={{
+                  width: "7.75rem",
+                  height: "1.1875rem",
+                  flexShrink: 0,
+                  color: "var(--flowkit-charcoal, #222)",
+                  fontSize: "0.75rem",
+                  fontStyle: "normal",
+                  fontWeight: 700,
+                  lineHeight: "normal",
+                }}
+              >
+                Gender
+              </Form.Label>
+              <Form.Control
+                as="select"
+                value={gender}
+                onChange={(e) => setGender(e.target.value)}
+              >
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+              </Form.Control>
+            </Form.Group>
           </div>
         </div>
 
