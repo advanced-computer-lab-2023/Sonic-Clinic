@@ -1,5 +1,6 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
+
 
 const patientSchema = new Schema({
   username: {
@@ -37,8 +38,13 @@ const patientSchema = new Schema({
   emergencyMobileNumber: {
     type: String,
     required: true
-  }
+  },
+  package: {
+    type: String,
+    required: false
+  },
 }, { timestamps: true });
 
-const User = mongoose.model('Patient', patientSchema);
+
+const Patient = mongoose.model("Patient", patientSchema);
 module.exports = Patient;
