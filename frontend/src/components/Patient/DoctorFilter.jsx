@@ -3,7 +3,7 @@ import { Button, Container, Form } from "react-bootstrap";
 import "./DoctorFilter.css";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
-import { setSearchData } from "../../state/Patient/SearchDoctor";
+import { setFilterData, setSearchData } from "../../state/Patient/SearchDoctor";
 function DoctorFilter() {
   const Specialties = [
     { title: "Cardiology", id: "1", selected: false },
@@ -72,46 +72,13 @@ function DoctorFilter() {
   const dispatch = useDispatch();
   const handleSearch = () => {
     dispatch(
-      setSearchData({
-        filterSpecialty: selectedSpecialty,
+      setFilterData({
+        specialty: selectedSpecialty,
         date: selectedDate,
         time: selectedTime,
       })
     );
   };
-  // const filteredDoctors = useSelector(
-  //   (state) => state.filterDoctor.filterArray
-  // );
-  // const handleApplyClick = async () => {
-  //   try {
-  //     // Create an object to hold the filters
-  //     const filters = {
-  //       specialties: currentSpecialties
-  //         .filter((specialty) => specialty.selected)
-  //         .map((specialty) => specialty.title),
-  //       date: selectedDate,
-  //       time: selectedTime,
-  //     };
-  //     const response = await axios.post(
-  //       "/filterDoctorsAfterSearch",
-  //       {
-  //         array: filteredDoctors, // Replace with your actual id value
-  //       },
-  //       {
-  //         speciality: currentSpecialties
-  //           .filter((specialty) => specialty.selected)
-  //           .map((specialty) => specialty.title),
-  //         date: selectedDate,
-  //         time: selectedTime, // Send filters as request parameters
-  //       }
-  //     );
-
-  //     // Handle the response as needed
-  //     console.log("API response:", response.data);
-  //   } catch (error) {
-  //     console.error("Error:", error);
-  //   }
-  // };
 
   return (
     <Container

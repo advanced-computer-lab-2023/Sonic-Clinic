@@ -14,19 +14,21 @@ const searchDoctorSlice = createSlice({
     setSearchData: (state, action) => {
       state.name = action.payload.name;
       state.specialty = action.payload.specialty;
-      state.filterSpecialty = action.payload.filterSpecialty;
+    },
+    setFilterData: (state, action) => {
+      state.specialty = action.payload.specialty;
       state.date = action.payload.date;
       state.time = action.payload.time;
     },
     deleteSearchData: (state, action) => {
       state.name = "";
       state.specialty = "";
-      state.filterSpecialty = "";
       state.date = "";
       state.time = "";
     },
   },
 });
 
-export const { setSearchData, deleteSearchData } = searchDoctorSlice.actions;
+export const { setSearchData, deleteSearchData, setFilterData } =
+  searchDoctorSlice.actions;
 export default searchDoctorSlice.reducer;

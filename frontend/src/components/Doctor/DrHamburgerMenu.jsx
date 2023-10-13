@@ -9,6 +9,7 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState } from "react";
 import { slide as Menu } from "react-burger-menu";
+import { useSelector } from "react-redux";
 function DrHamburgerMenu() {
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -19,6 +20,7 @@ function DrHamburgerMenu() {
   const closeMenu = () => {
     setMenuOpen(false);
   };
+  const name = useSelector((state) => state.doctorLogin.name).split(" ")[0];
   return (
     <div>
       <Menu
@@ -115,7 +117,7 @@ function DrHamburgerMenu() {
                 marginLeft: "1rem",
               }}
             >
-              Hello
+              Hello {name}
             </div>
           </div>
 
