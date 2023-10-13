@@ -35,59 +35,47 @@ const addDoctor = async (req, res) => {
   }
 };
 
-const addPackage = async(req,res) => {
-   try{
-      const newPackage = await packagesModel.create(req.body);
-      console.log("Package Created!")
-      res.status(200).send(newPackage);
-   } catch(error){
-      res.status(400).send({error:error.message});
-   }
+const addPackage = async (req, res) => {
+  try {
+    const newPackage = await packagesModel.create(req.body);
+    console.log("Package Created!");
+    res.status(200).send(newPackage);
+  } catch (error) {
+    res.status(400).send({ error: error.message });
+  }
 };
 const updatePackage = async (req, res) => {
-   try {
-     const id = req.query._id;
-     const {
-       type,
-       price,
-       sessionDiscount,
-       medicineDiscount,
-       packageDiscountFM,
-     } = req.query; // Extract fields from req.query
- 
-     const updatedPackage = await packagesModel.findByIdAndUpdate(
-       id,
-       {
-         type,
-         price,
-         sessionDiscount,
-         medicineDiscount,
-         packageDiscountFM,
-       },
-       { new: true, runValidators: true } // Use { new: true } to return the updated package
-     );
- 
-     if (!updatedPackage) {
-       return res.status(404).json({ message: 'Package not found' });
-     }
- 
-     return res.status(200).json(updatedPackage);
-   } catch (error) {
-     return res.status(500).send({ error: error.message });
-   }
- };
- 
+  try {
+    const id = req.query._id;
+    const {
+      type,
+      price,
+      sessionDiscount,
+      medicineDiscount,
+      packageDiscountFM,
+    } = req.query; // Extract fields from req.query
 
+    const updatedPackage = await packagesModel.findByIdAndUpdate(
+      id,
+      {
+        type,
+        price,
+        sessionDiscount,
+        medicineDiscount,
+        packageDiscountFM,
+      },
+      { new: true, runValidators: true } // Use { new: true } to return the updated package
+    );
 
+    if (!updatedPackage) {
+      return res.status(404).json({ message: "Package not found" });
+    }
 
-
-
-
-
-
-
-
-
+    return res.status(200).json(updatedPackage);
+  } catch (error) {
+    return res.status(500).send({ error: error.message });
+  }
+};
 
 const viewPotentialDoctors = async (req, res) => {
   try {
@@ -118,10 +106,12 @@ const deletePackage = async (req, res) => {
   }
 };
 
-const rejectPotentialDoctor = async(req,res) => {
-   try{
-      const username = req.query.username;
-      const rejectedDoctor = await potentialDoctorModel.findOneAndDelete({ username: username });
+const rejectPotentialDoctor = async (req, res) => {
+  try {
+    const username = req.query.username;
+    const rejectedDoctor = await potentialDoctorModel.findOneAndDelete({
+      username: username,
+    });
 
     if (!rejectedDoctor) {
       return res.status(404).json({ message: "Potential Doctor not found" });
@@ -133,40 +123,44 @@ const rejectPotentialDoctor = async(req,res) => {
   }
 };
 
-const removeDoctor = async(req,res) => {
-   try{
-      const username = req.query.username;
-      const removedDoctor = await doctorModel.findOneAndDelete({ username: username });
+const removeDoctor = async (req, res) => {
+  try {
+    const username = req.query.username;
+    const removedDoctor = await doctorModel.findOneAndDelete({
+      username: username,
+    });
 
     if (!removedDoctor) {
       return res.status(404).json({ message: "Doctor not found" });
     }
-    return res.status(200).json({ message: 'Doctor removed successfully' });
-   }
-   catch(error){
-   console.error(error);
-    return res.status(500).json({ message: 'Internal server error' });
-   }
-}
-const removePatient = async(req,res) => {
-   try{
-      const username = req.query.username;
-      const removedPatient = await patientModel.findOneAndDelete({ username: username });
+    return res.status(200).json({ message: "Doctor removed successfully" });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+const removePatient = async (req, res) => {
+  try {
+    const username = req.query.username;
+    const removedPatient = await patientModel.findOneAndDelete({
+      username: username,
+    });
 
     if (!removedPatient) {
       return res.status(404).json({ message: "Patient not found" });
     }
-    return res.status(200).json({ message: 'Patient removed successfully' });
-   }
-   catch(error){
-   console.error(error);
-    return res.status(500).json({ message: 'Internal server error' });
-   }
-}
-const removeAdmin = async(req,res) => {
-   try{
-      const username = req.query.username;
-      const removedAdmin = await administratorModel.findOneAndDelete({ username: username });
+    return res.status(200).json({ message: "Patient removed successfully" });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+const removeAdmin = async (req, res) => {
+  try {
+    const username = req.query.username;
+    const removedAdmin = await administratorModel.findOneAndDelete({
+      username: username,
+    });
 
     if (!removedAdmin) {
       return res.status(404).json({ message: "Admin not found" });
@@ -201,10 +195,12 @@ const dummyDoctors = [
     password: "password123",
     dateOfBirth: "1980-05-15",
     hourlyRate: 150,
+    sessionPrice: 150,
+    appointments: [],
     affiliation: "City Hospital",
     educationalBackground: "M.D. from University of Medical Sciences",
     patients: [],
-    speciality: "Cardiologist",
+    speciality: "Cardiology",
     photoLink:
       "https://media.licdn.com/dms/image/C4E03AQFg161EE_9n0Q/profile-displayphoto-shrink_800_800/0/1540403513741?e=2147483647&v=beta&t=zODGGNsdmZ03iwtSrHJEMR_Qxd_NkEQueFjKfd9JrOE",
   },
@@ -215,10 +211,12 @@ const dummyDoctors = [
     password: "password456",
     dateOfBirth: "1975-08-22",
     hourlyRate: 120,
+    sessionPrice: 120,
+    appointments: [],
     affiliation: "Community Clinic",
     educationalBackground: "M.D. from Medical University",
     patients: [],
-    speciality: "Pediatrician",
+    speciality: "Orthopedics",
     photoLink:
       "https://media.licdn.com/dms/image/C4E03AQHJ_sJIJWxHpw/profile-displayphoto-shrink_800_800/0/1529980129766?e=2147483647&v=beta&t=yH7Pz2hfrso5nXNCFilmjOnvL7OVcLML5vOsvA7nWDM",
   },
@@ -229,10 +227,12 @@ const dummyDoctors = [
     password: "password789",
     dateOfBirth: "1983-03-10",
     hourlyRate: 170,
+    sessionPrice: 170,
+    appointments: [],
     affiliation: "General Hospital",
     educationalBackground: "M.D. from Health Sciences Institute",
     patients: [],
-    speciality: "Dermatologist",
+    speciality: "Neurology",
     photoLink:
       "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTAi46IZubvG3_2P4upQgk2zqAqzySmQ7Yx8qmgUOuWdnth2Yoy7BXbSxHTEqpD8_11aeI&usqp=CAU",
   },
@@ -243,10 +243,12 @@ const dummyDoctors = [
     password: "password101",
     dateOfBirth: "1978-11-28",
     hourlyRate: 140,
+    sessionPrice: 140,
+    appointments: [],
     affiliation: "Medical Center",
     educationalBackground: "M.D. from Wellness University",
     patients: [],
-    speciality: "Oncologist",
+    speciality: "Oncology",
     photoLink:
       "https://media.licdn.com/dms/image/C4D03AQF3MdVSGuXrDw/profile-displayphoto-shrink_800_800/0/1525397028366?e=2147483647&v=beta&t=Ai6blaPhh7JFpMGwn1ltvfk40FHEupx1txBM6Qda7AY",
   },
@@ -257,10 +259,13 @@ const dummyDoctors = [
     password: "password202",
     dateOfBirth: "1985-09-03",
     hourlyRate: 160,
+    sessionPrice: 160,
+    appointments: [],
     affiliation: "Health Clinic",
     educationalBackground: "M.D. from Healing Institute",
     patients: [],
-    speciality: "Neurologist",
+    appointments: [],
+    speciality: "Neurology",
     photoLink:
       "https://www.woodlandshospital.in/images/doctor-img/ravi-kant-saraogi.jpg",
   },
@@ -271,10 +276,12 @@ const dummyDoctors = [
     password: "password303",
     dateOfBirth: "1973-12-18",
     hourlyRate: 180,
+    sessionPrice: 180,
+    appointments: [],
     affiliation: "Community Hospital",
     educationalBackground: "M.D. from Medical Excellence College",
     patients: [],
-    speciality: "Orthopedic Surgeon",
+    speciality: "Pediatrics",
     photoLink:
       "https://media.licdn.com/dms/image/D4D03AQGtRNtcH_1kFg/profile-displayphoto-shrink_400_400/0/1688449652391?e=1700697600&v=beta&t=XeEjFVmqBXMPwoCUZtqDLzw1_eA3FAICAT2APwaBHHM",
   },
@@ -285,10 +292,12 @@ const dummyDoctors = [
     password: "password404",
     dateOfBirth: "1976-07-07",
     hourlyRate: 130,
+    sessionPrice: 130,
+    appointments: [],
     affiliation: "General Medical Center",
     educationalBackground: "M.D. from Health Sciences Academy",
     patients: [],
-    speciality: "Psychiatrist",
+    speciality: "Oncology",
     photoLink:
       "https://images.drlogy.com/assets/uploads/img/user/home/health/Doctors.webp",
   },
@@ -336,11 +345,10 @@ const viewAllAdmins = async (req, res) => {
   }
 };
 
-const viewAllDocApp =async(req, res) =>{
+const viewAllDocApp = async (req, res) => {
   try {
-
-  //const docApp = await doctorModel.find();
-  const docPop = await doctorModel.find().populate("appointment");
+    //const docApp = await doctorModel.find();
+    const docPop = await doctorModel.find().populate("appointment");
 
     // const doctorsWithAppointments = await doctorModel.aggregate([
     //   {
@@ -374,7 +382,7 @@ const viewAllDocApp =async(req, res) =>{
     console.error("Error fetching doctors with appointments:", error);
     res.status(500).json({ error: "Internal server error" });
   }
-}
+};
 
 module.exports = {
   addAdmin,

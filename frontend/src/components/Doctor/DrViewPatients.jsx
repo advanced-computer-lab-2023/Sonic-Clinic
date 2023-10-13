@@ -49,6 +49,7 @@ export default function DrViewPatients() {
         </div>
         <div className="col-7">
           <DrShowPatients
+            patients={patients}
             responseData={responseData}
             setPatients={setPatients}
           />
