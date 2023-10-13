@@ -272,6 +272,7 @@ const calculateSessionPrice = async (hourlyRate, patientPackage) => {
       const sessionPrice =
         hourlyRate * 1.1 * (1 - packageInfo.sessionDiscount * 0.01);
 
+
       return sessionPrice;
     }
   } catch (error) {
@@ -410,9 +411,14 @@ const getDoctorsWithSessionPrice = async (req, res) => {
     if (!doctors || doctors.length === 0) {
       return res.status(404).json({ message: "No doctors found." });
     }
+    const doctorsWithFilledAndConfirmedAppointments = doctors.filter(
+      (doctor) =>
+        doctor.appointments.length > 0 &&
+        doctor.appointments.some((appointment) => appointment.status === "free")
+    );
 
     const doctorsWithSessionPrice = await Promise.all(
-      doctors.map(async (doctor) => {
+      doctorsWithFilledAndConfirmedAppointments.map(async (doctor) => {
         const sessionPrice = await calculateSessionPrice(
           doctor.hourlyRate,
           patient.package
@@ -449,43 +455,43 @@ const addAppointment = async (req, res) => {
 // Dummy data for 7 doctors with photo links
 const dummyDoctors = [
   {
-    name: "Dr. John Smith",
-    speciality: "Cardiologist",
+    name: "John Smith",
+    speciality: "Cardiology",
     photoLink:
       "https://media.licdn.com/dms/image/C4E03AQFg161EE_9n0Q/profile-displayphoto-shrink_800_800/0/1540403513741?e=2147483647&v=beta&t=zODGGNsdmZ03iwtSrHJEMR_Qxd_NkEQueFjKfd9JrOE",
   },
   {
-    name: "Dr. Emily Johnson",
+    name: "Emily Johnson",
     speciality: "Pediatrician",
     photoLink:
       "https://media.licdn.com/dms/image/C4E03AQHJ_sJIJWxHpw/profile-displayphoto-shrink_800_800/0/1529980129766?e=2147483647&v=beta&t=yH7Pz2hfrso5nXNCFilmjOnvL7OVcLML5vOsvA7nWDM",
   },
   {
-    name: "Dr. Michael Brown",
+    name: "Michael Brown",
     speciality: "Dermatologist",
     photoLink:
       "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTAi46IZubvG3_2P4upQgk2zqAqzySmQ7Yx8qmgUOuWdnth2Yoy7BXbSxHTEqpD8_11aeI&usqp=CAU",
   },
   {
-    name: "Dr. Sarah Wilson",
+    name: "Sarah Wilson",
     speciality: "Oncologist",
     photoLink:
       "https://media.licdn.com/dms/image/C4D03AQF3MdVSGuXrDw/profile-displayphoto-shrink_800_800/0/1525397028366?e=2147483647&v=beta&t=Ai6blaPhh7JFpMGwn1ltvfk40FHEupx1txBM6Qda7AY",
   },
   {
-    name: "Dr. David Lee",
+    name: "David Lee",
     speciality: "Neurologist",
     photoLink:
       "https://www.woodlandshospital.in/images/doctor-img/ravi-kant-saraogi.jpg",
   },
   {
-    name: "Dr. Lisa Miller",
+    name: "Lisa Miller",
     speciality: "Orthopedic Surgeon",
     photoLink:
       "https://media.licdn.com/dms/image/D4D03AQGtRNtcH_1kFg/profile-displayphoto-shrink_400_400/0/1688449652391?e=1700697600&v=beta&t=XeEjFVmqBXMPwoCUZtqDLzw1_eA3FAICAT2APwaBHHM",
   },
   {
-    name: "Dr. Karen Davis",
+    name: "Karen Davis",
     speciality: "Psychiatrist",
     photoLink:
       "https://images.drlogy.com/assets/uploads/img/user/home/health/Doctors.webp",
