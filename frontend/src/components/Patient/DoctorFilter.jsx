@@ -4,7 +4,7 @@ import "./DoctorFilter.css";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { setFilterData, setSearchData } from "../../state/Patient/SearchDoctor";
-function DoctorFilter() {
+function DoctorFilter({ patients, responseData, setPatients }) {
   const Specialties = [
     { title: "Cardiology", id: "1", selected: false },
     { title: "Orthopedics", id: "2", selected: false },
@@ -14,6 +14,7 @@ function DoctorFilter() {
   ];
 
   const [currentSpecialties, setSelectedSpecialties] = useState(Specialties);
+  const [error1, setError] = useState(null);
 
   const toggleSpecialty = (specialtyItem, index) => {
     const copyCurrentSpecialties = currentSpecialties.map((item, i) => {
@@ -42,6 +43,9 @@ function DoctorFilter() {
   const [selectedDate, setSelectedDate] = useState("");
   const [selectedTime, setSelectedTime] = useState("");
   const [selectedSpecialty, setSelectedSpecialty] = useState("");
+  const _id = useSelector((state) => state.patientLogin.userId);
+  const searchDataName = useSelector((state) => state.searchDoctor.name);
+  const searchDataSpec = useSelector((state) => state.searchDoctor.specialty);
 
   const handleDateChange = (e) => {
     setSelectedDate(e.target.value);
@@ -70,7 +74,16 @@ function DoctorFilter() {
     return `${yyyy}-${mm}-${dd}`;
   }
   const dispatch = useDispatch();
-  const handleSearch = () => {
+  // const handleSearch = () => {
+  //   dispatch(
+  //     setFilterData({
+  //       specialty: selectedSpecialty,
+  //       date: selectedDate,
+  //       time: selectedTime,
+  //     })
+  //   );
+  // };
+  const handleSearch = async () => {
     dispatch(
       setFilterData({
         specialty: selectedSpecialty,
@@ -78,6 +91,33 @@ function DoctorFilter() {
         time: selectedTime,
       })
     );
+    if (selectedDate !== "" || selectedTime !== "") {
+      const queryParameters = new URLSearchParams({
+        _id: _id,
+        specialty: searchDataSpec,
+        date: selectedDate,
+        time: selectedTime,
+        name: searchDataName,
+      }).toString();
+      const url = `/filterDoctorsAfterSearchDocName?${queryParameters}`;
+      try {
+        const response = await axios.post(url, null);
+        if (response.status === 200) {
+          setPatients(response.data.patients);
+        } else {
+          console.log("Server error");
+        }
+      } catch (error) {
+        //fix error messages
+        if (error.response && error.response.status === 409) {
+          setError("Error occured");
+        } else {
+          setError(
+            "An error occurred while adding admin. Please try again later"
+          );
+        }
+      }
+    }
   };
 
   return (

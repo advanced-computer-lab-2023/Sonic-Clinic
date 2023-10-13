@@ -8,17 +8,17 @@ import { setSearchData } from "../../state/Patient/SearchDoctor";
 import { setFilterArray } from "../../state/Patient/filteredDoctors";
 import axios from "axios";
 
-function ShowDoctors() {
-  const [loading, setLoading] = useState(true);
-  const [responseData, setResponseData] = useState([]);
-  const [error1, setError] = useState(null);
+function ShowDoctors({ patients, responseData, setPatients, loading, error1 }) {
+  // const [loading, setLoading] = useState(true);
+  // const [responseData, setResponseData] = useState([]);
+  // const [error1, setError] = useState(null);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const _id = useSelector((state) => state.patientLogin.userId);
-  const searchDataName = useSelector((state) => state.searchDoctor.name);
-  const searchDataSpec = useSelector((state) => state.searchDoctor.specialty);
-  const searchDataDate = useSelector((state) => state.searchDoctor.date);
-  const searchDataTime = useSelector((state) => state.searchDoctor.time);
+  // const _id = useSelector((state) => state.patientLogin.userId);
+  // const searchDataName = useSelector((state) => state.searchDoctor.name);
+  // const searchDataSpec = useSelector((state) => state.searchDoctor.specialty);
+  // const searchDataDate = useSelector((state) => state.searchDoctor.date);
+  // const searchDataTime = useSelector((state) => state.searchDoctor.time);
 
   const handleCard = (doctor, index) => {
     dispatch(
@@ -37,52 +37,52 @@ function ShowDoctors() {
     navigate(`/patient/view-doctors/${index}`);
   };
 
-  useEffect(() => {
-    fetchData();
-  }, {}); // Fetch data when searchData changes
+  // useEffect(() => {
+  //   fetchData();
+  // }, {}); // Fetch data when searchData changes
 
-  const fetchData = async () => {
-    const config = {
-      headers: {
-        _id: _id,
-      },
-    };
-    try {
-      const response = await axios.post(
-        "/getDoctorsWithSessionPrice",
-        { _id: _id },
-        config
-      );
-      if (response.status === 200) {
-        console.log("RESPONSE:", response.data);
-        setResponseData(response.data.allDoctors);
-      } else {
-        console.log("Server error");
-      }
-      setLoading(false);
-    } catch (error) {
-      if (error.response && error.response.status === 404) {
-        setError("No doctors found.");
-      } else if (error.response && error.response.status === 500) {
-        setError("Server Error");
-      } else {
-        setError("An error occurred. Please try again later.");
-      }
-      setLoading(false);
-    }
-  };
+  // const fetchData = async () => {
+  //   const config = {
+  //     headers: {
+  //       _id: _id,
+  //     },
+  //   };
+  //   try {
+  //     const response = await axios.post(
+  //       "/getDoctorsWithSessionPrice",
+  //       { _id: _id },
+  //       config
+  //     );
+  //     if (response.status === 200) {
+  //       console.log("RESPONSE:", response.data);
+  //       setResponseData(response.data.allDoctors);
+  //     } else {
+  //       console.log("Server error");
+  //     }
+  //     setLoading(false);
+  //   } catch (error) {
+  //     if (error.response && error.response.status === 404) {
+  //       setError("No doctors found.");
+  //     } else if (error.response && error.response.status === 500) {
+  //       setError("Server Error");
+  //     } else {
+  //       setError("An error occurred. Please try again later.");
+  //     }
+  //     setLoading(false);
+  //   }
+  // };
 
-  const NeededData = responseData;
-  const filteredDoctors = NeededData.filter((doctor) => {
-    const name = doctor.name ? doctor.name.toLowerCase() : "";
-    const speciality = doctor.speciality ? doctor.speciality.toLowerCase() : "";
+  // const NeededData = responseData;
+  // const filteredDoctors = NeededData.filter((doctor) => {
+  //   const name = doctor.name ? doctor.name.toLowerCase() : "";
+  //   const speciality = doctor.speciality ? doctor.speciality.toLowerCase() : "";
 
-    return (
-      (searchDataName === "" || name.includes(searchDataName.toLowerCase())) &&
-      (searchDataSpec === "" ||
-        speciality.includes(searchDataSpec.toLowerCase()))
-    );
-  });
+  //   return (
+  //     (searchDataName === "" || name.includes(searchDataName.toLowerCase())) &&
+  //     (searchDataSpec === "" ||
+  //       speciality.includes(searchDataSpec.toLowerCase()))
+  //   );
+  // });
 
   return (
     <div>
@@ -102,7 +102,7 @@ function ShowDoctors() {
       )}
       {error1 && <div style={{ color: "red" }}>{error1}</div>}
       {!loading &&
-        filteredDoctors.map((doctor, index) => (
+        patients.map((doctor, index) => (
           <a
             onClick={() => handleCard(doctor, index + 1)}
             key={index}
