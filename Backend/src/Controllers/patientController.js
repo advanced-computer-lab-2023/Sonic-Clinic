@@ -272,7 +272,6 @@ const calculateSessionPrice = async (hourlyRate, patientPackage) => {
       const sessionPrice =
         hourlyRate * 1.1 * (1 - packageInfo.sessionDiscount * 0.01);
 
-
       return sessionPrice;
     }
   } catch (error) {
@@ -411,10 +410,8 @@ const getDoctorsWithSessionPrice = async (req, res) => {
     if (!doctors || doctors.length === 0) {
       return res.status(404).json({ message: "No doctors found" });
     }
-    const doctorsWithFilledAndConfirmedAppointments = doctors.filter(
-      (doctor) =>
-        doctor.appointments.length > 0 &&
-        doctor.appointments.some((appointment) => appointment.status === "free")
+    const doctorsWithFilledAndConfirmedAppointments = doctors.filter((doctor) =>
+      doctor.appointments.some((appointment) => appointment.status === "free")
     );
 
     const doctorsWithSessionPrice = await Promise.all(
