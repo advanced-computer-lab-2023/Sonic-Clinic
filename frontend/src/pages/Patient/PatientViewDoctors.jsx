@@ -12,9 +12,7 @@ import { deleteSearchData } from "../../state/Patient/SearchDoctor";
 function PatientViewDoctors() {
   // const [filteredDoctors, setFilteredDoctors] = useState([]);
   const dispatch = useDispatch();
-  useEffect(() => {
-    dispatch(deleteSearchData());
-  }, []);
+  useEffect(() => {}, []);
 
   return (
     <div>
