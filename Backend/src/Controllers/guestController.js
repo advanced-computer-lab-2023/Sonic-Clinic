@@ -35,6 +35,7 @@ const addPatient = async (req, res) => {
   } = req.body;
 
   // Set default values for non-required fields
+  
   const package = req.body.package || "  ";
 
   try {
