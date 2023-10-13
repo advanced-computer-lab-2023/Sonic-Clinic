@@ -144,7 +144,7 @@ function ShowDoctors() {
                         marginBottom: "1rem",
                       }}
                     >
-                      {doctor.name}
+                      Dr. {doctor.name}
                     </Card.Title>
                     <Card.Text>
                       <div

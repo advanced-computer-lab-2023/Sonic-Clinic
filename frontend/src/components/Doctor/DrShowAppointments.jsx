@@ -50,7 +50,6 @@ function DrShowAppointments() {
       setLoading(false);
     }
   };
-
   const appointments = responseData;
   const filteredAppointments = appointments.filter((appointment) => {
     const isoDate = appointment.date; // Assuming appointment.date is in ISO format like "2023-10-05T14:30:00.000Z"
@@ -61,16 +60,20 @@ function DrShowAppointments() {
 
     const formattedDate = `${yyyy}-${mm}-${dd}`;
     const status = appointment.status ? appointment.status.toLowerCase() : "";
-    console.log("formattedDate", formattedDate);
-    console.log("filterDate", filterDate.toLowerCase());
+
+    if (filterDate === "" && filterStatus === "") {
+      // If both filterDate and filterStatus are empty, include all appointments.
+      return true;
+    }
 
     // Check if the formattedDate includes the filterDate and the status includes filterStatus, both in lowercase
     return (
-      formattedDate.includes(filterDate.toLowerCase()) &&
-      status.includes(filterStatus.toLowerCase())
+      (filterDate === "" || formattedDate.includes(filterDate.toLowerCase())) &&
+      (filterStatus === "" || status.includes(filterStatus.toLowerCase()))
     );
   });
 
+  console.log("HHHHHHHHHHHHHHHH", filteredAppointments);
   return (
     <div>
       {loading && (
