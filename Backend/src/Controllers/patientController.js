@@ -289,7 +289,7 @@ const getDoctorsWithSessionPrice = async (req, res) => {
     const doctors = await doctorModel.find().populate("appointment");
 
     if (!doctors || doctors.length === 0) {
-      return res.status(404).json({ message: "No doctors found." });
+      return res.status(404).json({ message: "No doctors found" });
     }
     const doctorsWithFilledAndConfirmedAppointments = doctors.filter(
       (doctor) =>
