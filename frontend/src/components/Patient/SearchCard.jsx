@@ -74,6 +74,7 @@ function SearchCard() {
                   type="text"
                   style={{ width: "100%" }}
                   placeholder="Enter doctor's name"
+                  onChange={(e) => setDoctorName(e.target.value)}
                 />
               </Form.Group>
 
