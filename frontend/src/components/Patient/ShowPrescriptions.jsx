@@ -15,9 +15,11 @@ function ShowPrescriptions() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const id = useSelector((state) => state.patientLogin.userId);
-  const filterDate = useSelector((state) => state.filterPrescriptions.date); // Assuming 'searchDoctor' is the slice name
-  const filterDoctor = useSelector((state) => state.filterAppointments.doctor);
-  const filterStatus = useSelector((state) => state.filterAppointments.status);
+  const filterDate = useSelector((state) => state.filterPrescriptions.date);
+
+  const filterDoctor = useSelector((state) => state.filterPrescriptions.doctor);
+  console.log("name", filterDoctor);
+  const filterStatus = useSelector((state) => state.filterPrescriptions.status);
 
   const handleCard = (prescription, index) => {
     dispatch(
@@ -70,16 +72,16 @@ function ShowPrescriptions() {
 
     const formattedDate = `${yyyy}-${mm}-${dd}`;
     const status = prescription.status ? prescription.status.toLowerCase() : "";
-    const doctor = prescription.doctorName
-      ? prescription.status.toLowerCase()
-      : "";
+    const doctor = prescription.doctorName;
     // Check if the formattedDate includes the filterDate and the status includes filterStatus, both in lowercase
     return (
       formattedDate.includes(filterDate.toLowerCase()) &&
-      status.includes(filterStatus.toLowerCase())
+      status.includes(filterStatus.toLowerCase()) &&
+      doctor.toLowerCase().includes(filterDoctor.toLowerCase())
       // doctor.includes(filterDoctor.toLowerCase())
     );
   });
+
   return (
     <div>
       {loading && (

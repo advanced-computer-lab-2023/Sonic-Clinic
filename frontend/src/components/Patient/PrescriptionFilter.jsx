@@ -111,7 +111,7 @@ function PrescriptionFilter() {
           style={{ marginBottom: "1rem" }}
           type="text"
           value={selectedDoctor}
-          onChange={handleDoctorChange}
+          onChange={(e) => setSelectedDoctor(e.target.value)}
         />
       </div>
 

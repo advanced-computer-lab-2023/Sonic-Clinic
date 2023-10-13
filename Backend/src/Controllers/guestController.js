@@ -35,13 +35,15 @@ const addPatient = async (req, res) => {
   } = req.body;
 
   // Set default values for non-required fields
-  const package = req.body.package || ' ';
-
+  
+  const package = req.body.package || "  ";
 
   try {
     const existingPatient = await patientModel.findOne({ username });
     if (existingPatient) {
-      return res.status(409).send({ message: "Patient with this username already exists." });
+      return res
+        .status(409)
+        .send({ message: "Patient with this username already exists." });
     }
 
     const newPatient = await patientModel.create({
@@ -54,7 +56,7 @@ const addPatient = async (req, res) => {
       mobileNumber,
       emergencyFullName,
       emergencyMobileNumber,
-      package,  // Set the default value for package
+      package, // Set the default value for package
     });
 
     console.log("Patient Created!");
@@ -63,6 +65,5 @@ const addPatient = async (req, res) => {
     res.status(400).send({ error: error.message });
   }
 };
-
 
 module.exports = { addPotentialDoctor, addPatient };

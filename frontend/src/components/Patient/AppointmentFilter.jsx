@@ -91,7 +91,6 @@ function AppointmentFilter() {
           <option value="confirmed">Confirmed</option>
           <option value="pending">Pending</option>
           <option value="canceled">Canceled</option>
-          <option value="filled">Filled</option>
         </Form.Control>
       </div>
 

@@ -21,7 +21,7 @@ function AdminImg() {
         <Card
           className="position-absolute text-center bg-transparent"
           style={{
-            top: "18%",
+            top: "9%",
             left: "50%",
             transform: "translate(-50%, -50%)",
             border: "none",
@@ -32,14 +32,14 @@ function AdminImg() {
               marginTop: "570px",
               color: "#05AFB9",
               textAlign: "center",
-              fontFamily: "Vibur",
+              fontFamily: "fantasy",
               fontSize: "7rem",
               fontStyle: "normal",
               fontWeight: 400,
               lineHeight: "120%",
             }}
           >
-            Hello 
+            Hello
           </Card.Text>
         </Card>
       </Card>

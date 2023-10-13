@@ -187,7 +187,7 @@ server.get("/viewPackages", viewPackages);
 server.get("/viewAllDoctorsByPatients", viewAllDoctorsForPatients);
 server.post("/getDoctorsWithSessionPrice", getDoctorsWithSessionPrice);
 server.post("/filterDoctorsAfterSearch", filterDoctorsAfterSearch);
-server.get("/viewAllAppointments", viewAllAppointments);
+server.post("/viewAllAppointments", viewAllAppointments);
 server.post(
   "/filterDoctorsAfterSearchDocName",
   filterDoctorsAfterSearchDocName
