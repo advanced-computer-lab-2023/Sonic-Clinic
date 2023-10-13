@@ -67,7 +67,7 @@ function DrProfileBox() {
 
   const [isEditing, setIsEditing] = useState(false);
   const [error, setError] = useState(null);
-  const _id = useSelector((state) => state.doctorLogin._id);
+  const _id = useSelector((state) => state.doctorLogin.userId);
   const dispatch = useDispatch();
 
   const handleInputChange = (e, field) => {
@@ -89,25 +89,16 @@ function DrProfileBox() {
         affiliation: profileData.affiliation,
       })
     );
-    const config = {
-      headers: {
-        _id: _id,
-        email: profileData.email,
-        hourlyRate: profileData.hourlyRate,
-        affiliation: profileData.affiliation,
-      },
-    };
+    const queryParameters = new URLSearchParams({
+      _id: _id,
+      email: profileData.email,
+      hourlyRate: profileData.hourlyRate,
+      affiliation: profileData.affiliation,
+    }).toString();
+    const url = `/updateDoctorProfile?${queryParameters}`;
+
     try {
-      const response = await axios.put(
-        "/updateDoctorProfile",
-        {
-          _id: _id,
-          email: profileData.email,
-          hourlyRate: profileData.hourlyRate,
-          affiliation: profileData.affiliation,
-        },
-        config
-      );
+      const response = await axios.put(url, null);
 
       if (response.status === 200) {
         console.log("tmam");
