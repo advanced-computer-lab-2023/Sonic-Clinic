@@ -6,7 +6,6 @@ const packagesModel = require("../Models/Packages.js");
 const prescriptionModel = require("../Models/Prescription.js");
 const appointmentModel = require("../Models/Appointment.js");
 
-
 const doctorDetails = async (req, res) => {
   const { name } = req.body;
 
@@ -267,10 +266,9 @@ const calculateSessionPrice = async (hourlyRate, patientPackage) => {
     // Fetch the package information based on the patient's package
     const packageInfo = await packagesModel.findOne({ type: patientPackage });
 
-    
-
     // Calculate the session price based on the package discount
-    const sessionPrice = (hourlyRate*1.1) * (1 - (packageInfo.sessionDiscount)*0.01);
+    const sessionPrice =
+      hourlyRate * 1.1 * (1 - packageInfo.sessionDiscount * 0.01);
 
     return sessionPrice;
   } catch (error) {
@@ -288,14 +286,22 @@ const getDoctorsWithSessionPrice = async (req, res) => {
       return res.status(404).json({ message: "Patient not found." });
     }
 
-    const doctors = await doctorModel.find();
+    const doctors = await doctorModel.find().populate("appointment");
 
     if (!doctors || doctors.length === 0) {
       return res.status(404).json({ message: "No doctors found." });
     }
 
+    const doctorsWithEmptyOrNotFilledAppointments = doctors.filter(
+      (doctor) =>
+        doctor.appointments.length === 0 ||
+        doctor.appointments.some(
+          (appointment) => appointment.status === "not filled"
+        )
+    );
+
     const doctorsWithSessionPrice = await Promise.all(
-      doctors.map(async (doctor) => {
+      doctorsWithEmptyOrNotFilledAppointments.map(async (doctor) => {
         const sessionPrice = await calculateSessionPrice(
           doctor.hourlyRate,
           patient.package
