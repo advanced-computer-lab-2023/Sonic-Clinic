@@ -410,12 +410,13 @@ const getDoctorsWithSessionPrice = async (req, res) => {
     if (!doctors || doctors.length === 0) {
       return res.status(404).json({ message: "No doctors found" });
     }
-    const doctorsWithFilledAndConfirmedAppointments = doctors.filter((doctor) =>
-      doctor.appointments.some((appointment) => appointment.status === "free")
-    );
+
+    // const doctorsWithFilledAndConfirmedAppointments = doctors.filter((doctor) =>
+    //   doctor.appointments.some((appointment) => appointment.status === "free")
+    // );
 
     const doctorsWithSessionPrice = await Promise.all(
-      doctorsWithFilledAndConfirmedAppointments.map(async (doctor) => {
+      doctors.map(async (doctor) => {
         const sessionPrice = await calculateSessionPrice(
           doctor.hourlyRate,
           patient.package
@@ -566,13 +567,15 @@ const viewAllAppointments = async (req, res) => {
 const filterDoctorsAfterSearchDocName = async (req, res) => {
   const { name, speciality, date, time } = req.query;
 
-  query = { date, time, status: "not filled" };
+  query = { date, time, status: "free" };
 
   try {
-    const doctors = await doctorModel.find({
-      speciality: speciality,
-      name: name,
-    });
+    const doctors = await doctorModel
+      .find({
+        speciality: speciality,
+        name: name,
+      })
+      .populate("appointment");
 
     if (!doctors || doctors.length === 0) {
       return res.status(404).json({ message: "No doctors found." });
@@ -595,19 +598,51 @@ const filterDoctorsAfterSearchDocName = async (req, res) => {
       return res.status(404).json({ message: "No doctors found." });
     }
 
-    const availableAppointments = appointments.filter(
-      (appointment) => appointment.status !== "filled"
-    );
+    // const availableAppointments = appointments.filter(
+    //   (appointment) => appointment.status !== "filled"
+    // );
     const availableDoctors = doctors.filter((doctor) =>
-      availableAppointments.some(
+      appointments.some(
         (appointment) =>
           appointment.doctorID.toString() === doctor._id.toString() &&
           doctor.speciality.toString() === speciality.toString()
       )
+    ); //specialty w date w time
+
+    const patientId = req.query._id; // Assuming _id is in the request body
+    const patient = await patientModel.findById(patientId);
+
+    if (!patient) {
+      return res.status(404).json({ message: "Patient not found." });
+    }
+
+    // const doctors = await doctorModel.find().populate("appointment");
+
+    // if (!doctors || doctors.length === 0) {
+    //   return res.status(404).json({ message: "No doctors found" });
+    // }
+
+    // const doctorsWithFilledAndConfirmedAppointments = doctors.filter((doctor) =>
+    //   doctor.appointments.some((appointment) => appointment.status === "free")
+    // );
+
+    const doctorsWithSessionPrice = await Promise.all(
+      availableDoctors.map(async (doctor) => {
+        const sessionPrice = await calculateSessionPrice(
+          doctor.hourlyRate,
+          patient.package
+        );
+
+        // Include all fields from the doctor object along with sessionPrice
+        return {
+          ...doctor.toObject(),
+          sessionPrice: sessionPrice,
+        };
+      })
     );
 
-    res.status(200).json({ availableDoctors });
-    res.status(200).json(appointments);
+    res.status(200).json({ doctorsWithSessionPrice });
+    // res.status(200).json(appointments);
   } catch (error) {
     res.status(500).json({ message: "Server Error" });
   }
