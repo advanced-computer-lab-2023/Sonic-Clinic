@@ -19,7 +19,7 @@ function ShowAppointments() {
   const [responseData, setResponseData] = useState([]);
   const [error1, setError] = useState(null);
   const id = useSelector((state) => state.patientLogin.userId);
-  const filterDate = useSelector((state) => state.filterAppointments.date); // Assuming 'searchDoctor' is the slice name
+  const filterDate = useSelector((state) => state.filterAppointments.date);
   const filterStatus = useSelector((state) => state.filterAppointments.status);
 
   useEffect(() => {
@@ -39,7 +39,7 @@ function ShowAppointments() {
       setLoading(false);
     } catch (error) {
       if (error.response && error.response.status === 404) {
-        setError("No Prescriptions Found");
+        setError(" You don't have any appointments.");
       } else if (error.response && error.response.status === 500) {
         setError("Server Error");
       } else {
@@ -49,6 +49,7 @@ function ShowAppointments() {
     }
   };
   const NeededData = responseData;
+
   const filteredAppointments = NeededData.filter((appointment) => {
     const isoDate = appointment.date; // Assuming appointment.date is in ISO format like "2023-10-05T14:30:00.000Z"
     const dateObj = new Date(isoDate);
@@ -84,11 +85,9 @@ function ShowAppointments() {
           </Spinner>
         </div>
       )}
-      {error1 && <div style={{ color: "red" }}>{error1}</div>}
+      {/* {error1 && <div style={{ color: "red" }}>{error1}</div>} */}
       {filteredAppointments.length === 0 && !loading && (
-        <div style={{ textAlign: "center", marginTop: "20px" }}>
-          You don't have any prescriptions.
-        </div>
+        <div style={{ textAlign: "center", marginTop: "20px" }}>{error1}</div>
       )}
       {!loading &&
         filteredAppointments.map((appointment, index) => {

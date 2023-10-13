@@ -1,26 +1,25 @@
 import React, { useEffect, useState } from "react";
 import { Card, Col, Row, Image, Spinner } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
-import axios from "axios";
-import { useDispatch } from "react-redux";
-import { setDoctorData } from "../../state/doctorIdReducer";
 import defaultPfp from "../../Assets/Patient/DefaultPfp.png";
-import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { setDoctorData } from "../../state/doctorIdReducer";
 import { setSearchData } from "../../state/Patient/SearchDoctor";
 import { setFilterArray } from "../../state/Patient/filteredDoctors";
+import axios from "axios";
 
 function ShowDoctors() {
   const [loading, setLoading] = useState(true);
   const [responseData, setResponseData] = useState([]);
+  const [error1, setError] = useState(null);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [error1, setError] = useState(null);
-  const updateFilteredDoctors = (filteredArray) => {
-    dispatch(setFilterArray({ filterArray: filteredDoctors }));
-  };
+  const _id = useSelector((state) => state.patientLogin.userId);
+  const searchDataName = useSelector((state) => state.searchDoctor.name);
+  const searchDataSpec = useSelector((state) => state.searchDoctor.specialty);
+  const searchDataDate = useSelector((state) => state.searchDoctor.date);
+  const searchDataTime = useSelector((state) => state.searchDoctor.time);
 
-  const searchDataName = useSelector((state) => state.searchDoctor.name); // Assuming 'searchDoctor' is the slice name
-  const searchDataSpec = useSelector((state) => state.searchDoctor.specialty); // Assuming 'searchDoctor' is the slice name
   const handleCard = (doctor, index) => {
     dispatch(
       setDoctorData({
@@ -43,11 +42,20 @@ function ShowDoctors() {
   }, {}); // Fetch data when searchData changes
 
   const fetchData = async () => {
+    const config = {
+      headers: {
+        _id: _id,
+      },
+    };
     try {
-      const response = await axios.get("/viewAllDoctors");
+      const response = await axios.post(
+        "/getDoctorsWithSessionPrice",
+        { _id: _id },
+        config
+      );
       if (response.status === 200) {
         console.log("RESPONSE:", response.data);
-        setResponseData(response.data.doctors);
+        setResponseData(response.data.allDoctors);
       } else {
         console.log("Server error");
       }
@@ -66,15 +74,15 @@ function ShowDoctors() {
 
   const NeededData = responseData;
   const filteredDoctors = NeededData.filter((doctor) => {
-    const name = doctor.name ? doctor.name.toLowerCase() : ""; // Check if doctor.name is defined
-    const speciality = doctor.speciality ? doctor.speciality.toLowerCase() : ""; // Check if doctor.speciality is defined
+    const name = doctor.name ? doctor.name.toLowerCase() : "";
+    const speciality = doctor.speciality ? doctor.speciality.toLowerCase() : "";
 
     return (
-      name.includes(searchDataName.toLowerCase()) &&
-      speciality.includes(searchDataSpec.toLowerCase())
+      (searchDataName === "" || name.includes(searchDataName.toLowerCase())) &&
+      (searchDataSpec === "" ||
+        speciality.includes(searchDataSpec.toLowerCase()))
     );
   });
-  updateFilteredDoctors(filteredDoctors);
 
   return (
     <div>
@@ -136,7 +144,7 @@ function ShowDoctors() {
                         marginBottom: "1rem",
                       }}
                     >
-                      {doctor.name}
+                      Dr. {doctor.name}
                     </Card.Title>
                     <Card.Text>
                       <div
@@ -157,7 +165,7 @@ function ShowDoctors() {
                         }}
                         className="d-flex align-items-center justify-content-end"
                       >
-                        ${doctor.hourlyRate} / Session
+                        ${doctor.sessionPrice} / Session
                       </div>
                     </Card.Text>
                   </Card.Body>

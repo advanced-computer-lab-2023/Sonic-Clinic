@@ -1,26 +1,38 @@
 import React, { useState } from "react";
 import { Button, Container, Form } from "react-bootstrap";
+import { useSelector } from "react-redux";
+import axios from "axios";
 
-function DrPatientFilter({ onFilter }) {
-  const [selectedDate, setSelectedDate] = useState("");
+function DrPatientFilter({ setPatients, responseData }) {
   const [selectedStatus, setSelectedStatus] = useState("");
+  const [error, setError] = useState(null);
+  const _id = useSelector((state) => state.doctorLogin._id);
 
-  const handleDateChange = (e) => {
-    setSelectedDate(e.target.value);
-  };
-
-  const handleStatusChange = (e) => {
-    setSelectedStatus(e.target.value);
-  };
-
-  const handleFilter = () => {
-    const filterData = {
-      date: selectedDate,
-      status: selectedStatus,
-    };
-
-    // Call the callback function with the filter data
-    onFilter(filterData);
+  const handleFilter = async () => {
+    if (selectedStatus === "upcoming") {
+      try {
+        const response = await axios.post("/filterPatientsByAppointments", {
+          _id: _id,
+        });
+        if (response.status === 200) {
+          console.log("yay");
+          setPatients(response.data.patients);
+        } else {
+          console.log("Server error");
+        }
+      } catch (error) {
+        //fix error messages
+        if (error.response && error.response.status === 409) {
+          setError("Error occured");
+        } else {
+          setError(
+            "An error occurred while adding admin. Please try again later"
+          );
+        }
+      }
+    } else {
+      setPatients(responseData);
+    }
   };
 
   return (
@@ -50,7 +62,7 @@ function DrPatientFilter({ onFilter }) {
         Filter Patients
       </div>
 
-      <div className="mb-2">
+      {/* <div className="mb-2">
         <div
           style={{
             color: "#099BA0 ",
@@ -68,28 +80,31 @@ function DrPatientFilter({ onFilter }) {
           value={selectedDate}
           onChange={handleDateChange}
         />
-      </div>
+      </div> */}
 
-      {/*  <div className="mb-2">
+      <div className="mb-2">
         <div
           style={{
-            color: "#000",
-            fontSize: "1.25rem",
+            color: "#099BA0 ",
+            fontSize: "1.1rem",
             fontStyle: "normal",
-            fontWeight: 700,
+            fontWeight: 500,
             lineHeight: "100%",
-            marginBottom: "1.4rem",
+            marginBottom: "1rem",
           }}
         >
-          Status
+          Appointment Status
         </div>
-        <Form.Control as="select" onChange={handleStatusChange}>
+        <Form.Control
+          as="select"
+          onChange={(e) => setSelectedStatus(e.target.value)}
+          style={{ marginBottom: "1rem" }}
+        >
           <option value="">Select status</option>
-          <option value="confirmed">Confirmed</option>
-          <option value="pending">Pending</option>
-          <option value="canceled">Canceled</option>
+          <option value="all">All</option>
+          <option value="upcoming">Upcoming</option>
         </Form.Control>
-      </div> */}
+      </div>
 
       <Container
         fluid

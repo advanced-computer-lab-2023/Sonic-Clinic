@@ -41,7 +41,7 @@ function ViewDoctorDetails() {
               lineHeight: "1.5",
             }}
           >
-            {doctor.name}
+            Dr. {doctor.name}
           </div>
           <ListGroup variant="flush">
             <ListGroup.Item>

@@ -9,7 +9,7 @@ const searchPatientByName = async (req, res) => {
 
   try {
     // Create a regular expression to match partial names (case insensitive)
-    const nameRegex = new RegExp(name, 'i');
+    const nameRegex = new RegExp(name, "i");
 
     // Find patients where the name matches partially
     const patients = await patientModel.find({ name: { $regex: nameRegex } });
@@ -23,7 +23,6 @@ const searchPatientByName = async (req, res) => {
     res.status(500).json({ message: "Server Error" });
   }
 };
-
 
 const filterPatientsByAppointments = async (req, res) => {
   try {
@@ -57,8 +56,7 @@ const filterApointmentsByDateOrStatusDoc = async (req, res) => {
   const { date, status } = req.query;
 
   try {
-   
-    const doctorID = req.body._id
+    const doctorID = req.body._id;
 
     let query = { doctorID };
 
@@ -108,7 +106,6 @@ const updateDoctorProfile = async (req, res) => {
   }
 };
 
-
 const viewPatients = async (req, res) => {
   const id = req.body._id;
 
@@ -117,7 +114,7 @@ const viewPatients = async (req, res) => {
     if (!doctor) {
       return res.status(404).json({ message: "Doctor not found." });
     }
-    
+
     const patients = doctor.patients;
     const actualPatients = [];
 
@@ -206,7 +203,6 @@ const selectPatient = async (req, res) => {
   }
 };
 
-
 const addPrescription = async (req, res) => {
   try {
     const newPrescription = await PrescriptionModel.create(req.body);
@@ -218,14 +214,14 @@ const addPrescription = async (req, res) => {
 };
 const viewDocApp = async (req, res) => {
   try {
-    const appointments = await appointmentModel.find({doctorID:req.body._id}).populate("patient");
+    const appointments = await appointmentModel
+      .find({ doctorID: req.body._id })
+      .populate("patient");
     res.status(200).json(appointments);
-   
   } catch (error) {
     res.status(400).send({ error: error.message });
   }
 };
-
 
 module.exports = {
   selectPatient,
