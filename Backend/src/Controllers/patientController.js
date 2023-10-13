@@ -416,7 +416,7 @@ const getDoctorsWithSessionPrice = async (req, res) => {
     // );
 
     const doctorsWithSessionPrice = await Promise.all(
-      doctorsWithFilledAndConfirmedAppointments.map(async (doctor) => {
+      doctors.map(async (doctor) => {
         const sessionPrice = await calculateSessionPrice(
           doctor.hourlyRate,
           patient.package
