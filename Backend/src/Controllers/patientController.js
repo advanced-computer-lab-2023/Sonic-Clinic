@@ -291,17 +291,14 @@ const getDoctorsWithSessionPrice = async (req, res) => {
     if (!doctors || doctors.length === 0) {
       return res.status(404).json({ message: "No doctors found." });
     }
-
-    const doctorsWithEmptyOrNotFilledAppointments = doctors.filter(
+    const doctorsWithFilledAndConfirmedAppointments = doctors.filter(
       (doctor) =>
-        doctor.appointments.length === 0 ||
-        doctor.appointments.some(
-          (appointment) => appointment.status === "not filled"
-        )
+        doctor.appointments.length > 0 &&
+        doctor.appointments.some((appointment) => appointment.status === "free")
     );
 
     const doctorsWithSessionPrice = await Promise.all(
-      doctorsWithEmptyOrNotFilledAppointments.map(async (doctor) => {
+      doctorsWithFilledAndConfirmedAppointments.map(async (doctor) => {
         const sessionPrice = await calculateSessionPrice(
           doctor.hourlyRate,
           patient.package
