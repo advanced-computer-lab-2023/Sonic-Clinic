@@ -196,7 +196,7 @@ const viewAllPatients = async (req, res) => {
 const dummyDoctors = [
   {
     username: "drjohnsmith",
-    name: "Dr. John Smith",
+    name: "John Smith",
     email: "john.smith@example.com",
     password: "password123",
     dateOfBirth: "1980-05-15",
@@ -210,7 +210,7 @@ const dummyDoctors = [
   },
   {
     username: "dremljohnson",
-    name: "Dr. Emily Johnson",
+    name: "Emily Johnson",
     email: "emily.johnson@example.com",
     password: "password456",
     dateOfBirth: "1975-08-22",
@@ -224,7 +224,7 @@ const dummyDoctors = [
   },
   {
     username: "drmichaelbrown",
-    name: "Dr. Michael Brown",
+    name: "Michael Brown",
     email: "michael.brown@example.com",
     password: "password789",
     dateOfBirth: "1983-03-10",
@@ -238,7 +238,7 @@ const dummyDoctors = [
   },
   {
     username: "drsarahwilson",
-    name: "Dr. Sarah Wilson",
+    name: "Sarah Wilson",
     email: "sarah.wilson@example.com",
     password: "password101",
     dateOfBirth: "1978-11-28",
@@ -252,7 +252,7 @@ const dummyDoctors = [
   },
   {
     username: "drdavidlee",
-    name: "Dr. David Lee",
+    name: "David Lee",
     email: "david.lee@example.com",
     password: "password202",
     dateOfBirth: "1985-09-03",
@@ -266,7 +266,7 @@ const dummyDoctors = [
   },
   {
     username: "drlisamiller",
-    name: "Dr. Lisa Miller",
+    name: "Lisa Miller",
     email: "lisa.miller@example.com",
     password: "password303",
     dateOfBirth: "1973-12-18",
@@ -280,7 +280,7 @@ const dummyDoctors = [
   },
   {
     username: "drkarendavis",
-    name: "Dr. Karen Davis",
+    name: "Karen Davis",
     email: "karen.davis@example.com",
     password: "password404",
     dateOfBirth: "1976-07-07",
