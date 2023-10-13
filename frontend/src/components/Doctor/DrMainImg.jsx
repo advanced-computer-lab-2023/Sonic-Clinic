@@ -3,7 +3,7 @@ import mainImg from "../../Assets/Patient/HomeImg.png";
 import { useSelector } from "react-redux";
 
 function DrMainImg() {
-  const name = useSelector((state) => state.doctorLogin.name);
+  const name = useSelector((state) => state.doctorLogin.name).split(" ")[0];
   return (
     <div>
       <Card
@@ -30,7 +30,7 @@ function DrMainImg() {
             style={{
               color: "#05AFB9",
               textAlign: "center",
-              fontFamily: "Vibur",
+              fontFamily: "fantasy",
               fontSize: "7rem",
               fontStyle: "normal",
               fontWeight: 400,

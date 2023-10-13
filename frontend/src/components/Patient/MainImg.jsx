@@ -2,7 +2,7 @@ import { Card, Image } from "react-bootstrap";
 import mainImg from "../../Assets/Patient/HomeImg.png";
 import { useSelector } from "react-redux";
 function MainImg() {
-  const name = useSelector((state) => state.patientLogin.name);
+  const name = useSelector((state) => state.patientLogin.name).split(" ")[0];
   return (
     <div>
       <Card
@@ -29,7 +29,7 @@ function MainImg() {
             style={{
               color: "#05AFB9",
               textAlign: "center",
-              fontFamily: "Vibur",
+              fontFamily: "fantasy",
               fontSize: "7rem",
               fontStyle: "normal",
               fontWeight: 400,
