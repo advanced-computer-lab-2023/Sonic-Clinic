@@ -216,7 +216,7 @@ const viewDocApp = async (req, res) => {
   try {
     const appointments = await appointmentModel
       .find({ doctorID: req.body._id })
-      .populate("patient");
+      .populate("patients");
     res.status(200).json(appointments);
   } catch (error) {
     res.status(400).send({ error: error.message });

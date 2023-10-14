@@ -200,7 +200,7 @@ const dummyDoctors = [
     affiliation: "City Hospital",
     educationalBackground: "M.D. from University of Medical Sciences",
     patients: [],
-    speciality: "Cardiology",
+    specialty: "Cardiology",
     photoLink:
       "https://media.licdn.com/dms/image/C4E03AQFg161EE_9n0Q/profile-displayphoto-shrink_800_800/0/1540403513741?e=2147483647&v=beta&t=zODGGNsdmZ03iwtSrHJEMR_Qxd_NkEQueFjKfd9JrOE",
   },
@@ -216,7 +216,7 @@ const dummyDoctors = [
     affiliation: "Community Clinic",
     educationalBackground: "M.D. from Medical University",
     patients: [],
-    speciality: "Orthopedics",
+    specialty: "Orthopedics",
     photoLink:
       "https://media.licdn.com/dms/image/C4E03AQHJ_sJIJWxHpw/profile-displayphoto-shrink_800_800/0/1529980129766?e=2147483647&v=beta&t=yH7Pz2hfrso5nXNCFilmjOnvL7OVcLML5vOsvA7nWDM",
   },
@@ -232,7 +232,7 @@ const dummyDoctors = [
     affiliation: "General Hospital",
     educationalBackground: "M.D. from Health Sciences Institute",
     patients: [],
-    speciality: "Neurology",
+    specialty: "Neurology",
     photoLink:
       "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTAi46IZubvG3_2P4upQgk2zqAqzySmQ7Yx8qmgUOuWdnth2Yoy7BXbSxHTEqpD8_11aeI&usqp=CAU",
   },
@@ -248,7 +248,7 @@ const dummyDoctors = [
     affiliation: "Medical Center",
     educationalBackground: "M.D. from Wellness University",
     patients: [],
-    speciality: "Oncology",
+    specialty: "Oncology",
     photoLink:
       "https://media.licdn.com/dms/image/C4D03AQF3MdVSGuXrDw/profile-displayphoto-shrink_800_800/0/1525397028366?e=2147483647&v=beta&t=Ai6blaPhh7JFpMGwn1ltvfk40FHEupx1txBM6Qda7AY",
   },
@@ -265,7 +265,7 @@ const dummyDoctors = [
     educationalBackground: "M.D. from Healing Institute",
     patients: [],
     appointments: [],
-    speciality: "Neurology",
+    specialty: "Neurology",
     photoLink:
       "https://www.woodlandshospital.in/images/doctor-img/ravi-kant-saraogi.jpg",
   },
@@ -281,7 +281,7 @@ const dummyDoctors = [
     affiliation: "Community Hospital",
     educationalBackground: "M.D. from Medical Excellence College",
     patients: [],
-    speciality: "Pediatrics",
+    specialty: "Pediatrics",
     photoLink:
       "https://media.licdn.com/dms/image/D4D03AQGtRNtcH_1kFg/profile-displayphoto-shrink_400_400/0/1688449652391?e=1700697600&v=beta&t=XeEjFVmqBXMPwoCUZtqDLzw1_eA3FAICAT2APwaBHHM",
   },
@@ -297,7 +297,7 @@ const dummyDoctors = [
     affiliation: "General Medical Center",
     educationalBackground: "M.D. from Health Sciences Academy",
     patients: [],
-    speciality: "Oncology",
+    specialty: "Oncology",
     photoLink:
       "https://images.drlogy.com/assets/uploads/img/user/home/health/Doctors.webp",
   },
@@ -371,7 +371,7 @@ const viewAllDocApp = async (req, res) => {
     //       affiliation: 1,
     //       educationalBackground: 1,
     //       patients: 1,
-    //       speciality: 1,
+    //       specialty: 1,
     //       appointments: 1,
     //     },
     //   },

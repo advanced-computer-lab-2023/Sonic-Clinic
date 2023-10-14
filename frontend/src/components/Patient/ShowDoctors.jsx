@@ -102,7 +102,7 @@ function ShowDoctors({ patients, responseData, setPatients, loading, error1 }) {
       )}
       {error1 && <div style={{ color: "red" }}>{error1}</div>}
       {!loading &&
-        patients.map((doctor, index) => (
+        patients?.map((doctor, index) => (
           <a
             onClick={() => handleCard(doctor, index + 1)}
             key={index}
