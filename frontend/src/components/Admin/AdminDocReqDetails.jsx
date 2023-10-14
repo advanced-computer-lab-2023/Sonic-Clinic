@@ -4,21 +4,26 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
 import { faX } from "@fortawesome/free-solid-svg-icons";
 
-export default function AdminDocReqDetails({ docEmail, docRate, docEducation, docAffiliation, docBirthDate }) {
+export default function AdminDocReqDetails({
+  docEmail,
+  docRate,
+  docEducation,
+  docAffiliation,
+  docBirthDate,
+}) {
   const rowStyle = {
     display: "flex",
     flexDirection: "row",
     marginBottom: "5px",
   };
 
-  const titleStyle={
+  const titleStyle = {
     color: "#212529",
     marginRight: "5px",
     fontWeight: "bold",
-    fontSize: "15px"
-  }
+    fontSize: "15px",
+  };
 
-  
   return (
     <Card style={{ width: "100%", border: "transparent" }}>
       <Card.Body>
@@ -62,44 +67,24 @@ export default function AdminDocReqDetails({ docEmail, docRate, docEducation, do
               fontSize: "15px",
             }}
           >
-            <div
-              style={rowStyle}
-            >
-              <span style={titleStyle}>
-                Email:
-              </span>
+            <div style={rowStyle}>
+              <span style={titleStyle}>Email:</span>
               {docEmail}
             </div>
-            <div
-              style={rowStyle}
-            >
-              <span style={titleStyle}>
-                Date of Birth:
-              </span>
+            <div style={rowStyle}>
+              <span style={titleStyle}>Date of Birth:</span>
               {docBirthDate}
             </div>
-            <div
-              style={rowStyle}
-            >
-              <span style={titleStyle}>
-                Hourly Rate:
-              </span>
-              {docRate}
+            <div style={rowStyle}>
+              <span style={titleStyle}>Hourly Rate:</span>
+              {docRate} LE/hr
             </div>
-            <div
-              style={rowStyle}
-            >
-              <span style={titleStyle}>
-                Affiliation:
-              </span>
+            <div style={rowStyle}>
+              <span style={titleStyle}>Affiliation:</span>
               {docAffiliation}
             </div>
-            <div
-              style={rowStyle}
-            >
-              <span style={titleStyle}>
-                Educational Background:
-              </span>
+            <div style={rowStyle}>
+              <span style={titleStyle}>Educational Background:</span>
               {docEducation}
             </div>
           </div>

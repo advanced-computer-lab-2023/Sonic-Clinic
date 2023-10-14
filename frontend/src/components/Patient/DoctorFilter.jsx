@@ -103,7 +103,7 @@ function DoctorFilter({ patients, responseData, setPatients }) {
       try {
         const response = await axios.post(url, null);
         if (response.status === 200) {
-          setPatients(response.data.patients);
+          setPatients(response.data.doctorsWithSessionPrice);
         } else {
           console.log("Server error");
         }

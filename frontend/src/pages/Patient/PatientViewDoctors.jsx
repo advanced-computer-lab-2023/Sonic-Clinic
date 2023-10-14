@@ -39,12 +39,11 @@ function PatientViewDoctors() {
       if (response.status === 200) {
         console.log("RESPONSE:", response.data);
         setResponseData(response.data.allDoctors);
-
         const NeededData = response.data.allDoctors;
         const filteredDoctors = NeededData.filter((doctor) => {
           const name = doctor.name ? doctor.name.toLowerCase() : "";
-          const speciality = doctor.speciality
-            ? doctor.speciality.toLowerCase()
+          const speciality = doctor.specialty
+            ? doctor.specialty.toLowerCase()
             : "";
 
           return (

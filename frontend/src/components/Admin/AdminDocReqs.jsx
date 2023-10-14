@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import AdminSearchBar from "../../components/Admin/AdminSearchBar";
 import { Container } from "react-bootstrap";
 import AdminDocReqCard from "./AdminDocReqCard";
@@ -12,12 +12,12 @@ export default function AdminDocReqs() {
   useEffect(() => {
     fetchData();
   }, []);
-  
+
   const fetchData = async () => {
     try {
       const response = await axios.get("/viewPotentialDoctors");
       if (response.status === 200) {
-           setResponseData(response.data.potentialDoctors);
+        setResponseData(response.data.potentialDoctors);
       } else {
         console.log("Server error");
       }
@@ -51,11 +51,11 @@ export default function AdminDocReqs() {
           key={index}
           docName={user.name}
           docSpecialty={user.specialty}
-          docEmail = {user.email}
-          docBirthDate = {user.dateOfBirth}
-          docRate = {user.rate}
-          docAffiliation = {user.affiliation}
-          docEducation = {user.education}
+          docEmail={user.email}
+          docBirthDate={user.dateOfBirth}
+          docRate={user.hourlyRate}
+          docAffiliation={user.affiliation}
+          docEducation={user.educationalBackground}
         />
       ))}
     </Container>
