@@ -647,6 +647,22 @@ const filterDoctorsAfterSearchDocName = async (req, res) => {
     res.status(500).json({ message: "Server Error" });
   }
 };
+const removeFamilyMember = async (req, res) => {
+  try {
+    const id = req.query._id;
+    const removedFamilyMember = await familyMemberModel.findByIdAndDelete(id);
+
+    if (!removedFamilyMember) {
+      return res.status(404).json({ message: "Family member not found" });
+    }
+    return res
+      .status(200)
+      .json({ message: "Family member removed successfully" });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
 
 module.exports = {
   selectPrescription,
@@ -665,4 +681,5 @@ module.exports = {
   filterDoctorsAfterSearch,
   viewAllAppointments,
   filterDoctorsAfterSearchDocName,
+  removeFamilyMember,
 };

@@ -28,6 +28,7 @@ const {
   filterDoctorsAfterSearch,
   viewAllAppointments,
   filterDoctorsAfterSearchDocName,
+  removeFamilyMember,
 } = require("./Controllers/patientController");
 
 /////////////////////////////////doctorController//////////////////////////////////////////
@@ -217,6 +218,7 @@ server.delete("/removeDoctor", removeDoctor);
 server.delete("/removePatient", removePatient);
 server.delete("/removeAdmin", removeAdmin);
 server.delete("/rejectDoctor", rejectPotentialDoctor);
+server.delete("/removeFamilyMember", removeFamilyMember);
 
 /*
                                                     End of your code
