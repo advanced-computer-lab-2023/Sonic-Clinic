@@ -571,10 +571,13 @@ const filterDoctorsAfterSearchDocName = async (req, res) => {
 
   query = { date, time, status };
 
+  const doctorQuery = { specialty };
+  if (name) {
+    doctorQuery.name = name;
+  }
+
   try {
-    const doctors = await doctorModel.find({
-      specialty: specialty,
-    });
+    const doctors = await doctorModel.find(doctorQuery);
     console.log(doctors + "Doctooorrsss");
 
     if (!doctors || doctors.length === 0) {
