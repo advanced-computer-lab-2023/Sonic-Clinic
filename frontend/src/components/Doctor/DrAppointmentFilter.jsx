@@ -17,8 +17,6 @@ function AppointmentFilter() {
   };
 
   const handleFilter = () => {
-    console.log("khaar1 :", selectedDate);
-    console.log("khara2 :", selectedStatus);
     dispatch(
       setFilterDrAppointments({
         date: selectedDate,
@@ -87,9 +85,10 @@ function AppointmentFilter() {
         </div>
         <Form.Control as="select" onChange={handleStatusChange}>
           <option value="">Select status</option>
-          <option value="filled">Confirmed</option>
+          <option value="confirmed">Confirmed</option>
           <option value="pending">Pending</option>
           <option value="cancelled">Cancelled</option>
+          <option value="free">Free</option>
         </Form.Control>
       </div>
 

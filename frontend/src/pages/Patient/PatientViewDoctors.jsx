@@ -1,18 +1,76 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Container, Row } from "react-bootstrap";
+import { useDispatch, useSelector } from "react-redux";
+import axios from "axios";
 import AppNavbar from "../../components/AppNavigation/AppNavbar";
 import HamburgerMenu from "../../components/Patient/HamburgerMenu";
 import DoctorFilter from "../../components/Patient/DoctorFilter";
 import ShowDoctors from "../../components/Patient/ShowDoctors";
 import ViewDoctorsSearch from "../../components/Patient/ViewDoctorsSearch";
-import { useEffect } from "react";
-import { useDispatch } from "react-redux";
 import { deleteSearchData } from "../../state/Patient/SearchDoctor";
 
 function PatientViewDoctors() {
-  // const [filteredDoctors, setFilteredDoctors] = useState([]);
   const dispatch = useDispatch();
-  useEffect(() => {}, []);
+
+  const [responseData, setResponseData] = useState([]);
+  const [patients, setPatients] = useState([]); // Updated patients state
+  const [error1, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const _id = useSelector((state) => state.patientLogin.userId);
+  const searchDataName = useSelector((state) => state.searchDoctor.name);
+  const searchDataSpec = useSelector((state) => state.searchDoctor.specialty);
+
+  useEffect(() => {
+    fetchData();
+  }, [searchDataName, searchDataSpec]); // Updated dependencies
+
+  const fetchData = async () => {
+    const config = {
+      headers: {
+        _id: _id,
+      },
+    };
+    try {
+      const response = await axios.post(
+        "/getDoctorsWithSessionPrice",
+        { _id: _id },
+        config
+      );
+      if (response.status === 200) {
+        console.log("RESPONSE:", response.data);
+        setResponseData(response.data.allDoctors);
+        const NeededData = response.data.allDoctors;
+        const filteredDoctors = NeededData.filter((doctor) => {
+          const name = doctor.name ? doctor.name.toLowerCase() : "";
+          const speciality = doctor.specialty
+            ? doctor.specialty.toLowerCase()
+            : "";
+
+          return (
+            (searchDataName === "" ||
+              name.includes(searchDataName.toLowerCase())) &&
+            (searchDataSpec === "" ||
+              speciality.includes(searchDataSpec.toLowerCase()))
+          );
+        });
+
+        // Update the patients state with filtered doctors
+        setPatients(filteredDoctors);
+      } else {
+        console.log("Server error");
+      }
+      setLoading(false);
+    } catch (error) {
+      if (error.response && error.response.status === 404) {
+        setError("No doctors found.");
+      } else if (error.response && error.response.status === 500) {
+        setError("Server Error");
+      } else {
+        setError("An error occurred. Please try again later.");
+      }
+      setLoading(false);
+    }
+  };
 
   return (
     <div>
@@ -24,10 +82,20 @@ function PatientViewDoctors() {
               <ViewDoctorsSearch />
             </div>
             <div className="col-5">
-              <DoctorFilter />
+              <DoctorFilter
+                patients={patients}
+                responseData={responseData}
+                setPatients={setPatients}
+              />
             </div>
             <div className="col-7">
-              <ShowDoctors />
+              <ShowDoctors
+                patients={patients}
+                responseData={responseData}
+                setPatients={setPatients}
+                loading={loading}
+                error1={error1}
+              />
             </div>
           </Row>
         </Container>

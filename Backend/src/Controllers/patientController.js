@@ -13,8 +13,8 @@ const doctorDetails = async (req, res) => {
     const doctor = await doctorModel.findOne({ name });
     const affiliation = doctor.affiliation;
     const educationalBackground = doctor.educationalBackground;
-    const speciality = doctor.speciality;
-    const output = { name, affiliation, educationalBackground, speciality };
+    const specialty = doctor.specialty;
+    const output = { name, affiliation, educationalBackground, specialty };
 
     if (!doctor) {
       return res.status(404).json({ message: "Doctor not found." });
@@ -28,7 +28,7 @@ const doctorDetails = async (req, res) => {
 };
 
 const searchDoctors = async (req, res) => {
-  const { name, speciality } = req.body;
+  const { name, specialty } = req.body;
 
   try {
     let query = {};
@@ -39,8 +39,8 @@ const searchDoctors = async (req, res) => {
       query.name = { $regex: nameRegex };
     }
 
-    if (speciality) {
-      query.speciality = speciality;
+    if (specialty) {
+      query.specialty = specialty;
     }
 
     const doctors = await doctorModel.find(query);
@@ -67,15 +67,15 @@ const filterDoctors = async (req, res) => {
         .status(405)
         .json({ message: "Please select at least one specialty" });
     }
-    //  const doctorTrial = await doctorModel.find({speciality: "Neurology"});
+    //  const doctorTrial = await doctorModel.find({specialty: "Neurology"});
     //  console.log(doctorTrial);
 
     const doctors = await doctorModel.find({
-      speciality: { $in: specialties },
+      specialty: { $in: specialties },
     });
     console.log(doctors);
 
-    //const doctors = await doctorModel.find({ speciality: speciality });
+    //const doctors = await doctorModel.find({ specialty: specialty });
 
     if (!doctors || doctors.length === 0) {
       return res.status(404).json({ message: "No doctors found." });
@@ -105,7 +105,7 @@ const filterDoctors = async (req, res) => {
       availableAppointments.some(
         (appointment) =>
           appointment.doctorID.toString() === doctor._id.toString() &&
-          doctor.speciality.toString() === speciality.toString()
+          doctor.specialty.toString() === specialty.toString()
       )
     );
 
@@ -293,7 +293,7 @@ const dummyDoctorsSession = [
     affiliation: "City Hospital",
     educationalBackground: "M.D. from University of Medical Sciences",
     patients: [],
-    speciality: "Cardiology",
+    specialty: "Cardiology",
     photoLink:
       "https://media.licdn.com/dms/image/C4E03AQFg161EE_9n0Q/profile-displayphoto-shrink_800_800/0/1540403513741?e=2147483647&v=beta&t=zODGGNsdmZ03iwtSrHJEMR_Qxd_NkEQueFjKfd9JrOE",
   },
@@ -309,7 +309,7 @@ const dummyDoctorsSession = [
     affiliation: "Community Clinic",
     educationalBackground: "M.D. from Medical University",
     patients: [],
-    speciality: "Orthopedics",
+    specialty: "Orthopedics",
     photoLink:
       "https://media.licdn.com/dms/image/C4E03AQHJ_sJIJWxHpw/profile-displayphoto-shrink_800_800/0/1529980129766?e=2147483647&v=beta&t=yH7Pz2hfrso5nXNCFilmjOnvL7OVcLML5vOsvA7nWDM",
   },
@@ -325,7 +325,7 @@ const dummyDoctorsSession = [
     affiliation: "General Hospital",
     educationalBackground: "M.D. from Health Sciences Institute",
     patients: [],
-    speciality: "Neurology",
+    specialty: "Neurology",
     photoLink:
       "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTAi46IZubvG3_2P4upQgk2zqAqzySmQ7Yx8qmgUOuWdnth2Yoy7BXbSxHTEqpD8_11aeI&usqp=CAU",
   },
@@ -341,7 +341,7 @@ const dummyDoctorsSession = [
     affiliation: "Medical Center",
     educationalBackground: "M.D. from Wellness University",
     patients: [],
-    speciality: "Oncology",
+    specialty: "Oncology",
     photoLink:
       "https://media.licdn.com/dms/image/C4D03AQF3MdVSGuXrDw/profile-displayphoto-shrink_800_800/0/1525397028366?e=2147483647&v=beta&t=Ai6blaPhh7JFpMGwn1ltvfk40FHEupx1txBM6Qda7AY",
   },
@@ -358,7 +358,7 @@ const dummyDoctorsSession = [
     educationalBackground: "M.D. from Healing Institute",
     patients: [],
     appointments: [],
-    speciality: "Neurology",
+    specialty: "Neurology",
     photoLink:
       "https://www.woodlandshospital.in/images/doctor-img/ravi-kant-saraogi.jpg",
   },
@@ -374,7 +374,7 @@ const dummyDoctorsSession = [
     affiliation: "Community Hospital",
     educationalBackground: "M.D. from Medical Excellence College",
     patients: [],
-    speciality: "Pediatrics",
+    specialty: "Pediatrics",
     photoLink:
       "https://media.licdn.com/dms/image/D4D03AQGtRNtcH_1kFg/profile-displayphoto-shrink_400_400/0/1688449652391?e=1700697600&v=beta&t=XeEjFVmqBXMPwoCUZtqDLzw1_eA3FAICAT2APwaBHHM",
   },
@@ -390,7 +390,7 @@ const dummyDoctorsSession = [
     affiliation: "General Medical Center",
     educationalBackground: "M.D. from Health Sciences Academy",
     patients: [],
-    speciality: "Oncology",
+    specialty: "Oncology",
     photoLink:
       "https://images.drlogy.com/assets/uploads/img/user/home/health/Doctors.webp",
   },
@@ -454,43 +454,43 @@ const addAppointment = async (req, res) => {
 const dummyDoctors = [
   {
     name: "John Smith",
-    speciality: "Cardiology",
+    specialty: "Cardiology",
     photoLink:
       "https://media.licdn.com/dms/image/C4E03AQFg161EE_9n0Q/profile-displayphoto-shrink_800_800/0/1540403513741?e=2147483647&v=beta&t=zODGGNsdmZ03iwtSrHJEMR_Qxd_NkEQueFjKfd9JrOE",
   },
   {
     name: "Emily Johnson",
-    speciality: "Pediatrician",
+    specialty: "Pediatrician",
     photoLink:
       "https://media.licdn.com/dms/image/C4E03AQHJ_sJIJWxHpw/profile-displayphoto-shrink_800_800/0/1529980129766?e=2147483647&v=beta&t=yH7Pz2hfrso5nXNCFilmjOnvL7OVcLML5vOsvA7nWDM",
   },
   {
     name: "Michael Brown",
-    speciality: "Dermatologist",
+    specialty: "Dermatologist",
     photoLink:
       "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTAi46IZubvG3_2P4upQgk2zqAqzySmQ7Yx8qmgUOuWdnth2Yoy7BXbSxHTEqpD8_11aeI&usqp=CAU",
   },
   {
     name: "Sarah Wilson",
-    speciality: "Oncologist",
+    specialty: "Oncologist",
     photoLink:
       "https://media.licdn.com/dms/image/C4D03AQF3MdVSGuXrDw/profile-displayphoto-shrink_800_800/0/1525397028366?e=2147483647&v=beta&t=Ai6blaPhh7JFpMGwn1ltvfk40FHEupx1txBM6Qda7AY",
   },
   {
     name: "David Lee",
-    speciality: "Neurologist",
+    specialty: "Neurologist",
     photoLink:
       "https://www.woodlandshospital.in/images/doctor-img/ravi-kant-saraogi.jpg",
   },
   {
     name: "Lisa Miller",
-    speciality: "Orthopedic Surgeon",
+    specialty: "Orthopedic Surgeon",
     photoLink:
       "https://media.licdn.com/dms/image/D4D03AQGtRNtcH_1kFg/profile-displayphoto-shrink_400_400/0/1688449652391?e=1700697600&v=beta&t=XeEjFVmqBXMPwoCUZtqDLzw1_eA3FAICAT2APwaBHHM",
   },
   {
     name: "Karen Davis",
-    speciality: "Psychiatrist",
+    specialty: "Psychiatrist",
     photoLink:
       "https://images.drlogy.com/assets/uploads/img/user/home/health/Doctors.webp",
   },
@@ -499,7 +499,7 @@ const dummyDoctors = [
 const viewAllDoctorsForPatients = async (req, res) => {
   try {
     // Query the database to get real doctors
-    const realDoctors = await doctorModel.find({}, { name: 1, speciality: 1 });
+    const realDoctors = await doctorModel.find({}, { name: 1, specialty: 1 });
 
     const allDoctors = dummyDoctors.concat(realDoctors);
 
@@ -541,7 +541,7 @@ const filterDoctorsAfterSearch = async (req, res) => {
       availableAppointments.some(
         (appointment) =>
           appointment.doctorID.toString() === doctor._id.toString() &&
-          doctor.speciality.toString() === speciality.toString()
+          doctor.specialty.toString() === specialty.toString()
       )
     );
 
@@ -552,7 +552,10 @@ const filterDoctorsAfterSearch = async (req, res) => {
 };
 const viewAllAppointments = async (req, res) => {
   try {
-    const appointments = await appointmentModel.find();
+    const id = req.body._id;
+    const appointments = await appointmentModel
+      .find({ patientID: id })
+      .populate("doctor");
 
     if (!appointments || appointments.length === 0) {
       return res.status(404).json({ message: "No appointments found." });
@@ -565,23 +568,32 @@ const viewAllAppointments = async (req, res) => {
 };
 
 const filterDoctorsAfterSearchDocName = async (req, res) => {
-  const { name, speciality, date, time } = req.query;
+  const name = req.query.name;
+  const { specialty, date, time } = req.query;
+  const status = "free";
 
-  query = { date, time, status: "free" };
+  query = { date, time, status };
+
+  const doctorQuery = { specialty };
+  if (name) {
+    doctorQuery.name = name;
+  }
 
   try {
-    const doctors = await doctorModel.find({
-      speciality: speciality,
-      name: name,
-    });
+    const doctors = await doctorModel.find();
+    if (specialty) {
+      doctors = await doctorModel.find(doctorQuery);
+    }
 
     if (!doctors || doctors.length === 0) {
       return res.status(404).json({ message: "No doctors found." });
     }
 
-    if (!date && !time) {
-      res.status(200).json({ doctors });
-    }
+    await doctors.forEach(async (doctor) => {
+      await doctor.getAppointments();
+    });
+    console.log(doctors);
+
     if (date && !time) {
       return res.status(405).json({ message: "Please enter time" });
     }
@@ -590,27 +602,63 @@ const filterDoctorsAfterSearchDocName = async (req, res) => {
     }
 
     const appointments = await appointmentModel.find(query);
-    console.log(appointments);
 
     if (!appointments || appointments.length === 0) {
       return res.status(404).json({ message: "No doctors found." });
     }
 
-    // const availableAppointments = appointments.filter(
-    //   (appointment) => appointment.status !== "filled"
-    // );
     const availableDoctors = doctors.filter((doctor) =>
       appointments.some(
         (appointment) =>
           appointment.doctorID.toString() === doctor._id.toString() &&
-          doctor.speciality.toString() === speciality.toString()
+          (specialty
+            ? doctor.specialty.toString() === specialty.toString()
+            : true)
       )
     );
 
-    res.status(200).json({ availableDoctors });
-    res.status(200).json(appointments);
+    const patientId = req.query._id; // Assuming _id is in the request body
+    const patient = await patientModel.findById(patientId);
+
+    if (!patient) {
+      return res.status(404).json({ message: "Patient not found." });
+    }
+
+    const doctorsWithSessionPrice = await Promise.all(
+      availableDoctors.map(async (doctor) => {
+        const sessionPrice = await calculateSessionPrice(
+          doctor.hourlyRate,
+          patient.package
+        );
+
+        // Include all fields from the doctor object along with sessionPrice
+        return {
+          ...doctor.toObject(),
+          sessionPrice: sessionPrice,
+        };
+      })
+    );
+
+    res.status(200).json({ doctorsWithSessionPrice });
+    // res.status(200).json(appointments);
   } catch (error) {
     res.status(500).json({ message: "Server Error" });
+  }
+};
+const removeFamilyMember = async (req, res) => {
+  try {
+    const id = req.query._id;
+    const removedFamilyMember = await familyMemberModel.findByIdAndDelete(id);
+
+    if (!removedFamilyMember) {
+      return res.status(404).json({ message: "Family member not found" });
+    }
+    return res
+      .status(200)
+      .json({ message: "Family member removed successfully" });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Internal server error" });
   }
 };
 
@@ -631,4 +679,5 @@ module.exports = {
   filterDoctorsAfterSearch,
   viewAllAppointments,
   filterDoctorsAfterSearchDocName,
+  removeFamilyMember,
 };

@@ -26,19 +26,27 @@ const searchPatientByName = async (req, res) => {
 
 const filterPatientsByAppointments = async (req, res) => {
   try {
-    const doctor = await doctorModel.find(req.body);
+    const doctor = await doctorModel.findOne(req.body);
+    console.log(doctor);
     if (!doctor) {
       return res.status(401).json({ error: "Doctor not authenticated" });
     }
 
     const today = new Date();
-    // Find upcoming appointments for the doctor
-    const upcomingAppointments = await appointmentModel.find({
+    const doctorAppointments = await appointmentModel.find({
       doctorID: doctor._id,
-      date: { $gte: today },
     });
 
-    // Extract patient IDs from upcoming appointments
+    const upcomingAppointments = [];
+    for (const appointment of doctorAppointments) {
+      const appointmentDate = new Date(appointment.date);
+      console.log(appointmentDate);
+      console.log(today);
+      if (appointmentDate > new Date(today)) {
+        upcomingAppointments.push(appointment);
+      }
+    }
+    console.log(upcomingAppointments);
     const patientIDs = upcomingAppointments.map(
       (appointment) => appointment.patientID
     );
@@ -119,7 +127,9 @@ const viewPatients = async (req, res) => {
     const actualPatients = [];
 
     for (const patientId of patients) {
-      const patient = await patientModel.findOne({ _id: patientId });
+      const patient = await patientModel
+        .findOne({ _id: patientId })
+        .populate("prescriptions");
       if (patient) {
         actualPatients.push(patient);
       }
@@ -222,6 +232,11 @@ const viewDocApp = async (req, res) => {
     res.status(400).send({ error: error.message });
   }
 };
+
+function parseDateString(dateString) {
+  const [year, month, day] = dateString.split("-").map(Number);
+  return new Date(year, month - 1, day); // Month is 0-indexed in JavaScript Date
+}
 
 module.exports = {
   selectPatient,

@@ -5,7 +5,7 @@ const Schema = mongoose.Schema;
 const appointmentSchema = new Schema(
   {
     date: {
-      type: Date,
+      type: String,
       required: true,
     },
     description: {
@@ -37,6 +37,15 @@ appointmentSchema.virtual("patient", {
   localField: "patientID",
   foreignField: "_id",
   justOne: true,
+});
+
+appointmentSchema.set("toObject", { virtuals: true });
+appointmentSchema.set("toJSON", { virtuals: true });
+
+appointmentSchema.virtual("doctor", {
+  ref: "Doctor",
+  localField: "doctorID",
+  foreignField: "_id",
 });
 
 appointmentSchema.set("toObject", { virtuals: true });

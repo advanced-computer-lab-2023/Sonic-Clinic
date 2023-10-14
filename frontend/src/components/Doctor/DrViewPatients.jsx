@@ -8,6 +8,7 @@ import DrShowPatients from "./DrShowPatients";
 export default function DrViewPatients() {
   const [responseData, setResponseData] = useState([]);
   const [patients, setPatients] = useState([]);
+  const [upcomingApp, setUpcomingApp] = useState(null);
   const [error, setError] = useState(null);
   const _id = useSelector((state) => state.doctorLogin.userId);
 
@@ -45,6 +46,7 @@ export default function DrViewPatients() {
             patients={patients}
             responseData={responseData}
             setPatients={setPatients}
+            setUpcomingApp={setUpcomingApp}
           />
         </div>
         <div className="col-7">
@@ -52,6 +54,7 @@ export default function DrViewPatients() {
             patients={patients}
             responseData={responseData}
             setPatients={setPatients}
+            upcomingApp={upcomingApp}
           />
         </div>
       </Container>

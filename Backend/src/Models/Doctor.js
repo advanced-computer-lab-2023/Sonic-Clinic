@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const Appointment = require("./Appointment");
 const Schema = mongoose.Schema;
 
 const doctorSchema = new Schema(
@@ -39,9 +40,12 @@ const doctorSchema = new Schema(
       type: Array,
       required: false,
     },
-    speciality: {
+    specialty: {
       type: String,
       required: true,
+    },
+    appointments: {
+      type: [Object],
     },
   },
   { timestamps: true }
@@ -56,5 +60,15 @@ doctorSchema.virtual("appointment", {
 doctorSchema.set("toObject", { virtuals: true });
 doctorSchema.set("toJSON", { virtuals: true });
 
+doctorSchema.methods.getAppointments = async function () {
+  try {
+    // Use async/await with Appointment.find to retrieve appointments for the current doctor
+    const appointments = await Appointment.find({ doctorID: this._id });
+    // Add the appointments to the doctor document
+    this.appointments = appointments;
+  } catch (error) {
+    throw error;
+  }
+};
 const Doctor = mongoose.model("Doctor", doctorSchema);
 module.exports = Doctor;

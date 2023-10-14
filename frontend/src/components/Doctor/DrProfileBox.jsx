@@ -199,6 +199,10 @@ function DrProfileBox() {
             )}
           </p>
         </div>
+        <p class="d-flex flex-row">
+          <div style={inputLabel}>Educational Background:</div>
+          <span>{profileData.educationalBackground}</span>
+        </p>
         <div>
           {isEditing && (
             <Button onClick={handleSaveChanges}>Save Changes</Button>

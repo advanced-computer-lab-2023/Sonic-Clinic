@@ -6,6 +6,8 @@ const initialState = {
   patientID: "",
   doctorID: 0,
   status: "",
+  medicine: [],
+  doctorName: "",
 };
 
 const prescriptionIdSlice = createSlice({
@@ -19,6 +21,8 @@ const prescriptionIdSlice = createSlice({
       state.patientID = action.payload.patientID;
       state.doctorID = action.payload.doctorID;
       state.status = action.payload.status;
+      state.medicine = action.payload.medicine;
+      state.doctorName = action.payload.doctorName;
     },
   },
 });
