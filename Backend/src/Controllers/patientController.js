@@ -552,7 +552,10 @@ const filterDoctorsAfterSearch = async (req, res) => {
 };
 const viewAllAppointments = async (req, res) => {
   try {
-    const appointments = await appointmentModel.find();
+    const id = req.body._id;
+    const appointments = await appointmentModel
+      .find({ patientID: id })
+      .populate("doctor");
 
     if (!appointments || appointments.length === 0) {
       return res.status(404).json({ message: "No appointments found." });

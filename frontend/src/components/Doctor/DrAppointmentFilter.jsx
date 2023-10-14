@@ -17,8 +17,6 @@ function AppointmentFilter() {
   };
 
   const handleFilter = () => {
-    console.log("khaar1 :", selectedDate);
-    console.log("khara2 :", selectedStatus);
     dispatch(
       setFilterDrAppointments({
         date: selectedDate,

@@ -42,5 +42,14 @@ appointmentSchema.virtual("patient", {
 appointmentSchema.set("toObject", { virtuals: true });
 appointmentSchema.set("toJSON", { virtuals: true });
 
+appointmentSchema.virtual("doctor", {
+  ref: "Doctor",
+  localField: "doctorID",
+  foreignField: "_id",
+});
+
+appointmentSchema.set("toObject", { virtuals: true });
+appointmentSchema.set("toJSON", { virtuals: true });
+
 const Appointment = mongoose.model("Appointment", appointmentSchema);
 module.exports = Appointment;

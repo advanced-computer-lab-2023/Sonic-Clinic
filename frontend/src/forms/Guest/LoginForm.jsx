@@ -81,9 +81,9 @@ const LoginForm = () => {
               name: user.name,
               hourlyRate: user.hourlyRate,
               affiliation: user.affiliation,
-              education: user.educationalBackground,
+              educationalBackground: user.educationalBackground,
               patients: user.patients,
-              speciality: user.speciality,
+              speciality: user.specialty,
               userId: user._id,
               isLoggedIn: true,
             })

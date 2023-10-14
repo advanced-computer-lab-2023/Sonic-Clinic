@@ -8,7 +8,8 @@ import {
   faCheckCircle,
   faTimesCircle,
 } from "@fortawesome/free-solid-svg-icons";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { deleteFilterDrAppointments } from "../../state/Doctor/filterDrAppointments";
 import axios from "axios";
 
 function DrShowAppointments() {
@@ -16,14 +17,20 @@ function DrShowAppointments() {
   const [loading, setLoading] = useState(true);
   const [error1, setError] = useState(null);
   const _id = useSelector((state) => state.doctorLogin.userId);
-
   const filterDate = useSelector((state) => state.filterDrAppointments.date);
   const filterStatus = useSelector(
     (state) => state.filterDrAppointments.status
   );
+  const dispatch = useDispatch();
 
   useEffect(() => {
     fetchData();
+    dispatch(
+      deleteFilterDrAppointments({
+        date: "",
+        status: "",
+      })
+    );
   }, []);
 
   const fetchData = async () => {
@@ -51,6 +58,7 @@ function DrShowAppointments() {
     }
   };
   const appointments = responseData;
+
   const filteredAppointments = appointments.filter((appointment) => {
     const isoDate = appointment.date; // Assuming appointment.date is in ISO format like "2023-10-05T14:30:00.000Z"
     const dateObj = new Date(isoDate);
@@ -73,7 +81,8 @@ function DrShowAppointments() {
     );
   });
 
-  console.log("HHHHHHHHHHHHHHHH", filteredAppointments);
+  console.log("Check:", filteredAppointments);
+
   return (
     <div>
       {loading && (
@@ -95,7 +104,7 @@ function DrShowAppointments() {
         <div style={{ textAlign: "center", marginTop: "20px" }}>{error1}</div>
       )}
       {!loading &&
-        filteredAppointments.map((appointment, index) => {
+        filteredAppointments.map((appointment) => {
           // Parse the date string into a Date object
           const appointmentDate = new Date(appointment.date);
 
@@ -115,75 +124,65 @@ function DrShowAppointments() {
             .padStart(2, "0")}`;
 
           return (
-            <div>
-              {/* change to filterAppointments */}
-              {filteredAppointments.map((appointment) => (
-                <Link
-                  // to={`/appointment/${appointment.appointmentId}`}
-                  key={appointment._Id}
-                  className="text-decoration-none"
-                >
-                  <Card
-                    className="mb-4 mx-3~ bg-light"
-                    style={{ cursor: "pointer" }}
-                  >
-                    <Row>
-                      <Col lg={4}>
-                        <div
-                          className={`appointment-icon-container
-                      ${
-                        appointment.status === "filled"
-                          ? "confirmed"
-                          : "cancelled"
-                      }`}
-                        >
+            <Link
+              key={appointment._id} // Use _id as the key
+              to={`/appointment/${appointment.appointmentId}`}
+              className="text-decoration-none"
+            >
+              <Card
+                className={`mb-4 mx-3~ bg-light ${
+                  appointment.status === "Confirmed" ? "confirmed" : "cancelled"
+                }`}
+                style={{ cursor: "pointer" }}
+              >
+                <Row>
+                  <Col lg={4}>
+                    <div className="appointment-icon-container">
+                      <FontAwesomeIcon
+                        icon={
+                          appointment.status === "Confirmed"
+                            ? faCheckCircle
+                            : faTimesCircle
+                        }
+                        style={{ height: "2rem" }}
+                      />
+                    </div>
+                  </Col>
+                  <Col lg={8}>
+                    <Card.Body className="p-4">
+                      <Card.Title className="show-more-title">
+                        {appointment.patient.name}
+                      </Card.Title>
+                      <Card.Text>
+                        <div className="show-more-date">
                           <FontAwesomeIcon
-                            icon={
-                              appointment.status === "filled"
-                                ? faCheckCircle
-                                : faTimesCircle
-                            }
-                            style={{ height: "2rem" }}
+                            icon={faCalendar}
+                            style={{ marginRight: "0.5rem" }}
                           />
+                          {formattedDate}
                         </div>
-                      </Col>
-                      <Col lg={8}>
-                        <Card.Body className="p-4">
-                          <Card.Title className="show-more-title">
-                            {appointment.patient.name}
-                          </Card.Title>
-                          <Card.Text>
-                            <div className="show-more-date">
-                              <FontAwesomeIcon
-                                icon={faCalendar}
-                                style={{ marginRight: "0.5rem" }}
-                              />
-                              {formattedDate}
-                            </div>
-                            <div className="show-more-time">
-                              <FontAwesomeIcon
-                                icon={faClock}
-                                style={{ marginRight: "0.5rem" }}
-                              />
-                              {appointment.time}
-                            </div>
-                            <div
-                              className={`show-more-status ${
-                                appointment.status === "Filled"
-                                  ? "confirmed"
-                                  : "cancelled"
-                              }`}
-                            >
-                              {appointment.status}
-                            </div>
-                          </Card.Text>
-                        </Card.Body>
-                      </Col>
-                    </Row>
-                  </Card>
-                </Link>
-              ))}
-            </div>
+                        <div className="show-more-time">
+                          <FontAwesomeIcon
+                            icon={faClock}
+                            style={{ marginRight: "0.5rem" }}
+                          />
+                          {appointment.time}
+                        </div>
+                        <div
+                          className={`show-more-status ${
+                            appointment.status === "Confirmed"
+                              ? "confirmed"
+                              : "cancelled"
+                          }`}
+                        >
+                          {appointment.status}
+                        </div>
+                      </Card.Text>
+                    </Card.Body>
+                  </Col>
+                </Row>
+              </Card>
+            </Link>
           );
         })}
     </div>

@@ -3,7 +3,7 @@ import { Button, Container, Form } from "react-bootstrap";
 import { useSelector } from "react-redux";
 import axios from "axios";
 
-function DrPatientFilter({ setPatients, responseData }) {
+function DrPatientFilter({ setPatients, responseData, setUpcomingApp }) {
   const [selectedStatus, setSelectedStatus] = useState("");
   const [error, setError] = useState(null);
   const _id = useSelector((state) => state.doctorLogin._id);
@@ -17,6 +17,7 @@ function DrPatientFilter({ setPatients, responseData }) {
         if (response.status === 200) {
           console.log("yay");
           setPatients(response.data.patients);
+          setUpcomingApp(true);
         } else {
           console.log("Server error");
         }
@@ -32,6 +33,7 @@ function DrPatientFilter({ setPatients, responseData }) {
       }
     } else {
       setPatients(responseData);
+      setUpcomingApp(null);
     }
   };
 

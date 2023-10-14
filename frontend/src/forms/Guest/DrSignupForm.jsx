@@ -182,7 +182,7 @@ const DrSignupForm = () => {
         education,
       };
       try {
-        const response = await axios.post("/addDoctor", {
+        const response = await axios.post("/addPotentialDoctor", {
           username: username,
           name: name,
           email: email,
@@ -191,11 +191,12 @@ const DrSignupForm = () => {
           hourlyRate: rate,
           affiliation: affiliation,
           educationalBackground: education,
-          speciality: speciality,
+          specialty: speciality,
         });
 
-        if (response.status === 200) {
+        if (response.status === 201) {
           isLoading(false);
+          setError(null);
           navigate("/login");
         } else {
           setError("Signup failed");
@@ -242,7 +243,7 @@ const DrSignupForm = () => {
         <div className="row">
           <div className="col">
             <FormInput
-              name="Birthdate"
+              name="Birth date"
               type="date"
               onChange={(e) => setBirthdate(e.target.value)}
             />
@@ -300,7 +301,7 @@ const DrSignupForm = () => {
                   lineHeight: "normal",
                 }}
               >
-                Gender
+                Specialty
               </Form.Label>
               <Form.Control
                 as="select"
@@ -318,7 +319,7 @@ const DrSignupForm = () => {
         </div>
 
         <FormInput
-          name="email"
+          name="Email"
           type="email"
           placeholder="john.doe@ibm.com"
           onChange={
@@ -328,13 +329,13 @@ const DrSignupForm = () => {
         />
         <FormPassword
           id="password"
-          name="password"
+          name="Password"
           type="password"
           placeholder="**************"
           onChange={(e) => setPassword(e.target.value)}
         />
         <FormPassword
-          name="confirmPassword"
+          name="Confirm Password"
           type="password"
           placeholder="**************"
           onChange={(e) => setConfirmPassword(e.target.value)}

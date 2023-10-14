@@ -3,9 +3,7 @@ import { Link } from "react-router-dom";
 import {
   faCalendar,
   faClock,
-  faCheckCircle,
   faTimesCircle,
-  faCheckDouble,
 } from "@fortawesome/free-solid-svg-icons";
 import { Card, Col, Row, Image, Spinner } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -65,7 +63,9 @@ function ShowAppointments() {
     // Check if the formattedDate includes the filterDate and the status includes filterStatus, both in lowercase
     return (
       formattedDate.includes(filterDate.toLowerCase()) &&
-      status.includes(filterStatus.toLowerCase())
+      status.includes(filterStatus.toLowerCase()) &&
+      status !== "free" &&
+      status !== "Free"
     );
   });
 
@@ -90,6 +90,7 @@ function ShowAppointments() {
         <div style={{ textAlign: "center", marginTop: "20px" }}>{error1}</div>
       )}
       {!loading &&
+        // formatting el date w el time ghalat
         filteredAppointments.map((appointment, index) => {
           // Parse the date string into a Date object
           const appointmentDate = new Date(appointment.date);
@@ -132,28 +133,32 @@ function ShowAppointments() {
                   <Col lg={8}>
                     <Card.Body className="p-4">
                       <Card.Title className="show-more-title">
-                        Appointment {index + 1}
+                        Dr{" "}
+                        {appointment.doctor.length === 1 &&
+                          appointment.doctor[0].name}
                       </Card.Title>
+                      <div>
+                        {appointment.doctor.length === 1 &&
+                          appointment.doctor[0].specialty}
+                      </div>
                       <Card.Text>
                         <div className="show-more-date">
                           <FontAwesomeIcon
                             icon={faCalendar}
                             style={{ marginRight: "0.5rem" }}
                           />
-                          {formattedDate}
+                          {/* {formattedDate} */}
+                          {appointment.date}
                         </div>
                         <div className="show-more-date">
                           <FontAwesomeIcon
-                            icon={faTimesCircle}
+                            icon={faClock}
                             style={{ marginRight: "0.5rem" }}
                           />
-                          {formattedTime}
+                          {/* {formattedTime} */}
+                          {appointment.time}
                         </div>
                         <div className="show-more-date">
-                          <FontAwesomeIcon
-                            icon={faCheckDouble}
-                            style={{ marginRight: "0.5rem" }}
-                          />
                           {appointment.status}
                         </div>
                       </Card.Text>

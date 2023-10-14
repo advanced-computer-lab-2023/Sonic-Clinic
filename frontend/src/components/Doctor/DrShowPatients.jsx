@@ -9,7 +9,7 @@ import {
   faSearch,
 } from "@fortawesome/free-solid-svg-icons";
 
-function DrShowPatients({ patients, setPatients, responseData }) {
+function DrShowPatients({ patients, setPatients, responseData, upcomingApp }) {
   const [searchTerm, setSearchTerm] = useState("");
   const [expandedPatient, setExpandedPatient] = useState(null);
 
@@ -97,6 +97,7 @@ function DrShowPatients({ patients, setPatients, responseData }) {
               <Row>
                 <Col lg={8}>
                   <Card.Text>
+                    {upcomingApp && <div>Has an upcoming appointment</div>}
                     <div className="patient-info">
                       <h5 style={{ fontWeight: "bold" }}>
                         Patient Information

@@ -267,7 +267,7 @@ const PatientSignupForm = () => {
         <div className="row">
           <div className="col">
             <FormInput
-              name="Birthdate"
+              name="Birth date"
               type="date"
               onChange={(e) => setBirthdate(e.target.value)}
             />
@@ -334,7 +334,7 @@ const PatientSignupForm = () => {
         </div>
 
         <FormInput
-          name="email"
+          name="Email"
           type="email"
           placeholder="john.doe@ibm.com"
           onChange={
@@ -344,13 +344,13 @@ const PatientSignupForm = () => {
         />
         <FormPassword
           id="password"
-          name="password"
+          name="Password"
           type="password"
           placeholder="**************"
           onChange={(e) => setPassword(e.target.value)}
         />
         <FormPassword
-          name="confirmPassword"
+          name="Confirm Password"
           type="password"
           placeholder="**************"
           onChange={(e) => setConfirmPassword(e.target.value)}
