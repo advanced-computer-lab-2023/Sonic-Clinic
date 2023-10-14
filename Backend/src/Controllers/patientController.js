@@ -577,8 +577,10 @@ const filterDoctorsAfterSearchDocName = async (req, res) => {
   }
 
   try {
-    const doctors = await doctorModel.find(doctorQuery);
-    console.log(doctors + "Doctooorrsss");
+    const doctors = await doctorModel.find();
+    if (specialty) {
+      doctors = await doctorModel.find(doctorQuery);
+    }
 
     if (!doctors || doctors.length === 0) {
       return res.status(404).json({ message: "No doctors found." });
@@ -589,9 +591,6 @@ const filterDoctorsAfterSearchDocName = async (req, res) => {
     });
     console.log(doctors);
 
-    if (!date && !time) {
-      res.status(200).json({ doctors });
-    }
     if (date && !time) {
       return res.status(405).json({ message: "Please enter time" });
     }
@@ -609,10 +608,11 @@ const filterDoctorsAfterSearchDocName = async (req, res) => {
       appointments.some(
         (appointment) =>
           appointment.doctorID.toString() === doctor._id.toString() &&
-          doctor.specialty.toString() === specialty.toString()
+          (specialty
+            ? doctor.specialty.toString() === specialty.toString()
+            : true)
       )
-    ); //specialty w date w time
-    console.log(availableDoctors + "tooooooot");
+    );
 
     const patientId = req.query._id; // Assuming _id is in the request body
     const patient = await patientModel.findById(patientId);

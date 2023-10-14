@@ -98,22 +98,25 @@ function DrShowPatients({ patients, setPatients, responseData }) {
                 <Col lg={8}>
                   <Card.Text>
                     <div className="patient-info">
-                      <h5>Patient Information</h5>
+                      <h5 style={{ fontWeight: "bold" }}>
+                        Patient Information
+                      </h5>
                       <p>
                         Date of birth: {formatDateOfBirth(patient.dateOfBirth)}
                       </p>
                       <p>Gender: {patient.gender}</p>
-                      <p>Medical History:</p>
+                      <p style={{ fontWeight: "bold" }}>Medical History:</p>
                       {patient.prescriptions &&
                       patient.prescriptions.length > 0 ? (
                         patient.prescriptions.map((prescription, pIndex) => (
                           <div key={pIndex}>
                             <p>
-                              Prescription {pIndex + 1}: {prescription.date}
+                              Prescription {pIndex + 1} by Dr{" "}
+                              {prescription.doctorName}
                             </p>
                             <ul>
                               {prescription.medicine.map((medicine, mIndex) => (
-                                <li key={mIndex}>{medicine.name}</li>
+                                <li key={mIndex}>{medicine}</li>
                               ))}
                             </ul>
                           </div>

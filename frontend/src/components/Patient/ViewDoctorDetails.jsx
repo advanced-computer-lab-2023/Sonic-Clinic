@@ -47,7 +47,7 @@ function ViewDoctorDetails() {
             <ListGroup.Item>
               <div style={listItemStyle}>
                 <span style={{ color: "#099BA0" }}>Specialty:</span>{" "}
-                {doctor.speciality}
+                {doctor.specialty}
               </div>
               <div style={listItemStyle}>
                 <span style={{ color: "#099BA0" }}>

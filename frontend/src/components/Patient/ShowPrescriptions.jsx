@@ -30,6 +30,8 @@ function ShowPrescriptions() {
         patientID: prescription.patientID,
         doctorID: prescription.doctorID,
         status: prescription.status,
+        medicine: prescription.medicine,
+        doctorName: prescription.doctorName,
       })
     );
     navigate(`/patient/view-prescriptions/${index}`);
@@ -76,9 +78,12 @@ function ShowPrescriptions() {
     // Check if the formattedDate includes the filterDate and the status includes filterStatus, both in lowercase
     return (
       formattedDate.includes(filterDate.toLowerCase()) &&
-      status.includes(filterStatus.toLowerCase()) &&
+      (filterStatus === ""
+        ? status.includes("")
+        : status === filterStatus.toLowerCase()) &&
       doctor.toLowerCase().includes(filterDoctor.toLowerCase())
       // doctor.includes(filterDoctor.toLowerCase())
+      // status.includes(filterStatus.toLowerCase())
     );
   });
 
@@ -164,7 +169,7 @@ function ShowPrescriptions() {
                           {prescription.status}
                         </div>
                         <div className="show-more-doctor">
-                          {prescription.doctorName}
+                          Dr. {prescription.doctorName}
                         </div>
                       </Card.Text>
                     </Card.Body>

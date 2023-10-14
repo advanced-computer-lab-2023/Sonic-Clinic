@@ -26,7 +26,8 @@ function ViewDoctorDetails() {
               lineHeight: "1.5",
             }}
           >
-            {/*Should be a title */}Prescription
+            {/*Should be a title */}Prescription by Dr.{" "}
+            {prescription.doctorName}
           </div>
           <ListGroup variant="flush">
             <ListGroup.Item>
@@ -35,8 +36,14 @@ function ViewDoctorDetails() {
                 {prescription.date}
               </div>
               <div style={listItemStyle}>
-                <span style={{ color: "#099BA0" }}>Description:</span>{" "}
-                {prescription.description}
+                {prescription.medicine.map((medicine, index) => (
+                  <div key={index} style={listItemStyle}>
+                    <span style={{ color: "#099BA0" }}>
+                      Medicine {index + 1}:
+                    </span>{" "}
+                    {medicine}
+                  </div>
+                ))}
               </div>
               <div style={listItemStyle}>
                 <span style={{ color: "#099BA0" }}>Status:</span>{" "}

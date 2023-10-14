@@ -30,7 +30,7 @@ function ShowDoctors({ patients, responseData, setPatients, loading, error1 }) {
         hourlyRate: doctor.hourlyRate,
         affiliation: doctor.affiliation,
         educationalBackground: doctor.educationalBackground,
-        speciality: doctor.speciality,
+        speciality: doctor.specialty,
         photoLink: doctor.photoLink,
       })
     );
@@ -38,7 +38,8 @@ function ShowDoctors({ patients, responseData, setPatients, loading, error1 }) {
   };
 
   // useEffect(() => {
-  //   fetchData();
+  //   // setPatients(patients);
+  //   console.log("gom m3aya show docs ", patients);
   // }, {}); // Fetch data when searchData changes
 
   // const fetchData = async () => {
@@ -154,7 +155,7 @@ function ShowDoctors({ patients, responseData, setPatients, loading, error1 }) {
                           marginBottom: "4rem",
                         }}
                       >
-                        {doctor.speciality}
+                        {doctor.specialty}
                       </div>
                       <div
                         style={{
