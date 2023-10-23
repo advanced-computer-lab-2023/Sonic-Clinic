@@ -3,11 +3,12 @@ import React, { useState } from "react";
 import { Form, Button, Col } from "react-bootstrap";
 import { useSelector } from "react-redux";
 
-function AddFamilyMemberForm({ onRefresh }) {
+function AddFamilyMemberForm({ onRefresh, toggleForm }) {
   const [error1, setError] = useState(null);
   const [message, setMessage] = useState(null);
   const [loading, isLoading] = useState(null);
   const id = useSelector((state) => state.patientLogin.userId);
+  const handleClickAlreadyUser = async (e) => {};
   const [formData, setFormData] = useState({
     name: "",
     nationalId: "",
@@ -205,6 +206,16 @@ function AddFamilyMemberForm({ onRefresh }) {
       >
         Add Family Member
       </Button>
+      <div className="form-comment" style={{ cursor: "default" }}>
+        Family Member{" "}
+        <div
+          className="text-decoration-none  link-decoration "
+          style={{ cursor: "pointer", fontWeight: "600" }}
+          onClick={toggleForm}
+        >
+          Already a User?
+        </div>
+      </div>
     </Form>
   );
 }
