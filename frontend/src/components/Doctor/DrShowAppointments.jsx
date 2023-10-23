@@ -80,9 +80,6 @@ function DrShowAppointments() {
       (filterStatus === "" || status.includes(filterStatus.toLowerCase()))
     );
   });
-
-  console.log("Check:", filteredAppointments);
-
   return (
     <div>
       {loading && (
