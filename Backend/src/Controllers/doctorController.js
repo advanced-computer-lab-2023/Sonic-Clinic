@@ -238,6 +238,31 @@ function parseDateString(dateString) {
   return new Date(year, month - 1, day); // Month is 0-indexed in JavaScript Date
 }
 
+const addAvailableSlots = async (req, res) => {
+  const doctorId = req.query._id;
+  const { availableSlots  } = req.body;
+
+  try {
+    // Find the doctor by ID
+    const doctor = await doctorModel.findOne({ _id: doctorId });
+
+    if (!doctor) {
+      return res.status(404).json({ message: 'Doctor not found.' });
+    }
+
+    const slotsAsDates = availableSlots.map(dateString => new Date(dateString));
+
+    doctor.availableSlots = doctor.availableSlots.concat(slotsAsDates);
+
+    // Save the updated doctor document
+    await doctor.save();
+
+    res.status(200).json({ message: 'Available slots added successfully.' });
+  } catch (error) {
+    res.status(500).json({ message: "Server Error", error });
+  }
+};
+
 module.exports = {
   selectPatient,
   viewInfoAndHealthRecord,
@@ -248,4 +273,5 @@ module.exports = {
   searchPatientByName,
   addPrescription,
   viewDocApp,
+  addAvailableSlots,
 };

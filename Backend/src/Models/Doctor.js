@@ -46,7 +46,12 @@ const doctorSchema = new Schema(
     },
     appointments: {
       type: [Object],
+      required: false,
     },
+    availableSlots: {
+      type: [Date],
+      required: false,
+    }
   },
   { timestamps: true }
 );

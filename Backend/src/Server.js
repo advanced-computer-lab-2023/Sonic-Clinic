@@ -45,6 +45,7 @@ const {
   searchPatientByName,
   addPrescription,
   viewDocApp,
+  addAvailableSlots,
 } = require("./Controllers/doctorController");
 
 ///////////////////////////////adminstratorController//////////////////////////////////////
@@ -163,6 +164,7 @@ server.post("/addPatient", addPatient);
 server.post("/addPotentialDoctor", addPotentialDoctor);
 //doctor
 server.post("/addPrescription", addPrescription);
+server.post("/addAvailableSlots", addAvailableSlots);
 
 //patient
 server.post("/addFamilyMember", addFamilyMember);
