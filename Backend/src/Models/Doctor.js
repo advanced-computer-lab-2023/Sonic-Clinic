@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const Appointment = require("./Appointment");
 const Schema = mongoose.Schema;
+const bcrypt=require('bcrypt');
 
 const doctorSchema = new Schema(
   {
@@ -75,5 +76,11 @@ doctorSchema.methods.getAppointments = async function () {
     throw error;
   }
 };
+
+doctorSchema.pre('save',async function (next){
+  const salt=await bcrypt.genSalt();
+  this.password=await bcrypt.hash(this.password,salt);
+  next();
+});
 const Doctor = mongoose.model("Doctor", doctorSchema);
 module.exports = Doctor;
