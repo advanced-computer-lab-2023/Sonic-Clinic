@@ -280,6 +280,37 @@ const viewAllAppointmentsDoctor = async (req, res) => {
     res.status(500).json({ message: "Server Error" });
   }
 };
+const changePasswordForDoctor = async (req, res) => {
+  const { currentPassword, newPassword } = req.body;
+  const doctorID = req.body._id; 
+
+  try {
+    
+    const doctor = await doctorModel.findById(adminID);
+
+    if (!doctor) {
+      return res.status(404).json({ message: "Doctor not found." });
+    }
+
+  
+    const isPasswordCorrect = await bcrypt.compare(currentPassword, doctor.password);
+
+    if (!isPasswordCorrect) {
+      return res.status(401).json({ message: "Current password is incorrect." });
+    }
+
+    // Hash the new password and update it in the database
+    const salt = await bcrypt.genSalt();
+    const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+    doctor.password = hashedPassword;
+    await doctor.save();
+
+    res.status(200).json({ message: "Password changed successfully." });
+  } catch (error) {
+    res.status(500).json({ message: "Server Error" });
+  }
+};
 module.exports = {
   selectPatient,
   viewInfoAndHealthRecord,
@@ -292,4 +323,5 @@ module.exports = {
   viewDocApp,
   addAvailableSlots,
   viewAllAppointmentsDoctor,
+  changePasswordForDoctor
 };
