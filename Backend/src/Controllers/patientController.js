@@ -789,7 +789,7 @@ const changePasswordForPatient = async (req, res) => {
     const patient = await patientModel.findById(patientID);
 
     if (!patient) {
-      return res.status(404).json({ message: "Patient not found." });
+      return res.status(404).json({ message: "patient not found." });
     }
 
   
@@ -809,24 +809,8 @@ const changePasswordForPatient = async (req, res) => {
     res.status(200).json({ message: "Password changed successfully." });
   } catch (error) {
     res.status(500).json({ message: "Server Error" });
-const cancelHealthPackage = async (req, res) => {
-  try {
-    const patient = await patientModel.findById(req.query._id);
-    const package = req.query.type;
-    if (patient.package === package) {
-      patient.package = "";
-    } else {
-      return res
-        .status(404)
-        .json({ message: "You are not subscribed to this package!" });
-    }
-    return res.status(200).json({ patient });
-  } catch (error) {
-    console.error("Error:", error);
-    return res.status(500).json({ message: "Server Error" });
   }
 };
-
 const cancelHealthPackageFam = async (req, res) => {
   try {
     const familyMember = await familyMemberModel.findById(req.query._id);

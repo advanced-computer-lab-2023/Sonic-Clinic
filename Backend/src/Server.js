@@ -40,6 +40,7 @@ const {
   cancelHealthPackageFam,
   viewSubscribedPackage,
   viewSubscribedPackageFam,
+  changePasswordForPatient,
 } = require("./Controllers/patientController");
 
 /////////////////////////////////doctorController//////////////////////////////////////////
@@ -178,6 +179,7 @@ server.post("/addPotentialDoctor", addPotentialDoctor);
 //doctor
 server.post("/addPrescription", addPrescription);
 server.post("/addAvailableSlots", addAvailableSlots);
+server.post("/changePasswordForPatient", changePasswordForPatient);
 
 //patient
 server.post("/addFamilyMember", addFamilyMember);
@@ -224,7 +226,7 @@ server.post(
 );
 server.post("/cancelHealthPackage", cancelHealthPackage);
 server.post("/cancelHealthPackageFam", cancelHealthPackageFam);
-server.post("/cancelHealthPackageFam", cancelHealthPackageFam);
+server.post("/changePasswordForDoctor", changePasswordForDoctor);
 
 //doctor
 server.post("/selectPatient", selectPatient);

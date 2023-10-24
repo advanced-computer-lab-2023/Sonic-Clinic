@@ -286,7 +286,7 @@ const changePasswordForDoctor = async (req, res) => {
 
   try {
     
-    const doctor = await doctorModel.findById(adminID);
+    const doctor = await doctorModel.findById(doctorID);
 
     if (!doctor) {
       return res.status(404).json({ message: "Doctor not found." });
