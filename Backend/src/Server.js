@@ -31,6 +31,7 @@ const {
   removeFamilyMember,
   viewHealthPackages,
   viewWalletAmount,
+  viewAllAppointmentsOfDoctor,
 } = require("./Controllers/patientController");
 
 /////////////////////////////////doctorController//////////////////////////////////////////
@@ -185,6 +186,7 @@ server.post(
   filterAppointmentsByDateOrStatus
 );
 server.post("/searchDoctors", searchDoctors);
+server.post("/viewAllAppointmentsOfDoctor", viewAllAppointmentsOfDoctor);
 server.get("/filterDoctors", filterDoctors);
 server.get("/viewAvailablePackages", viewAvailablePackages);
 server.get("/viewAllDoctorsByPatients", viewAllDoctorsForPatients);

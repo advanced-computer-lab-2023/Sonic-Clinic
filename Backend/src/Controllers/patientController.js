@@ -11,14 +11,16 @@ const doctorDetails = async (req, res) => {
 
   try {
     const doctor = await doctorModel.findOne({ name });
-    const affiliation = doctor.affiliation;
-    const educationalBackground = doctor.educationalBackground;
-    const specialty = doctor.specialty;
-    const output = { name, affiliation, educationalBackground, specialty };
+    
 
     if (!doctor) {
       return res.status(404).json({ message: "Doctor not found." });
     }
+
+    const affiliation = doctor.affiliation;
+    const educationalBackground = doctor.educationalBackground;
+    const specialty = doctor.specialty;
+    const output = { name, affiliation, educationalBackground, specialty };
 
     return res.status(200).json({ output });
   } catch (error) {
@@ -721,6 +723,25 @@ const viewWalletAmount = async (req, res) => {
   }
 };
 
+const viewAllAppointmentsOfDoctor = async (req, res) => {
+  const { name } = req.body;
+
+  try {
+    const doctor = await doctorModel.findOne({ name });
+    
+    if (!doctor) {
+      return res.status(404).json({ message: "Doctor not found." });
+    }
+
+    const appointments = doctor.appointments;
+
+    return res.status(200).json({ appointments });
+  } catch (error) {
+    console.error("Error:", error);
+    return res.status(500).json({ message: "Server Error" });
+  }
+};
+
 
 module.exports = {
   selectPrescription,
@@ -741,5 +762,6 @@ module.exports = {
   filterDoctorsAfterSearchDocName,
   removeFamilyMember,
   viewHealthPackages,
-  viewWalletAmount
+  viewWalletAmount,
+  viewAllAppointmentsOfDoctor,
 };
