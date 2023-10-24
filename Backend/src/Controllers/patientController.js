@@ -11,7 +11,6 @@ const doctorDetails = async (req, res) => {
 
   try {
     const doctor = await doctorModel.findOne({ name });
-    
 
     if (!doctor) {
       return res.status(404).json({ message: "Doctor not found." });
@@ -552,7 +551,7 @@ const filterDoctorsAfterSearch = async (req, res) => {
     res.status(500).json({ message: "Server Error" });
   }
 };
-const viewAllAppointments = async (req, res) => {
+const viewAllAppointmentsPatient = async (req, res) => {
   try {
     const id = req.body._id;
     const appointments = await appointmentModel
@@ -710,9 +709,10 @@ const viewWalletAmount = async (req, res) => {
       return res.status(404).json({ message: "Patient not found." });
     }
 
-   
-    if (typeof patient.wallet === 'undefined') {
-      return res.status(404).json({ message: "Patient does not have a wallet." });
+    if (typeof patient.wallet === "undefined") {
+      return res
+        .status(404)
+        .json({ message: "Patient does not have a wallet." });
     }
 
     const walletAmount = patient.wallet;
@@ -728,7 +728,7 @@ const viewAllAppointmentsOfDoctor = async (req, res) => {
 
   try {
     const doctor = await doctorModel.findOne({ name });
-    
+
     if (!doctor) {
       return res.status(404).json({ message: "Doctor not found." });
     }
@@ -741,8 +741,44 @@ const viewAllAppointmentsOfDoctor = async (req, res) => {
     return res.status(500).json({ message: "Server Error" });
   }
 };
-
-
+const subscribeHealthPackage = async (req, res) => {
+  try {
+    const patient = await patientModel.findById(req.query._id);
+    const package = req.query.type;
+    patient.package = package;
+    return res.status(200).json({ patient });
+  } catch (error) {
+    console.error("Error:", error);
+    return res.status(500).json({ message: "Server Error" });
+  }
+};
+const subscribeHealthPackageFam = async (req, res) => {
+  try {
+    const familyMember = await familyMemberModel.findById(req.query._id);
+    const package = req.query.type;
+    familyMember.package = package;
+    return res.status(200).json({ familyMember });
+  } catch (error) {
+    console.error("Error:", error);
+    return res.status(500).json({ message: "Server Error" });
+  }
+};
+const viewAvailableAppointmentsOfDoctor = async (req, res) => {
+  const doctorId = req.query._id;
+  try {
+    const query = { doctorID: doctorId, status: "free" };
+    const appointments = await appointmentModel.find(query);
+    if (!appointments) {
+      return res
+        .status(404)
+        .json({ message: "This doctor has no free appointments." });
+    }
+    return res.status(200).json({ appointments });
+  } catch (error) {
+    console.error("Error:", error);
+    return res.status(500).json({ message: "Server Error" });
+  }
+};
 module.exports = {
   selectPrescription,
   viewFamilyMembers,
@@ -758,10 +794,13 @@ module.exports = {
   getDoctorsWithSessionPrice,
   addAppointment,
   filterDoctorsAfterSearch,
-  viewAllAppointments,
+  viewAllAppointmentsPatient,
   filterDoctorsAfterSearchDocName,
   removeFamilyMember,
   viewHealthPackages,
   viewWalletAmount,
   viewAllAppointmentsOfDoctor,
+  subscribeHealthPackage,
+  subscribeHealthPackageFam,
+  viewAvailableAppointmentsOfDoctor,
 };

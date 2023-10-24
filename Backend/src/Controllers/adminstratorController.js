@@ -25,6 +25,7 @@ const addAdmin = async (req, res) => {
     res.status(400).send({ error: error.message });
   }
 };
+
 const addDoctor = async (req, res) => {
   try {
     const newDoctor = await doctorModel.create(req.body);

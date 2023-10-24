@@ -11,7 +11,7 @@ const creditCardSchema = new Schema({
     required: false,
   },
   expiryDate: {
-    type: String, 
+    type: String,
     required: false,
   },
 });
@@ -72,6 +72,14 @@ patientSchema.virtual("prescriptions", {
   foreignField: "patientID",
 });
 
+patientSchema.set("toObject", { virtuals: true });
+patientSchema.set("toJSON", { virtuals: true });
+
+patientSchema.virtual("packages", {
+  ref: "Packages",
+  localField: "package",
+  foreignField: "type",
+});
 
 patientSchema.set("toObject", { virtuals: true });
 patientSchema.set("toJSON", { virtuals: true });

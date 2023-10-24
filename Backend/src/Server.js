@@ -26,12 +26,15 @@ const {
   getDoctorsWithSessionPrice,
   addAppointment,
   filterDoctorsAfterSearch,
-  viewAllAppointments,
+  viewAllAppointmentsPatient,
   filterDoctorsAfterSearchDocName,
   removeFamilyMember,
   viewHealthPackages,
   viewWalletAmount,
   viewAllAppointmentsOfDoctor,
+  subscribeHealthPackage,
+  subscribeHealthPackageFam,
+  viewAvailableAppointmentsOfDoctor,
 } = require("./Controllers/patientController");
 
 /////////////////////////////////doctorController//////////////////////////////////////////
@@ -46,6 +49,7 @@ const {
   addPrescription,
   viewDocApp,
   addAvailableSlots,
+  viewAllAppointmentsDoctor,
 } = require("./Controllers/doctorController");
 
 ///////////////////////////////adminstratorController//////////////////////////////////////
@@ -169,6 +173,8 @@ server.post("/addAvailableSlots", addAvailableSlots);
 //patient
 server.post("/addFamilyMember", addFamilyMember);
 server.post("/addAppointment", addAppointment);
+server.post("/subscribeHealthPackage", subscribeHealthPackage);
+server.post("/subscribeHealthPackageFam", subscribeHealthPackageFam);
 //////////////////////////////////////////// GET/////////////////////////////////////
 //admin
 server.get("/viewAllPatients", viewAllPatients);
@@ -192,17 +198,18 @@ server.post("/viewAllAppointmentsOfDoctor", viewAllAppointmentsOfDoctor);
 server.get("/filterDoctors", filterDoctors);
 server.get("/viewAvailablePackages", viewAvailablePackages);
 server.get("/viewAllDoctorsByPatients", viewAllDoctorsForPatients);
-server.get(
-  "/viewHealthPackages",
-  viewHealthPackages
-);
+server.get("/viewHealthPackages", viewHealthPackages);
 server.get("/viewWalletAmount", viewWalletAmount);
 server.post("/getDoctorsWithSessionPrice", getDoctorsWithSessionPrice);
 server.post("/filterDoctorsAfterSearch", filterDoctorsAfterSearch);
-server.post("/viewAllAppointments", viewAllAppointments);
+server.post("/viewAllAppointmentsPatient", viewAllAppointmentsPatient);
 server.post(
   "/filterDoctorsAfterSearchDocName",
   filterDoctorsAfterSearchDocName
+);
+server.post(
+  "/viewAvailableAppointmentsOfDoctor",
+  viewAvailableAppointmentsOfDoctor
 );
 
 //doctor
@@ -216,6 +223,7 @@ server.post(
 server.post("/filterPatientsByAppointments", filterPatientsByAppointments);
 server.get("/searchPatientByName", searchPatientByName);
 server.post("/viewDocApp", viewDocApp);
+server.post("/viewAllAppointmentsDoctor", viewAllAppointmentsDoctor);
 
 ////////////////////////////////////////////////////PUT////////////////////////////////////////
 //admin
