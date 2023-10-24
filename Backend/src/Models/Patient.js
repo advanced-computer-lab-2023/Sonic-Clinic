@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
-const bcrypt=require('bcrypt');
+const bcrypt = require("bcrypt");
 
 const creditCardSchema = new Schema({
   cardNumber: {
@@ -76,7 +76,7 @@ patientSchema.virtual("prescriptions", {
 patientSchema.set("toObject", { virtuals: true });
 patientSchema.set("toJSON", { virtuals: true });
 
-patientSchema.virtual("packages", {
+patientSchema.virtual("package", {
   ref: "Packages",
   localField: "package",
   foreignField: "type",
@@ -85,9 +85,9 @@ patientSchema.virtual("packages", {
 patientSchema.set("toObject", { virtuals: true });
 patientSchema.set("toJSON", { virtuals: true });
 
-patientSchema.pre('save',async function (next){
-  const salt=await bcrypt.genSalt();
-  this.password=await bcrypt.hash(this.password,salt);
+patientSchema.pre("save", async function (next) {
+  const salt = await bcrypt.genSalt();
+  this.password = await bcrypt.hash(this.password, salt);
   next();
 });
 const Patient = mongoose.model("Patient", patientSchema);

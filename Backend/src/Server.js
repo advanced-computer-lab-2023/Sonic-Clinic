@@ -35,6 +35,10 @@ const {
   subscribeHealthPackage,
   subscribeHealthPackageFam,
   viewAvailableAppointmentsOfDoctor,
+  cancelHealthPackage,
+  cancelHealthPackageFam,
+  viewSubscribedPackage,
+  viewSubscribedPackageFam,
 } = require("./Controllers/patientController");
 
 /////////////////////////////////doctorController//////////////////////////////////////////
@@ -211,6 +215,9 @@ server.post(
   "/viewAvailableAppointmentsOfDoctor",
   viewAvailableAppointmentsOfDoctor
 );
+server.post("/cancelHealthPackage", cancelHealthPackage);
+server.post("/cancelHealthPackageFam", cancelHealthPackageFam);
+server.post("/cancelHealthPackageFam", cancelHealthPackageFam);
 
 //doctor
 server.post("/selectPatient", selectPatient);
@@ -223,7 +230,8 @@ server.post(
 server.post("/filterPatientsByAppointments", filterPatientsByAppointments);
 server.get("/searchPatientByName", searchPatientByName);
 server.post("/viewDocApp", viewDocApp);
-server.post("/viewAllAppointmentsDoctor", viewAllAppointmentsDoctor);
+server.post("/viewSubscribedPackage", viewSubscribedPackage);
+server.post("/viewSubscribedPackageFam", viewSubscribedPackageFam);
 
 ////////////////////////////////////////////////////PUT////////////////////////////////////////
 //admin
