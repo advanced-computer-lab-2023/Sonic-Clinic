@@ -5,6 +5,7 @@ const bodyParser = require("body-parser");
 const { MongoClient } = require("mongodb");
 const session = require("express-session");
 const jwt = require("jsonwebtoken");
+const cookieParser=require('cookie-parser');
 
 mongoose.set("strictQuery", false);
 require("dotenv").config();
@@ -91,7 +92,7 @@ const appointment = require("./Models/Appointment");
 //////////////////////////////////////////////////////////////////////////////////////
 
 //login
-
+server.use(cookieParser());
 server.use(bodyParser.json());
 server.use(
   session({ secret: "your-secret-key", resave: true, saveUninitialized: true })
