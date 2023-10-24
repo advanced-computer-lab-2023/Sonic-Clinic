@@ -21,7 +21,7 @@ const {
   searchDoctors,
   doctorDetails,
   addFamilyMember,
-  viewPackages,
+  viewAvailablePackages,
   viewAllDoctorsForPatients,
   getDoctorsWithSessionPrice,
   addAppointment,
@@ -30,6 +30,7 @@ const {
   filterDoctorsAfterSearchDocName,
   removeFamilyMember,
   viewHealthPackages,
+  viewWalletAmount,
 } = require("./Controllers/patientController");
 
 /////////////////////////////////doctorController//////////////////////////////////////////
@@ -185,12 +186,13 @@ server.post(
 );
 server.post("/searchDoctors", searchDoctors);
 server.get("/filterDoctors", filterDoctors);
-server.get("/viewPackages", viewPackages);
+server.get("/viewAvailablePackages", viewAvailablePackages);
 server.get("/viewAllDoctorsByPatients", viewAllDoctorsForPatients);
 server.get(
   "/viewHealthPackages",
   viewHealthPackages
 );
+server.get("/viewWalletAmount", viewWalletAmount);
 server.post("/getDoctorsWithSessionPrice", getDoctorsWithSessionPrice);
 server.post("/filterDoctorsAfterSearch", filterDoctorsAfterSearch);
 server.post("/viewAllAppointments", viewAllAppointments);

@@ -43,6 +43,11 @@ const patientSchema = new Schema(
       type: String,
       required: false,
     },
+    wallet: {
+      type: Number,
+      required: false,
+    },
+    creditCard: creditCardSchema,
   },
   { timestamps: true }
 );
@@ -50,6 +55,20 @@ patientSchema.virtual("prescriptions", {
   ref: "Prescription",
   localField: "_id",
   foreignField: "patientID",
+});
+const creditCardSchema = new Schema({
+  cardNumber: {
+    type: String,
+    required: false,
+  },
+  cvv: {
+    type: String,
+    required: false,
+  },
+  expiryDate: {
+    type: String, 
+    required: false,
+  },
 });
 
 patientSchema.set("toObject", { virtuals: true });

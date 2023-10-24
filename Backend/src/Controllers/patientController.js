@@ -249,7 +249,7 @@ const addFamilyMember = async (req, res) => {
     res.status(400).send({ error: error.message });
   }
 };
-const viewPackages = async (req, res) => {
+const viewAvailablePackages = async (req, res) => {
   try {
     const packages = await packagesModel.find();
     if (!packages || packages.length === 0) {
@@ -699,6 +699,28 @@ const viewHealthPackages = async (req, res) => {
     res.status(500).json({ message: "Server Error" });
   }
 };
+const viewWalletAmount = async (req, res) => {
+  try {
+    const patientId = req.body._id;
+    const patient = await Patient.findById(patientId);
+
+    if (!patient) {
+      return res.status(404).json({ message: "Patient not found." });
+    }
+
+   
+    if (typeof patient.wallet === 'undefined') {
+      return res.status(404).json({ message: "Patient does not have a wallet." });
+    }
+
+    const walletAmount = patient.wallet;
+
+    res.status(200).json({ walletAmount });
+  } catch (error) {
+    res.status(500).json({ message: "Server Error", error: error.message });
+  }
+};
+
 
 module.exports = {
   selectPrescription,
@@ -710,7 +732,7 @@ module.exports = {
   searchDoctors,
   doctorDetails,
   addFamilyMember,
-  viewPackages,
+  viewAvailablePackages,
   viewAllDoctorsForPatients,
   getDoctorsWithSessionPrice,
   addAppointment,
@@ -719,4 +741,5 @@ module.exports = {
   filterDoctorsAfterSearchDocName,
   removeFamilyMember,
   viewHealthPackages,
+  viewWalletAmount
 };
