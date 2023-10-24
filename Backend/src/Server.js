@@ -29,6 +29,7 @@ const {
   viewAllAppointments,
   filterDoctorsAfterSearchDocName,
   removeFamilyMember,
+  viewHealthPackages,
 } = require("./Controllers/patientController");
 
 /////////////////////////////////doctorController//////////////////////////////////////////
@@ -186,6 +187,10 @@ server.post("/searchDoctors", searchDoctors);
 server.get("/filterDoctors", filterDoctors);
 server.get("/viewPackages", viewPackages);
 server.get("/viewAllDoctorsByPatients", viewAllDoctorsForPatients);
+server.get(
+  "/viewHealthPackages",
+  viewHealthPackages
+);
 server.post("/getDoctorsWithSessionPrice", getDoctorsWithSessionPrice);
 server.post("/filterDoctorsAfterSearch", filterDoctorsAfterSearch);
 server.post("/viewAllAppointments", viewAllAppointments);
@@ -193,6 +198,7 @@ server.post(
   "/filterDoctorsAfterSearchDocName",
   filterDoctorsAfterSearchDocName
 );
+
 //doctor
 server.post("/selectPatient", selectPatient);
 server.post("/viewInfoAndHealthRecord", viewInfoAndHealthRecord);

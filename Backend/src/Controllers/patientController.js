@@ -662,6 +662,44 @@ const removeFamilyMember = async (req, res) => {
   }
 };
 
+const viewHealthPackages = async (req, res) => {
+  const patientID = req.body._id;
+
+  try {
+    const patient = await patientModel.findOne({ _id: patientID });
+
+    if (!patient) {
+      return res.status(404).json({ message: "Patient not found." });
+    }
+
+    const familyMembers = await familyMemberModel.find({ patientID });
+
+    // Create an array to store health packages
+    const healthPackages = [];
+
+    // Add the patient's package to the result
+    const patientWithPackage = {
+      name: patient.name,
+      package: patient.package,
+    };
+    healthPackages.push(patientWithPackage);
+
+    // Add family members and their health packages to the result if they exist
+    if (familyMembers.length > 0) {
+      familyMembers.forEach((familyMember) => {
+        healthPackages.push({
+          name: familyMember.name,
+          package: familyMember.package,
+        });
+      });
+    }
+
+    res.status(200).json({ healthPackages });
+  } catch (error) {
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+
 module.exports = {
   selectPrescription,
   viewFamilyMembers,
@@ -680,4 +718,5 @@ module.exports = {
   viewAllAppointments,
   filterDoctorsAfterSearchDocName,
   removeFamilyMember,
+  viewHealthPackages,
 };

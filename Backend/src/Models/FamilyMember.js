@@ -25,6 +25,10 @@ const familyMemberSchema = new Schema({
   patientID: {
     type: String,
     required: true
+  },
+  package: {
+    type: String,
+    required: false
   }
 }, { timestamps: true });
 
