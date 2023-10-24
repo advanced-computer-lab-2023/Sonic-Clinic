@@ -809,6 +809,64 @@ const changePasswordForPatient = async (req, res) => {
     res.status(200).json({ message: "Password changed successfully." });
   } catch (error) {
     res.status(500).json({ message: "Server Error" });
+const cancelHealthPackage = async (req, res) => {
+  try {
+    const patient = await patientModel.findById(req.query._id);
+    const package = req.query.type;
+    if (patient.package === package) {
+      patient.package = "";
+    } else {
+      return res
+        .status(404)
+        .json({ message: "You are not subscribed to this package!" });
+    }
+    return res.status(200).json({ patient });
+  } catch (error) {
+    console.error("Error:", error);
+    return res.status(500).json({ message: "Server Error" });
+  }
+};
+
+const cancelHealthPackageFam = async (req, res) => {
+  try {
+    const familyMember = await familyMemberModel.findById(req.query._id);
+    const package = req.query.type;
+    if (familyMember.package === package) {
+      familyMember.package = "";
+    } else {
+      return res
+        .status(404)
+        .json({ message: "You are not subscribed to this package!" });
+    }
+
+    return res.status(200).json({ familyMember });
+  } catch (error) {
+    console.error("Error:", error);
+    return res.status(500).json({ message: "Server Error" });
+  }
+};
+const viewSubscribedPackage = async (req, res) => {
+  try {
+    const patient = await patientModel.findById(req.query._id);
+    if (patient.package != "") {
+      const package = patient.populate("package");
+    }
+    return res.status(200).json({ package });
+  } catch (error) {
+    console.error("Error:", error);
+    return res.status(500).json({ message: "Server Error" });
+  }
+};
+const viewSubscribedPackageFam = async (req, res) => {
+  try {
+    const familyMember = await familyMemberModel.findById(req.query._id);
+    if (familyMember.package != "") {
+      const package = familyMember.populate("package");
+    }
+    return res.status(200).json({ package });
+  } catch (error) {
+    console.error("Error:", error);
+    return res.status(500).json({ message: "Server Error" });
   }
 };
 
@@ -836,5 +894,9 @@ module.exports = {
   subscribeHealthPackage,
   subscribeHealthPackageFam,
   viewAvailableAppointmentsOfDoctor,
-  changePasswordForPatient
+  changePasswordForPatient,
+  cancelHealthPackage,
+  cancelHealthPackageFam,
+  viewSubscribedPackage,
+  viewSubscribedPackageFam,
 };
