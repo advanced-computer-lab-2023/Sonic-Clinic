@@ -1,6 +1,21 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
+const creditCardSchema = new Schema({
+  cardNumber: {
+    type: String,
+    required: false,
+  },
+  cvv: {
+    type: String,
+    required: false,
+  },
+  expiryDate: {
+    type: String, 
+    required: false,
+  },
+});
+
 const patientSchema = new Schema(
   {
     username: {
@@ -56,20 +71,7 @@ patientSchema.virtual("prescriptions", {
   localField: "_id",
   foreignField: "patientID",
 });
-const creditCardSchema = new Schema({
-  cardNumber: {
-    type: String,
-    required: false,
-  },
-  cvv: {
-    type: String,
-    required: false,
-  },
-  expiryDate: {
-    type: String, 
-    required: false,
-  },
-});
+
 
 patientSchema.set("toObject", { virtuals: true });
 patientSchema.set("toJSON", { virtuals: true });
