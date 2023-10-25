@@ -22,6 +22,7 @@ function DrProfileBox() {
     justifyContent: "center",
     alignItems: "center",
     height: "100vh",
+    width: "40rem",
     backgroundColor: "#f0f0f0",
   };
 

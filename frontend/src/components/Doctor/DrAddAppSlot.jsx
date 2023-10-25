@@ -1,28 +1,48 @@
 import React, { useState } from "react";
 import { Button, Container, Form } from "react-bootstrap";
-import { setFilterDrAppointments } from "../../state/Doctor/filterDrAppointments";
-import { useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
+import axios from "axios";
 
-function AppointmentFilter() {
+function DrAddAppSlot({ fetchData }) {
   const [selectedDate, setSelectedDate] = useState("");
-  const [selectedStatus, setSelectedStatus] = useState("");
-  const dispatch = useDispatch();
+  const [selectedTime, setSelectedTime] = useState("");
+  const [error, setError] = useState(null);
+  const _id = useSelector((state) => state.doctorLogin.userId);
 
-  const handleDateChange = (e) => {
-    setSelectedDate(e.target.value);
+  const handleTimeChange = (e) => {
+    const inputTime = e.target.value;
+    const timeParts = inputTime.split(":");
+    if (timeParts.length === 2) {
+      const hours = parseInt(timeParts[0], 10);
+      const minutes = parseInt(timeParts[1], 10);
+      const nearestHalfHour = (Math.round(minutes / 30) * 30) % 60;
+      const roundedTime = `${hours}:${nearestHalfHour
+        .toString()
+        .padStart(2, "0")}`;
+      setSelectedTime(roundedTime);
+    }
   };
 
-  const handleStatusChange = (e) => {
-    setSelectedStatus(e.target.value);
-  };
+  const addSlot = async () => {
+    const selectedDateTime = new Date(
+      selectedDate + "T" + selectedTime + ":00"
+    ).toISOString();
+    try {
+      const response = await axios.post("/addAppointmentSlot", {
+        _id: _id,
+        dateTime: selectedDateTime,
+      });
 
-  const handleFilter = () => {
-    dispatch(
-      setFilterDrAppointments({
-        date: selectedDate,
-        status: selectedStatus,
-      })
-    );
+      if (response.status === 200) {
+        fetchData();
+      } else {
+        setError("Error");
+      }
+    } catch (error) {
+      setError(
+        "An error occurred while adding appointment. Please try again later"
+      );
+    }
   };
 
   return (
@@ -47,9 +67,8 @@ function AppointmentFilter() {
           marginBottom: "1rem",
         }}
       >
-        Filter Appointments
+        Add Appointment Slot
       </div>
-
       <div className="mb-2">
         <div
           style={{
@@ -66,10 +85,9 @@ function AppointmentFilter() {
         <Form.Control
           type="date"
           value={selectedDate}
-          onChange={handleDateChange}
+          onChange={(e) => setSelectedDate(e.target.value)}
         />
       </div>
-
       <div className="mb-2">
         <div
           style={{
@@ -81,27 +99,24 @@ function AppointmentFilter() {
             marginBottom: "1rem",
           }}
         >
-          Status
+          Time
         </div>
-        <Form.Control as="select" onChange={handleStatusChange}>
-          <option value="">Select status</option>
-          <option value="upcoming">Upcoming</option>
-          <option value="completed">Completed</option>
-          <option value="cancelled">Cancelled</option>
-          <option value="rescheduled">Rescheduled</option>
-        </Form.Control>
+        <Form.Control
+          type="time"
+          value={selectedTime}
+          onChange={handleTimeChange}
+        />
       </div>
-
       <Container
         fluid
         className="d-flex align-items-center justify-content-center"
       >
-        <Button className="custom-button" onClick={handleFilter}>
-          Apply
+        <Button className="custom-button" onClick={addSlot}>
+          Add Slot
         </Button>
       </Container>
     </Container>
   );
 }
 
-export default AppointmentFilter;
+export default DrAddAppSlot;

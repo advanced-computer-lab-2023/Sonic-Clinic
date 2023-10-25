@@ -10,8 +10,14 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState } from "react";
 import { slide as Menu } from "react-burger-menu";
 import { useSelector } from "react-redux";
+import { logoutDoctor } from "../../state/loginDoctorReducer";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+
 function DrHamburgerMenu() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleMenuClick = () => {
     setMenuOpen(!menuOpen);
@@ -20,6 +26,13 @@ function DrHamburgerMenu() {
   const closeMenu = () => {
     setMenuOpen(false);
   };
+
+  const logout = () => {
+    navigate("/");
+    dispatch(logoutDoctor());
+    closeMenu();
+  };
+
   const name = useSelector((state) => state.doctorLogin.name).split(" ")[0];
   return (
     <div>
@@ -243,7 +256,7 @@ function DrHamburgerMenu() {
             id="logout"
             className="menu-item"
             href="/"
-            onClick={closeMenu}
+            onClick={logout}
             style={{
               color: "var(--gray-600, #6C757D)",
               fontFamily: "Roboto",

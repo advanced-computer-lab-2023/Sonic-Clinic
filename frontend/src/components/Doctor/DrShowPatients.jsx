@@ -12,6 +12,15 @@ import {
 function DrShowPatients({ patients, setPatients, responseData, upcomingApp }) {
   const [searchTerm, setSearchTerm] = useState("");
   const [expandedPatient, setExpandedPatient] = useState(null);
+  const [recordAdded, setRecordAdded] = useState(null);
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setRecordAdded(file);
+      //feedback like success aw re- fetchData
+    }
+  };
 
   // Function to format the date of birth
   function formatDateOfBirth(isoDate) {
@@ -125,6 +134,19 @@ function DrShowPatients({ patients, setPatients, responseData, upcomingApp }) {
                       ) : (
                         <div>No previous history found</div>
                       )}
+                      <label
+                        htmlFor="fileInput"
+                        className="btn btn-primary button-label"
+                      >
+                        Upload Health Record
+                      </label>
+                      <input
+                        type="file"
+                        accept=".pdf"
+                        onChange={handleFileChange}
+                        style={{ display: "none" }}
+                        id="fileInput"
+                      />
                     </div>
                   </Card.Text>
                 </Col>

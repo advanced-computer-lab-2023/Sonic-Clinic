@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Card, Button, Modal } from "react-bootstrap";
-import { Document, Page } from "react-pdf";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck, faX } from "@fortawesome/free-solid-svg-icons";
 import contract from "../../Assets/EmploymentContract.pdf";
