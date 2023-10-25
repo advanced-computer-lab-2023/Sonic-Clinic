@@ -779,24 +779,38 @@ const viewAvailableAppointmentsOfDoctor = async (req, res) => {
     return res.status(500).json({ message: "Server Error" });
   }
 };
-const cancelHealthPackage = async (req, res) => {
+
+const changePasswordForPatient = async (req, res) => {
+  const { currentPassword, newPassword } = req.body;
+  const patientID = req.body._id; 
+
   try {
-    const patient = await patientModel.findById(req.query._id);
-    const package = req.query.type;
-    if (patient.package === package) {
-      patient.package = "";
-    } else {
-      return res
-        .status(404)
-        .json({ message: "You are not subscribed to this package!" });
+    
+    const patient = await patientModel.findById(patientID);
+
+    if (!patient) {
+      return res.status(404).json({ message: "patient not found." });
     }
-    return res.status(200).json({ patient });
+
+  
+    const isPasswordCorrect = await bcrypt.compare(currentPassword, patient.password);
+
+    if (!isPasswordCorrect) {
+      return res.status(401).json({ message: "Current password is incorrect." });
+    }
+
+    // Hash the new password and update it in the database
+    const salt = await bcrypt.genSalt();
+    const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+    patient.password = hashedPassword;
+    await patient.save();
+
+    res.status(200).json({ message: "Password changed successfully." });
   } catch (error) {
-    console.error("Error:", error);
-    return res.status(500).json({ message: "Server Error" });
+    res.status(500).json({ message: "Server Error" });
   }
 };
-
 const cancelHealthPackageFam = async (req, res) => {
   try {
     const familyMember = await familyMemberModel.findById(req.query._id);
@@ -864,6 +878,7 @@ module.exports = {
   subscribeHealthPackage,
   subscribeHealthPackageFam,
   viewAvailableAppointmentsOfDoctor,
+  changePasswordForPatient,
   cancelHealthPackage,
   cancelHealthPackageFam,
   viewSubscribedPackage,

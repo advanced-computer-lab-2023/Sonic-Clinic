@@ -40,6 +40,7 @@ const {
   cancelHealthPackageFam,
   viewSubscribedPackage,
   viewSubscribedPackageFam,
+  changePasswordForPatient,
 } = require("./Controllers/patientController");
 
 /////////////////////////////////doctorController//////////////////////////////////////////
@@ -55,6 +56,7 @@ const {
   viewDocApp,
   addAvailableSlots,
   viewAllAppointmentsDoctor,
+  changePasswordForDoctor,
 } = require("./Controllers/doctorController");
 
 ///////////////////////////////adminstratorController//////////////////////////////////////
@@ -74,6 +76,7 @@ const {
   viewPackagesAdmin,
   viewAllAdmins,
   viewAllDocApp,
+  changePasswordForAdmin,
 } = require("./Controllers/adminstratorController");
 
 ////////////////////////////////guestController///////////////////////////////////////////
@@ -167,6 +170,8 @@ server.use(express.json());
 server.post("/addAdmin", addAdmin);
 server.post("/addDoctor", addDoctor);
 server.post("/addPackage", addPackage);
+server.post("/changePasswordForAdmin", changePasswordForAdmin);
+
 
 //guest
 server.post("/addPatient", addPatient);
@@ -174,12 +179,15 @@ server.post("/addPotentialDoctor", addPotentialDoctor);
 //doctor
 server.post("/addPrescription", addPrescription);
 server.post("/addAvailableSlots", addAvailableSlots);
+server.post("/changePasswordForPatient", changePasswordForPatient);
 
 //patient
 server.post("/addFamilyMember", addFamilyMember);
 server.post("/addAppointment", addAppointment);
 server.post("/subscribeHealthPackage", subscribeHealthPackage);
 server.post("/subscribeHealthPackageFam", subscribeHealthPackageFam);
+server.post("/changePasswordForPatient", changePasswordForPatient);
+
 //////////////////////////////////////////// GET/////////////////////////////////////
 //admin
 server.get("/viewAllPatients", viewAllPatients);
@@ -218,7 +226,7 @@ server.post(
 );
 server.post("/cancelHealthPackage", cancelHealthPackage);
 server.post("/cancelHealthPackageFam", cancelHealthPackageFam);
-server.post("/cancelHealthPackageFam", cancelHealthPackageFam);
+server.post("/changePasswordForDoctor", changePasswordForDoctor);
 
 //doctor
 server.post("/selectPatient", selectPatient);
