@@ -172,7 +172,6 @@ server.post("/addDoctor", addDoctor);
 server.post("/addPackage", addPackage);
 server.post("/changePasswordForAdmin", changePasswordForAdmin);
 
-
 //guest
 server.post("/addPatient", addPatient);
 server.post("/addPotentialDoctor", addPotentialDoctor);

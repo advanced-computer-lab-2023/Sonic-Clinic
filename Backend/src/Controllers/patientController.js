@@ -782,21 +782,24 @@ const viewAvailableAppointmentsOfDoctor = async (req, res) => {
 
 const changePasswordForPatient = async (req, res) => {
   const { currentPassword, newPassword } = req.body;
-  const patientID = req.body._id; 
+  const patientID = req.body._id;
 
   try {
-    
     const patient = await patientModel.findById(patientID);
 
     if (!patient) {
       return res.status(404).json({ message: "patient not found." });
     }
 
-  
-    const isPasswordCorrect = await bcrypt.compare(currentPassword, patient.password);
+    const isPasswordCorrect = await bcrypt.compare(
+      currentPassword,
+      patient.password
+    );
 
     if (!isPasswordCorrect) {
-      return res.status(401).json({ message: "Current password is incorrect." });
+      return res
+        .status(401)
+        .json({ message: "Current password is incorrect." });
     }
 
     // Hash the new password and update it in the database
@@ -854,6 +857,23 @@ const viewSubscribedPackageFam = async (req, res) => {
   }
 };
 
+const cancelHealthPackage = async (req, res) => {
+  try {
+    const patient = await patientModel.findById(req.query._id);
+    const package = req.query.type;
+    if (patient.package === package) {
+      patient.package = "";
+    } else {
+      return res
+        .status(404)
+        .json({ message: "You are not subscribed to this package!" });
+    }
+    return res.status(200).json({ patient });
+  } catch (error) {
+    console.error("Error:", error);
+    return res.status(500).json({ message: "Server Error" });
+  }
+};
 module.exports = {
   selectPrescription,
   viewFamilyMembers,
