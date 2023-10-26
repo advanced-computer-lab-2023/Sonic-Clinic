@@ -5,7 +5,7 @@ const bodyParser = require("body-parser");
 const { MongoClient } = require("mongodb");
 const session = require("express-session");
 const jwt = require("jsonwebtoken");
-const cookieParser=require('cookie-parser');
+const cookieParser = require("cookie-parser");
 
 mongoose.set("strictQuery", false);
 require("dotenv").config();
@@ -171,7 +171,6 @@ server.post("/addAdmin", addAdmin);
 server.post("/addDoctor", addDoctor);
 server.post("/addPackage", addPackage);
 server.post("/changePasswordForAdmin", changePasswordForAdmin);
-
 
 //guest
 server.post("/addPatient", addPatient);
