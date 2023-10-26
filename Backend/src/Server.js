@@ -85,6 +85,14 @@ const {
   addPotentialDoctor,
 } = require("./Controllers/guestController");
 
+
+////////////////////////////////authorizationController///////////////////////////////////////////
+const {
+  login,
+  requireAuth,
+  logout,
+} = require("./Controllers/authorization");
+
 //el link bta3 el DB
 const MongoURI = process.env.MONGO_URI;
 
@@ -108,39 +116,8 @@ server.use(bodyParser.json());
 server.use(
   session({ secret: "your-secret-key", resave: true, saveUninitialized: true })
 );
-
-server.post("/login", async (req, res) => {
-  const { username, password } = req.body;
-
-  try {
-    const doctor1 = await doctor.findOne({ username, password });
-    const patient1 = await patient.findOne({ username, password });
-    const admin1 = await adminstrator.findOne({ username, password });
-
-    if (doctor1) {
-      // Save user data in session
-      req.session.user = doctor1;
-      return res.status(200).json({ message: "Doctor", user: doctor1 });
-    }
-
-    if (patient1) {
-      // Save user data in session
-      req.session.user = patient1;
-      return res.status(200).json({ message: "Patient", user: patient1 });
-    }
-
-    if (admin1) {
-      // Save user data in session
-      req.session.user = admin1;
-      return res.status(200).json({ message: "Admin", user: admin1 });
-    }
-
-    return res.status(401).json({ message: "Invalid credentials" });
-  } catch (error) {
-    console.error("Error:", error);
-    return res.status(500).json({ message: "Server Error" });
-  }
-});
+//login
+server.post("/login",login) ;
 
 // configurations
 // Mongo DB
@@ -170,91 +147,91 @@ server.use(express.json());
 server.post("/addAdmin", addAdmin);
 server.post("/addDoctor", addDoctor);
 server.post("/addPackage", addPackage);
-server.post("/changePasswordForAdmin", changePasswordForAdmin);
+server.post("/changePasswordForAdmin",requireAuth, changePasswordForAdmin);
 
 //guest
 server.post("/addPatient", addPatient);
 server.post("/addPotentialDoctor", addPotentialDoctor);
 //doctor
-server.post("/addPrescription", addPrescription);
-server.post("/addAvailableSlots", addAvailableSlots);
-server.post("/changePasswordForPatient", changePasswordForPatient);
+server.post("/addPrescription",requireAuth, addPrescription);
+server.post("/addAvailableSlots",requireAuth, addAvailableSlots);
+server.post("/changePasswordForPatient", requireAuth,changePasswordForPatient);
 
 //patient
-server.post("/addFamilyMember", addFamilyMember);
-server.post("/addAppointment", addAppointment);
-server.post("/subscribeHealthPackage", subscribeHealthPackage);
-server.post("/subscribeHealthPackageFam", subscribeHealthPackageFam);
-server.post("/changePasswordForPatient", changePasswordForPatient);
+server.post("/addFamilyMember",requireAuth, addFamilyMember);
+server.post("/addAppointment",requireAuth, addAppointment);
+server.post("/subscribeHealthPackage",requireAuth, subscribeHealthPackage);
+server.post("/subscribeHealthPackageFam",requireAuth, subscribeHealthPackageFam);
+server.post("/changePasswordForPatient",requireAuth, changePasswordForPatient);
 
 //////////////////////////////////////////// GET/////////////////////////////////////
 //admin
-server.get("/viewAllPatients", viewAllPatients);
-server.get("/viewAllDoctors", viewAllDoctors);
-server.get("/viewPotentialDoctors", viewPotentialDoctors);
-server.get("/viewPackagesAdmin", viewPackagesAdmin);
-server.get("/viewAllAdmins", viewAllAdmins);
-server.get("/viewAllDocApp", viewAllDocApp);
+server.get("/viewAllPatients",requireAuth, viewAllPatients);
+server.get("/viewAllDoctors", requireAuth,viewAllDoctors);
+server.get("/viewPotentialDoctors",requireAuth, viewPotentialDoctors);
+server.get("/viewPackagesAdmin",requireAuth, viewPackagesAdmin);
+server.get("/viewAllAdmins",requireAuth, viewAllAdmins);
+server.get("/viewAllDocApp",requireAuth, viewAllDocApp);
 //patient
-server.post("/doctorDetails", doctorDetails);
-server.post("/viewPrescriptions", viewPrescriptions);
-server.post("/viewFamilyMembers", viewFamilyMembers);
-server.post("/selectPrescription", selectPrescription);
-server.post("/filterPrescriptions", filterPrescriptions);
+server.post("/doctorDetails", requireAuth,doctorDetails);
+server.post("/viewPrescriptions",requireAuth, viewPrescriptions);
+server.post("/viewFamilyMembers", requireAuth,viewFamilyMembers);
+server.post("/selectPrescription",requireAuth, selectPrescription);
+server.post("/filterPrescriptions", requireAuth,filterPrescriptions);
 server.post(
-  "/filterAppointmentsByDateOrStatus",
+  "/filterAppointmentsByDateOrStatus",requireAuth,
   filterAppointmentsByDateOrStatus
 );
-server.post("/searchDoctors", searchDoctors);
-server.post("/viewAllAppointmentsOfDoctor", viewAllAppointmentsOfDoctor);
-server.get("/filterDoctors", filterDoctors);
-server.get("/viewAvailablePackages", viewAvailablePackages);
-server.get("/viewAllDoctorsByPatients", viewAllDoctorsForPatients);
-server.get("/viewHealthPackages", viewHealthPackages);
-server.get("/viewWalletAmount", viewWalletAmount);
-server.post("/getDoctorsWithSessionPrice", getDoctorsWithSessionPrice);
-server.post("/filterDoctorsAfterSearch", filterDoctorsAfterSearch);
-server.post("/viewAllAppointmentsPatient", viewAllAppointmentsPatient);
+server.post("/searchDoctors",requireAuth, searchDoctors);
+server.post("/viewAllAppointmentsOfDoctor",requireAuth, viewAllAppointmentsOfDoctor);
+server.get("/filterDoctors",requireAuth, filterDoctors);
+server.get("/viewAvailablePackages",requireAuth, viewAvailablePackages);
+server.get("/viewAllDoctorsByPatients", requireAuth, viewAllDoctorsForPatients);
+server.get("/viewHealthPackages",requireAuth, viewHealthPackages);
+server.get("/viewWalletAmount",requireAuth, viewWalletAmount);
+server.post("/getDoctorsWithSessionPrice",requireAuth, getDoctorsWithSessionPrice);
+server.post("/filterDoctorsAfterSearch",requireAuth, filterDoctorsAfterSearch);
+server.post("/viewAllAppointmentsPatient",requireAuth, viewAllAppointmentsPatient);
 server.post(
-  "/filterDoctorsAfterSearchDocName",
+  "/filterDoctorsAfterSearchDocName",requireAuth,
   filterDoctorsAfterSearchDocName
 );
 server.post(
-  "/viewAvailableAppointmentsOfDoctor",
+  "/viewAvailableAppointmentsOfDoctor",requireAuth,
   viewAvailableAppointmentsOfDoctor
 );
-server.post("/cancelHealthPackage", cancelHealthPackage);
-server.post("/cancelHealthPackageFam", cancelHealthPackageFam);
-server.post("/changePasswordForDoctor", changePasswordForDoctor);
+server.post("/cancelHealthPackage",requireAuth, cancelHealthPackage);
+server.post("/cancelHealthPackageFam",requireAuth, cancelHealthPackageFam);
+server.post("/changePasswordForDoctor",requireAuth, changePasswordForDoctor);
 
 //doctor
-server.post("/selectPatient", selectPatient);
-server.post("/viewInfoAndHealthRecord", viewInfoAndHealthRecord);
-server.post("/viewPatients", viewPatients);
+server.post("/selectPatient",requireAuth, selectPatient);
+server.post("/viewInfoAndHealthRecord",requireAuth, viewInfoAndHealthRecord);
+server.post("/viewPatients",requireAuth, viewPatients);
 server.post(
-  "/filterApointmentsByDateOrStatusDoc",
+  "/filterApointmentsByDateOrStatusDoc",requireAuth,
   filterApointmentsByDateOrStatusDoc
 );
-server.post("/filterPatientsByAppointments", filterPatientsByAppointments);
-server.get("/searchPatientByName", searchPatientByName);
-server.post("/viewDocApp", viewDocApp);
-server.post("/viewSubscribedPackage", viewSubscribedPackage);
-server.post("/viewSubscribedPackageFam", viewSubscribedPackageFam);
+server.post("/filterPatientsByAppointments",requireAuth, filterPatientsByAppointments);
+server.get("/searchPatientByName",requireAuth, searchPatientByName);
+server.post("/viewDocApp",requireAuth, viewDocApp);
+server.post("/viewSubscribedPackage",requireAuth, viewSubscribedPackage);
+server.post("/viewSubscribedPackageFam",requireAuth, viewSubscribedPackageFam);
 
 ////////////////////////////////////////////////////PUT////////////////////////////////////////
 //admin
-server.put("/updatePackage", updatePackage);
+server.put("/updatePackage",requireAuth, updatePackage);
 //doctor
-server.put("/updateDoctorProfile", updateDoctorProfile);
+server.put("/updateDoctorProfile",requireAuth, updateDoctorProfile);
 
 ////////////////////////////////////////////////DELETE/////////////////////////////////////////
 //admin
-server.delete("/deletePackage", deletePackage);
-server.delete("/removeDoctor", removeDoctor);
-server.delete("/removePatient", removePatient);
-server.delete("/removeAdmin", removeAdmin);
-server.delete("/rejectDoctor", rejectPotentialDoctor);
-server.delete("/removeFamilyMember", removeFamilyMember);
+server.delete("/deletePackage",requireAuth, deletePackage);
+server.delete("/removeDoctor",requireAuth, removeDoctor);
+server.delete("/removePatient",requireAuth, removePatient);
+server.delete("/removeAdmin",requireAuth, removeAdmin);
+server.delete("/rejectDoctor",requireAuth, rejectPotentialDoctor);
+server.delete("/removeFamilyMember", requireAuth,removeFamilyMember);
 
 /*
                                                     End of your code
