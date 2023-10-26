@@ -1,5 +1,4 @@
 import { Card, Image } from "react-bootstrap";
-import packages from "../../Assets/hand.svg";
 import { useNavigate } from "react-router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHandHoldingHeart } from "@fortawesome/free-solid-svg-icons";
