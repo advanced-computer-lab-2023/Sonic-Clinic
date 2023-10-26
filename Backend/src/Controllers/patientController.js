@@ -6,6 +6,7 @@ const packagesModel = require("../Models/Packages.js");
 const prescriptionModel = require("../Models/Prescription.js");
 const appointmentModel = require("../Models/Appointment.js");
 
+
 const doctorDetails = async (req, res) => {
   const { name } = req.body;
 

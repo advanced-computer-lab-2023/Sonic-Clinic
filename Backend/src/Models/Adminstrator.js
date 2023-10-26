@@ -6,6 +6,7 @@ const adminstratorSchema = new Schema({
   username: {
     type: String,
     required: true,
+    unique:[true,'this username is taken, please enter another username'],
   },
   password: {
     type: String,

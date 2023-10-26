@@ -7,6 +7,7 @@ const patientModel = require("../Models/Patient.js");
 const potentialDoctorModel = require("../Models/PotentialDoctor.js");
 const appointmentModel = require("../Models/Appointment.js");
 
+
 const addAdmin = async (req, res) => {
   const { username } = req.body;
 

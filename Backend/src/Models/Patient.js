@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const bcrypt = require("bcrypt");
 
+
 const creditCardSchema = new Schema({
   cardNumber: {
     type: String,
@@ -22,6 +23,7 @@ const patientSchema = new Schema(
     username: {
       type: String,
       required: true,
+      unique:[true,'this username is taken, please enter another username'],
     },
     name: {
       type: String,
@@ -90,5 +92,6 @@ patientSchema.pre("save", async function (next) {
   this.password = await bcrypt.hash(this.password, salt);
   next();
 });
+
 const Patient = mongoose.model("Patient", patientSchema);
 module.exports = Patient;
