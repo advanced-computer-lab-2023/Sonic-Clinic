@@ -26,6 +26,11 @@ import DrProfile from "./pages/Doctor/DrProfile";
 import DrPatients from "./pages/Doctor/DrPatients";
 import PatientOneDoctor from "./pages/Patient/PatientOneDoctor";
 import PatientOnePrescription from "./pages/Patient/PatientOnePrescription";
+import ForgotPassword from "./pages/Guest/ForgotPassword";
+import OTPVerification from "./pages/Guest/OTPVerification";
+import ResetPassword from "./pages/Guest/ResetPassword";
+import PasswordChanged from "./pages/Guest/PasswordChanged";
+import PatientHealthPackages from "./pages/Patient/PatientHealthPackages";
 
 function App() {
   return (
@@ -35,6 +40,13 @@ function App() {
 
         <Route path="login">
           <Route index element={<Login />} />
+        </Route>
+
+        <Route path="forgot-password">
+          <Route path="otp-verification" element={<OTPVerification />} />
+          <Route path="reset-password" element={<ResetPassword />} />
+          <Route path="password-changed" element={<PasswordChanged />} />
+          <Route index element={<ForgotPassword />} />
         </Route>
 
         <Route path="patient-signup">
@@ -64,6 +76,7 @@ function App() {
           </Route>
 
           <Route path="profile" element={<PatientProfile />} />
+          <Route path="health-packages" element={<PatientHealthPackages />} />
         </Route>
 
         <Route path="doctor">
