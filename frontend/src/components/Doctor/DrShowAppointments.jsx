@@ -12,11 +12,8 @@ import { useSelector, useDispatch } from "react-redux";
 import { deleteFilterDrAppointments } from "../../state/Doctor/filterDrAppointments";
 import axios from "axios";
 
-function DrShowAppointments() {
-  const [responseData, setResponseData] = useState([]);
-  const [loading, setLoading] = useState(true);
+function DrShowAppointments({ fetchData, appointments, loading }) {
   const [error1, setError] = useState(null);
-  const _id = useSelector((state) => state.doctorLogin.userId);
   const filterDate = useSelector((state) => state.filterDrAppointments.date);
   const filterStatus = useSelector(
     (state) => state.filterDrAppointments.status
@@ -32,32 +29,6 @@ function DrShowAppointments() {
       })
     );
   }, []);
-
-  const fetchData = async () => {
-    const config = {
-      headers: {
-        _id: _id,
-      },
-    };
-    console.log(_id);
-    try {
-      const response = await axios.post("/viewDocApp", { _id: _id }, config);
-      if (response.status === 200) {
-        setResponseData(response.data);
-      } else {
-        console.log("Server error");
-      }
-      setLoading(false);
-    } catch (error) {
-      if (error.response && error.response.status === 404) {
-        setError("No data found.");
-      } else if (error.response && error.response.status === 500) {
-        setError("Server Error");
-      }
-      setLoading(false);
-    }
-  };
-  const appointments = responseData;
 
   const filteredAppointments = appointments.filter((appointment) => {
     const isoDate = appointment.date; // Assuming appointment.date is in ISO format like "2023-10-05T14:30:00.000Z"
@@ -80,9 +51,6 @@ function DrShowAppointments() {
       (filterStatus === "" || status.includes(filterStatus.toLowerCase()))
     );
   });
-
-  console.log("Check:", filteredAppointments);
-
   return (
     <div>
       {loading && (
