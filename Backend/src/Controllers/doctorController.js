@@ -311,6 +311,34 @@ const changePasswordForDoctor = async (req, res) => {
     res.status(500).json({ message: "Server Error" });
   }
 };
+
+const addAppointmentByPatientID = async (req, res) => {
+  try {
+    
+    const doctorID=req.user.id;
+
+    console.log(doctorID);
+    const { date, description, patientID, status,time } = req.body;
+    console.log(patientID);
+
+    // Create a new appointment with doctorID, patientID, and other details
+    const appointment = await appointmentModel.create({
+      date,
+      description,
+      patientID,
+      doctorID,
+      status,
+      time,
+    });
+
+    res
+      .status(201)
+      .json({ message: 'Appointment added successfully.', appointment });
+  } catch (error) {
+    res.status(500).json({ message: 'Server Error' });
+  }
+};
+
 module.exports = {
   selectPatient,
   viewInfoAndHealthRecord,
@@ -323,5 +351,6 @@ module.exports = {
   viewDocApp,
   addAvailableSlots,
   viewAllAppointmentsDoctor,
-  changePasswordForDoctor
+  changePasswordForDoctor,
+  addAppointmentByPatientID,
 };

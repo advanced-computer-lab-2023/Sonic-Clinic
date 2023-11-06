@@ -33,6 +33,8 @@ const addPatient = async (req, res) => {
     mobileNumber,
     emergencyFullName,
     emergencyMobileNumber,
+    age,
+    nationalID
   } = req.body;
 
   // Set default values for non-required fields
@@ -58,6 +60,8 @@ const addPatient = async (req, res) => {
       emergencyFullName,
       emergencyMobileNumber,
       package, // Set the default value for package
+      age,
+    nationalID
     }); 
     console.log("Patient Created!");
     res.status(200).send(newPatient);

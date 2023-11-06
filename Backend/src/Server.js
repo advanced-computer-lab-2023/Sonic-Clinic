@@ -7,6 +7,13 @@ const session = require("express-session");
 const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
 
+//const Grid = require('gridfs-stream');
+//const GridFS = Grid(mongoose.connection.db, mongoose.mongo);
+
+
+//const multer = require('multer');
+
+
 mongoose.set("strictQuery", false);
 require("dotenv").config();
 
@@ -41,6 +48,8 @@ const {
   viewSubscribedPackage,
   viewSubscribedPackageFam,
   changePasswordForPatient,
+  //uploadPDF,
+  addFamilyMemberExisting,
 } = require("./Controllers/patientController");
 
 /////////////////////////////////doctorController//////////////////////////////////////////
@@ -57,6 +66,7 @@ const {
   addAvailableSlots,
   viewAllAppointmentsDoctor,
   changePasswordForDoctor,
+  addAppointmentByPatientID,
 } = require("./Controllers/doctorController");
 
 ///////////////////////////////adminstratorController//////////////////////////////////////
@@ -108,6 +118,7 @@ const doctor = require("./Models/Doctor.js");
 const adminstrator = require("./Models/Adminstrator");
 const potentialDoctor = require("./Models/PotentialDoctor");
 const appointment = require("./Models/Appointment");
+//const pdfSchema = require('./Models/pdf.js'); // Import the PDF model
 //////////////////////////////////////////////////////////////////////////////////////
 
 //login
@@ -121,6 +132,14 @@ server.post("/login",login) ;
 
 // configurations
 // Mongo DB
+
+
+
+// Set up Multer for file uploads
+//const storage = multer.memoryStorage();
+//const upload = multer({ storage: storage });
+
+// Connect to MongoDB using Mongoose
 mongoose
   .connect(MongoURI)
   .then(() => {
@@ -131,6 +150,7 @@ mongoose
     });
   })
   .catch((err) => console.log(err));
+
 
 /*
                                                     Start of your code
@@ -156,6 +176,7 @@ server.post("/addPotentialDoctor", addPotentialDoctor);
 server.post("/addPrescription",requireAuth, addPrescription);
 server.post("/addAvailableSlots",requireAuth, addAvailableSlots);
 server.post("/changePasswordForPatient", requireAuth,changePasswordForPatient);
+server.post("/addAppointmentByPatientID",requireAuth,addAppointmentByPatientID);
 
 //patient
 server.post("/addFamilyMember",requireAuth, addFamilyMember);
@@ -203,6 +224,11 @@ server.post(
 server.post("/cancelHealthPackage",requireAuth, cancelHealthPackage);
 server.post("/cancelHealthPackageFam",requireAuth, cancelHealthPackageFam);
 server.post("/changePasswordForDoctor",requireAuth, changePasswordForDoctor);
+server.post(
+  "/addFamilyMemberExisting",requireAuth,
+  addFamilyMemberExisting
+);
+//server.post("/uploadPdf",requireAuth, uploadPDF);
 
 //doctor
 server.post("/selectPatient",requireAuth, selectPatient);
