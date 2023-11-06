@@ -6,6 +6,7 @@ import Flicking, { ViewportSlot } from "@egjs/react-flicking";
 import "@egjs/react-flicking/dist/flicking-inline.css";
 import { Arrow } from "@egjs/flicking-plugins";
 import "@egjs/flicking-plugins/dist/arrow.css";
+import HealthPackageCard from "../../components/Patient/HealthPackageCard";
 
 function PatientHealthPackages() {
   const plugins = [new Arrow()];
@@ -18,15 +19,7 @@ function PatientHealthPackages() {
         <Container className="bg-white px-5 py-4 d-flex align-items-center justify-content-center">
           <Row className="w-100">
             <div>
-              <Flicking circular={true} plugins={plugins}>
-                <div className="card-panel">1</div>
-                <div className="card-panel">2</div>
-                <div className="card-panel">3</div>
-                <ViewportSlot>
-                  <span className="flicking-arrow-prev"></span>
-                  <span className="flicking-arrow-next"></span>
-                </ViewportSlot>
-              </Flicking>
+              <HealthPackageCard />
             </div>
           </Row>
         </Container>
