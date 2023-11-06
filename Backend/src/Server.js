@@ -50,6 +50,7 @@ const {
   changePasswordForPatient,
   //uploadPDF,
   addFamilyMemberExisting,
+  addAppointmentForMyselfOrFam,
 } = require("./Controllers/patientController");
 
 /////////////////////////////////doctorController//////////////////////////////////////////
@@ -186,6 +187,7 @@ server.post(
   subscribeHealthPackageFam
 );
 server.post("/changePasswordForPatient", requireAuth, changePasswordForPatient);
+server.post("/addAppointmentForMyselfOrFam", requireAuth, addAppointmentForMyselfOrFam);
 
 //////////////////////////////////////////// GET/////////////////////////////////////
 //admin
@@ -265,6 +267,7 @@ server.get("/searchPatientByName", requireAuth, searchPatientByName);
 server.post("/viewDocApp", requireAuth, viewDocApp);
 server.get("/viewSubscribedPackage", requireAuth, viewSubscribedPackage);
 server.post("/viewSubscribedPackageFam", requireAuth, viewSubscribedPackageFam);
+server.get("/viewAllAppointmentsDoctor", requireAuth, viewAllAppointmentsDoctor);
 
 ////////////////////////////////////////////////////PUT////////////////////////////////////////
 //admin

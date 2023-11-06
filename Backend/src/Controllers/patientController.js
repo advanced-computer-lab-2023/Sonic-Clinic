@@ -957,6 +957,31 @@ const cancelHealthPackage = async (req, res) => {
   }
 };
 
+const addAppointmentForMyselfOrFam = async (req, res) => {
+  let patientID = req.user.id; // Use let to make it reassignable
+  const { famID, doctorID, date, description, status, time } = req.body;
+  
+  try {
+    if (famID !== "") {
+      patientID = famID;
+    }
+    
+    const appointment = await appointmentModel.create({
+      date,
+      description,
+      patientID,
+      doctorID,
+      status,
+      time,
+    });
+
+    res.status(201).json({ message: "Appointment added successfully.", appointment });
+  } catch (error) {
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+
+
 module.exports = {
   selectPrescription,
   viewFamilyMembers,
@@ -987,4 +1012,5 @@ module.exports = {
   viewSubscribedPackage,
   viewSubscribedPackageFam,
   addFamilyMemberExisting,
+  addAppointmentForMyselfOrFam,
 };

@@ -266,7 +266,7 @@ const addAvailableSlots = async (req, res) => {
 };
 const viewAllAppointmentsDoctor = async (req, res) => {
   try {
-    const id = req.body._id;
+    const id = req.user.id;
     const appointments = await appointmentModel
       .find({ doctorID: id })
       .populate("patient");
@@ -355,7 +355,7 @@ module.exports = {
   addAvailableSlots,
   viewAllAppointmentsDoctor,
   changePasswordForDoctor,
-  
+
   addAppointmentByPatientID,
 
 };
