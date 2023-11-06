@@ -4,6 +4,7 @@ import AppNavbar from "../../components/AppNavigation/AppNavbar";
 import HamburgerMenu from "../../components/Patient/HamburgerMenu";
 import ShowDoctors from "../../components/Patient/ShowDoctors";
 import ViewDoctorDetails from "../../components/Patient/ViewDoctorDetails";
+import DoctorAppointments from "../../components/Patient/DoctorAppointments";
 
 function PatientOneDoctor() {
   return (
@@ -14,6 +15,9 @@ function PatientOneDoctor() {
           <Row className="w-100">
             <div>
               <ViewDoctorDetails />
+            </div>
+            <div>
+              <DoctorAppointments />
             </div>
           </Row>
         </Container>
