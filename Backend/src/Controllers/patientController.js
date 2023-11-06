@@ -121,7 +121,7 @@ const filterAppointmentsByDateOrStatus = async (req, res) => {
 
   try {
     // Retrieve username from the session
-    const patientID = req.body._id;
+    const patientID = req.user.id;
 
     let query = { patientID };
 
@@ -148,7 +148,7 @@ const filterAppointmentsByDateOrStatus = async (req, res) => {
 const viewPrescriptions = async (req, res) => {
   try {
     // Extract the username from the session
-    const id = req.body._id;
+    const id = req.user.id;
 
     // Check if a patient with the provided username exists
     const prescriptions = await prescriptionModel.find({ patientID: id });
@@ -170,7 +170,7 @@ const filterPrescriptions = async (req, res) => {
 
   try {
     // Retrieve username from the session
-    const patientID = req.body.patientID;
+    const patientID = req.user.id;
 
     let query = { patientID };
 
@@ -200,7 +200,7 @@ const filterPrescriptions = async (req, res) => {
 };
 
 const viewFamilyMembers = async (req, res) => {
-  const patientID = req.body._id;
+  const patientID = req.user.id;
 
   try {
     const patient = await patientModel.findOne({ _id: patientID });
@@ -223,7 +223,7 @@ const viewFamilyMembers = async (req, res) => {
 
 const selectPrescription = async (req, res) => {
   const prescriptionId = req.body._id;
-  const id = req.body.patientID;
+  const id = req.user.id;
 
   try {
     const prescription = await prescriptionModel.findOne({
@@ -399,7 +399,7 @@ const dummyDoctorsSession = [
 
 const getDoctorsWithSessionPrice = async (req, res) => {
   try {
-    const { _id } = req.body; // Assuming _id is in the request body
+    const { _id } = req.user.id; // Assuming _id is in the request body
     const patient = await patientModel.findById(_id);
 
     if (!patient) {
@@ -553,7 +553,7 @@ const filterDoctorsAfterSearch = async (req, res) => {
 };
 const viewAllAppointmentsPatient = async (req, res) => {
   try {
-    const id = req.body._id;
+    const id = req.user.id;
     const appointments = await appointmentModel
       .find({ patientID: id })
       .populate("doctor");
@@ -618,7 +618,7 @@ const filterDoctorsAfterSearchDocName = async (req, res) => {
       )
     );
 
-    const patientId = req.query._id; // Assuming _id is in the request body
+    const patientId = req.user.id; // Assuming _id is in the request body
     const patient = await patientModel.findById(patientId);
 
     if (!patient) {
@@ -664,7 +664,7 @@ const removeFamilyMember = async (req, res) => {
 };
 
 const viewHealthPackages = async (req, res) => {
-  const patientID = req.body._id;
+  const patientID = req.user.id;
 
   try {
     const patient = await patientModel.findOne({ _id: patientID });
@@ -702,7 +702,7 @@ const viewHealthPackages = async (req, res) => {
 };
 const viewWalletAmount = async (req, res) => {
   try {
-    const patientId = req.body._id;
+    const patientId = req.user.id;
     const patient = await Patient.findById(patientId);
 
     if (!patient) {
@@ -755,8 +755,8 @@ const subscribeHealthPackage = async (req, res) => {
     }
   } catch (error) {
     console.error("Error:", error);
-    return res.status(500).json({ message: "Server Error" });
-  }
+    return res.status(500).json({ message: "Server Error" });
+  }
 };
 const subscribeHealthPackageFam = async (req, res) => {
   try {
@@ -840,7 +840,7 @@ const cancelHealthPackageFam = async (req, res) => {
 };
 const viewSubscribedPackage = async (req, res) => {
   try {
-    const patient = await patientModel.findById(req.user._id);
+    const patient = await patientModel.findById(req.user.id);
     if (patient.package != "") {
       const package = patient.populate("packagesPatient");
     }
@@ -865,7 +865,7 @@ const viewSubscribedPackageFam = async (req, res) => {
 
 const cancelHealthPackage = async (req, res) => {
   try {
-    const patient = await patientModel.findById(req.query._id);
+    const patient = await patientModel.findById(req.user.id);
     const package = req.query.type;
     if (patient.package === package) {
       patient.package = "";

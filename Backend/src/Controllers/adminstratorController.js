@@ -7,7 +7,6 @@ const patientModel = require("../Models/Patient.js");
 const potentialDoctorModel = require("../Models/PotentialDoctor.js");
 const appointmentModel = require("../Models/Appointment.js");
 
-
 const addAdmin = async (req, res) => {
   const { username } = req.body;
 
@@ -387,21 +386,24 @@ const viewAllDocApp = async (req, res) => {
 };
 const changePasswordForAdmin = async (req, res) => {
   const { currentPassword, newPassword } = req.body;
-  const adminID = req.body._id; 
+  const adminID = req.body._id;
 
   try {
-    
     const Admin = await administratorModel.findById(adminID);
 
     if (!Admin) {
       return res.status(404).json({ message: "Admin not found." });
     }
 
-  
-    const isPasswordCorrect = await bcrypt.compare(currentPassword, Admin.password);
+    const isPasswordCorrect = await bcrypt.compare(
+      currentPassword,
+      Admin.password
+    );
 
     if (!isPasswordCorrect) {
-      return res.status(401).json({ message: "Current password is incorrect." });
+      return res
+        .status(401)
+        .json({ message: "Current password is incorrect." });
     }
 
     // Hash the new password and update it in the database
@@ -433,5 +435,5 @@ module.exports = {
   viewPackagesAdmin,
   viewAllAdmins,
   viewAllDocApp,
-  changePasswordForAdmin
+  changePasswordForAdmin,
 };

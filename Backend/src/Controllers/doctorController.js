@@ -26,7 +26,7 @@ const searchPatientByName = async (req, res) => {
 
 const filterPatientsByAppointments = async (req, res) => {
   try {
-    const doctor = await doctorModel.findOne(req.body);
+    const doctor = await doctorModel.findOne(req.user.id);
     console.log(doctor);
     if (!doctor) {
       return res.status(401).json({ error: "Doctor not authenticated" });
@@ -64,7 +64,7 @@ const filterApointmentsByDateOrStatusDoc = async (req, res) => {
   const { date, status } = req.query;
 
   try {
-    const doctorID = req.body._id;
+    const doctorID = req.user.id;
 
     let query = { doctorID };
 
@@ -91,7 +91,7 @@ const filterApointmentsByDateOrStatusDoc = async (req, res) => {
 const updateDoctorProfile = async (req, res) => {
   const { email, hourlyRate, affiliation } = req.query; // Extract fields from req.query
 
-  const id = req.query._id;
+  const id = req.user.id;
 
   try {
     const doctor = await doctorModel.findOne({ _id: id });
@@ -115,7 +115,7 @@ const updateDoctorProfile = async (req, res) => {
 };
 
 const viewPatients = async (req, res) => {
-  const id = req.body._id;
+  const id = req.user.id;
 
   try {
     const doctor = await doctorModel.findOne({ _id: id });
@@ -185,7 +185,7 @@ const viewInfoAndHealthRecord = async (req, res) => {
 };
 
 const selectPatient = async (req, res) => {
-  const doctorId = req.query._id;
+  const doctorId = req.user.id;
   const { patientUsername } = req.body;
 
   try {
@@ -225,7 +225,7 @@ const addPrescription = async (req, res) => {
 const viewDocApp = async (req, res) => {
   try {
     const appointments = await appointmentModel
-      .find({ doctorID: req.body._id })
+      .find({ doctorID: req.user.id })
       .populate("patient");
     res.status(200).json(appointments);
   } catch (error) {
@@ -239,7 +239,7 @@ function parseDateString(dateString) {
 }
 
 const addAvailableSlots = async (req, res) => {
-  const doctorId = req.query._id;
+  const doctorId = req.user.id;
   const { availableSlots } = req.body;
 
   try {
@@ -282,21 +282,24 @@ const viewAllAppointmentsDoctor = async (req, res) => {
 };
 const changePasswordForDoctor = async (req, res) => {
   const { currentPassword, newPassword } = req.body;
-  const doctorID = req.body._id; 
+  const doctorID = req.body._id;
 
   try {
-    
     const doctor = await doctorModel.findById(doctorID);
 
     if (!doctor) {
       return res.status(404).json({ message: "Doctor not found." });
     }
 
-  
-    const isPasswordCorrect = await bcrypt.compare(currentPassword, doctor.password);
+    const isPasswordCorrect = await bcrypt.compare(
+      currentPassword,
+      doctor.password
+    );
 
     if (!isPasswordCorrect) {
-      return res.status(401).json({ message: "Current password is incorrect." });
+      return res
+        .status(401)
+        .json({ message: "Current password is incorrect." });
     }
 
     // Hash the new password and update it in the database
@@ -323,5 +326,5 @@ module.exports = {
   viewDocApp,
   addAvailableSlots,
   viewAllAppointmentsDoctor,
-  changePasswordForDoctor
+  changePasswordForDoctor,
 };
