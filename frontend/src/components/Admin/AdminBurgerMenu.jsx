@@ -4,13 +4,18 @@ import {
   faUsers,
   faBriefcaseMedical,
   faRightFromBracket,
-  faUser,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState } from "react";
 import { slide as Menu } from "react-burger-menu";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { logoutAdmin } from "../../state/loginAdminReducer";
+
 function HamburgerMenu() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleMenuClick = () => {
     setMenuOpen(!menuOpen);
@@ -19,6 +24,13 @@ function HamburgerMenu() {
   const closeMenu = () => {
     setMenuOpen(false);
   };
+
+  const logout = () => {
+    navigate("/");
+    dispatch(logoutAdmin());
+    closeMenu();
+  };
+
   return (
     <div>
       <Menu
@@ -266,8 +278,7 @@ function HamburgerMenu() {
           <a
             id="logout"
             className="menu-item"
-            href="/"
-            onClick={closeMenu}
+            onClick={logout}
             style={{
               color: "var(--gray-600, #6C757D)",
               fontFamily: "Roboto",
@@ -279,6 +290,7 @@ function HamburgerMenu() {
               alignItems: "center",
               textDecoration: "none", // To remove underlines
               padding: "0.5rem 0",
+              cursor: "pointer",
             }}
           >
             <FontAwesomeIcon

@@ -1,6 +1,5 @@
 import React from "react";
 import AdminViewTable from "../../components/Admin/AdminViewTable";
-import AdminSearchBar from "../../components/Admin/AdminSearchBar";
 import AppNavbar from "../../components/AppNavigation/AppNavbar";
 import AdminBurgerMenu from "../../components/Admin/AdminBurgerMenu";
 import { Container } from "react-bootstrap";
@@ -32,7 +31,6 @@ export default function AdminAdminsPage() {
           marginLeft: "100px",
         }}
       >
-        <AdminSearchBar />
         <AdminViewTable onAdmins={true} api={"/viewAllAdmins"} />
       </Container>
     </>

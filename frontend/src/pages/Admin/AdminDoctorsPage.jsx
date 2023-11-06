@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import AdminViewTable from "../../components/Admin/AdminViewTable";
-import AdminSearchBar from "../../components/Admin/AdminSearchBar";
 import AppNavbar from "../../components/AppNavigation/AppNavbar";
 import { Container } from "react-bootstrap";
 import Tab from "react-bootstrap/Tab";
@@ -57,7 +56,6 @@ export default function AdminDoctorsPage() {
               marginLeft: "100px",
             }}
           >
-            <AdminSearchBar />
             <AdminViewTable onAdmins={false} api={"/viewAllDoctors"} />
           </Container>
         </Tab>
