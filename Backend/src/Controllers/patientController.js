@@ -5,6 +5,7 @@ const familyMemberModel = require("../Models/FamilyMember.js");
 const packagesModel = require("../Models/Packages.js");
 const prescriptionModel = require("../Models/Prescription.js");
 const appointmentModel = require("../Models/Appointment.js");
+const { updateUserInfoInCookie } = require("./authorization.js");
 
 const doctorDetails = async (req, res) => {
   const { name } = req.body;
@@ -209,7 +210,9 @@ const viewFamilyMembers = async (req, res) => {
       return res.status(404).json({ message: "Patient not found." });
     }
 
-    const familyMembers = await familyMemberModel.find({ patientID });
+    const familyMembers = await familyMemberModel.find({
+      patientID: patientID,
+    });
 
     if (!familyMembers || familyMembers.length === 0) {
       return res.status(404).json({ message: "No family members found." });
@@ -242,8 +245,25 @@ const selectPrescription = async (req, res) => {
 };
 
 const addFamilyMember = async (req, res) => {
+  const patientID = req.user.id;
+  const name = req.body.name;
+  const nationalID = req.body.nationalID;
+  const age = req.body.age;
+  const gender = req.body.gender;
+  const relationToPatient = req.body.relationToPatient;
+  const package = "  ";
+  let query = {
+    name,
+    nationalID,
+    age,
+    gender,
+    relationToPatient,
+    patientID,
+    package,
+  };
+
   try {
-    const newFamilyMember = await familyMemberModel.create(req.body);
+    const newFamilyMember = await familyMemberModel.create(query);
     console.log("Family member Created!");
     res.status(200).send(newFamilyMember);
   } catch (error) {
@@ -744,9 +764,14 @@ const viewAllAppointmentsOfDoctor = async (req, res) => {
 const subscribeHealthPackage = async (req, res) => {
   try {
     const patient = await patientModel.findById(req.user.id);
+
+    if (!patient) {
+      return res.status(404).json({ message: "Patient not found." });
+    }
     const package = req.query.type;
-    if (patient.package == "  " || patient.package != package) {
+    if (patient.package !== package) {
       patient.package = package;
+      await patient.save();
       return res.status(200).json({ patient });
     } else {
       return res
@@ -758,17 +783,27 @@ const subscribeHealthPackage = async (req, res) => {
     return res.status(500).json({ message: "Server Error" });
   }
 };
+
 const subscribeHealthPackageFam = async (req, res) => {
   try {
     const familyMember = await familyMemberModel.findById(req.query._id);
+
+    if (!familyMember) {
+      return res.status(404).json({ message: "Family member not found." });
+    }
+
     const package = req.query.type;
     familyMember.package = package;
+
+    await familyMember.save();
+
     return res.status(200).json({ familyMember });
   } catch (error) {
     console.error("Error:", error);
     return res.status(500).json({ message: "Server Error" });
   }
 };
+
 const viewAvailableAppointmentsOfDoctor = async (req, res) => {
   const doctorId = req.query._id;
   try {
@@ -823,21 +858,25 @@ const changePasswordForPatient = async (req, res) => {
 const cancelHealthPackageFam = async (req, res) => {
   try {
     const familyMember = await familyMemberModel.findById(req.query._id);
-    const package = req.query.type;
-    if (familyMember.package === package) {
-      familyMember.package = "";
+
+    if (!familyMember) {
+      return res.status(404).json({ message: "Family member not found." });
+    }
+    if (familyMember.package != "  ") {
+      familyMember.package = "  ";
+      await familyMember.save();
+      return res.status(200).json({ familyMember });
     } else {
       return res
         .status(404)
         .json({ message: "You are not subscribed to this package!" });
     }
-
-    return res.status(200).json({ familyMember });
   } catch (error) {
     console.error("Error:", error);
     return res.status(500).json({ message: "Server Error" });
   }
 };
+
 const viewSubscribedPackage = async (req, res) => {
   try {
     const patient = await patientModel.findById(req.user.id);
@@ -866,20 +905,24 @@ const viewSubscribedPackageFam = async (req, res) => {
 const cancelHealthPackage = async (req, res) => {
   try {
     const patient = await patientModel.findById(req.user.id);
-    const package = req.query.type;
-    if (patient.package === package) {
-      patient.package = "";
+    if (!patient) {
+      return res.status(404).json({ message: "Patient not found." });
+    }
+    if (patient.package != "  ") {
+      patient.package = "  ";
+      await patient.save();
+      return res.status(200).json({ patient });
     } else {
       return res
         .status(404)
         .json({ message: "You are not subscribed to this package!" });
     }
-    return res.status(200).json({ patient });
   } catch (error) {
     console.error("Error:", error);
     return res.status(500).json({ message: "Server Error" });
   }
 };
+
 module.exports = {
   selectPrescription,
   viewFamilyMembers,

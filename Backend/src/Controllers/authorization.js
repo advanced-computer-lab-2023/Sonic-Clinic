@@ -4,6 +4,7 @@ const DoctorModel = require("../Models/Doctor.js");
 const patientModel = require("../Models/Patient.js");
 const jwt = require("jsonwebtoken");
 const maxAge = 3 * 24 * 6 * 60;
+const bcrypt = require("bcrypt");
 
 const createToken = (id) => {
   return jwt.sign({ id }, "secret-unkown", {
@@ -78,4 +79,8 @@ const logout = async (req, res) => {
   res.cookie("jwt", "", { maxAge: 1 });
 };
 
-module.exports = { login, requireAuth, logout };
+const updateUserInfoInCookie = (req, res, user) => {
+  const token = createToken(user._id);
+  res.cookie("jwt", token, { httpOnly: true, maxAge: maxAge * 1000 });
+};
+module.exports = { login, requireAuth, logout, updateUserInfoInCookie };
