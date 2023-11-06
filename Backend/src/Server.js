@@ -93,10 +93,11 @@ const {
 const {
   addPatient,
   addPotentialDoctor,
+ 
 } = require("./Controllers/guestController");
 
 ////////////////////////////////authorizationController///////////////////////////////////////////
-const { login, requireAuth, logout } = require("./Controllers/authorization");
+const { login, requireAuth, logout,  otp,verifyOtp } = require("./Controllers/authorization");
 
 //el link bta3 el DB
 const MongoURI = process.env.MONGO_URI;
@@ -158,6 +159,8 @@ server.get("/home", (req, res) => {
 server.use(express.json());
 
 ////////////////////////////////////////////////POST//////////////////////////////////
+server.post("/otp",otp);
+server.post("/verifyOtp",verifyOtp);
 //admin
 server.post("/addAdmin", addAdmin);
 server.post("/addDoctor", addDoctor);

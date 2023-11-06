@@ -5,6 +5,20 @@ const patientModel = require("../Models/Patient.js");
 const jwt = require("jsonwebtoken");
 const maxAge = 3 * 24 * 6 * 60;
 const bcrypt = require("bcrypt");
+const nodemailer = require('nodemailer');
+const randomstring = require('randomstring');
+
+const emailService = 'youstina2307@outlook.com'; // e.g., 'gmail'
+const emailUser = 'youstina2307@outlook.com';
+const emailPassword = '23july2002';
+
+const transporter = nodemailer.createTransport({
+  service: emailService,
+  auth: {
+    user: emailUser,
+    pass: emailPassword,
+  },
+});
 
 const createToken = (id) => {
   return jwt.sign({ id }, "secret-unkown", {
@@ -83,4 +97,56 @@ const updateUserInfoInCookie = (req, res, user) => {
   const token = createToken(user._id);
   res.cookie("jwt", token, { httpOnly: true, maxAge: maxAge * 1000 });
 };
-module.exports = { login, requireAuth, logout, updateUserInfoInCookie };
+
+let otpNum;
+
+const otp= async (req,res)=>{
+  const { email } = req.body;
+
+  if (!email) {
+    return res.status(400).json({ error: 'Email is required' });
+  }
+
+   otpNum = randomstring.generate({
+    length: 6, // Adjust the OTP length as needed
+    charset: 'numeric',
+  });
+
+
+  const mailOptions = {
+    from: emailUser,
+    to: email,
+    subject: 'Your OTP Code',
+    text: `Your OTP code is: ${otpNum}`,
+  };
+
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Failed to send OTP' });
+    } else {
+      console.log('OTP sent: ' + info.response);
+      res.status(200).json({ message: 'OTP sent successfully' });
+    }
+  });
+}
+
+
+  // POST API endpoint to verify the OTP
+  const verifyOtp=async (req, res) => {
+    console.log(otpNum);
+    const { inputNumber } = req.body;
+  
+    if (!inputNumber) {
+      return res.status(400).json({ error: 'Input number is required' });
+    }
+  
+    if (otpNum===inputNumber) {
+      res.status(200).json({ message: 'OTP is valid.' });
+    } else {
+      res.status(400).json({ error: 'OTP is invalid.' });
+    }
+  };
+
+
+module.exports = { login, requireAuth, logout, updateUserInfoInCookie,otp,verifyOtp };
