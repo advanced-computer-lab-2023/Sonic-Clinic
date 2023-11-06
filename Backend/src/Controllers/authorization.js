@@ -16,9 +16,9 @@ const login = async (req, res) => {
     const { username,password } = req.body;
    
     try {
-      const doctor1 = await DoctorModel.findOne({ username, password });
-      const patient1 = await patientModel.findOne({ username, password });
-      const admin1 = await administratorModel.findOne({ username, password });
+      const doctor1 = await DoctorModel.findOne({ username});
+      const patient1 = await patientModel.findOne({ username});
+      const admin1 = await administratorModel.findOne({ username });
   
       if (doctor1) {
 
