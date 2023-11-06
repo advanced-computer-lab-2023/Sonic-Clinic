@@ -2,7 +2,6 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const bcrypt = require("bcrypt");
 
-
 const creditCardSchema = new Schema({
   cardNumber: {
     type: String,
@@ -23,7 +22,7 @@ const patientSchema = new Schema(
     username: {
       type: String,
       required: true,
-      unique:[true,'this username is taken, please enter another username'],
+      unique: [true, "this username is taken, please enter another username"],
     },
     name: {
       type: String,
@@ -78,14 +77,11 @@ patientSchema.virtual("prescriptions", {
 patientSchema.set("toObject", { virtuals: true });
 patientSchema.set("toJSON", { virtuals: true });
 
-patientSchema.virtual("package", {
+patientSchema.virtual("packagesPatient", {
   ref: "Packages",
   localField: "package",
   foreignField: "type",
 });
-
-patientSchema.set("toObject", { virtuals: true });
-patientSchema.set("toJSON", { virtuals: true });
 
 patientSchema.pre("save", async function (next) {
   const salt = await bcrypt.genSalt();

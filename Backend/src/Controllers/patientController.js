@@ -6,7 +6,6 @@ const packagesModel = require("../Models/Packages.js");
 const prescriptionModel = require("../Models/Prescription.js");
 const appointmentModel = require("../Models/Appointment.js");
 
-
 const doctorDetails = async (req, res) => {
   const { name } = req.body;
 
@@ -837,7 +836,7 @@ const viewSubscribedPackage = async (req, res) => {
   try {
     const patient = await patientModel.findById(req.query._id);
     if (patient.package != "") {
-      const package = patient.populate("package");
+      const package = patient.populate("packagesPatient");
     }
     return res.status(200).json({ package });
   } catch (error) {
@@ -849,7 +848,7 @@ const viewSubscribedPackageFam = async (req, res) => {
   try {
     const familyMember = await familyMemberModel.findById(req.query._id);
     if (familyMember.package != "") {
-      const package = familyMember.populate("package");
+      const package = familyMember.populate("packagesPatient");
     }
     return res.status(200).json({ package });
   } catch (error) {

@@ -35,7 +35,7 @@ const familyMemberSchema = new Schema(
   { timestamps: true }
 );
 
-familyMemberSchema.virtual("package", {
+familyMemberSchema.virtual("packagesFamily", {
   ref: "Packages",
   localField: "package",
   foreignField: "type",
