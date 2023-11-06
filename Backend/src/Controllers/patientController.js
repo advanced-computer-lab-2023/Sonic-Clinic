@@ -743,14 +743,20 @@ const viewAllAppointmentsOfDoctor = async (req, res) => {
 };
 const subscribeHealthPackage = async (req, res) => {
   try {
-    const patient = await patientModel.findById(req.query._id);
+    const patient = await patientModel.findById(req.user.id);
     const package = req.query.type;
-    patient.package = package;
-    return res.status(200).json({ patient });
+    if (patient.package == "  " || patient.package != package) {
+      patient.package = package;
+      return res.status(200).json({ patient });
+    } else {
+      return res
+        .status(404)
+        .json({ message: "You are already subscribed to that package." });
+    }
   } catch (error) {
     console.error("Error:", error);
-    return res.status(500).json({ message: "Server Error" });
-  }
+    return res.status(500).json({ message: "Server Error" });
+  }
 };
 const subscribeHealthPackageFam = async (req, res) => {
   try {
@@ -834,7 +840,7 @@ const cancelHealthPackageFam = async (req, res) => {
 };
 const viewSubscribedPackage = async (req, res) => {
   try {
-    const patient = await patientModel.findById(req.query._id);
+    const patient = await patientModel.findById(req.user._id);
     if (patient.package != "") {
       const package = patient.populate("packagesPatient");
     }

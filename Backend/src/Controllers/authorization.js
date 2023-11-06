@@ -4,6 +4,7 @@ const DoctorModel = require("../Models/Doctor.js");
 const patientModel = require("../Models/Patient.js");
 const jwt= require('jsonwebtoken');
 const maxAge=3*24*6*60;
+const bcrypt = require('bcrypt');
 
 
 const createToken=(id)=>{
@@ -57,24 +58,24 @@ const login = async (req, res) => {
       return res.status(500).json({ message: "Server Error" });
     }
   };
-  const requireAuth = async (req, res) => {
-   const token= req.cookies.jwt;
 
-   if(token){
-    jwt.verify(token,'secret-unkown',(err,decodedToken) =>{
-        if(err){
-            console.log(err.message);
-            res.redirect('/login')
+  const requireAuth = async (req, res, next) => {
+    const token = req.cookies.jwt;
+  
+    if (token) {
+      jwt.verify(token, 'secret-unkown', (err, decodedToken) => {
+        if (err) {
+          console.log(err.message);
+          res.redirect('/login');
+        } else {
+          // Store the user information in the request object
+          req.user = decodedToken;
+          next();
         }
-        else{
-            console.log(decodedToken);
-            next();
-        }
-    })
-   }
-   else{
-    res.redirect('/login');
-   }
+      });
+    } else {
+      res.redirect('/login');
+    }
   };
 
 

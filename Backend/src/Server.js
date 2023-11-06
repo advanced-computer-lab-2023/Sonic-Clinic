@@ -215,7 +215,7 @@ server.post(
 server.post("/filterPatientsByAppointments",requireAuth, filterPatientsByAppointments);
 server.get("/searchPatientByName",requireAuth, searchPatientByName);
 server.post("/viewDocApp",requireAuth, viewDocApp);
-server.post("/viewSubscribedPackage",requireAuth, viewSubscribedPackage);
+server.get("/viewSubscribedPackage",requireAuth, viewSubscribedPackage);
 server.post("/viewSubscribedPackageFam",requireAuth, viewSubscribedPackageFam);
 
 ////////////////////////////////////////////////////PUT////////////////////////////////////////
