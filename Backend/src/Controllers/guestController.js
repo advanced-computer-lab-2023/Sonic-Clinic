@@ -63,14 +63,7 @@ const addPatient = async (req, res) => {
       age,
     nationalID
     }); 
-    if(req.files){
-      let path=''
-      req.files.array.forEach(function(files,index,arr){
-        path=path+files.path+','
-      });
-      path=path.substring(0,path.lastIndexOf(","))
-      newPatient.medicalHistory=path
-    }
+   
     console.log("Patient Created!");
     res.status(200).send(newPatient);
   } catch (error) {

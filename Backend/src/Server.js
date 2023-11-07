@@ -173,7 +173,8 @@ server.post("/addPackage", addPackage);
 server.post("/changePasswordForAdmin", requireAuth, changePasswordForAdmin);
 
 //guest
-server.post("/addPatient", uploadFiles.array('medicalHistory[]'),addPatient);
+
+server.post("/addPatient",addPatient);
 server.post("/addPotentialDoctor", addPotentialDoctor);
 //doctor
 server.post("/addPrescription", requireAuth, addPrescription);
@@ -182,6 +183,7 @@ server.post("/changePasswordForPatient", requireAuth, changePasswordForPatient);
 server.post("/addAppointmentByPatientID",requireAuth,addAppointmentByPatientID);
 
 //patient
+server.post("/uploadFiles", uploadFiles.array('medicalHistory[]'),uploadFiles);
 server.post("/addFamilyMember", requireAuth, addFamilyMember);
 server.post("/addAppointment", requireAuth, addAppointment);
 server.post("/subscribeHealthPackage", requireAuth, subscribeHealthPackage);
