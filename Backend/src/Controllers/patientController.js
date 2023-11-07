@@ -270,6 +270,40 @@ const addFamilyMember = async (req, res) => {
     res.status(400).send({ error: error.message });
   }
 };
+
+const addFamilyMemberExisting = async (req, res) => {
+  const email = req.body.email;
+  const relationToPatient = req.body.relationToPatient;
+  const phoneNumber = req.body.phoneNumber;
+
+  try {
+    let familyMember = await patientModel.findOne({ email });
+
+    if (!familyMember) {
+      familyMember = await patientModel.findOne({ phoneNumber });
+    }
+
+    if (!familyMember) {
+      return res.status(404).json({ error: "Patient not found" });
+    }
+
+    const { name, nationalID, gender, age } = familyMember;
+
+    const fam = await familyMemberModel.create({
+      name,
+      nationalID,
+      age,
+      gender,
+      relationToPatient,
+      patientID: familyMember._id, // Assuming patientModel has an _id field
+    });
+
+    console.log("Family member added!");
+    res.status(200).json(fam);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
 const viewAvailablePackages = async (req, res) => {
   try {
     const packages = await packagesModel.find();
@@ -923,6 +957,31 @@ const cancelHealthPackage = async (req, res) => {
   }
 };
 
+const addAppointmentForMyselfOrFam = async (req, res) => {
+  let patientID = req.user.id; // Use let to make it reassignable
+  const { famID, doctorID, date, description, status, time } = req.body;
+  
+  try {
+    if (famID !== "") {
+      patientID = famID;
+    }
+    
+    const appointment = await appointmentModel.create({
+      date,
+      description,
+      patientID,
+      doctorID,
+      status,
+      time,
+    });
+
+    res.status(201).json({ message: "Appointment added successfully.", appointment });
+  } catch (error) {
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+
+
 module.exports = {
   selectPrescription,
   viewFamilyMembers,
@@ -952,4 +1011,6 @@ module.exports = {
   cancelHealthPackageFam,
   viewSubscribedPackage,
   viewSubscribedPackageFam,
+  addFamilyMemberExisting,
+  addAppointmentForMyselfOrFam,
 };

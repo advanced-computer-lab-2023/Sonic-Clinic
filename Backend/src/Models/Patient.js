@@ -65,6 +65,14 @@ const patientSchema = new Schema(
       required: false,
     },
     creditCard: creditCardSchema,
+    age: {
+      type: Number,
+      required: false,
+    },
+    nationalID: {
+      type: Number,
+      required: false,
+    },
   },
   { timestamps: true }
 );
