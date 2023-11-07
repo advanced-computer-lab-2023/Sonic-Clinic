@@ -73,6 +73,10 @@ const patientSchema = new Schema(
       type: Number,
       required: true,
     },
+    medicalHistory: {
+      type: String,
+      required: false,
+    },
   },
   { timestamps: true }
 );
