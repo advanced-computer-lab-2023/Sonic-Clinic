@@ -1,8 +1,6 @@
 import {
   faCalendarCheck,
-  faPrescription,
-  faPrescriptionBottle,
-  faPrescriptionBottleAlt,
+  faUsers,
   faRightFromBracket,
   faUser,
 } from "@fortawesome/free-solid-svg-icons";
@@ -219,10 +217,7 @@ function DrHamburgerMenu() {
               padding: "0.5rem 0",
             }}
           >
-            <FontAwesomeIcon
-              icon={faPrescriptionBottle}
-              style={{ marginRight: "0.5rem" }}
-            />
+            <FontAwesomeIcon icon={faUsers} style={{ marginRight: "0.5rem" }} />
             My Patients
           </a>
 

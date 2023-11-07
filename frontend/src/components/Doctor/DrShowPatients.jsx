@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Card, Col, Row, Form, Button } from "react-bootstrap";
+import { Card, Col, Row, Form, Button, Modal } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faChevronDown,
@@ -13,6 +13,8 @@ function DrShowPatients({ patients, setPatients, responseData, upcomingApp }) {
   const [expandedPatient, setExpandedPatient] = useState(null);
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const [uploadVisible, setUploadVisible] = useState(false);
+  const [followUpModal, setFollowUpModal] = useState(false);
+  const [followUpDateTime, setFollowUpDateTime] = useState(null);
 
   const handleFileUpload = (e) => {
     const newFiles = Array.from(e.target.files);
@@ -62,6 +64,14 @@ function DrShowPatients({ patients, setPatients, responseData, upcomingApp }) {
     //fetch medical history tani
   };
 
+  const scheduleFollowUp = () => {
+    setFollowUpModal(false);
+    // Handle scheduling logic
+    // You can add your scheduling logic here
+    // For this example, we'll just log the patient's name
+    // console.log(`Scheduling appointment for ${patient.name}`);
+  };
+
   return (
     <div>
       <div
@@ -98,7 +108,7 @@ function DrShowPatients({ patients, setPatients, responseData, upcomingApp }) {
         </Button>
       </div>
       {patients.map((patient, index) => (
-        <Card className="mb-4 mx-3 bg-light" key={patient.username}>
+        <Card className="mb-4 mx-3 bg-white" key={patient.username}>
           <Card.Header
             className="d-flex align-items-center justify-content-between"
             onClick={() => toggleExpand(index)}
@@ -114,12 +124,32 @@ function DrShowPatients({ patients, setPatients, responseData, upcomingApp }) {
               <Row>
                 <Col lg={8}>
                   <Card.Text>
+                    <Button
+                      style={{ marginBottom: "1rem" }}
+                      onClick={() =>
+                        followUpModal
+                          ? scheduleFollowUp
+                          : setFollowUpModal(true)
+                      }
+                    >
+                      Schedule Follow-up
+                    </Button>
+                    {followUpModal && (
+                      <div>
+                        <Form.Group style={{ marginBottom: "1rem" }}>
+                          <Form.Control
+                            type="datetime-local"
+                            value={followUpDateTime}
+                            onChange={(e) =>
+                              setFollowUpDateTime(e.target.value)
+                            }
+                          />
+                        </Form.Group>
+                      </div>
+                    )}
+
                     {upcomingApp && <div>Has an upcoming appointment</div>}
                     <div className="patient-info">
-                      <h5 style={{ fontWeight: "bold" }}>
-                        Patient Information
-                      </h5>
-
                       <p>
                         Date of birth: {formatDateOfBirth(patient.dateOfBirth)}
                       </p>
@@ -145,8 +175,12 @@ function DrShowPatients({ patients, setPatients, responseData, upcomingApp }) {
                         <div>No previous history found</div>
                       )}
                       <label
-                        className="btn btn-primary"
-                        style={{ marginTop: "1rem" }}
+                        style={{
+                          marginTop: "1rem",
+                          cursor: "pointer",
+                          color: "#099BA0",
+                          textDecoration: "underline",
+                        }}
                         onClick={() => setUploadVisible(!uploadVisible)}
                         htmlFor="weee"
                       >
@@ -195,9 +229,6 @@ function DrShowPatients({ patients, setPatients, responseData, upcomingApp }) {
                             </div>
                           </div>
                         )}
-                        <Button style={{ marginTop: "1rem" }}>
-                          Schedule Followup
-                        </Button>
                       </div>
                     </div>
                   </Card.Text>
