@@ -6,6 +6,7 @@ const { MongoClient } = require("mongodb");
 const session = require("express-session");
 const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
+const multer = require("multer");
 
 mongoose.set("strictQuery", false);
 require("dotenv").config();
