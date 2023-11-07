@@ -39,11 +39,8 @@ function DrViewApps() {
 
   return (
     <>
-      <div className="col-5">
-        <DrAddAppSlot fetchData={fetchData} />
-        <div className="my-5">
-          <DrAppointmentFilter />
-        </div>
+      <div className="container">
+        <DrAppointmentFilter />
       </div>
       <div className="col-7">
         <DrShowAppointments

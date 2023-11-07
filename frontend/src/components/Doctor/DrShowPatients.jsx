@@ -2,24 +2,27 @@ import React, { useState } from "react";
 import { Card, Col, Row, Form, Button } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faCalendar,
-  faClock,
   faChevronDown,
   faChevronUp,
   faSearch,
+  faX,
 } from "@fortawesome/free-solid-svg-icons";
 
 function DrShowPatients({ patients, setPatients, responseData, upcomingApp }) {
   const [searchTerm, setSearchTerm] = useState("");
   const [expandedPatient, setExpandedPatient] = useState(null);
-  const [recordAdded, setRecordAdded] = useState(null);
+  const [uploadedFiles, setUploadedFiles] = useState([]);
+  const [uploadVisible, setUploadVisible] = useState(false);
 
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setRecordAdded(file);
-      //feedback like success aw re- fetchData
-    }
+  const handleFileUpload = (e) => {
+    const newFiles = Array.from(e.target.files);
+    setUploadedFiles([...uploadedFiles, ...newFiles]);
+  };
+
+  const handleRemoveFile = (index) => {
+    const updatedFiles = [...uploadedFiles];
+    updatedFiles.splice(index, 1);
+    setUploadedFiles(updatedFiles);
   };
 
   // Function to format the date of birth
@@ -52,6 +55,11 @@ function DrShowPatients({ patients, setPatients, responseData, upcomingApp }) {
     } else {
       setExpandedPatient(index);
     }
+  };
+
+  const addFiles = () => {
+    setUploadedFiles([]);
+    //fetch medical history tani
   };
 
   return (
@@ -111,11 +119,13 @@ function DrShowPatients({ patients, setPatients, responseData, upcomingApp }) {
                       <h5 style={{ fontWeight: "bold" }}>
                         Patient Information
                       </h5>
+
                       <p>
                         Date of birth: {formatDateOfBirth(patient.dateOfBirth)}
                       </p>
                       <p>Gender: {patient.gender}</p>
                       <p style={{ fontWeight: "bold" }}>Medical History:</p>
+                      {/* Should be medical history list NOT prescriptions */}
                       {patient.prescriptions &&
                       patient.prescriptions.length > 0 ? (
                         patient.prescriptions.map((prescription, pIndex) => (
@@ -135,18 +145,60 @@ function DrShowPatients({ patients, setPatients, responseData, upcomingApp }) {
                         <div>No previous history found</div>
                       )}
                       <label
-                        htmlFor="fileInput"
-                        className="btn btn-primary button-label"
+                        className="btn btn-primary"
+                        style={{ marginTop: "1rem" }}
+                        onClick={() => setUploadVisible(!uploadVisible)}
+                        htmlFor="weee"
                       >
-                        Upload Health Record
+                        Upload Health Records
                       </label>
-                      <input
-                        type="file"
-                        accept=".pdf"
-                        onChange={handleFileChange}
-                        style={{ display: "none" }}
-                        id="fileInput"
-                      />
+                      <div>
+                        <input
+                          type="file"
+                          accept=".pdf, .jpeg, .jpg, .png"
+                          multiple
+                          onChange={handleFileUpload}
+                          style={{ display: "none" }}
+                          id="weee"
+                        />
+
+                        {uploadedFiles.length > 0 && (
+                          <div>
+                            <ul style={{ marginTop: "1rem" }}>
+                              {uploadedFiles.map((file, index) => (
+                                <li key={index}>
+                                  {file.name}
+                                  <FontAwesomeIcon
+                                    icon={faX}
+                                    style={{
+                                      opacity: 1,
+                                      color: "red",
+                                      fontSize: "15px",
+                                      marginLeft: "2rem",
+                                      cursor: "pointer",
+                                    }}
+                                    onClick={() => handleRemoveFile(index)}
+                                  />
+                                </li>
+                              ))}
+                            </ul>
+                            <div
+                              style={{
+                                marginLeft: "6rem",
+                                cursor: "pointer",
+                                color: "#05afb9 ",
+                                fontWeight: "bold",
+                              }}
+                              onClick={addFiles}
+                            >
+                              Add
+                            </div>
+                          </div>
+                        )}
+                        <Button style={{ marginTop: "1rem" }}>
+                          Schedule Followup
+                        </Button>
+                      </div>
                     </div>
                   </Card.Text>
                 </Col>
