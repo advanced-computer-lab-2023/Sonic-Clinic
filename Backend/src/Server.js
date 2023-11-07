@@ -100,6 +100,8 @@ const {
 
 ////////////////////////////////authorizationController///////////////////////////////////////////
 const { login, requireAuth, logout,  otp,verifyOtp } = require("./Controllers/authorization");
+////////////////////////////////uploadController///////////////////////////////////////////
+const { uploadFiles,} = require("./Controllers/upload");
 
 //el link bta3 el DB
 const MongoURI = process.env.MONGO_URI;
@@ -159,6 +161,7 @@ server.get("/home", (req, res) => {
 
 // #Routing to userController here
 server.use(express.json());
+server.use('/Uploads',express.static('Uploads'))
 
 ////////////////////////////////////////////////POST//////////////////////////////////
 server.post("/otp",otp);
@@ -170,7 +173,7 @@ server.post("/addPackage", addPackage);
 server.post("/changePasswordForAdmin", requireAuth, changePasswordForAdmin);
 
 //guest
-server.post("/addPatient", addPatient);
+server.post("/addPatient", uploadFiles.array('medicalHistory[]'),addPatient);
 server.post("/addPotentialDoctor", addPotentialDoctor);
 //doctor
 server.post("/addPrescription", requireAuth, addPrescription);

@@ -71,6 +71,10 @@ const patientSchema = new Schema(
     },
     nationalID: {
       type: Number,
+      required: true,
+    },
+    medicalHistory: {
+      type: String,
       required: false,
     },
   },
