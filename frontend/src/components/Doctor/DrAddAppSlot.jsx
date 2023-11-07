@@ -1,13 +1,26 @@
 import React, { useState } from "react";
 import { Button, Container, Form } from "react-bootstrap";
-import { useSelector } from "react-redux";
+import { Calendar, momentLocalizer } from "react-big-calendar";
+import "react-big-calendar/lib/css/react-big-calendar.css";
 import axios from "axios";
+import moment from "moment";
+const localizer = momentLocalizer(moment);
 
-function DrAddAppSlot({ fetchData }) {
+function DrAddAppSlot() {
   const [selectedDate, setSelectedDate] = useState("");
   const [selectedTime, setSelectedTime] = useState("");
   const [error, setError] = useState(null);
-  const _id = useSelector((state) => state.doctorLogin.userId);
+
+  const appointmentSlots = [
+    {
+      title: "4:30pm",
+      start: new Date(2023, 0, 1, 9, 0, 0),
+      end: new Date(2023, 0, 1, 10, 0, 0),
+      time: "wee",
+    },
+
+    // Add more slots here
+  ];
 
   const handleTimeChange = (e) => {
     const inputTime = e.target.value;
@@ -29,12 +42,11 @@ function DrAddAppSlot({ fetchData }) {
     ).toISOString();
     try {
       const response = await axios.post("/addAppointmentSlot", {
-        _id: _id,
         dateTime: selectedDateTime,
       });
 
       if (response.status === 200) {
-        fetchData();
+        // fetchData() betgeeb el free appointments;
       } else {
         setError("Error");
       }
@@ -45,39 +57,35 @@ function DrAddAppSlot({ fetchData }) {
     }
   };
 
+  const eventStyleGetter = (event, start, end, isSelected) => {
+    const eventStyle = {
+      backgroundColor: "#05afb9  ", // Background color
+      color: "white", // Text color
+      border: "none", // Border styles
+      marginBottom: "0.3rem",
+      width: "90%",
+      marginLeft: "0.3rem",
+    };
+
+    return {
+      style: eventStyle,
+    };
+  };
+
   return (
-    <Container
-      style={{
-        height: "fit-content",
-        flexShrink: 0,
-        width: "80%",
-        borderRadius: "2.5625rem 2.5625rem 3.25rem 3.25rem",
-        border: "1px solid var(--gray-400, #ced4da)",
-        background: "var(--gray-white, #fff)",
-        padding: "1.6rem",
-        marginLeft: "2.2rem",
-      }}
-    >
+    <div className="d-flex, column-flex">
       <div
-        style={{
-          fontSize: "30px",
-          fontStyle: "normal",
-          fontWeight: 700,
-          lineHeight: "120%",
-          marginBottom: "1rem",
-        }}
+        className="d-flex flex-row"
+        style={{ marginBottom: "2rem", marginLeft: "5rem" }}
       >
-        Add Appointment Slot
-      </div>
-      <div className="mb-2">
         <div
           style={{
-            color: "#099BA0 ",
+            color: "#099BA0",
             fontSize: "1.1rem",
             fontStyle: "normal",
             fontWeight: 500,
             lineHeight: "100%",
-            marginBottom: "1rem",
+            marginRight: "1rem",
           }}
         >
           Date
@@ -86,17 +94,16 @@ function DrAddAppSlot({ fetchData }) {
           type="date"
           value={selectedDate}
           onChange={(e) => setSelectedDate(e.target.value)}
+          style={{ marginRight: "2rem" }}
         />
-      </div>
-      <div className="mb-2">
         <div
           style={{
-            color: "#099BA0 ",
+            color: "#099BA0",
             fontSize: "1.1rem",
             fontStyle: "normal",
             fontWeight: 500,
             lineHeight: "100%",
-            marginBottom: "1rem",
+            marginRight: "1rem",
           }}
         >
           Time
@@ -106,16 +113,46 @@ function DrAddAppSlot({ fetchData }) {
           value={selectedTime}
           onChange={handleTimeChange}
         />
+        <Container
+          fluid
+          className="d-flex align-items-center justify-content-center"
+        >
+          <Button className="custom-button" onClick={addSlot}>
+            Add Slot
+          </Button>
+        </Container>
       </div>
-      <Container
-        fluid
-        className="d-flex align-items-center justify-content-center"
-      >
-        <Button className="custom-button" onClick={addSlot}>
-          Add Slot
-        </Button>
-      </Container>
-    </Container>
+
+      <div>
+        <style>{`
+          .rbc-toolbar-label {
+            color: #ff6b35  ;
+            font-weight: bold;
+            font-size: 2rem;
+          }
+          .events-container {
+            overflow-y: auto; /* Enable vertical scrolling */
+          }
+        `}</style>
+
+        <Calendar
+          localizer={localizer}
+          events={appointmentSlots}
+          startAccessor="start"
+          endAccessor="end"
+          views={["month"]}
+          defaultDate={new Date()}
+          style={{ height: 800, width: 1000, marginLeft: "1.5rem" }}
+          eventPropGetter={eventStyleGetter} // Apply event styling
+          titleAccessor="time"
+          components={{
+            eventWrapper: ({ children }) => (
+              <div className="events-container">{children}</div>
+            ),
+          }}
+        />
+      </div>
+    </div>
   );
 }
 
