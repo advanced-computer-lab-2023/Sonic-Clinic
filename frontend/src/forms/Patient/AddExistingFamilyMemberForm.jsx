@@ -60,35 +60,30 @@ function AddExistingFamilyMemberForm({ onRefresh, toggleForm }) {
       isLoading(false);
       return;
     } else {
-      //   try {
-      //     const response = await axios.post("/addFamilyMember", {
-      //       name: formData.name,
-      //       nationalID: formData.nationalId,
-      //       age: formData.age,
-      //       gender: formData.gender,
-      //       relationToPatient: formData.relation,
-      //       patientID: id,
-      //     });
-      //     if (response.status === 200) {
-      //       isLoading(false);
-      //       onRefresh();
-      //     } else {
-      //       setError("Signup failed");
-      //       isLoading(false);
-      //     }
-      //   } catch (error) {
-      //     console.error("Error:", error);
-      //     if (error.response && error.response.status === 409) {
-      //       setError("Username taken!");
-      //     } else if (error.response && error.response.status !== 200) {
-      //       setError("Signup failed");
-      //     } else {
-      //       setError(
-      //         "An error occurred while signing up. Please try again later."
-      //       );
-      //     }
-      //     isLoading(false);
-      //   }
+      try {
+        const response = await axios.post("/addFamilyMemberExisting", {
+          email: formData.email,
+          phoneNumber: formData.number,
+          relationToPatient: formData.relation,
+        });
+        if (response.status === 200) {
+          isLoading(false);
+          onRefresh();
+        } else {
+          setError("Server Error");
+          isLoading(false);
+        }
+      } catch (error) {
+        if (error.response && error.response.status === 404) {
+          console.log(error.response);
+          setError(error.response.data.error);
+        } else {
+          setError(
+            "An error occurred while adding the family member. Please try again later."
+          );
+        }
+        isLoading(false);
+      }
     }
   };
 
@@ -105,64 +100,67 @@ function AddExistingFamilyMemberForm({ onRefresh, toggleForm }) {
   };
 
   return (
-    <Form onSubmit={handleSubmit}>
-      <Form.Group controlId="email">
-        <Form.Label>Email</Form.Label>
-        <Form.Control
-          type="text"
-          name="email"
-          value={formData.email}
-          placeholder="JohnDoe@gmail.com"
-          onChange={handleChange}
-        />
-      </Form.Group>
+    <>
+      <Form onSubmit={handleSubmit}>
+        <Form.Group controlId="email">
+          <Form.Label>Email</Form.Label>
+          <Form.Control
+            type="text"
+            name="email"
+            value={formData.email}
+            placeholder="JohnDoe@gmail.com"
+            onChange={handleChange}
+          />
+        </Form.Group>
 
-      <Form.Group controlId="number">
-        <Form.Label>Phone Number</Form.Label>
-        <Form.Control
-          type="text"
-          name="number"
-          placeholder="0506404491"
-          value={formData.number}
-          onChange={handleChange}
-        />
-      </Form.Group>
-      <Form.Group controlId="relation">
-        <Form.Label>Relation</Form.Label>
-        <Form.Control
-          as="select"
-          name="relation"
-          value={formData.relation}
-          onChange={handleChange}
-          required
+        <Form.Group controlId="number">
+          <Form.Label>Phone Number</Form.Label>
+          <Form.Control
+            type="text"
+            name="number"
+            placeholder="0506404491"
+            value={formData.number}
+            onChange={handleChange}
+          />
+        </Form.Group>
+        <Form.Group controlId="relation">
+          <Form.Label>Relation</Form.Label>
+          <Form.Control
+            as="select"
+            name="relation"
+            value={formData.relation}
+            onChange={handleChange}
+            required
+          >
+            <option>Husband</option>
+            <option>Wife</option>
+            <option>Child</option>
+          </Form.Control>
+        </Form.Group>
+        <Button
+          variant="primary"
+          type="submit"
+          style={{ marginTop: "1rem", width: "100%" }}
+          onClick={handleClick}
         >
-          <option>Husband</option>
-          <option>Wife</option>
-          <option>Child</option>
-        </Form.Control>
-      </Form.Group>
-      <Button
-        variant="primary"
-        type="submit"
-        style={{ marginTop: "1rem", width: "100%" }}
-        onClick={handleClick}
-      >
-        Add Family Member
-      </Button>
-      <div
-        className="form-comment align-items-center justify-content-center d-flex"
-        style={{ cursor: "default" }}
-      >
-        Family Member is a{" "}
+          Add Family Member
+        </Button>
         <div
-          className="text-decoration-none  link-decoration "
-          style={{ cursor: "pointer", fontWeight: "600" }}
-          onClick={toggleForm}
+          className="form-comment align-items-center justify-content-center d-flex"
+          style={{ cursor: "default" }}
         >
-          New User?
+          Family Member is a{" "}
+          <div
+            className="text-decoration-none  link-decoration "
+            style={{ cursor: "pointer", fontWeight: "600" }}
+            onClick={toggleForm}
+          >
+            New User?
+          </div>
         </div>
-      </div>
-    </Form>
+      </Form>
+      {error1 && <div className="error">{error1}</div>}
+    </>
   );
 }
 
