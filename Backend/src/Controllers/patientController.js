@@ -717,14 +717,25 @@ const removeFamilyMember = async (req, res) => {
     if (!removedFamilyMember) {
       return res.status(404).json({ message: "Family member not found" });
     }
-    return res
-      .status(200)
-      .json({ message: "Family member removed successfully" });
+
+    // Remove the family member from the patient's familyMembers array
+    const patient = await patientModel.findById(req.user.id);
+    if (patient.familyMembers) {
+      patient.familyMembers = patient.familyMembers.filter(
+        (member) => member[0].toString() !== id
+      );
+    }
+
+    // Save the updated patient document
+    await patient.save();
+
+    return res.status(200).json({ message: "Family member removed successfully" });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "Internal server error" });
   }
 };
+
 
 const viewHealthPackages = async (req, res) => {
   const patientID = req.user.id;
@@ -766,7 +777,7 @@ const viewHealthPackages = async (req, res) => {
 const viewWalletAmount = async (req, res) => {
   try {
     const patientId = req.user.id;
-    const patient = await Patient.findById(patientId);
+    const patient = await patientModel.findById(patientId);
 
     if (!patient) {
       return res.status(404).json({ message: "Patient not found." });
