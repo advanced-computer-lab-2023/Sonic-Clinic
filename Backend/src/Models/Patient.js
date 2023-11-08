@@ -17,6 +17,7 @@ const creditCardSchema = new Schema({
   },
 });
 
+
 const patientSchema = new Schema(
   {
     username: {
@@ -71,8 +72,16 @@ const patientSchema = new Schema(
     },
     nationalID: {
       type: Number,
+      required: true,
+    },
+    medicalHistory: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'GridFSFile', 
       required: false,
     },
+    familyMembers: [
+      [String, String], 
+    ],
   },
   { timestamps: true }
 );

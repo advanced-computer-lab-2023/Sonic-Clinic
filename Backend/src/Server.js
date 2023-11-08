@@ -97,6 +97,7 @@ const {
 } = require("./Controllers/guestController");
 
 ////////////////////////////////authorizationController///////////////////////////////////////////
+
 const {
   login,
   requireAuth,
@@ -104,6 +105,16 @@ const {
   otp,
   verifyOtp,
 } = require("./Controllers/authorization");
+
+const {
+  login,
+  requireAuth,
+  logout,
+  otp,
+  verifyOtp,
+} = require("./Controllers/authorization");
+////////////////////////////////uploadController///////////////////////////////////////////
+const { uploadFiles } = require("./Controllers/upload");
 
 //el link bta3 el DB
 const MongoURI = process.env.MONGO_URI;
@@ -171,6 +182,7 @@ server.post("/addPackage", addPackage);
 server.post("/changePasswordForAdmin", requireAuth, changePasswordForAdmin);
 
 //guest
+
 server.post("/addPatient", addPatient);
 server.post("/addPotentialDoctor", addPotentialDoctor);
 //doctor
@@ -255,6 +267,8 @@ server.post("/cancelHealthPackageFam", requireAuth, cancelHealthPackageFam);
 server.post("/changePasswordForDoctor", requireAuth, changePasswordForDoctor);
 server.post("/addFamilyMemberExisting", requireAuth, addFamilyMemberExisting);
 //server.post("/uploadPdf",requireAuth, uploadPDF);
+server.post("/addFamilyMemberExisting", requireAuth, addFamilyMemberExisting);
+//server.post("/uploadFiles",requireAuth, uploadFiles);
 
 //doctor
 server.post("/selectPatient", requireAuth, selectPatient);

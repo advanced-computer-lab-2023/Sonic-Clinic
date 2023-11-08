@@ -245,31 +245,40 @@ const selectPrescription = async (req, res) => {
 };
 
 const addFamilyMember = async (req, res) => {
-  const patientID = req.user.id;
-  const name = req.body.name;
-  const nationalID = req.body.nationalID;
-  const age = req.body.age;
-  const gender = req.body.gender;
-  const relationToPatient = req.body.relationToPatient;
-  const package = "  ";
-  let query = {
-    name,
-    nationalID,
-    age,
-    gender,
-    relationToPatient,
-    patientID,
-    package,
-  };
-
   try {
-    const newFamilyMember = await familyMemberModel.create(query);
-    console.log("Family member Created!");
+    const patient = await patientModel.findById(req.user.id); // Assuming req.user is a Mongoose model instance
+
+    const name = req.body.name;
+    const nationalID = req.body.nationalID;
+    const age = req.body.age;
+    const gender = req.body.gender;
+    const relationToPatient = req.body.relationToPatient;
+
+    // Create the new family member
+    const newFamilyMember = await familyMemberModel.create({
+      name,
+      nationalID,
+      age,
+      gender,
+      relationToPatient,
+      patientID: patient.id, // Use patient's ID
+    });
+
+    // Update the patient's familyMembers array
+    patient.familyMembers = patient.familyMembers || [];
+    patient.familyMembers.push([newFamilyMember._id, newFamilyMember.name]);
+
+    // Save the updated patient document
+    await patient.save();
+
+    console.log("Family member Created and added to the patient's familyMembers array!");
     res.status(200).send(newFamilyMember);
   } catch (error) {
     res.status(400).send({ error: error.message });
   }
 };
+
+
 
 const addFamilyMemberExisting = async (req, res) => {
   const email = req.body.email;

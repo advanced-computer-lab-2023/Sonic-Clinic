@@ -259,11 +259,15 @@ const addAvailableSlots = async (req, res) => {
     // Save the updated doctor document
     await doctor.save();
 
-    res.status(200).json({ message: "Available slots added successfully." });
+    res.status(200).json({
+      message: "Available slots added successfully.",
+      slotsAsDates: slotsAsDates, // Include the slotsAsDates array in the response
+    });
   } catch (error) {
     res.status(500).json({ message: "Server Error", error });
   }
 };
+
 const viewAllAppointmentsDoctor = async (req, res) => {
   try {
     const id = req.user.id;

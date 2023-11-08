@@ -63,6 +63,7 @@ const addPatient = async (req, res) => {
       age,
     nationalID
     }); 
+   
     console.log("Patient Created!");
     res.status(200).send(newPatient);
   } catch (error) {
