@@ -6,6 +6,7 @@ const packagesModel = require("../Models/Packages.js");
 const prescriptionModel = require("../Models/Prescription.js");
 const appointmentModel = require("../Models/Appointment.js");
 const { updateUserInfoInCookie } = require("./authorization.js");
+const bcrypt = require("bcrypt");
 
 const doctorDetails = async (req, res) => {
   const { name } = req.body;
@@ -925,21 +926,17 @@ const changePasswordForPatientForget = async (req, res) => {
   const { email, newPassword } = req.body;
 
   try {
-    const patient = await patientModel.find({email:email});
-
-    if (!patient) {
-      return res.status(404).json({ message: "email does not exist" });
+    if (!email || !newPassword) {
+      return res
+        .status(400)
+        .json({ message: "Email and newPassword are required." });
     }
 
-    const isPasswordCorrect = await bcrypt.compare(
-      currentPassword,
-      patient.password
-    );
+    const patient = await patientModel.findOne({ email });
+    console.log(patient.name);
 
-    if (!isPasswordCorrect) {
-      return res
-        .status(401)
-        .json({ message: "Current password is incorrect." });
+    if (!patient) {
+      return res.status(404).json({ message: "Email does not exist." });
     }
 
     // Hash the new password and update it in the database
@@ -954,6 +951,7 @@ const changePasswordForPatientForget = async (req, res) => {
     res.status(500).json({ message: "Server Error" });
   }
 };
+
 const cancelHealthPackageFam = async (req, res) => {
   try {
     const familyMember = await familyMemberModel.findById(req.query._id);
@@ -1026,7 +1024,7 @@ const addAppointmentForMyselfOrFam = async (req, res) => {
   let patientID = req.user.id; // Use let to make it reassignable
 
   const { famID, doctorID, date, description, time } = req.body;
-  
+
   try {
     const doctor = await doctorModel.findById(doctorID);
     const doctorAvailableSlots = doctor.availableSlots;
@@ -1042,14 +1040,16 @@ const addAppointmentForMyselfOrFam = async (req, res) => {
         break; // Exiting the loop when a matching slot is found
       }
     }
-ew
-    
+    ew;
+
     if (!isAvailableSlot) {
-      return res.status(400).json({ message: "Appointment date is not available." });
+      return res
+        .status(400)
+        .json({ message: "Appointment date is not available." });
     }
 
     // If the date is available, remove it from the doctor's available slots
-    doctor.availableSlots = doctorAvailableSlots.filter(slot => {
+    doctor.availableSlots = doctorAvailableSlots.filter((slot) => {
       return slot !== slot2;
     });
 
@@ -1057,7 +1057,7 @@ ew
     if (famID) {
       patientID = famID;
     }
-const status='upcoming'
+    const status = "upcoming";
 
     const appointment = await appointmentModel.create({
       date,
@@ -1068,11 +1068,11 @@ const status='upcoming'
       time,
     });
 
-
     await doctor.save();
 
-    res.status(201).json({ message: "Appointment added successfully.", appointment });
-
+    res
+      .status(201)
+      .json({ message: "Appointment added successfully.", appointment });
   } catch (error) {
     res.status(500).json({ message: "Server Error" });
   }
@@ -1109,5 +1109,5 @@ module.exports = {
   viewSubscribedPackageFam,
   addFamilyMemberExisting,
   addAppointmentForMyselfOrFam,
-  changePasswordForPatientForget
+  changePasswordForPatientForget,
 };
