@@ -342,9 +342,9 @@ const addAppointmentByPatientID = async (req, res) => {
 };
 
 const viewAvailableSlots = async (req, res) => {
- 
+
   try {
-    const doctor = await doctorModel.findById(user.req.id);
+    const doctor = await doctorModel.findById(req.user.id);
     if (!doctor) {
       return res.status(404).json({ message: "Doctor not found." });
     }
