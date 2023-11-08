@@ -91,7 +91,6 @@ const requireAuth = async (req, res, next) => {
 
 const logout = async (req, res) => {
   res.cookie("jwt", "", { maxAge: 1 });
-  return res.status(500).json({ message: "You are logged out " });
 };
 
 const updateUserInfoInCookie = (req, res, user) => {
