@@ -462,8 +462,7 @@ const dummyDoctorsSession = [
 
 const getDoctorsWithSessionPrice = async (req, res) => {
   try {
-    const { _id } = req.user.id; // Assuming _id is in the request body
-    const patient = await patientModel.findById(_id);
+    const patient = await patientModel.findById(req.user.id);
 
     if (!patient) {
       return res.status(404).json({ message: "Patient not found." });
