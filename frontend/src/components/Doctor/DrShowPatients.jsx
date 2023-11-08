@@ -7,6 +7,7 @@ import {
   faSearch,
   faX,
 } from "@fortawesome/free-solid-svg-icons";
+import axios from "axios";
 
 function DrShowPatients({ patients, setPatients, responseData, upcomingApp }) {
   const [searchTerm, setSearchTerm] = useState("");
@@ -69,8 +70,22 @@ function DrShowPatients({ patients, setPatients, responseData, upcomingApp }) {
     //fetch medical history tani
   };
 
-  const scheduleFollowUp = () => {
-    setFollowUpModal(false);
+  const scheduleFollowUp = async (patientID) => {
+    const [datePart, timePart] = followUpDateTime.split("T");
+    try {
+      const response = await axios.post("/addAppointmentByPatientID", {
+        date: datePart,
+        description: patientID,
+        status: "upcoming",
+        patientID: patientID,
+        time: timePart,
+      });
+      if (response.status === 201) {
+        setFollowUpModal(false);
+      }
+    } catch (error) {
+      console.log();
+    }
   };
 
   return (
@@ -129,7 +144,7 @@ function DrShowPatients({ patients, setPatients, responseData, upcomingApp }) {
                       style={{ marginBottom: "1rem" }}
                       onClick={() =>
                         followUpModal
-                          ? scheduleFollowUp()
+                          ? scheduleFollowUp(patient._id)
                           : setFollowUpModal(true)
                       }
                     >

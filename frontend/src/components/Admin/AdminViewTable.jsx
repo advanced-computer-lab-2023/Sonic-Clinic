@@ -28,6 +28,8 @@ export default function AdminViewTable({ onAdmins, api }) {
         if (api === "/viewAllDoctors") setResponseData(response.data.doctors);
         if (api === "/viewAllPatients") setResponseData(response.data.patients);
         if (api === "/viewAllAdmins") setResponseData(response.data.admins);
+      } else if (response.status === 304) {
+        if (api === "/viewAllAdmins") setResponseData(response.data.admins);
       } else {
         console.log("Server error");
       }
@@ -43,8 +45,9 @@ export default function AdminViewTable({ onAdmins, api }) {
   };
 
   const users = responseData;
+  console.log(users);
   const filteredUsers = users.filter((user) =>
-    user.name.toLowerCase().includes(searchTerm.toLowerCase())
+    user.username.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   useEffect(() => {}, [username]);
@@ -122,7 +125,7 @@ export default function AdminViewTable({ onAdmins, api }) {
       >
         <Form.Control
           type="Text"
-          placeholder="Search"
+          placeholder="Search Username"
           style={{ height: "2.5rem" }}
           onChange={(e) => setSearchTerm(e.target.value)}
         />

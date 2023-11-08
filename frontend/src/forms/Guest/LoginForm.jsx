@@ -66,6 +66,7 @@ const LoginForm = () => {
               userId: user._id,
               emergencyName: user.emergencyFullName,
               emergencyNumber: user.emergencyMobileNumber,
+              wallet: 0,
               isLoggedIn: true,
             })
           );
@@ -89,6 +90,7 @@ const LoginForm = () => {
               patients: user.patients,
               speciality: user.specialty,
               userId: user._id,
+              wallet: 0,
               isLoggedIn: true,
             })
           );

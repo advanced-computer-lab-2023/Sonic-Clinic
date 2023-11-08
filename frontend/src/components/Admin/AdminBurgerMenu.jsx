@@ -26,17 +26,6 @@ function HamburgerMenu() {
     setMenuOpen(false);
   };
 
-  const logout = async () => {
-    try {
-      const response = await axios.get("/logout");
-      navigate("/");
-    } catch (error) {
-      console.log();
-    }
-    dispatch(logoutAdmin());
-    closeMenu();
-  };
-
   return (
     <div>
       <Menu
@@ -284,7 +273,7 @@ function HamburgerMenu() {
           <a
             id="logout"
             className="menu-item"
-            onClick={logout}
+            href="/"
             style={{
               color: "var(--gray-600, #6C757D)",
               fontFamily: "Roboto",

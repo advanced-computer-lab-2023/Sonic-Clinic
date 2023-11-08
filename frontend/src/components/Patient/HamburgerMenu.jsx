@@ -26,13 +26,11 @@ function HamburgerMenu() {
   const logout = async () => {
     setMenuOpen(false);
     try {
-      console.log("HHHHHHHH");
       const response = await axios.get("/logout");
       if (response.status === 200) {
         navigate("/");
       }
     } catch (error) {
-      console.log("HHHHHHHH");
       console.log();
     }
     closeMenu();
