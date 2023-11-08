@@ -55,7 +55,7 @@ const login = async (req, res) => {
     }
 
     if (admin1) {
-      const auth = bcrypt.compare(password, patient1.password);
+      const auth = bcrypt.compare(password, admin1.password);
       if (auth) {
         const token = createToken(admin1._id);
         res.cookie("jwt", token, { httpOnly: true, maxAge: maxAge } * 1000);

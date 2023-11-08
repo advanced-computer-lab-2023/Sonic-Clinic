@@ -51,6 +51,7 @@ const {
   //uploadPDF,
   addFamilyMemberExisting,
   addAppointmentForMyselfOrFam,
+  changePasswordForPatientForget,
 } = require("./Controllers/patientController");
 
 /////////////////////////////////doctorController//////////////////////////////////////////
@@ -189,6 +190,7 @@ server.post(
   addAppointmentByPatientID
 );
 
+
 //patient
 server.post("/addFamilyMember", requireAuth, addFamilyMember);
 server.post("/addAppointment", requireAuth, addAppointment);
@@ -204,6 +206,7 @@ server.post(
   requireAuth,
   addAppointmentForMyselfOrFam
 );
+server.post("/changePasswordForPatientForget", changePasswordForPatientForget);
 
 //////////////////////////////////////////// GET/////////////////////////////////////
 //admin
