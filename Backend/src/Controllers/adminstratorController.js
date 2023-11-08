@@ -25,6 +25,7 @@ const addAdmin = async (req, res) => {
     res.status(400).send({ error: error.message });
   }
 };
+
 const addDoctor = async (req, res) => {
   try {
     const newDoctor = await doctorModel.create(req.body);
@@ -383,6 +384,40 @@ const viewAllDocApp = async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 };
+const changePasswordForAdmin = async (req, res) => {
+  const { currentPassword, newPassword } = req.body;
+  const adminID = req.body._id;
+
+  try {
+    const Admin = await administratorModel.findById(adminID);
+
+    if (!Admin) {
+      return res.status(404).json({ message: "Admin not found." });
+    }
+
+    const isPasswordCorrect = await bcrypt.compare(
+      currentPassword,
+      Admin.password
+    );
+
+    if (!isPasswordCorrect) {
+      return res
+        .status(401)
+        .json({ message: "Current password is incorrect." });
+    }
+
+    // Hash the new password and update it in the database
+    const salt = await bcrypt.genSalt();
+    const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+    Admin.password = hashedPassword;
+    await Admin.save();
+
+    res.status(200).json({ message: "Password changed successfully." });
+  } catch (error) {
+    res.status(500).json({ message: "Server Error" });
+  }
+};
 
 module.exports = {
   addAdmin,
@@ -400,4 +435,5 @@ module.exports = {
   viewPackagesAdmin,
   viewAllAdmins,
   viewAllDocApp,
+  changePasswordForAdmin,
 };

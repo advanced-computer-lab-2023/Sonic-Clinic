@@ -1,11 +1,29 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
+const bcrypt = require("bcrypt");
+
+const creditCardSchema = new Schema({
+  cardNumber: {
+    type: String,
+    required: false,
+  },
+  cvv: {
+    type: String,
+    required: false,
+  },
+  expiryDate: {
+    type: String,
+    required: false,
+  },
+});
+
 
 const patientSchema = new Schema(
   {
     username: {
       type: String,
       required: true,
+      unique: [true, "this username is taken, please enter another username"],
     },
     name: {
       type: String,
@@ -43,6 +61,27 @@ const patientSchema = new Schema(
       type: String,
       required: false,
     },
+    wallet: {
+      type: Number,
+      required: false,
+    },
+    creditCard: creditCardSchema,
+    age: {
+      type: Number,
+      required: false,
+    },
+    nationalID: {
+      type: Number,
+      required: true,
+    },
+    medicalHistory: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'GridFSFile', 
+      required: false,
+    },
+    familyMembers: [
+      [String, String], 
+    ],
   },
   { timestamps: true }
 );
@@ -54,6 +93,18 @@ patientSchema.virtual("prescriptions", {
 
 patientSchema.set("toObject", { virtuals: true });
 patientSchema.set("toJSON", { virtuals: true });
+
+patientSchema.virtual("packagesPatient", {
+  ref: "Packages",
+  localField: "package",
+  foreignField: "type",
+});
+
+patientSchema.pre("save", async function (next) {
+  const salt = await bcrypt.genSalt();
+  this.password = await bcrypt.hash(this.password, salt);
+  next();
+});
 
 const Patient = mongoose.model("Patient", patientSchema);
 module.exports = Patient;
