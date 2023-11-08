@@ -12,14 +12,8 @@ function DrViewApps() {
   const [loading, setLoading] = useState(true);
 
   const fetchData = async () => {
-    const config = {
-      headers: {
-        _id: _id,
-      },
-    };
-    console.log(_id);
     try {
-      const response = await axios.post("/viewDocApp", { _id: _id }, config);
+      const response = await axios.post("/viewDocApp");
       if (response.status === 200) {
         setResponseData(response.data);
       } else {

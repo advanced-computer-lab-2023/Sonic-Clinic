@@ -82,7 +82,6 @@ function DrProfileBox() {
       })
     );
     const queryParameters = new URLSearchParams({
-      _id: _id,
       email: profileData.email,
       hourlyRate: profileData.hourlyRate,
       affiliation: profileData.affiliation,

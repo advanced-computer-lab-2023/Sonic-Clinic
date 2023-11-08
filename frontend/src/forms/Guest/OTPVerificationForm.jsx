@@ -28,97 +28,27 @@ const OTPVerificationForm = () => {
   };
 
   const handleClick = async (e) => {
-    console.log("code" + code); //remove
-    e.preventDefault();
-    setError(null);
-    isLoading(true);
-    if (!code) {
-      setError("Please enter the OTP");
-      isLoading(false);
-      return;
+    try {
+      isLoading(true);
+      await axios
+        .post("/verifyOtp", {
+          inputNumber: code,
+        })
+        .then((response) => {
+          if (response.status !== 200) {
+            setError("Incorrect Code");
+          } else {
+            navigate("/forgot-password/reset-password/");
+            isLoading(false);
+          }
+        })
+        .catch((error) => {
+          isLoading(false);
+          setError("Incorrect Code"); // change error msg
+        });
+    } catch (error) {
+      setError(error); // change error msg
     }
-
-    const otpRegex = /^[A-Z0-9]+$/i;
-    if (!code.match(otpRegex)) {
-      setError("Invalid OTP.");
-      console.log(error1);
-      isLoading(false);
-      return;
-    }
-
-    if (code.length != 6) {
-      setError("Invalid OTP.");
-      isLoading(false);
-      return;
-    } else {
-      //   const data = { otp: code, email: userEmail, type: 'forgetPassword' };
-      //   try {
-      //     isLoading(true);
-      //     await axios
-      //       .post(baseUrl + '/otp/confirmOTP', data, config)
-      //       .then((response) => {
-      //         if (response.status !== 200) {
-      //           setError('Server Error'); //change : nzabat el error msgs
-      //           console.log('Server error'); //remove
-      //           console.log(response); //remove
-      //         } else {
-      //           console.log('OTP tmam'); //remove
-      //           console.log(response); //remove
-      //           isLoading(false);
-      //           navigate('/forgot-password/reset-password');
-      //         }
-      //       })
-      //       .catch((error) => {
-      //         console.error('Error:', error); //remove
-      //         setError("There's an error");
-      //         if (error.response) {
-      //           setMessage(null); // change : eh lazmetha?
-      //           if (error.response.status === 400) {
-      //             // console.log(userEmail);
-      //             setError('Authentication error'); //change
-      //             console.log('Authentication error'); //remove
-      //           }
-      //         }
-      //       });
-      //   } catch (error) {
-      //     // setMessage("An error occurred");
-      //     setError(error); //change error msg
-      //     // setOkay(false);
-      //     console.log(error); //remove
-      //   }
-
-      navigate("/forgot-password/reset-password");
-    }
-  };
-
-  const handleClickResend = async (e) => {
-    //   try {
-    //     isLoading(true);
-    //     setError(null);
-    //     await axios
-    //       .post(
-    //         baseUrl + '/otp/forgetPassword/generateOTP', // forgetPassword wala signup?
-    //         {
-    //           email: userEmail,
-    //         },
-    //         config,
-    //       )
-    //       .then((response) => {
-    //         setMessage('An OTP code has been sent to your email');
-    //         isLoading(false);
-    //       })
-    //       .catch((error) => {
-    //         setError("There's an error"); //remove
-    //         if (error.response) {
-    //           if (error.response.status === 400) {
-    //             setError('Authentication Error'); //change
-    //           }
-    //         }
-    //       });
-    //   } catch (error) {
-    //     console.log('error mn el awel'); //remove
-    //     setError(error); //change
-    //   }
   };
 
   return (
@@ -143,7 +73,7 @@ const OTPVerificationForm = () => {
         >
           Verify
         </button>
-        <div className="form-comment" style={{ cursor: "default" }}>
+        {/* <div className="form-comment" style={{ cursor: "default" }}>
           Didn't get code?{" "}
           <div
             className="text-decoration-none  link-decoration "
@@ -152,7 +82,7 @@ const OTPVerificationForm = () => {
           >
             Resend
           </div>
-        </div>
+        </div> */}
         {message && <div className="form-comment">{message}</div>}
         {error1 && <div className="error">{error1}</div>}
       </form>

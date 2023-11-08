@@ -5,6 +5,7 @@ import FormPassword from "../FormPassword";
 import FormInput from "../FormInput";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
+import { setForgotEmail } from "../../state/forgotEmail";
 import "../forms.css";
 
 const ForgotPasswordForm = () => {
@@ -34,57 +35,32 @@ const ForgotPasswordForm = () => {
       console.log(error1);
       return;
     } else {
-      //   const config = {
-      //     headers: {
-      //       'Access-Control-Allow-Origin': '*',
-      //       'Access-Control-Allow-Methods': 'GET,PUT,POST,DELETE,PATCH,OPTIONS',
-      //       'Content-Type': 'application/json',
-      //     },
-      //   };
-      //   try {
-      //     isLoading(true);
-      //     await axios
-      //       .post(
-      //         baseUrl + '/otp/forgetPassword/generateOTP',
-      //         {
-      //           email: email,
-      //         },
-      //         config,
-      //       )
-      //       .then((response) => {
-      //         if (response.status !== 200) {
-      //           setError('Incorrect Email');
-      //           console.log('Authentication failed'); // remove
-      //           console.log(response); // remove
-      //         } else {
-      //           console.log('Response: '); // remove
-      //           console.log(response); // remove
-      //           dispatch(
-      //             setCredentials({
-      //               userEmail: email, // is it needed?
-      //             }),
-      //           );
-      //           isLoading(false);
-
-      //         }
-      //       })
-      //       .catch((error) => {
-      //         isLoading(false);
-
-      //         console.error('Error:', error); // remove
-      //         setError("Incorrect Email"); // change error msg
-      //         if (error.response) {
-      //           if (error.response.status === 400) {
-      //             setError('Authentication error'); // change error msg
-      //             console.log('Authentication error'); // remove
-      //           }
-      //         }
-      //       });
-      //   } catch (error) {
-      //     setError(error); // change error msg
-      //     console.log(error); // remove
-      //   }
-      navigate("/forgot-password/otp-verification");
+      try {
+        isLoading(true);
+        await axios
+          .post("/otp", {
+            email: email,
+          })
+          .then((response) => {
+            if (response.status !== 200) {
+              setError("Incorrect Email");
+            } else {
+              dispatch(
+                setForgotEmail({
+                  email: email,
+                })
+              );
+              navigate("/forgot-password/otp-verification");
+              isLoading(false);
+            }
+          })
+          .catch((error) => {
+            isLoading(false);
+            setError("Incorrect Email"); // change error msg
+          });
+      } catch (error) {
+        setError(error); // change error msg
+      }
     }
   };
 

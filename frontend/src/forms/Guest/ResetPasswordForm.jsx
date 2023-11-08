@@ -15,6 +15,8 @@ const ResetPasswordForm = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  const email = useSelector((state) => state.forgotEmail.email);
+
   //   const userEmail = useSelector((state) => state.login.userEmail);
 
   const handleSubmit = async (e) => {
@@ -70,58 +72,28 @@ const ResetPasswordForm = () => {
       isLoading(false);
       return;
     } else {
-      const config = {
-        headers: {
-          "Access-Control-Allow-Origin": "*",
-          "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS",
-          "Content-Type": "application/json",
-        },
-      };
-
-      //   try {
-      //     isLoading(true);
-      //     console.log(userEmail, password);
-      //     await axios
-      //       .put(
-      //         baseUrl + '/identity/changePassword',
-      //         {
-      //           email: userEmail,
-      //           newPassword: password,
-      //         },
-      //         config,
-      //       )
-      //       .then((response) => {
-      //         if (response.status !== 200) {
-      //           setError('Authentication Failed');
-      //           console.log('Authentication failed'); // remove
-      //           console.log(response); // remove
-      //         } else {
-      //           console.log('Response: '); // remove
-      //           console.log(response); // remove
-      //           dispatch(
-      //             setCredentials({
-      //               password: password,
-      //             }),
-      //           );
-      //           isLoading(false);
-      //           navigate('/forgot-password/password-changed');
-      //         }
-      //       })
-      //       .catch((error) => {
-      //         console.error('Error:', error); // remove
-      //         setError("There's an error"); // change error msg
-      //         if (error.response) {
-      //           if (error.response.status === 400) {
-      //             setError('Authentication error'); // change error msg
-      //             console.log('Authentication error'); // remove
-      //           }
-      //         }
-      //       });
-      //   } catch (error) {
-      //     setError(error); // change error msg
-      //     console.log(error); // remove
-      //   }
-      navigate("/forgot-password/password-changed");
+      try {
+        isLoading(true);
+        await axios
+          .post("/changePass", {
+            email: email,
+            password: password,
+          })
+          .then((response) => {
+            if (response.status !== 200) {
+              setError("Incorrect Code");
+            } else {
+              navigate("/forgot-password/password-changed");
+              isLoading(false);
+            }
+          })
+          .catch((error) => {
+            isLoading(false);
+            setError("Error"); // change error msg
+          });
+      } catch (error) {
+        setError(error); // change error msg
+      }
     }
   };
 

@@ -874,7 +874,9 @@ const viewAvailableAppointmentsOfDoctor = async (req, res) => {
     const availableSlots = doctor.availableSlots || [];
 
     if (availableSlots.length === 0) {
-      return res.status(404).json({ message: "This doctor has no available slots." });
+      return res
+        .status(404)
+        .json({ message: "This doctor has no available slots." });
     }
 
     return res.status(200).json({ availableSlots });
@@ -883,7 +885,6 @@ const viewAvailableAppointmentsOfDoctor = async (req, res) => {
     return res.status(500).json({ message: "Server Error" });
   }
 };
-
 
 const changePasswordForPatient = async (req, res) => {
   const { currentPassword, newPassword } = req.body;

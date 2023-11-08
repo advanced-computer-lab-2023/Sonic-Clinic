@@ -17,13 +17,8 @@ export default function DrViewPatients() {
   }, []);
 
   const fetchData = async () => {
-    const config = {
-      headers: {
-        _id: _id,
-      },
-    };
     try {
-      const response = await axios.post("/viewPatients", { _id: _id }, config);
+      const response = await axios.post("/viewPatients");
       if (response.status === 200) {
         setPatients(response.data.patients);
         setResponseData(response.data.patients);
