@@ -341,6 +341,30 @@ const addAppointmentByPatientID = async (req, res) => {
   }
 };
 
+const viewAvailableSlots = async (req, res) => {
+ 
+  try {
+    const doctor = await doctorModel.findById(user.req.id);
+    if (!doctor) {
+      return res.status(404).json({ message: "Doctor not found." });
+    }
+
+    // Get the available slots of the doctor
+    const availableSlots = doctor.availableSlots || [];
+
+    if (availableSlots.length === 0) {
+      return res
+        .status(404)
+        .json({ message: "This doctor has no available slots." });
+    }
+
+    return res.status(200).json({ availableSlots });
+  } catch (error) {
+    console.error("Error:", error);
+    return res.status(500).json({ message: "Server Error" });
+  }
+};
+
 module.exports = {
   selectPatient,
   viewInfoAndHealthRecord,
@@ -354,7 +378,7 @@ module.exports = {
   addAvailableSlots,
   viewAllAppointmentsDoctor,
   changePasswordForDoctor,
-
+  viewAvailableSlots,
   addAppointmentByPatientID,
 
 };
