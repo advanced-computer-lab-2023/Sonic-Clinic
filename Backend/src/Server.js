@@ -7,8 +7,8 @@ const session = require("express-session");
 const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
 const multer = require("multer");
-const Grid = require('gridfs-stream');
-const GridFS = Grid(mongoose.connection.db, mongoose.mongo);
+//const Grid = require('gridfs-stream');
+//const GridFS = Grid(mongoose.connection.db, mongoose.mongo);
 
 
 //const multer = require('multer');
@@ -251,7 +251,7 @@ server.post(
   "/addFamilyMemberExisting",requireAuth,
   addFamilyMemberExisting
 );
-server.post("/uploadFiles",requireAuth, uploadFiles);
+//server.post("/uploadFiles",requireAuth, uploadFiles);
 
 //doctor
 server.post("/selectPatient", requireAuth, selectPatient);

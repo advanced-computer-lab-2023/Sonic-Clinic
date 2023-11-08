@@ -79,6 +79,9 @@ const patientSchema = new Schema(
       ref: 'GridFSFile', 
       required: false,
     },
+    familyMembers: [
+      [String, String], 
+    ],
   },
   { timestamps: true }
 );
