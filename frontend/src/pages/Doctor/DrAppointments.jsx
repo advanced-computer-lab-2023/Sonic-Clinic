@@ -1,24 +1,50 @@
-import React from "react";
-import { Container, Row } from "react-bootstrap";
+import React, { useState } from "react";
+import { Container, Tab, Tabs } from "react-bootstrap";
 import AppNavbar from "../../components/AppNavigation/AppNavbar";
 import DrHamburgerMenu from "../../components/Doctor/DrHamburgerMenu";
-import DrShowAppointments from "../../components/Doctor/DrShowAppointments";
-import DrAppointmentFilter from "../../components/Doctor/DrAppointmentFilter";
+import DrViewApps from "../../components/Doctor/DrViewApps";
+import DrAddAppSlot from "../../components/Doctor/DrAddAppSlot";
 
 function DrAppointments() {
+  const [tab, setTab] = useState("booked");
+
   return (
     <div>
       <AppNavbar hamburgerMenu={<DrHamburgerMenu />} />
-      <Container fluid className="bg-light pt-3 mt-2">
-        <Container className="bg-white px-5 py-4 d-flex align-items-center justify-content-center">
-          <div className="col-5">
-            <DrAppointmentFilter />
-          </div>
-          <div className="col-7">
-            <DrShowAppointments />
-          </div>
-        </Container>
-      </Container>
+      <div
+        style={{
+          marginTop: "50px",
+          color: "var(--body-text-body-color, #212529)",
+          fontSize: "2rem",
+          fontWeight: "600",
+          textAlign: "center",
+          lineHeight: "120%",
+        }}
+      >
+        My Appointments
+      </div>
+      <Tabs
+        id="controlled-tab-example"
+        activeKey={tab}
+        onSelect={(k) => setTab(k)}
+        className="mb-3 d-flex align-items-center justify-content-center"
+        style={{ marginTop: "20px" }}
+      >
+        <Tab eventKey="booked" title="Booked">
+          <Container fluid className="bg-light pt-3 mt-2">
+            <Container className="bg-white px-2 py-4 d-flex justify-content-center">
+              <DrViewApps />
+            </Container>
+          </Container>
+        </Tab>
+        <Tab eventKey="free" title="Free">
+          <Container fluid className="bg-light pt-3 mt-2">
+            <Container className="bg-white px-2 py-4 d-flex justify-content-center">
+              <DrAddAppSlot />
+            </Container>
+          </Container>
+        </Tab>
+      </Tabs>
     </div>
   );
 }

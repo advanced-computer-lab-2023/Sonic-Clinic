@@ -271,14 +271,14 @@ const addFamilyMember = async (req, res) => {
     // Save the updated patient document
     await patient.save();
 
-    console.log("Family member Created and added to the patient's familyMembers array!");
+    console.log(
+      "Family member Created and added to the patient's familyMembers array!"
+    );
     res.status(200).send(newFamilyMember);
   } catch (error) {
     res.status(400).send({ error: error.message });
   }
 };
-
-
 
 const addFamilyMemberExisting = async (req, res) => {
   const email = req.body.email;
@@ -732,13 +732,14 @@ const removeFamilyMember = async (req, res) => {
     // Save the updated patient document
     await patient.save();
 
-    return res.status(200).json({ message: "Family member removed successfully" });
+    return res
+      .status(200)
+      .json({ message: "Family member removed successfully" });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "Internal server error" });
   }
 };
-
 
 const viewHealthPackages = async (req, res) => {
   const patientID = req.user.id;
@@ -1022,6 +1023,7 @@ const cancelHealthPackage = async (req, res) => {
 
 const addAppointmentForMyselfOrFam = async (req, res) => {
   let patientID = req.user.id; // Use let to make it reassignable
+
   const { famID, doctorID, date, description, time } = req.body;
   
   try {
@@ -1039,6 +1041,7 @@ const addAppointmentForMyselfOrFam = async (req, res) => {
         break; // Exiting the loop when a matching slot is found
       }
     }
+ew
     
     if (!isAvailableSlot) {
       return res.status(400).json({ message: "Appointment date is not available." });
@@ -1054,6 +1057,7 @@ const addAppointmentForMyselfOrFam = async (req, res) => {
       patientID = famID;
     }
 const status='upcoming'
+
     const appointment = await appointmentModel.create({
       date,
       description,
@@ -1063,15 +1067,15 @@ const status='upcoming'
       time,
     });
 
+
     await doctor.save();
 
     res.status(201).json({ message: "Appointment added successfully.", appointment });
+
   } catch (error) {
     res.status(500).json({ message: "Server Error" });
   }
 };
-
-
 
 module.exports = {
   selectPrescription,

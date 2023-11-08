@@ -14,9 +14,7 @@ function FamilyMembersList({ refreshFlag }) {
 
   const fetchData = async () => {
     try {
-      const response = await axios.post("/viewFamilyMembers", {
-        _id: id,
-      });
+      const response = await axios.post("/viewFamilyMembers");
 
       if (response.status === 200) {
         setResponseData(response.data.familyMembers);

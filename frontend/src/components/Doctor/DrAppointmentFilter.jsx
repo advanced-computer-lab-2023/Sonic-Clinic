@@ -85,10 +85,10 @@ function AppointmentFilter() {
         </div>
         <Form.Control as="select" onChange={handleStatusChange}>
           <option value="">Select status</option>
-          <option value="confirmed">Confirmed</option>
-          <option value="pending">Pending</option>
+          <option value="upcoming">Upcoming</option>
+          <option value="completed">Completed</option>
           <option value="cancelled">Cancelled</option>
-          <option value="free">Free</option>
+          <option value="rescheduled">Rescheduled</option>
         </Form.Control>
       </div>
 

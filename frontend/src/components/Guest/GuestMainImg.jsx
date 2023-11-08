@@ -28,12 +28,11 @@ function GuestMainImg() {
             style={{
               color: "#05AFB9",
               textAlign: "center",
-              fontFamily: "Vibur",
+              fontFamily: "fantasy",
               fontSize: "7rem",
               fontStyle: "normal",
               fontWeight: 400,
               lineHeight: "120%",
-           
             }}
           >
             Welcome to El7a2ny!
@@ -44,6 +43,4 @@ function GuestMainImg() {
   );
 }
 
-
 export default GuestMainImg;
-

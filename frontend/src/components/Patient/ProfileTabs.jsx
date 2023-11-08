@@ -6,6 +6,7 @@ import Tab from "react-bootstrap/Tab";
 import AddFamilyMember from "./AddFamilyMember";
 import FamilyMembersList from "./FamilyMembersList";
 import ViewPersonalInfo from "./viewPersonalInfo";
+import UploadDocuments from "./UploadDocuments";
 
 function ProfileTabs() {
   const [activeKey, setActiveKey] = useState("first");
@@ -58,11 +59,48 @@ function ProfileTabs() {
                       activeKey === "second"
                         ? "none"
                         : "1px solid rgb(189, 189, 189)",
+                    marginBottom: "1rem",
                     fontSize: "1.2rem",
                     fontWeight: "600",
                   }}
                 >
                   Family Members
+                </Nav.Link>
+              </Nav.Item>
+              <Nav.Item>
+                <Nav.Link
+                  eventKey="third"
+                  style={{
+                    background: activeKey === "third" ? "#05afb9" : "white",
+                    color: activeKey === "third" ? "white" : "black",
+                    border:
+                      activeKey === "third"
+                        ? "none"
+                        : "1px solid rgb(189, 189, 189)",
+                    marginBottom: "1rem",
+                    fontSize: "1.2rem",
+                    fontWeight: "600",
+                  }}
+                >
+                  Medical History
+                </Nav.Link>
+              </Nav.Item>
+              <Nav.Item>
+                <Nav.Link
+                  eventKey="fourth"
+                  style={{
+                    background: activeKey === "fourth" ? "#05afb9" : "white",
+                    color: activeKey === "fourth" ? "white" : "black",
+                    border:
+                      activeKey === "fourth"
+                        ? "none"
+                        : "1px solid rgb(189, 189, 189)",
+                    marginBottom: "1rem",
+                    fontSize: "1.2rem",
+                    fontWeight: "600",
+                  }}
+                >
+                  My Wallet
                 </Nav.Link>
               </Nav.Item>
             </Nav>
@@ -77,6 +115,12 @@ function ProfileTabs() {
                   <FamilyMembersList refreshFlag={refreshFlag} />
                   <AddFamilyMember onRefresh={handleRefresh} />
                 </div>
+              </Tab.Pane>
+              <Tab.Pane eventKey="third">
+                <UploadDocuments />
+              </Tab.Pane>
+              <Tab.Pane eventKey="fourth">
+                <ViewPersonalInfo />
               </Tab.Pane>
             </Tab.Content>
           </Col>

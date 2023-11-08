@@ -25,19 +25,9 @@ function PatientViewDoctors() {
   }, [searchDataName, searchDataSpec]); // Updated dependencies
 
   const fetchData = async () => {
-    const config = {
-      headers: {
-        _id: _id,
-      },
-    };
     try {
-      const response = await axios.post(
-        "/getDoctorsWithSessionPrice",
-        { _id: _id },
-        config
-      );
+      const response = await axios.post("/getDOctorsWithSessionPrice");
       if (response.status === 200) {
-        console.log("RESPONSE:", response.data);
         setResponseData(response.data.allDoctors);
         const NeededData = response.data.allDoctors;
         const filteredDoctors = NeededData.filter((doctor) => {

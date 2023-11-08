@@ -3,11 +3,12 @@ import React, { useState } from "react";
 import { Form, Button, Col } from "react-bootstrap";
 import { useSelector } from "react-redux";
 
-function AddFamilyMemberForm({ onRefresh }) {
+function AddFamilyMemberForm({ onRefresh, toggleForm }) {
   const [error1, setError] = useState(null);
   const [message, setMessage] = useState(null);
   const [loading, isLoading] = useState(null);
   const id = useSelector((state) => state.patientLogin.userId);
+  const handleClickAlreadyUser = async (e) => {};
   const [formData, setFormData] = useState({
     name: "",
     nationalId: "",
@@ -86,7 +87,6 @@ function AddFamilyMemberForm({ onRefresh }) {
           age: formData.age,
           gender: formData.gender,
           relationToPatient: formData.relation,
-          patientID: id,
         });
 
         if (response.status === 200) {
@@ -129,83 +129,96 @@ function AddFamilyMemberForm({ onRefresh }) {
   };
 
   return (
-    <Form onSubmit={handleSubmit}>
-      <Form.Group controlId="name">
-        <Form.Label>Name</Form.Label>
-        <Form.Control
-          type="text"
-          name="name"
-          value={formData.name}
-          placeholder="John Doe"
-          onChange={handleChange}
-          required
-        />
-      </Form.Group>
+    <>
+      <Form onSubmit={handleSubmit}>
+        <Form.Group controlId="name">
+          <Form.Label>Name</Form.Label>
+          <Form.Control
+            type="text"
+            name="name"
+            value={formData.name}
+            placeholder="John Doe"
+            onChange={handleChange}
+            required
+          />
+        </Form.Group>
 
-      <Form.Group controlId="nationalId">
-        <Form.Label>National ID</Form.Label>
-        <Form.Control
-          type="text"
-          name="nationalId"
-          placeholder="Enter 16 digit number"
-          value={formData.nationalId}
-          onChange={handleChange}
-          maxLength="16"
-          minLength="16"
-          required
-        />
-      </Form.Group>
+        <Form.Group controlId="nationalId">
+          <Form.Label>National ID</Form.Label>
+          <Form.Control
+            type="text"
+            name="nationalId"
+            placeholder="Enter 16 digit number"
+            value={formData.nationalId}
+            onChange={handleChange}
+            maxLength="16"
+            minLength="16"
+            required
+          />
+        </Form.Group>
 
-      <Form.Group controlId="age">
-        <Form.Label>Age</Form.Label>
-        <Form.Control
-          type="number"
-          name="age"
-          placeholder="13"
-          value={formData.age}
-          onChange={handleChange}
-          required
-        />
-      </Form.Group>
+        <Form.Group controlId="age">
+          <Form.Label>Age</Form.Label>
+          <Form.Control
+            type="number"
+            name="age"
+            placeholder="13"
+            value={formData.age}
+            onChange={handleChange}
+            required
+          />
+        </Form.Group>
 
-      <Form.Group controlId="gender">
-        <Form.Label>Gender</Form.Label>
-        <Form.Control
-          as="select"
-          name="gender"
-          value={formData.gender}
-          onChange={handleChange}
-          required
+        <Form.Group controlId="gender">
+          <Form.Label>Gender</Form.Label>
+          <Form.Control
+            as="select"
+            name="gender"
+            value={formData.gender}
+            onChange={handleChange}
+            required
+          >
+            <option>Male</option>
+            <option>Female</option>
+          </Form.Control>
+        </Form.Group>
+
+        <Form.Group controlId="relation">
+          <Form.Label>Relation</Form.Label>
+          <Form.Control
+            as="select"
+            name="relation"
+            value={formData.relation}
+            onChange={handleChange}
+            required
+          >
+            <option>Husband</option>
+            <option>Wife</option>
+            <option>Child</option>
+          </Form.Control>
+        </Form.Group>
+
+        <Button
+          variant="primary"
+          type="submit"
+          style={{ marginTop: "1rem", width: "100%" }}
+          onClick={handleClick}
         >
-          <option>Male</option>
-          <option>Female</option>
-        </Form.Control>
-      </Form.Group>
-
-      <Form.Group controlId="relation">
-        <Form.Label>Relation</Form.Label>
-        <Form.Control
-          as="select"
-          name="relation"
-          value={formData.relation}
-          onChange={handleChange}
-          required
-        >
-          <option>Husband</option>
-          <option>Wife</option>
-          <option>Child</option>
-        </Form.Control>
-      </Form.Group>
-
-      <Button
-        variant="primary"
-        type="submit"
-        style={{ marginTop: "1rem", width: "100%" }}
-        onClick={handleClick}
-      >
-        Add Family Member
-      </Button>
-    </Form>
+          Add Family Member
+        </Button>
+        <div className="form-comment" style={{ cursor: "default" }}>
+          Family Member{" "}
+          <div
+            className="text-decoration-none  link-decoration "
+            style={{ cursor: "pointer", fontWeight: "600" }}
+            onClick={toggleForm}
+          >
+            Already a User?
+          </div>
+        </div>
+      </Form>
+      {error1 && <div className="error">{error1}</div>}
+    </>
   );
 }
 

@@ -1,11 +1,12 @@
 import axios from "axios";
 import * as React from "react";
-import { useState, useEffect } from "react";
-import { Col, Container, Form, Row } from "react-bootstrap";
+import { useState } from "react";
+import { Col, Container, Form, Row, Modal, Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import FormPassword from "../FormPassword";
 import FormInput from "../FormInput";
+import contract from "../../Assets/EmploymentContract.pdf";
 import { setCredentials } from "../../state/loginPatientReducer";
 import { baseUrl } from "../../state/baseUrl";
 import { setCredentialsPatient } from "../../state/loginPatientReducer";
@@ -24,6 +25,7 @@ const LoginForm = () => {
   const [agree, setAgree] = useState(false);
   const [okay, setOkay] = useState(false);
   const [open, setOpen] = React.useState(false);
+  const [showAcceptModal, setShowAcceptModal] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -72,6 +74,8 @@ const LoginForm = () => {
           navigate("/patient");
         }
         if (type === "Doctor") {
+          //check the flag to make sure eno doctor accepted the contract
+          //setShowAcceptModal(true);
           dispatch(
             setCredentialsDoctor({
               password: password,
@@ -125,9 +129,42 @@ const LoginForm = () => {
     }
   };
 
+  const loginNewDoctor = async (e) => {
+    e.preventDefault();
+    setError(null);
+    isLoading(true);
+    //call method that changes the status of a new doctor to a regular
+    //call dispatcher
+    isLoading(false);
+    navigate("/doctor");
+  };
+
   return (
     <div className="col-9 form-container">
       <div className="form-title">Welcome Back!</div>
+      <Modal show={showAcceptModal} onHide={() => setShowAcceptModal(false)}>
+        <Modal.Header>
+          <Modal.Title>Employment Contract</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <object
+            data={contract}
+            type="application/pdf"
+            width="100%"
+            height="500"
+          >
+            PDF Viewer is not supported in this browser.
+          </object>
+        </Modal.Body>
+        <Modal.Footer className="d-flex align-items-center justify-content-center">
+          <Button variant="success" onClick={loginNewDoctor}>
+            Accept
+          </Button>
+          <Button variant="danger" onClick={() => setShowAcceptModal(false)}>
+            Reject
+          </Button>
+        </Modal.Footer>
+      </Modal>
       <Form className="rounded-3" onSubmit={handleSubmit}>
         <FormInput
           name="Username"
@@ -141,15 +178,15 @@ const LoginForm = () => {
           placeholder="**************"
           onChange={(e) => setPassword(e.target.value)}
         />
-        {/* <Container className="forgot-password-container">
+        <Container className="forgot-password-container">
           <div
             className="forgot-password text-decoration-none"
             style={{ cursor: "pointer" }}
-            onClick={() => navigate("forgot-password")}
+            onClick={() => navigate("/forgot-password")}
           >
             Forgot Password?
           </div>
-        </Container> */}
+        </Container>
         <button
           className="w-100 btn-sm custom-button"
           disabled={loading}
@@ -168,20 +205,7 @@ const LoginForm = () => {
             Sign Up
           </div>
         </div> */}
-        {error1 && (
-          <div
-            style={{
-              marginTop: "2rem",
-              backgroundColor: "#f44336", // Red background color
-              color: "white", // White text color
-              padding: "10px", // Padding around the message
-              borderRadius: "5px", // Rounded corners
-              boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.2)", // Box shadow for a subtle effect
-            }}
-          >
-            {error1}
-          </div>
-        )}
+        {error1 && <div className="error">{error1}</div>}
       </Form>
     </div>
   );

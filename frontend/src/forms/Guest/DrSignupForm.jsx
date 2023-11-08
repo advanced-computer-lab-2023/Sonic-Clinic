@@ -2,12 +2,9 @@ import axios from "axios";
 import * as React from "react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-
 import { useDispatch } from "react-redux";
-
 import FormPassword from "../FormPassword";
 import FormInput from "../FormInput";
-import { setCredentialsDoctor } from "../../state/loginDoctorReducer";
 import { Form } from "react-bootstrap";
 
 const DrSignupForm = () => {
@@ -21,11 +18,11 @@ const DrSignupForm = () => {
   const [affiliation, setAffiliation] = useState("");
   const [education, setEducation] = useState("");
   const [speciality, setSpeciality] = useState("");
+  const [doctorID, setdoctorID] = useState(null);
+  const [medicalLicense, setMedicalLicense] = useState(null);
+  const [medicalDegree, setMedicalDegree] = useState(null);
   const [error1, setError] = useState(null);
-  const [message, setMessage] = useState(null);
   const [loading, isLoading] = useState(null);
-  const [agree, setAgree] = useState(false);
-  const [okay, setOkay] = useState(false);
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -55,7 +52,10 @@ const DrSignupForm = () => {
       !education ||
       !affiliation ||
       !speciality ||
-      !rate
+      !rate ||
+      !medicalDegree ||
+      !medicalLicense ||
+      !doctorID
     ) {
       setError("Please fill in all fields");
       console.log(error1);
@@ -170,6 +170,7 @@ const DrSignupForm = () => {
       isLoading(false);
       return;
     } else {
+      //ADD THE DOCUMENTS HENAAAA
       const user = {
         name,
         username,
@@ -219,13 +220,9 @@ const DrSignupForm = () => {
       }
     }
   };
-  const checkboxHandler = () => {
-    setAgree(!agree);
-  };
 
   return (
     <div className="col-9 form-container">
-      <div className="form-title">Hello!</div>
       <div className="form-title">Submit a Request to Get Started</div>
       <form className="rounded-3" onSubmit={handleSubmit}>
         <div className="col">
@@ -239,7 +236,6 @@ const DrSignupForm = () => {
             />
           </div>
         </div>
-
         <div className="row">
           <div className="col">
             <FormInput
@@ -288,7 +284,7 @@ const DrSignupForm = () => {
             />
           </div>
           <div className="col">
-            <Form.Group controlId="genderSelect">
+            <Form.Group controlId="SpecialtySelect">
               <Form.Label
                 style={{
                   width: "7.75rem",
@@ -316,8 +312,90 @@ const DrSignupForm = () => {
               </Form.Control>
             </Form.Group>
           </div>
+          <div className="col">
+            <label
+              htmlFor="fileInput"
+              style={{
+                width: "7.75rem",
+                height: "1.1875rem",
+                flexShrink: 0,
+                color: "var(--flowkit-charcoal, #222)",
+                fontSize: "0.75rem",
+                fontStyle: "normal",
+                fontWeight: 700,
+                lineHeight: "normal",
+              }}
+            >
+              Medical License
+            </label>
+            <input
+              type="file"
+              accept=".pdf"
+              onChange={(e) => setMedicalLicense(e.target.files[0])}
+              style={{
+                color: "#05afb9",
+                fontSize: "0.93rem",
+                marginBottom: "1rem",
+              }}
+              id="licenseInput"
+            />
+          </div>
+          <div className="col">
+            <label
+              htmlFor="fileInput"
+              style={{
+                width: "7.75rem",
+                height: "1.1875rem",
+                flexShrink: 0,
+                color: "var(--flowkit-charcoal, #222)",
+                fontSize: "0.75rem",
+                fontStyle: "normal",
+                fontWeight: 700,
+                lineHeight: "normal",
+              }}
+            >
+              Medical Degree
+            </label>
+            <input
+              type="file"
+              accept=".pdf"
+              onChange={(e) => setMedicalDegree(e.target.files[0])}
+              style={{
+                color: "#05afb9",
+                fontSize: "0.93rem",
+                marginBottom: "1rem",
+              }}
+              id="degreeInput"
+            />
+          </div>
+          <div className="col">
+            <label
+              style={{
+                width: "7.75rem",
+                height: "1.1875rem",
+                flexShrink: 0,
+                color: "var(--flowkit-charcoal, #222)",
+                fontSize: "0.75rem",
+                fontStyle: "normal",
+                fontWeight: 700,
+                lineHeight: "normal",
+              }}
+            >
+              Doctor ID
+            </label>
+            <input
+              type="file"
+              accept=".pdf"
+              onChange={(e) => setdoctorID(e.target.files[0])}
+              style={{
+                color: "#05afb9",
+                fontSize: "0.93rem",
+                marginBottom: "0.75rem",
+              }}
+              id="IdInput"
+            />
+          </div>
         </div>
-
         <FormInput
           name="Email"
           type="email"
