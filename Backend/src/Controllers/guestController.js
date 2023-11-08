@@ -3,7 +3,6 @@ const { default: mongoose } = require("mongoose");
 const potentialDoctorModel = require("../Models/PotentialDoctor.js");
 const patientModel = require("../Models/Patient.js");
 
-
 const addPotentialDoctor = async (req, res) => {
   const { username } = req.body;
 
@@ -34,11 +33,11 @@ const addPatient = async (req, res) => {
     emergencyFullName,
     emergencyMobileNumber,
     age,
-    nationalID
+    nationalID,
   } = req.body;
 
   // Set default values for non-required fields
-  
+
   const package = req.body.package || "  ";
 
   try {
@@ -61,9 +60,10 @@ const addPatient = async (req, res) => {
       emergencyMobileNumber,
       package, // Set the default value for package
       age,
-    nationalID
-    }); 
-   
+      nationalID,
+      wallet: 0,
+    });
+
     console.log("Patient Created!");
     res.status(200).send(newPatient);
   } catch (error) {
