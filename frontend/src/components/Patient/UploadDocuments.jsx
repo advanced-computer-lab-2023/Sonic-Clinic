@@ -1,12 +1,14 @@
 import React, { useState } from "react";
-import { Button, Card, ListGroup } from "react-bootstrap";
+import { Card, ListGroup } from "react-bootstrap";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faX } from "@fortawesome/free-solid-svg-icons";
 
 function UploadDocuments() {
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const [existingFiles, setExistingFiles] = useState([
-    "document1.pdf",
-    "image.jpg",
-    "document2.pdf",
+    "file1.pdf",
+    "file2.pdf",
+    "file3.pdf",
   ]);
   const [uploadVisible, setUploadVisible] = useState(false);
 
@@ -21,56 +23,90 @@ function UploadDocuments() {
     setUploadedFiles(updatedFiles);
   };
 
+  const addFiles = () => {
+    setUploadedFiles([]);
+    //fetch medical history tani
+  };
+
   return (
     <Card>
       <Card.Header>
         <h5>My Documents</h5>
       </Card.Header>
       <Card.Body>
-        <Button
-          variant="primary"
+        <label
+          style={{
+            marginBottom: "1rem",
+            cursor: "pointer",
+            color: "#099BA0",
+            textDecoration: "underline",
+          }}
           onClick={() => setUploadVisible(!uploadVisible)}
+          htmlFor="weee"
         >
-          {uploadVisible ? "Hide Upload" : "Upload Documents"}
-        </Button>
+          Upload Health Records
+        </label>
+        <div>
+          <input
+            type="file"
+            accept=".pdf, .jpeg, .jpg, .png"
+            multiple
+            onChange={handleFileUpload}
+            style={{ display: "none" }}
+            id="weee"
+          />
 
-        {uploadVisible && (
-          <div>
-            <input
-              type="file"
-              accept=".pdf, .jpeg, .jpg, .png"
-              multiple
-              onChange={handleFileUpload}
-            />
-
-            {uploadedFiles.length > 0 && (
-              <div>
-                <h6>Newly Uploaded Documents:</h6>
-                <ul>
-                  {uploadedFiles.map((file, index) => (
-                    <li key={index}>
-                      {file.name}
-                      <Button
-                        variant="danger"
-                        size="sm"
-                        onClick={() => handleRemoveFile(index)}
-                      >
-                        Remove
-                      </Button>
-                    </li>
-                  ))}
-                </ul>
+          {uploadedFiles.length > 0 && (
+            <div>
+              <ul>
+                {uploadedFiles.map((file, index) => (
+                  <li key={index}>
+                    {file.name}
+                    <FontAwesomeIcon
+                      icon={faX}
+                      style={{
+                        opacity: 1,
+                        color: "red",
+                        fontSize: "15px",
+                        marginLeft: "2rem",
+                        cursor: "pointer",
+                      }}
+                      onClick={() => handleRemoveFile(index)}
+                    />
+                  </li>
+                ))}
+              </ul>
+              <div
+                style={{
+                  marginLeft: "6rem",
+                  cursor: "pointer",
+                  color: "#05afb9 ",
+                  fontWeight: "bold",
+                  marginBottom: "1rem",
+                }}
+                onClick={addFiles}
+              >
+                Add
               </div>
-            )}
-          </div>
-        )}
+            </div>
+          )}
+        </div>
 
         {existingFiles.length > 0 && (
           <div>
             <h6>Existing Documents:</h6>
             <ListGroup>
               {existingFiles.map((file, index) => (
-                <ListGroup.Item key={index}>{file}</ListGroup.Item>
+                <ListGroup.Item key={index}>
+                  <a
+                    href={file}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ color: "#212529" }}
+                  >
+                    {file}
+                  </a>
+                </ListGroup.Item>
               ))}
             </ListGroup>
           </div>
