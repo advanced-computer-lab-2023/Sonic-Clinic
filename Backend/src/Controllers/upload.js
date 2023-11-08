@@ -76,4 +76,63 @@ const uploadFiles = async (req, res) => {
   }
 };
 
-module.exports = uploadFiles;
+const viewPatientMedicalHistory = async (req, res) => {
+  try {
+    const patientUsername = req.body.username;
+    const patient = await patientModel.findById(patientUsername);
+    if (!patient) {
+      return res.status(404).json({ error: 'Patient not found' });
+    }
+
+    // Retrieve and send the files from the medicalHistory
+    const files = await Promise.all(patient.medicalHistory.map(async (fileId) => {
+      const file = await gfs.find({ _id: fileId }).toArray();
+
+      if (file.length === 0) {
+        return null; // File not found in GridFS
+      }
+
+      return {
+        filename: file[0].filename,
+        contentType: file[0].contentType,
+        data: await gfs.createReadStream({ _id: fileId }),
+      };
+    }));
+
+    // Remove null entries (files not found)
+    const validFiles = files.filter((file) => file !== null);
+
+    // Send the valid files in the response
+    res.status(200).json({ files: validFiles });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+const removeFileFromMedicalHistory = async (req, res) => {
+  try {
+   
+    const fileIdToRemove = req.params.fileId;
+    const patient = await patientModel.findById(req.user.id);
+
+    if (!patient) {
+      return res.status(404).json({ error: 'Patient not found' });
+    }
+    const index = patient.medicalHistory.indexOf(fileIdToRemove);
+
+    if (index === -1) {
+      return res.status(404).json({ error: 'File not found in medicalHistory' });
+    }
+
+    // Remove the fileId from the medicalHistory
+    patient.medicalHistory.splice(index, 1);
+
+    await patient.save();
+
+    res.status(200).json({ message: 'File removed from medicalHistory' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+module.exports = { uploadFiles, viewPatientMedicalHistory, removeFileFromMedicalHistory,};
