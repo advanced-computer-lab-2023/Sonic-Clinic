@@ -7,13 +7,12 @@ const session = require("express-session");
 const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
 const multer = require("multer");
+const stripe = require("stripe")(process.env.SECRET_KEY);
 
 //const Grid = require('gridfs-stream');
 //const GridFS = Grid(mongoose.connection.db, mongoose.mongo);
 
-
 //const multer = require('multer');
-
 
 mongoose.set("strictQuery", false);
 require("dotenv").config();
@@ -95,11 +94,16 @@ const {
 const {
   addPatient,
   addPotentialDoctor,
- 
 } = require("./Controllers/guestController");
 
 ////////////////////////////////authorizationController///////////////////////////////////////////
-const { login, requireAuth, logout,  otp,verifyOtp } = require("./Controllers/authorization");
+const {
+  login,
+  requireAuth,
+  logout,
+  otp,
+  verifyOtp,
+} = require("./Controllers/authorization");
 
 //el link bta3 el DB
 const MongoURI = process.env.MONGO_URI;
@@ -131,8 +135,6 @@ server.post("/login", login);
 // configurations
 // Mongo DB
 
-
-
 // Set up Multer for file uploads
 //const storage = multer.memoryStorage();
 //const upload = multer({ storage: storage });
@@ -149,7 +151,6 @@ mongoose
   })
   .catch((err) => console.log(err));
 
-
 /*
                                                     Start of your code
 */
@@ -161,8 +162,8 @@ server.get("/home", (req, res) => {
 server.use(express.json());
 
 ////////////////////////////////////////////////POST//////////////////////////////////
-server.post("/otp",otp);
-server.post("/verifyOtp",verifyOtp);
+server.post("/otp", otp);
+server.post("/verifyOtp", verifyOtp);
 //admin
 server.post("/addAdmin", addAdmin);
 server.post("/addDoctor", addDoctor);
@@ -176,7 +177,11 @@ server.post("/addPotentialDoctor", addPotentialDoctor);
 server.post("/addPrescription", requireAuth, addPrescription);
 server.post("/addAvailableSlots", requireAuth, addAvailableSlots);
 server.post("/changePasswordForPatient", requireAuth, changePasswordForPatient);
-server.post("/addAppointmentByPatientID",requireAuth,addAppointmentByPatientID);
+server.post(
+  "/addAppointmentByPatientID",
+  requireAuth,
+  addAppointmentByPatientID
+);
 
 //patient
 server.post("/addFamilyMember", requireAuth, addFamilyMember);
@@ -188,7 +193,11 @@ server.post(
   subscribeHealthPackageFam
 );
 server.post("/changePasswordForPatient", requireAuth, changePasswordForPatient);
-server.post("/addAppointmentForMyselfOrFam", requireAuth, addAppointmentForMyselfOrFam);
+server.post(
+  "/addAppointmentForMyselfOrFam",
+  requireAuth,
+  addAppointmentForMyselfOrFam
+);
 
 //////////////////////////////////////////// GET/////////////////////////////////////
 //admin
@@ -244,10 +253,7 @@ server.post(
 server.post("/cancelHealthPackage", requireAuth, cancelHealthPackage);
 server.post("/cancelHealthPackageFam", requireAuth, cancelHealthPackageFam);
 server.post("/changePasswordForDoctor", requireAuth, changePasswordForDoctor);
-server.post(
-  "/addFamilyMemberExisting",requireAuth,
-  addFamilyMemberExisting
-);
+server.post("/addFamilyMemberExisting", requireAuth, addFamilyMemberExisting);
 //server.post("/uploadPdf",requireAuth, uploadPDF);
 
 //doctor
@@ -268,7 +274,11 @@ server.get("/searchPatientByName", requireAuth, searchPatientByName);
 server.post("/viewDocApp", requireAuth, viewDocApp);
 server.get("/viewSubscribedPackage", requireAuth, viewSubscribedPackage);
 server.post("/viewSubscribedPackageFam", requireAuth, viewSubscribedPackageFam);
-server.get("/viewAllAppointmentsDoctor", requireAuth, viewAllAppointmentsDoctor);
+server.get(
+  "/viewAllAppointmentsDoctor",
+  requireAuth,
+  viewAllAppointmentsDoctor
+);
 
 ////////////////////////////////////////////////////PUT////////////////////////////////////////
 //admin
@@ -284,6 +294,22 @@ server.delete("/removePatient", requireAuth, removePatient);
 server.delete("/removeAdmin", requireAuth, removeAdmin);
 server.delete("/rejectDoctor", requireAuth, rejectPotentialDoctor);
 server.delete("/removeFamilyMember", requireAuth, removeFamilyMember);
+
+/////handling el payment///////
+server.post("/create-payment-intent", async (req, res) => {
+  const { amount, currency } = req.body;
+
+  try {
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: amount,
+      currency: currency,
+    });
+
+    res.json({ clientSecret: paymentIntent.client_secret });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 
 /*
                                                     End of your code
