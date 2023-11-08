@@ -51,7 +51,7 @@ const doctorSchema = new Schema(
       required: false,
     },
     availableSlots: {
-      type: [Date],
+      type: [String],
       required: false,
     }
   },

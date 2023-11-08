@@ -284,6 +284,7 @@ const addFamilyMemberExisting = async (req, res) => {
   const email = req.body.email;
   const relationToPatient = req.body.relationToPatient;
   const phoneNumber = req.body.phoneNumber;
+  const patient = await patientModel.findById(req.user.id);
 
   try {
     let familyMember = await patientModel.findOne({ email });
@@ -304,8 +305,11 @@ const addFamilyMemberExisting = async (req, res) => {
       age,
       gender,
       relationToPatient,
-      patientID: familyMember._id, // Assuming patientModel has an _id field
+      patientID: req.user.id, // Assuming patientModel has an _id field
     });
+    patient.familyMembers = patient.familyMembers || [];
+    patient.familyMembers.push([fam._id, name]);
+    await patient.save();
 
     console.log("Family member added!");
     res.status(200).json(fam);
@@ -914,6 +918,40 @@ const changePasswordForPatient = async (req, res) => {
     res.status(500).json({ message: "Server Error" });
   }
 };
+
+const changePasswordForPatientForget = async (req, res) => {
+  const { email, newPassword } = req.body;
+
+  try {
+    const patient = await patientModel.find({email:email});
+
+    if (!patient) {
+      return res.status(404).json({ message: "email does not exist" });
+    }
+
+    const isPasswordCorrect = await bcrypt.compare(
+      currentPassword,
+      patient.password
+    );
+
+    if (!isPasswordCorrect) {
+      return res
+        .status(401)
+        .json({ message: "Current password is incorrect." });
+    }
+
+    // Hash the new password and update it in the database
+    const salt = await bcrypt.genSalt();
+    const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+    patient.password = hashedPassword;
+    await patient.save();
+
+    res.status(200).json({ message: "Password changed successfully." });
+  } catch (error) {
+    res.status(500).json({ message: "Server Error" });
+  }
+};
 const cancelHealthPackageFam = async (req, res) => {
   try {
     const familyMember = await familyMemberModel.findById(req.query._id);
@@ -984,13 +1022,38 @@ const cancelHealthPackage = async (req, res) => {
 
 const addAppointmentForMyselfOrFam = async (req, res) => {
   let patientID = req.user.id; // Use let to make it reassignable
-  const { famID, doctorID, date, description, status, time } = req.body;
+  const { famID, doctorID, date, description, time } = req.body;
   
   try {
-    if (famID !== "") {
-      patientID = famID;
+    const doctor = await doctorModel.findById(doctorID);
+    const doctorAvailableSlots = doctor.availableSlots;
+
+    // Check if the appointment date matches any of the doctor's available slots
+    let isAvailableSlot = false;
+    let slot2;
+    for (const slot of doctorAvailableSlots) {
+      const [dateS, timeS] = slot.split(" ");
+      if (dateS === date && timeS === time) {
+        slot2 = slot;
+        isAvailableSlot = true;
+        break; // Exiting the loop when a matching slot is found
+      }
     }
     
+    if (!isAvailableSlot) {
+      return res.status(400).json({ message: "Appointment date is not available." });
+    }
+
+    // If the date is available, remove it from the doctor's available slots
+    doctor.availableSlots = doctorAvailableSlots.filter(slot => {
+      return slot !== slot2;
+    });
+
+    // Create the appointment and update the doctor's appointments
+    if (famID) {
+      patientID = famID;
+    }
+const status='upcoming'
     const appointment = await appointmentModel.create({
       date,
       description,
@@ -1000,11 +1063,14 @@ const addAppointmentForMyselfOrFam = async (req, res) => {
       time,
     });
 
+    await doctor.save();
+
     res.status(201).json({ message: "Appointment added successfully.", appointment });
   } catch (error) {
     res.status(500).json({ message: "Server Error" });
   }
 };
+
 
 
 module.exports = {
@@ -1038,4 +1104,5 @@ module.exports = {
   viewSubscribedPackageFam,
   addFamilyMemberExisting,
   addAppointmentForMyselfOrFam,
+  changePasswordForPatientForget
 };

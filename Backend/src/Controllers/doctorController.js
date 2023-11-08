@@ -239,7 +239,7 @@ function parseDateString(dateString) {
 }
 
 const addAvailableSlots = async (req, res) => {
-  const { availableSlots } = req.body;
+  const  slots  = req.body.slots;
 
   try {
     // Find the doctor by ID
@@ -249,18 +249,14 @@ const addAvailableSlots = async (req, res) => {
       return res.status(404).json({ message: "Doctor not found." });
     }
 
-    const slotsAsDates = availableSlots.map(
-      (dateString) => new Date(dateString)
-    );
-
-    doctor.availableSlots = doctor.availableSlots.concat(slotsAsDates);
+    doctor.availableSlots = doctor.availableSlots.concat(slots);
 
     // Save the updated doctor document
     await doctor.save();
 
     res.status(200).json({
       message: "Available slots added successfully.",
-      slotsAsDates: slotsAsDates, // Include the slotsAsDates array in the response
+     slots
     });
   } catch (error) {
     res.status(500).json({ message: "Server Error", error });
