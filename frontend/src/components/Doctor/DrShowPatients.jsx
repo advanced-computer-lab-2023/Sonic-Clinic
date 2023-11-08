@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Card, Col, Row, Form, Button, Modal } from "react-bootstrap";
+import { Card, Col, Row, Form, Button, ListGroup } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faChevronDown,
@@ -15,6 +15,11 @@ function DrShowPatients({ patients, setPatients, responseData, upcomingApp }) {
   const [uploadVisible, setUploadVisible] = useState(false);
   const [followUpModal, setFollowUpModal] = useState(false);
   const [followUpDateTime, setFollowUpDateTime] = useState(null);
+  const [existingFiles, setExistingFiles] = useState([
+    "file1.pdf",
+    "file2.pdf",
+    "file3.pdf",
+  ]);
 
   const handleFileUpload = (e) => {
     const newFiles = Array.from(e.target.files);
@@ -66,10 +71,6 @@ function DrShowPatients({ patients, setPatients, responseData, upcomingApp }) {
 
   const scheduleFollowUp = () => {
     setFollowUpModal(false);
-    // Handle scheduling logic
-    // You can add your scheduling logic here
-    // For this example, we'll just log the patient's name
-    // console.log(`Scheduling appointment for ${patient.name}`);
   };
 
   return (
@@ -128,11 +129,11 @@ function DrShowPatients({ patients, setPatients, responseData, upcomingApp }) {
                       style={{ marginBottom: "1rem" }}
                       onClick={() =>
                         followUpModal
-                          ? scheduleFollowUp
+                          ? scheduleFollowUp()
                           : setFollowUpModal(true)
                       }
                     >
-                      Schedule Follow-up
+                      {followUpModal ? "Save" : "Schedule Follow-up"}
                     </Button>
                     {followUpModal && (
                       <div>
@@ -155,22 +156,21 @@ function DrShowPatients({ patients, setPatients, responseData, upcomingApp }) {
                       </p>
                       <p>Gender: {patient.gender}</p>
                       <p style={{ fontWeight: "bold" }}>Medical History:</p>
-                      {/* Should be medical history list NOT prescriptions */}
-                      {patient.prescriptions &&
-                      patient.prescriptions.length > 0 ? (
-                        patient.prescriptions.map((prescription, pIndex) => (
-                          <div key={pIndex}>
-                            <p>
-                              Prescription {pIndex + 1} by Dr{" "}
-                              {prescription.doctorName}
-                            </p>
-                            <ul>
-                              {prescription.medicine.map((medicine, mIndex) => (
-                                <li key={mIndex}>{medicine}</li>
-                              ))}
-                            </ul>
-                          </div>
-                        ))
+                      {existingFiles ? (
+                        <ListGroup>
+                          {existingFiles.map((file, index) => (
+                            <ListGroup.Item key={index}>
+                              <a
+                                href={file}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                style={{ color: "#212529" }}
+                              >
+                                {file}
+                              </a>
+                            </ListGroup.Item>
+                          ))}
+                        </ListGroup>
                       ) : (
                         <div>No previous history found</div>
                       )}
