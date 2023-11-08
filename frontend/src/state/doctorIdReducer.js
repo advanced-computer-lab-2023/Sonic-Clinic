@@ -9,6 +9,7 @@ const initialState = {
   educationalBackground: "",
   speciality: "",
   photoLink: "",
+  id: "",
 };
 
 const doctorIdSlice = createSlice({
@@ -25,6 +26,7 @@ const doctorIdSlice = createSlice({
       state.educationalBackground = action.payload.educationalBackground;
       state.speciality = action.payload.speciality;
       state.photoLink = action.payload.photoLink;
+      state.id = action.payload.id;
     },
   },
 });

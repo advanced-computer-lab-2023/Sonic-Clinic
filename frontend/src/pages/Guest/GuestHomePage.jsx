@@ -10,6 +10,7 @@ import { useEffect } from "react";
 import { logoutDoctor } from "../../state/loginDoctorReducer";
 import { logoutAdmin } from "../../state/loginAdminReducer";
 import { logoutPatient } from "../../state/loginPatientReducer";
+import axios from "axios";
 
 function GuestHomePage() {
   const dispatch = useDispatch();
@@ -17,7 +18,19 @@ function GuestHomePage() {
     dispatch(logoutDoctor());
     dispatch(logoutAdmin());
     dispatch(logoutPatient());
+    logout();
   }, []);
+  const logout = async () => {
+    try {
+      console.log("HHHHHHHH");
+      const response = await axios.get("/logout");
+      if (response.status === 200) {
+        console.log("LOGOUT");
+      }
+    } catch (error) {
+      console.log();
+    }
+  };
   return (
     <div>
       <AppNavbar hamburgerMenu={<GuestBurgerMenu />} />

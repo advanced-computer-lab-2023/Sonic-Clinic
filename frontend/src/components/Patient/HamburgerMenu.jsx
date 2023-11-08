@@ -10,9 +10,11 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState } from "react";
 import { slide as Menu } from "react-burger-menu";
 import { useSelector } from "react-redux";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 function HamburgerMenu() {
   const [menuOpen, setMenuOpen] = useState(false);
-
+  const navigate = useNavigate();
   const handleMenuClick = () => {
     setMenuOpen(!menuOpen);
   };
@@ -21,6 +23,20 @@ function HamburgerMenu() {
     setMenuOpen(false);
   };
   const name = useSelector((state) => state.patientLogin.name).split(" ")[0];
+  const logout = async () => {
+    setMenuOpen(false);
+    try {
+      console.log("HHHHHHHH");
+      const response = await axios.get("/logout");
+      if (response.status === 200) {
+        navigate("/");
+      }
+    } catch (error) {
+      console.log("HHHHHHHH");
+      console.log();
+    }
+    closeMenu();
+  };
   return (
     <div>
       <Menu
@@ -260,6 +276,7 @@ function HamburgerMenu() {
             <FontAwesomeIcon
               icon={faRightFromBracket}
               style={{ marginRight: "0.5rem" }}
+              // onClick={logout()}
             />
             Logout
           </a>

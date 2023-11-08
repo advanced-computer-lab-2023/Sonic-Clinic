@@ -32,6 +32,7 @@ function ShowDoctors({ patients, responseData, setPatients, loading, error1 }) {
         educationalBackground: doctor.educationalBackground,
         speciality: doctor.specialty,
         photoLink: doctor.photoLink,
+        id: doctor.id,
       })
     );
     navigate(`/patient/view-doctors/${index}`);

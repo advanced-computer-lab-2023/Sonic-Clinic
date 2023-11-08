@@ -11,6 +11,7 @@ import { slide as Menu } from "react-burger-menu";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { logoutAdmin } from "../../state/loginAdminReducer";
+import axios from "axios";
 
 function HamburgerMenu() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -25,8 +26,13 @@ function HamburgerMenu() {
     setMenuOpen(false);
   };
 
-  const logout = () => {
-    navigate("/");
+  const logout = async () => {
+    try {
+      const response = await axios.get("/logout");
+      navigate("/");
+    } catch (error) {
+      console.log();
+    }
     dispatch(logoutAdmin());
     closeMenu();
   };

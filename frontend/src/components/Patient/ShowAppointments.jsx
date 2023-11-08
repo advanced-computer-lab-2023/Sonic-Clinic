@@ -26,9 +26,7 @@ function ShowAppointments() {
 
   const fetchData = async () => {
     try {
-      const response = await axios.post("/viewAllAppointments", {
-        _id: id,
-      });
+      const response = await axios.post("/viewAllAppointmentsPatient");
       if (response.status === 200) {
         setResponseData(response.data);
       } else {

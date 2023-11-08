@@ -12,6 +12,7 @@ import { useSelector } from "react-redux";
 import { logoutDoctor } from "../../state/loginDoctorReducer";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
+import axios from "axios";
 
 function DrHamburgerMenu() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -26,8 +27,13 @@ function DrHamburgerMenu() {
     setMenuOpen(false);
   };
 
-  const logout = () => {
-    navigate("/");
+  const logout = async () => {
+    try {
+      const response = await axios.get("/logout");
+      navigate("/");
+    } catch (error) {
+      console.log();
+    }
     dispatch(logoutDoctor());
     closeMenu();
   };

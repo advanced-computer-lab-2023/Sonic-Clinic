@@ -98,8 +98,6 @@ const {
 
 ////////////////////////////////authorizationController///////////////////////////////////////////
 
-
-
 const {
   login,
   requireAuth,
@@ -136,6 +134,7 @@ server.use(
 );
 //login
 server.post("/login", login);
+server.get("/logout", logout);
 
 // configurations
 // Mongo DB
