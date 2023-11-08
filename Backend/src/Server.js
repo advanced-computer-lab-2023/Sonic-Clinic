@@ -98,13 +98,7 @@ const {
 
 ////////////////////////////////authorizationController///////////////////////////////////////////
 
-const {
-  login,
-  requireAuth,
-  logout,
-  otp,
-  verifyOtp,
-} = require("./Controllers/authorization");
+
 
 const {
   login,
