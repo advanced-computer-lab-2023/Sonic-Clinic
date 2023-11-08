@@ -136,7 +136,7 @@ export default function HealthPackageCard() {
     >
       <Carousel
         className="d-flex align-items-center carousel-dark"
-        style={{ height: "550px", width: "500px", marginBottom: "5px" }}
+        style={{ height: "550px", width: "60rem", marginBottom: "5px" }}
       >
         {packages.map((packagee, index) => {
           const dynamicTextsForPackage = [
@@ -150,11 +150,11 @@ export default function HealthPackageCard() {
             <Carousel.Item
               key={index}
               className="align-items-center"
-              style={{ marginLeft: "21%" }}
+              style={{ marginLeft: "13%" }}
             >
               <Card
                 style={{
-                  width: "300px",
+                  width: "45rem",
                   boxShadow: "0px 4px 4px 0px #adb5bd",
                   borderRadius: "3px",
                   marginBottom: "60px",

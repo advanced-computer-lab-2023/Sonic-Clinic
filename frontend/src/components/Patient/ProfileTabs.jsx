@@ -85,6 +85,24 @@ function ProfileTabs() {
                   Medical History
                 </Nav.Link>
               </Nav.Item>
+              <Nav.Item>
+                <Nav.Link
+                  eventKey="fourth"
+                  style={{
+                    background: activeKey === "fourth" ? "#05afb9" : "white",
+                    color: activeKey === "fourth" ? "white" : "black",
+                    border:
+                      activeKey === "fourth"
+                        ? "none"
+                        : "1px solid rgb(189, 189, 189)",
+                    marginBottom: "1rem",
+                    fontSize: "1.2rem",
+                    fontWeight: "600",
+                  }}
+                >
+                  My Wallet
+                </Nav.Link>
+              </Nav.Item>
             </Nav>
           </Col>
           <Col lg={9}>
@@ -100,6 +118,9 @@ function ProfileTabs() {
               </Tab.Pane>
               <Tab.Pane eventKey="third">
                 <UploadDocuments />
+              </Tab.Pane>
+              <Tab.Pane eventKey="fourth">
+                <ViewPersonalInfo />
               </Tab.Pane>
             </Tab.Content>
           </Col>
