@@ -239,12 +239,11 @@ function parseDateString(dateString) {
 }
 
 const addAvailableSlots = async (req, res) => {
-  const doctorId = req.user.id;
   const { availableSlots } = req.body;
 
   try {
     // Find the doctor by ID
-    const doctor = await doctorModel.findOne({ _id: doctorId });
+    const doctor = await doctorModel.findById(req.user.id);
 
     if (!doctor) {
       return res.status(404).json({ message: "Doctor not found." });
