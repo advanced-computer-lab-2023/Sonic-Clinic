@@ -69,6 +69,8 @@ const {
   viewAllAppointmentsDoctor,
   changePasswordForDoctor,
   addAppointmentByPatientID,
+  viewAvailableSlots,
+  
 } = require("./Controllers/doctorController");
 
 ///////////////////////////////adminstratorController//////////////////////////////////////
@@ -267,6 +269,7 @@ server.post("/addFamilyMemberExisting", requireAuth, addFamilyMemberExisting);
 //server.post("/uploadFiles",requireAuth, uploadFiles);
 
 //doctor
+server.get("/viewAvailableSlots",requireAuth,viewAvailableSlots);
 server.post("/selectPatient", requireAuth, selectPatient);
 server.post("/viewInfoAndHealthRecord", requireAuth, viewInfoAndHealthRecord);
 server.post("/viewPatients", requireAuth, viewPatients);
