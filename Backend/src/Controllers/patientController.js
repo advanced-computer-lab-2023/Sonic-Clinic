@@ -1142,7 +1142,13 @@ const subscribeHealthPackageWallet = async (req, res) => {
 };
 const payAppointmentWallet = async (req, res) => {
   try {
-    const patient = await patientModel.findById(req.user.id);
+    let patient;
+    const id = req.body.famID;
+    if (!id) {
+      patient = await patientModel.findById(req.user.id);
+    } else {
+      patient = await familyMemberModel.findById(id);
+    }
     if (!patient) {
       return res.status(404).json({ message: "Patient not found." });
     }
