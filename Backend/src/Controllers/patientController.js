@@ -844,17 +844,7 @@ const subscribeHealthPackageStripe = async (req, res) => {
       success_url: `${process.env.SERVER_URL}/patient/packages`,
       cancel_url: `${process.env.SERVER_URL}/patient/packages`,
     });
-    res.json({ url: session.url });
-
-    if (session.url == success_url) {
-      patient.package = package;
-      await patient.save();
-      return res.status(200).json({ patient });
-    } else {
-      return res
-        .status(404)
-        .json({ message: "You are already subscribed to that package." });
-    }
+    res.status(200).json({ url: session.url });
   } catch (error) {
     console.error("Error:", error);
     return res.status(500).json({ message: "Server Error" });
