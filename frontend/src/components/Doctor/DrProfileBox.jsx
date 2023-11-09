@@ -16,6 +16,7 @@ function DrProfileBox() {
     padding: "1rem",
     backgroundColor: "#ffffff",
     textAlign: "center",
+    marginLeft: "10rem",
   };
 
   const profileImageStyle = {
@@ -34,7 +35,7 @@ function DrProfileBox() {
   };
 
   const inputLabel = {
-    width: "7rem",
+    width: "12rem",
     marginRight: "0.5rem",
     fontWeight: "bold",
     color: "#adb5bd ",

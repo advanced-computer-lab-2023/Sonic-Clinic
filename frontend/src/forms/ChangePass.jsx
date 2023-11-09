@@ -45,9 +45,9 @@ export default function ChangePass({ mg }) {
     }
 
     try {
-      const response = await axios.post("/changePass", {
-        currentPass: oldPass,
-        newPass: newPass,
+      const response = await axios.post("/changePasswordForPatient", {
+        currentPassword: oldPass,
+        newPassword: newPass,
       });
       if (response.status === 200) {
         console.log("tmam");
@@ -108,7 +108,7 @@ export default function ChangePass({ mg }) {
             color: "#05afb9 ",
             fontWeight: "bold",
             fontSize: "0.9rem",
-            marginLeft: { mg } ? "9.5rem" : "0",
+            marginLeft: mg ? "9.5rem" : "0px",
           }}
         >
           Save
