@@ -80,19 +80,6 @@ export default function HealthPackageCard() {
     });
   };
 
-  // const handleBookAppointment = () => {
-  //   // Simulate a booking request (replace with actual API call)
-  //   setBookingStatus("booking"); // Show "Booking in progress" message
-  //   setTimeout(() => {
-  //     // Simulate a successful booking
-  //     setBookingStatus("success"); // Show "Booking success" message
-  //   }, 500); // Simulate a 2-second delay (replace with actual API call)
-
-  //   // In a real application, you would perform the booking logic and handle the response.
-
-  //   // Close the modal
-  //   // handleClose();
-  // };
   const handleBookAppointment = async () => {
     try {
       const response = await axios.post("/subscribeHealthPackage?type=Silver");

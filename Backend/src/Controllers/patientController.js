@@ -7,6 +7,9 @@ const prescriptionModel = require("../Models/Prescription.js");
 const appointmentModel = require("../Models/Appointment.js");
 const { updateUserInfoInCookie } = require("./authorization.js");
 const bcrypt = require("bcrypt");
+const stripe = require("stripe")(
+  "sk_test_51O9lZ0IQTS4vUIMWJeAJ5Ds71jNbeQFj6v8mO7leS2cDIJuLy1fwNzoiXPKZV5KdoMpfzocfJ6hBusxPIjbGeveF00RTnmVYCX"
+);
 
 const doctorDetails = async (req, res) => {
   const { name } = req.body;
@@ -825,25 +828,32 @@ const subscribeHealthPackageStripe = async (req, res) => {
   try {
     const patient = await patientModel.findById(req.user.id);
     const packageName = req.query.type;
-    const package = await packagesModel.find({ type: packageName });
+    const package = await packagesModel.findOne({ type: packageName });
+
     if (!patient) {
       return res.status(404).json({ message: "Patient not found." });
     }
+
+    console.log("Before the session");
+
     const session = await stripe.checkout.sessions.create({
-      payment_methods_types: ["card"],
+      payment_method_types: ["card"],
+      mode: "payment",
       line_items: [
         {
-          price_date: {
+          price_data: {
             currency: "usd",
-            product_data: { type: package.type },
+            product_data: { name: package.type },
             unit_amount: package.price,
           },
           quantity: 1,
         },
       ],
+
       success_url: `${process.env.SERVER_URL}/patient/packages`,
       cancel_url: `${process.env.SERVER_URL}/patient/packages`,
     });
+
     res.status(200).json({ url: session.url });
   } catch (error) {
     console.error("Error:", error);
