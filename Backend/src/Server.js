@@ -7,7 +7,9 @@ const session = require("express-session");
 const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
 const multer = require("multer");
-const stripe = require("stripe")(process.env.SECRET_KEY);
+const stripe = require("stripe")(
+  "sk_test_51O9lZ0IQTS4vUIMWJeAJ5Ds71jNbeQFj6v8mO7leS2cDIJuLy1fwNzoiXPKZV5KdoMpfzocfJ6hBusxPIjbGeveF00RTnmVYCX"
+);
 
 //const Grid = require('gridfs-stream');
 //const GridFS = Grid(mongoose.connection.db, mongoose.mongo);
@@ -76,7 +78,6 @@ const {
   viewAvailableSlots,
   viewWalletDoc,
   acceptContract,
-  
 } = require("./Controllers/doctorController");
 
 ///////////////////////////////adminstratorController//////////////////////////////////////
