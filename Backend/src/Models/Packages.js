@@ -6,7 +6,7 @@ const packagesSchema = new Schema(
     type: {
       type: String,
       required: true,
-      unique:[true,'this package is alrady created'],
+      unique:[true,'This package is already created'],
     },
     price: {
       type: Number,

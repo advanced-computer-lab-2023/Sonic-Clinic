@@ -40,7 +40,7 @@ const {
   viewHealthPackages,
   viewWalletAmount,
   viewAllAppointmentsOfDoctor,
-  subscribeHealthPackage,
+  subscribeHealthPackageStripe,
   subscribeHealthPackageFam,
   viewAvailableAppointmentsOfDoctor,
   cancelHealthPackage,
@@ -52,6 +52,10 @@ const {
   addFamilyMemberExisting,
   addAppointmentForMyselfOrFam,
   changePasswordForPatientForget,
+  viewWalletPatient,
+  subscribeHealthPackageWallet,
+  payAppointmentWallet,
+  payAppointmentStripe,
 } = require("./Controllers/patientController");
 
 /////////////////////////////////doctorController//////////////////////////////////////////
@@ -69,6 +73,10 @@ const {
   viewAllAppointmentsDoctor,
   changePasswordForDoctor,
   addAppointmentByPatientID,
+  viewAvailableSlots,
+  viewWalletDoc,
+  acceptContract,
+  
 } = require("./Controllers/doctorController");
 
 ///////////////////////////////adminstratorController//////////////////////////////////////
@@ -95,6 +103,7 @@ const {
 const {
   addPatient,
   addPotentialDoctor,
+  acceptPotientialDoc,
 } = require("./Controllers/guestController");
 
 ////////////////////////////////authorizationController///////////////////////////////////////////
@@ -176,10 +185,11 @@ server.post("/addPackage", addPackage);
 server.post("/changePasswordForAdmin", requireAuth, changePasswordForAdmin);
 
 //guest
-
+server.post("/acceptPotientialDoc", acceptPotientialDoc);
 server.post("/addPatient", addPatient);
 server.post("/addPotentialDoctor", addPotentialDoctor);
 //doctor
+server.get("/acceptContract", requireAuth, acceptContract);
 server.post("/addPrescription", requireAuth, addPrescription);
 server.post("/addAvailableSlots", requireAuth, addAvailableSlots);
 server.post("/changePasswordForPatient", requireAuth, changePasswordForPatient);
@@ -189,11 +199,14 @@ server.post(
   addAppointmentByPatientID
 );
 
-
 //patient
 server.post("/addFamilyMember", requireAuth, addFamilyMember);
 server.post("/addAppointment", requireAuth, addAppointment);
-server.post("/subscribeHealthPackage", requireAuth, subscribeHealthPackage);
+server.post(
+  "/subscribeHealthPackage",
+  requireAuth,
+  subscribeHealthPackageStripe
+);
 server.post(
   "/subscribeHealthPackageFam",
   requireAuth,
@@ -206,6 +219,8 @@ server.post(
   addAppointmentForMyselfOrFam
 );
 server.post("/changePasswordForPatientForget", changePasswordForPatientForget);
+server.post("/payAppointmentWallet", requireAuth, payAppointmentWallet);
+server.post("/payAppointmentStripe", requireAuth, payAppointmentStripe);
 
 //////////////////////////////////////////// GET/////////////////////////////////////
 //admin
@@ -265,8 +280,15 @@ server.post("/addFamilyMemberExisting", requireAuth, addFamilyMemberExisting);
 //server.post("/uploadPdf",requireAuth, uploadPDF);
 server.post("/addFamilyMemberExisting", requireAuth, addFamilyMemberExisting);
 //server.post("/uploadFiles",requireAuth, uploadFiles);
+server.get("/viewWalletPatient", requireAuth, viewWalletPatient);
+server.post(
+  "/subscribeHealthPackageWallet",
+  requireAuth,
+  subscribeHealthPackageWallet
+);
 
 //doctor
+server.get("/viewAvailableSlots", requireAuth, viewAvailableSlots);
 server.post("/selectPatient", requireAuth, selectPatient);
 server.post("/viewInfoAndHealthRecord", requireAuth, viewInfoAndHealthRecord);
 server.post("/viewPatients", requireAuth, viewPatients);
@@ -289,7 +311,7 @@ server.get(
   requireAuth,
   viewAllAppointmentsDoctor
 );
-
+server.get("/viewWalletDoc", requireAuth, viewWalletDoc);
 ////////////////////////////////////////////////////PUT////////////////////////////////////////
 //admin
 server.put("/updatePackage", requireAuth, updatePackage);

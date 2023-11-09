@@ -1,14 +1,14 @@
 const mongoose = require("mongoose");
 const Appointment = require("./Appointment");
 const Schema = mongoose.Schema;
-const bcrypt=require('bcrypt');
+const bcrypt = require("bcrypt");
 
 const doctorSchema = new Schema(
   {
     username: {
       type: String,
       required: true,
-      unique:[true,'this username is taken, please enter another username'],
+      unique: [true, "this username is taken, please enter another username"],
     },
     name: {
       type: String,
@@ -17,6 +17,7 @@ const doctorSchema = new Schema(
     email: {
       type: String,
       required: true,
+      unique: [true, "this email is taken, please enter another email"],
     },
     password: {
       type: String,
@@ -53,7 +54,15 @@ const doctorSchema = new Schema(
     availableSlots: {
       type: [String],
       required: false,
-    }
+    },
+    wallet: {
+      type: Number,
+      required: false,
+    },
+    contract: {
+      type: Boolean,
+      required: false,
+    },
   },
   { timestamps: true }
 );
@@ -78,9 +87,9 @@ doctorSchema.methods.getAppointments = async function () {
   }
 };
 
-doctorSchema.pre('save',async function (next){
-  const salt=await bcrypt.genSalt();
-  this.password=await bcrypt.hash(this.password,salt);
+doctorSchema.pre("save", async function (next) {
+  const salt = await bcrypt.genSalt();
+  this.password = await bcrypt.hash(this.password, salt);
   next();
 });
 const Doctor = mongoose.model("Doctor", doctorSchema);

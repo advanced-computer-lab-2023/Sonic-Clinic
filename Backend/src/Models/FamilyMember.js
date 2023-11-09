@@ -10,6 +10,7 @@ const familyMemberSchema = new Schema(
     nationalID: {
       type: String,
       required: true,
+      unique: [true, "this National ID is already registered"],
     },
     age: {
       type: Number,

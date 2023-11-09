@@ -32,6 +32,7 @@ const patientSchema = new Schema(
     email: {
       type: String,
       required: true,
+      unique: [true, "this email is taken, please enter another email"],
     },
     password: {
       type: String,

@@ -239,7 +239,7 @@ function parseDateString(dateString) {
 }
 
 const addAvailableSlots = async (req, res) => {
-  const  slots  = req.body.slots;
+  const slots = req.body.slots;
 
   try {
     // Find the doctor by ID
@@ -256,7 +256,7 @@ const addAvailableSlots = async (req, res) => {
 
     res.status(200).json({
       message: "Available slots added successfully.",
-     slots
+      slots,
     });
   } catch (error) {
     res.status(500).json({ message: "Server Error", error });
@@ -316,11 +316,10 @@ const changePasswordForDoctor = async (req, res) => {
 
 const addAppointmentByPatientID = async (req, res) => {
   try {
-    
-    const doctorID=req.user.id;
+    const doctorID = req.user.id;
 
     console.log(doctorID);
-    const { date, description, patientID, status,time } = req.body;
+    const { date, description, patientID, status, time } = req.body;
     console.log(patientID);
 
     // Create a new appointment with doctorID, patientID, and other details
@@ -335,11 +334,58 @@ const addAppointmentByPatientID = async (req, res) => {
 
     res
       .status(201)
-      .json({ message: 'Appointment added successfully.', appointment });
+      .json({ message: "Appointment added successfully.", appointment });
   } catch (error) {
-    res.status(500).json({ message: 'Server Error' });
+    res.status(500).json({ message: "Server Error" });
   }
 };
+
+const viewAvailableSlots = async (req, res) => {
+  try {
+    const doctor = await doctorModel.findById(req.user.id);
+    if (!doctor) {
+      return res.status(404).json({ message: "Doctor not found." });
+    }
+
+    // Get the available slots of the doctor
+    const availableSlots = doctor.availableSlots || [];
+
+    if (availableSlots.length === 0) {
+      return res
+        .status(404)
+        .json({ message: "This doctor has no available slots." });
+    }
+
+    return res.status(200).json({ availableSlots });
+  } catch (error) {
+    console.error("Error:", error);
+    return res.status(500).json({ message: "Server Error" });
+  }
+};
+
+const viewWalletDoc = async (req, res) => {
+  try {
+    const doc = await doctorModel.findById(req.user.id);
+    const wallet = doc.wallet;
+    res.status(200).json(wallet);
+  } catch (error) {
+    console.error("Error:", error);
+    return res.status(500).json({ message: "Server Error" });
+  }
+};
+
+const acceptContract =async (req, res) => {
+  try{
+    const doc = await doctorModel.findById(req.user.id);
+    doc.acceptContract=true;
+    await doc.save();
+    res.status(200).json("Contract Accepted");
+  }
+  catch (error) {
+    console.error("Error:", error);
+    return res.status(500).json({ message: "Server Error" });
+  }
+}
 
 module.exports = {
   selectPatient,
@@ -354,7 +400,8 @@ module.exports = {
   addAvailableSlots,
   viewAllAppointmentsDoctor,
   changePasswordForDoctor,
-
+  viewAvailableSlots,
   addAppointmentByPatientID,
-
+  viewWalletDoc,
+  acceptContract,
 };

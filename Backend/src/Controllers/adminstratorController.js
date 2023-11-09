@@ -26,16 +26,6 @@ const addAdmin = async (req, res) => {
   }
 };
 
-const addDoctor = async (req, res) => {
-  try {
-    const newDoctor = await doctorModel.create(req.body);
-    console.log("Doctor Created!");
-    res.status(200).send(newDoctor);
-  } catch (error) {
-    res.status(400).send({ error: error.message });
-  }
-};
-
 const addPackage = async (req, res) => {
   try {
     const newPackage = await packagesModel.create(req.body);
@@ -416,6 +406,46 @@ const changePasswordForAdmin = async (req, res) => {
     res.status(200).json({ message: "Password changed successfully." });
   } catch (error) {
     res.status(500).json({ message: "Server Error" });
+  }
+};
+
+const addDoctor = async (req, res) => {
+  const {
+    username,
+    name,
+    email,
+    password,
+    dateOfBirth,
+    hourlyRate,
+    affiliation,
+    educationalBackground,
+    specialty,
+  } = req.body;
+  try {
+    const existingDoctor = await doctorModel.findOne({ username });
+    if (existingDoctor) {
+      return res
+        .status(409)
+        .send({ message: "Doctor with this username already exists." });
+    }
+
+    const newDoctor = await doctorModel.create({
+      username,
+      name,
+      email,
+      password,
+      dateOfBirth,
+      hourlyRate,
+      affiliation,
+      educationalBackground,
+      specialty,
+      wallet: 0,
+    });
+
+    console.log("Doctor Created!");
+    res.status(200).send(newDoctor);
+  } catch (error) {
+    res.status(400).send({ error: error.message });
   }
 };
 
