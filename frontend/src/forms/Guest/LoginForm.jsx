@@ -65,6 +65,7 @@ const LoginForm = () => {
               emergencyName: user.emergencyFullName,
               emergencyNumber: user.emergencyMobileNumber,
               wallet: 0,
+              family: user.familyMembers,
               isLoggedIn: true,
             })
           );

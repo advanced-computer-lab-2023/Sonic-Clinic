@@ -5,8 +5,11 @@ import ListGroup from "react-bootstrap/ListGroup";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faShoppingBasket } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 export default function HealthPackageCard() {
+  const navigate = useNavigate();
   const constantTexts = [
     "Annual Fee",
     "Doctor Discount",
@@ -22,12 +25,15 @@ export default function HealthPackageCard() {
   const [showAddPackage, setShowAddPackage] = useState(false);
   const [loading, setLoading] = useState(true);
   const [responseData, setResponseData] = useState([]);
+  const [responseUrl, setResponseUrl] = useState([]);
   const [error1, setError] = useState(null);
 
   const [showModal, setShowModal] = useState(false);
   const [bookingStatus, setBookingStatus] = useState("booking");
 
-  const [bookingName, setBookingName] = useState("");
+  const [selectedFamilyMember, setSelectedFamilyMember] = useState("");
+  const [selectedFamilyMemberId, setSelectedFamilyMemberId] = useState("");
+
   const [paymentMethod, setPaymentMethod] = useState("wallet");
   const [creditCard, setCreditCard] = useState({
     cardNumber: "",
@@ -42,7 +48,7 @@ export default function HealthPackageCard() {
     setTimeout(() => {
       setBookingStatus("booking"); // Reset the status after a short delay
     }, 200); // Adjust the delay as needed
-    setBookingName("");
+    setSelectedFamilyMember("");
     setPaymentMethod("wallet");
     setCreditCard({
       cardNumber: "",
@@ -57,8 +63,9 @@ export default function HealthPackageCard() {
     setShowModal(true);
   };
 
-  const handleBookingNameChange = (e) => {
-    setBookingName(e.target.value);
+  const handleFamilyMemberChange = (e) => {
+    const selectedId = e.target.value;
+    setSelectedFamilyMemberId(selectedId === "myself" ? "" : selectedId);
   };
 
   const handlePaymentMethodChange = (e) => {
@@ -82,21 +89,31 @@ export default function HealthPackageCard() {
 
   const handleBookAppointment = async () => {
     try {
-      const response = await axios.post("/subscribeHealthPackage?type=Silver");
+      const response = await axios.post(
+        `/subscribeHealthPackage?type=${selectedPackage.type}`
+      );
       if (response.status === 200) {
+        setResponseUrl(response.data.url);
         setBookingStatus("booking"); // Show "Booking in progress" message
+
         setTimeout(() => {
           // Simulate a successful booking
           setBookingStatus("success"); // Show "Booking success" message
+
+          // Open the responseUrl in a new tab
+          if (responseUrl) {
+            if (responseUrl) {
+              window.open(responseUrl, "_blank");
+            }
+          }
         }, 500);
-        //doctor accepted feedback
       }
     } catch (error) {
       if (error.response && error.response.status === 404) {
         setError("Doctor not found");
       } else {
         setError(
-          "An error occurred while accepting doctor. Please try again later"
+          "An error occurred while accepting the doctor. Please try again later"
         );
       }
     }
@@ -136,6 +153,7 @@ export default function HealthPackageCard() {
     fontSize: "20px",
     cursor: "pointer",
   };
+  const familyMembers = useSelector((state) => state.patientLogin.family);
 
   return (
     <div
@@ -258,11 +276,20 @@ export default function HealthPackageCard() {
                 <Form.Group controlId="bookingName">
                   <Form.Label>Booking Name</Form.Label>
                   <Form.Control
-                    type="text"
-                    placeholder="Enter booking name"
-                    value={bookingName}
-                    onChange={handleBookingNameChange}
-                  />
+                    as="select"
+                    value={selectedFamilyMemberId}
+                    onChange={handleFamilyMemberChange}
+                    defaultValue="myself" // Set "Myself" as the default value
+                  >
+                    <option value="myself" key="myself">
+                      Myself
+                    </option>{" "}
+                    {familyMembers.map((member) => (
+                      <option key={member[0]} value={member[0]}>
+                        {member[1]}
+                      </option>
+                    ))}
+                  </Form.Control>
                 </Form.Group>
                 <Form.Group>
                   <Form.Label>Payment Method</Form.Label>
@@ -279,11 +306,11 @@ export default function HealthPackageCard() {
                     label="Credit Card"
                     name="paymentMethod"
                     value="creditCard"
-                    checked={paymentMethod === "creditCard"}
+                    // checked={paymentMethod === "creditCard"}
                     onChange={handlePaymentMethodChange}
                   />
                 </Form.Group>
-                {paymentMethod === "creditCard" && (
+                {/* {paymentMethod === "creditCard" && (
                   <div>
                     <Form.Group controlId="creditCardNumber">
                       <Form.Label>Credit Card Number</Form.Label>
@@ -320,7 +347,7 @@ export default function HealthPackageCard() {
                       />
                     </Form.Group>
                   </div>
-                )}
+                )} */}
               </Form>
             </div>
           )}
