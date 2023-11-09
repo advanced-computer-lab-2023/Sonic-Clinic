@@ -850,8 +850,8 @@ const subscribeHealthPackageStripe = async (req, res) => {
         },
       ],
 
-      success_url: `${process.env.SERVER_URL}/patient/packages`,
-      cancel_url: `${process.env.SERVER_URL}/patient/packages`,
+      success_url: `${process.env.SERVER_URL}/patient/`,
+      cancel_url: `${process.env.SERVER_URL}/patient/health-packages`,
     });
 
     res.status(200).json({ url: session.url });

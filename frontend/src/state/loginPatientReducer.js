@@ -13,6 +13,7 @@ const initialState = {
   emergencyNumber: "",
   userId: "",
   wallet: "0",
+  family: [],
   isLoggedIn: false,
 };
 
@@ -34,10 +35,21 @@ const loginSlice = createSlice({
       state.emergencyNumber = action.payload.emergencyNumber;
       state.isLoggedIn = action.payload.isLoggedIn;
       state.wallet = action.payload.wallet;
+      state.family = action.payload.family;
     },
     updatePatientWallet: (state, action) => {
-      state.wallet = action.payload.wallet;
+      state = {
+        ...state,
+        wallet: action.payload.wallet,
+      };
     },
+    updatePatientFamily: (state, action) => {
+      state = {
+        ...state,
+        family: action.payload.family,
+      };
+    },
+
     logoutPatient: (state, action) => {
       state.userName = "";
       state.name = "";
@@ -51,6 +63,7 @@ const loginSlice = createSlice({
       state.emergencyNumber = "";
       state.userId = "";
       state.wallet = "0";
+      state.family = [];
       state.isLoggedIn = false;
     },
     clearPassword: (state, action) => {
@@ -74,5 +87,6 @@ export const {
   logoutPatient,
   clearPassword,
   setUserId,
+  updatePatientFamily,
 } = loginSlice.actions;
 export default loginSlice.reducer;
