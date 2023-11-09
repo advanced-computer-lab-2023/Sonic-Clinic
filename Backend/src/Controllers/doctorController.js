@@ -374,6 +374,19 @@ const viewWalletDoc = async (req, res) => {
   }
 };
 
+const acceptContract =async (req, res) => {
+  try{
+    const doc = await doctorModel.findById(req.user.id);
+    doc.acceptContract=true;
+    await doc.save();
+    res.status(200).json("Contract Accepted");
+  }
+  catch (error) {
+    console.error("Error:", error);
+    return res.status(500).json({ message: "Server Error" });
+  }
+}
+
 module.exports = {
   selectPatient,
   viewInfoAndHealthRecord,
@@ -390,4 +403,5 @@ module.exports = {
   viewAvailableSlots,
   addAppointmentByPatientID,
   viewWalletDoc,
+  acceptContract,
 };

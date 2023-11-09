@@ -31,7 +31,7 @@ const doctorDetails = async (req, res) => {
 };
 
 const searchDoctors = async (req, res) => {
-  const { name, specialty } = req.body;
+  const { name, specialty: specialty } = req.body;
 
   try {
     let query = {};
