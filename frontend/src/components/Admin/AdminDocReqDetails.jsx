@@ -12,6 +12,7 @@ export default function AdminDocReqDetails({
   docAffiliation,
   docBirthDate,
   fetchData,
+  docUsername,
 }) {
   const [showRejectModal, setShowRejectModal] = useState(false);
   const [showAcceptModal, setShowAcceptModal] = useState(false);
@@ -38,8 +39,8 @@ export default function AdminDocReqDetails({
 
   const acceptDoctor = async () => {
     try {
-      const response = await axios.post("/acceptDoctor", {
-        email: docEmail,
+      const response = await axios.post("/addDoctor", {
+        username: docUsername,
       });
       if (response.status === 200) {
         handleClose();
@@ -59,9 +60,10 @@ export default function AdminDocReqDetails({
 
   const rejectDoctor = async () => {
     try {
-      const response = await axios.post("/rejectDoctor", {
-        email: docEmail,
-      });
+      const response = await axios.delete(
+        `/rejectDoctor?username=${docUsername}`
+      );
+
       if (response.status === 200) {
         handleClose();
         fetchData();

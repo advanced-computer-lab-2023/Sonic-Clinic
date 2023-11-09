@@ -37,10 +37,10 @@ function FamilyMembersList({ refreshFlag }) {
       <div
         className="d-flex justify-content-center align-items-center"
         style={{
-          fontSize: "2rem",
+          fontSize: "2.5rem", // Increase font size for the title
           fontWeight: "600",
-          color: "#212529  ",
-          // textDecoration: "underline",
+          color: "#212529",
+          lineHeight: "1.5",
         }}
       >
         Family Members
@@ -65,6 +65,8 @@ function FamilyMembersList({ refreshFlag }) {
             <strong>Age:</strong> {member.age}
             <br />
             <strong>Gender:</strong> {member.gender}
+            <br />
+            <strong>Package:</strong> {member.package}
             <br />
             <strong>Relation:</strong> {member.relationToPatient}
           </ListGroup.Item>

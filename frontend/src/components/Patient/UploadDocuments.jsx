@@ -29,90 +29,103 @@ function UploadDocuments() {
   };
 
   return (
-    <Card>
-      <Card.Header>
-        <h5>My Documents</h5>
-      </Card.Header>
-      <Card.Body>
-        <label
-          style={{
-            marginBottom: "1rem",
-            cursor: "pointer",
-            color: "#099BA0",
-            textDecoration: "underline",
-          }}
-          onClick={() => setUploadVisible(!uploadVisible)}
-          htmlFor="weee"
-        >
-          Upload Health Records
-        </label>
-        <div>
-          <input
-            type="file"
-            accept=".pdf, .jpeg, .jpg, .png"
-            multiple
-            onChange={handleFileUpload}
-            style={{ display: "none" }}
-            id="weee"
-          />
+    <>
+      <div
+        className="d-flex justify-content-center align-items-center"
+        style={{
+          fontSize: "2.5rem", // Increase font size for the title
+          fontWeight: "600",
+          color: "#212529",
+          lineHeight: "1.5",
+        }}
+      >
+        Medical History
+      </div>
+      <Card>
+        <Card.Header>
+          <h5>My Documents</h5>
+        </Card.Header>
+        <Card.Body>
+          <label
+            style={{
+              marginBottom: "1rem",
+              cursor: "pointer",
+              color: "#099BA0",
+              textDecoration: "underline",
+            }}
+            onClick={() => setUploadVisible(!uploadVisible)}
+            htmlFor="weee"
+          >
+            Upload Health Records
+          </label>
+          <div>
+            <input
+              type="file"
+              accept=".pdf, .jpeg, .jpg, .png"
+              multiple
+              onChange={handleFileUpload}
+              style={{ display: "none" }}
+              id="weee"
+            />
 
-          {uploadedFiles.length > 0 && (
-            <div>
-              <ul>
-                {uploadedFiles.map((file, index) => (
-                  <li key={index}>
-                    {file.name}
-                    <FontAwesomeIcon
-                      icon={faX}
-                      style={{
-                        opacity: 1,
-                        color: "red",
-                        fontSize: "15px",
-                        marginLeft: "2rem",
-                        cursor: "pointer",
-                      }}
-                      onClick={() => handleRemoveFile(index)}
-                    />
-                  </li>
-                ))}
-              </ul>
-              <div
-                style={{
-                  marginLeft: "6rem",
-                  cursor: "pointer",
-                  color: "#05afb9 ",
-                  fontWeight: "bold",
-                  marginBottom: "1rem",
-                }}
-                onClick={addFiles}
-              >
-                Add
+            {uploadedFiles.length > 0 && (
+              <div>
+                <ul>
+                  {uploadedFiles.map((file, index) => (
+                    <li key={index}>
+                      {file.name}
+                      <FontAwesomeIcon
+                        icon={faX}
+                        style={{
+                          opacity: 1,
+                          color: "red",
+                          fontSize: "15px",
+                          marginLeft: "2rem",
+                          cursor: "pointer",
+                        }}
+                        onClick={() => handleRemoveFile(index)}
+                      />
+                    </li>
+                  ))}
+                </ul>
+                <div
+                  style={{
+                    marginLeft: "6rem",
+                    cursor: "pointer",
+                    color: "#05afb9 ",
+                    fontWeight: "bold",
+                    marginBottom: "1rem",
+                  }}
+                  onClick={addFiles}
+                >
+                  Add
+                </div>
               </div>
+            )}
+          </div>
+
+          {existingFiles.length > 0 && (
+            <div>
+              <h6>Existing Documents:</h6>
+              <ListGroup>
+                {existingFiles.map((file, index) => (
+                  <ListGroup.Item key={index}>
+                    <a
+                      href={file}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{ color: "#212529" }}
+                    >
+                      {file}
+                    </a>
+                  </ListGroup.Item>
+                ))}
+              </ListGroup>
             </div>
           )}
-        </div>
-
-        {existingFiles.length > 0 && (
-          <div>
-            <h6>Existing Documents:</h6>
-            <ListGroup>
-              {existingFiles.map((file, index) => (
-                <ListGroup.Item key={index}>
-                  <a
-                    href={file}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{ color: "#212529" }}
-                  >
-                    {file}
-                  </a>
-                </ListGroup.Item>
-              ))}
-            </ListGroup>
-          </div>
-        )}
-      </Card.Body>
-    </Card>
+        </Card.Body>
+      </Card>
+    </>
   );
 }
 

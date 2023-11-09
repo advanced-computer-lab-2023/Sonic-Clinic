@@ -75,9 +75,9 @@ const ResetPasswordForm = () => {
       try {
         isLoading(true);
         await axios
-          .post("/changePass", {
+          .post("/changePasswordForPatientForget", {
             email: email,
-            password: password,
+            newPassword: password,
           })
           .then((response) => {
             if (response.status !== 200) {

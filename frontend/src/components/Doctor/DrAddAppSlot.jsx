@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button, Container, Form } from "react-bootstrap";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
@@ -9,18 +9,32 @@ const localizer = momentLocalizer(moment);
 function DrAddAppSlot() {
   const [selectedDate, setSelectedDate] = useState("");
   const [selectedTime, setSelectedTime] = useState("");
-  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [responseData, setResponseData] = useState([]);
+  const [error1, setError] = useState(null);
 
-  const appointmentSlots = [
-    {
-      title: "4:30pm",
-      start: new Date(2023, 0, 1, 9, 0, 0),
-      end: new Date(2023, 0, 1, 10, 0, 0),
-      time: "wee",
-    },
+  useEffect(() => {
+    fetchData();
+  }, []);
 
-    // Add more slots here
-  ];
+  const fetchData = async () => {
+    try {
+      const response = await axios.get();
+      if (response.status === 200) {
+        setResponseData(response.data.availableSlots);
+      } else {
+        console.log("Server error");
+      }
+      setLoading(false);
+    } catch (error) {
+      if (error.response && error.response.status === 404) {
+        setError("No Appointments found.");
+      } else {
+        setError("Server Error");
+      }
+      setLoading(false);
+    }
+  };
 
   const handleTimeChange = (e) => {
     const inputTime = e.target.value;
@@ -37,16 +51,15 @@ function DrAddAppSlot() {
   };
 
   const addSlot = async () => {
-    const selectedDateTime = new Date(
-      selectedDate + "T" + selectedTime + ":00"
-    ).toISOString();
     try {
-      const response = await axios.post("/addAppointmentSlot", {
-        dateTime: selectedDateTime,
+      console.log(selectedDate);
+      console.log(selectedTime);
+      const response = await axios.post("/addAvailableSlots", {
+        slots: [selectedDate + " " + selectedTime],
       });
 
       if (response.status === 200) {
-        // fetchData() betgeeb el free appointments;
+        fetchData();
       } else {
         setError("Error");
       }
@@ -137,14 +150,14 @@ function DrAddAppSlot() {
 
         <Calendar
           localizer={localizer}
-          events={appointmentSlots}
+          events={responseData}
           startAccessor="start"
           endAccessor="end"
           views={["month"]}
           defaultDate={new Date()}
           style={{ height: 800, width: 1000, marginLeft: "1.5rem" }}
           eventPropGetter={eventStyleGetter} // Apply event styling
-          titleAccessor="time"
+          // titleAccessor="time"
           components={{
             eventWrapper: ({ children }) => (
               <div className="events-container">{children}</div>

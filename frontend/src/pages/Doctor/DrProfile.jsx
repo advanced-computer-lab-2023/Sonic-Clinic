@@ -4,10 +4,12 @@ import AppNavbar from "../../components/AppNavigation/AppNavbar";
 import DrHamburgerMenu from "../../components/Doctor/DrHamburgerMenu";
 import DrProfileBox from "../../components/Doctor/DrProfileBox";
 import DrContract from "../../components/Doctor/DrContract";
+import { useSelector } from "react-redux";
 
 function DrProfile() {
   const [activeKey, setActiveKey] = useState("first");
   const [refreshFlag, setRefreshFlag] = useState(false);
+  const wallet = useSelector((state) => state.doctorLogin.wallet);
 
   const handleSelect = (selectedKey) => {
     setActiveKey(selectedKey);
@@ -70,6 +72,25 @@ function DrProfile() {
                           Employment Contract
                         </Nav.Link>
                       </Nav.Item>
+                      <Nav.Item>
+                        <Nav.Link
+                          eventKey="third"
+                          style={{
+                            background:
+                              activeKey === "third" ? "#05afb9" : "white",
+                            color: activeKey === "third" ? "white" : "black",
+                            border:
+                              activeKey === "third"
+                                ? "none"
+                                : "1px solid rgb(189, 189, 189)",
+                            marginBottom: "1rem",
+                            fontSize: "1.2rem",
+                            fontWeight: "600",
+                          }}
+                        >
+                          My Wallet
+                        </Nav.Link>
+                      </Nav.Item>
                     </Nav>
                   </Col>
                   <Col lg={9}>
@@ -79,6 +100,35 @@ function DrProfile() {
                       </Tab.Pane>
                       <Tab.Pane eventKey="second">
                         <DrContract />
+                      </Tab.Pane>
+                      <Tab.Pane eventKey="third">
+                        <div>
+                          <div
+                            className="d-flex justify-content-center align-items-center"
+                            style={{
+                              fontSize: "2.5rem", // Increase font size for the title
+                              fontWeight: "600",
+                              color: "#212529",
+                              lineHeight: "1.5",
+                            }}
+                          >
+                            My Wallet
+                          </div>
+                          <div
+                            style={{
+                              color: "#099BA0  ",
+                              fontSize: "30px",
+                              fontWeight: "600",
+                              marginBottom: "10px",
+                              marginLeft: "22rem",
+                              marginTop: "3rem",
+                            }}
+                          >
+                            Balance: ${wallet}
+                          </div>
+
+                          {/* You can add more wallet-related content here */}
+                        </div>
                       </Tab.Pane>
                     </Tab.Content>
                   </Col>
