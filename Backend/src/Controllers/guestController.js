@@ -99,6 +99,7 @@ const acceptPotientialDoc = async (req, res) => {
       affiliation: potentialDoctor.affiliation,
       educationalBackground: potentialDoctor.educationalBackground,
       specialty: potentialDoctor.specialty,
+      documents: potentialDoctor.documents,
       contract: false,
     });
 
