@@ -56,7 +56,7 @@ function ViewPersonalInfo() {
                 {showChangePass ? "close" : "change password"}
               </label>
             </span>
-            {showChangePass && <ChangePass mg={true} />}
+            {showChangePass && <ChangePass patient={true} />}
           </div>
           <div style={listItemStyle}>
             <span style={{ color: "#099BA0" }}>Email:</span> {user.userEmail}

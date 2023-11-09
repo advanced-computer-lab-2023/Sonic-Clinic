@@ -1,20 +1,47 @@
 import React, { useState } from "react";
 import { Card, ListGroup } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faX } from "@fortawesome/free-solid-svg-icons";
+import { faX, faTrashCan } from "@fortawesome/free-solid-svg-icons";
+import axios from "axios";
 
 function UploadDocuments() {
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const [existingFiles, setExistingFiles] = useState([
+    //mn redux
     "file1.pdf",
     "file2.pdf",
     "file3.pdf",
   ]);
   const [uploadVisible, setUploadVisible] = useState(false);
 
+  const fetchData = async () => {
+    //mafrod el medical history tkon fl redux
+  };
+
+  const viewFile = async (file) => {
+    console.log(file);
+    try {
+      const response = await axios.get(
+        `/viewPatientMedicalHistory?filename=${file}`
+      );
+
+      if (response.status === 200) {
+        console.log("cool");
+      }
+    } catch (error) {
+      console.log("oops");
+    }
+  };
+
   const handleFileUpload = (e) => {
     const newFiles = Array.from(e.target.files);
-    setUploadedFiles([...uploadedFiles, ...newFiles]);
+    const formData = new FormData();
+
+    newFiles.forEach((file, index) => {
+      formData.append(`files`, file);
+    });
+
+    setUploadedFiles([...uploadedFiles, ...formData]);
   };
 
   const handleRemoveFile = (index) => {
@@ -23,9 +50,31 @@ function UploadDocuments() {
     setUploadedFiles(updatedFiles);
   };
 
-  const addFiles = () => {
-    setUploadedFiles([]);
-    //fetch medical history tani
+  const addFiles = async () => {
+    console.log(uploadedFiles);
+    try {
+      const response = await axios.post("/uploadFiles", uploadedFiles);
+      if (response.status === 200) {
+        setUploadedFiles([]);
+        fetchData();
+      }
+    } catch (error) {
+      console.log("oops");
+    }
+  };
+
+  const deleteFile = async (file) => {
+    console.log(file);
+    try {
+      const response = await axios.delete(
+        `/deleteFileFromMedicalHistory?filename=${file}`
+      );
+      if (response.status === 200) {
+        fetchData();
+      }
+    } catch (error) {
+      console.log("oops");
+    }
   };
 
   return (
@@ -104,24 +153,37 @@ function UploadDocuments() {
             )}
           </div>
 
-          {existingFiles.length > 0 && (
+          {existingFiles.length > 0 ? (
             <div>
               <h6>Existing Documents:</h6>
               <ListGroup>
                 {existingFiles.map((file, index) => (
                   <ListGroup.Item key={index}>
                     <a
-                      href={file}
+                      onClick={() => viewFile(file)}
                       target="_blank"
                       rel="noopener noreferrer"
-                      style={{ color: "#212529" }}
+                      style={{ color: "#212529", cursor: "pointer" }}
+                      className="d-flex justify-content-between"
                     >
                       {file}
+                      <FontAwesomeIcon
+                        icon={faTrashCan}
+                        onClick={() => deleteFile(file)}
+                        style={{
+                          opacity: 1,
+                          color: "#ff6b35",
+                          fontSize: "20px",
+                          cursor: "pointer",
+                        }}
+                      />
                     </a>
                   </ListGroup.Item>
                 ))}
               </ListGroup>
             </div>
+          ) : (
+            <div>No medical records found</div>
           )}
         </Card.Body>
       </Card>
