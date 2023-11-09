@@ -78,8 +78,9 @@ const acceptPotientialDoc = async (req, res) => {
   try {
     const fakePotential = await doctorModel.findOne({ username });
     if (fakePotential) {
-      return res.status(409).json( "Doctor already got accepted" );
+      return res.status(409).json("Doctor already got accepted");
     }
+
     // Find the potential doctor by username
     const potentialDoctor = await potentialDoctorModel.findOne({ username });
 
@@ -98,20 +99,22 @@ const acceptPotientialDoc = async (req, res) => {
       affiliation: potentialDoctor.affiliation,
       educationalBackground: potentialDoctor.educationalBackground,
       specialty: potentialDoctor.specialty,
+      documents: potentialDoctor.documents,
       contract: false,
     });
 
     // Save the new doctor to the doctorModel
     await doctor.save();
 
-    // Remove the potential doctor (optional, based on your requirements)
-    //await potentialDoctor.remove();
+    // Remove the potential doctor from the potentialDoctorModel
+    await potentialDoctorModel.deleteOne({ username });
 
     res.status(201).json({ message: "Doctor created successfully", doctor });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
 };
+
 
 
 module.exports = { addPotentialDoctor, addPatient, acceptPotientialDoc };

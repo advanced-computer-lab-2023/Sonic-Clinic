@@ -374,18 +374,24 @@ const viewWalletDoc = async (req, res) => {
   }
 };
 
-const acceptContract =async (req, res) => {
-  try{
+const acceptContract = async (req, res) => {
+  try {
     const doc = await doctorModel.findById(req.user.id);
-    doc.acceptContract=true;
+    
+    if (!doc) {
+      return res.status(404).json({ message: "Doctor not found" });
+    }
+
+    doc.contract = true; 
     await doc.save();
+
     res.status(200).json("Contract Accepted");
-  }
-  catch (error) {
+  } catch (error) {
     console.error("Error:", error);
     return res.status(500).json({ message: "Server Error" });
   }
-}
+};
+
 
 module.exports = {
   selectPatient,

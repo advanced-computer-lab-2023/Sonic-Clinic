@@ -7,7 +7,9 @@ const session = require("express-session");
 const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
 const multer = require("multer");
-const stripe = require("stripe")(process.env.SECRET_KEY);
+const stripe = require("stripe")(
+  "sk_test_51O9lZ0IQTS4vUIMWJeAJ5Ds71jNbeQFj6v8mO7leS2cDIJuLy1fwNzoiXPKZV5KdoMpfzocfJ6hBusxPIjbGeveF00RTnmVYCX"
+);
 
 //const Grid = require('gridfs-stream');
 //const GridFS = Grid(mongoose.connection.db, mongoose.mongo);
@@ -76,7 +78,6 @@ const {
   viewAvailableSlots,
   viewWalletDoc,
   acceptContract,
-  
 } = require("./Controllers/doctorController");
 
 ///////////////////////////////adminstratorController//////////////////////////////////////
@@ -116,7 +117,10 @@ const {
   verifyOtp,
 } = require("./Controllers/authorization");
 ////////////////////////////////uploadController///////////////////////////////////////////
-const { uploadFiles } = require("./Controllers/upload");
+const { uploadFiles,deleteFileFromMedicalHistory,viewPatientMedicalHistory,viewPatientMedicalHistoryForDoctors
+,uploadFilesForPotentialDoctor } = require("./Controllers/upload");
+
+
 
 //el link bta3 el DB
 const MongoURI = process.env.MONGO_URI;
@@ -312,6 +316,12 @@ server.get(
   viewAllAppointmentsDoctor
 );
 server.get("/viewWalletDoc", requireAuth, viewWalletDoc);
+//upload
+server.post("/uploadFilesForPotentialDoctor", uploadFilesForPotentialDoctor);
+server.post("/uploadFiles", requireAuth, uploadFiles);
+server.get("/viewPatientMedicalHistoryForDoctors", requireAuth, viewPatientMedicalHistoryForDoctors);
+server.get("/viewPatientMedicalHistory", requireAuth, viewPatientMedicalHistory);
+server.delete("/deleteFileFromMedicalHistory", requireAuth, deleteFileFromMedicalHistory);
 ////////////////////////////////////////////////////PUT////////////////////////////////////////
 //admin
 server.put("/updatePackage", requireAuth, updatePackage);
