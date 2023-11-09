@@ -46,7 +46,9 @@ const uploadFiles = async (req, res) => {
       });
       await patient.save();
 
-      res.status(200).json({ message: "Files uploaded and associated with the patient." });
+      res
+        .status(200)
+        .json({ message: "Files uploaded and associated with the patient." });
     });
   } catch (error) {
     console.error(error);
@@ -97,23 +99,32 @@ const viewPatientMedicalHistory = async (req, res) => {
     const medicalHistory = patient.medicalHistory;
 
     if (!medicalHistory || medicalHistory.length === 0) {
-      return res.status(404).json({ message: "No medical records found for the patient." });
+      return res
+        .status(404)
+        .json({ message: "No medical records found for the patient." });
     }
 
     const requestedFilename = req.body.filename;
 
-    const requestedFile = medicalHistory.find((file) => file.filename === requestedFilename);
+    const requestedFile = medicalHistory.find(
+      (file) => file.filename === requestedFilename
+    );
 
     if (!requestedFile) {
-      return res.status(404).json({ message: "File not found in the patient's medical history." });
+      return res
+        .status(404)
+        .json({ message: "File not found in the patient's medical history." });
     }
 
     const { buffer, mimetype, filename } = requestedFile;
 
-    const sanitizedFilename = encodeURIComponent(filename); 
+    const sanitizedFilename = encodeURIComponent(filename);
 
     res.setHeader("Content-Type", mimetype);
-    res.setHeader("Content-Disposition", `attachment; filename="${sanitizedFilename}"`);
+    res.setHeader(
+      "Content-Disposition",
+      `attachment; filename="${sanitizedFilename}"`
+    );
     res.end(buffer);
   } catch (error) {
     console.error(error);
@@ -134,23 +145,30 @@ const viewPatientMedicalHistoryForDoctors = async (req, res) => {
       return res.status(404).json({ error: "Patient not found" });
     }
 
-   
-    const isAssociated = doctor.patients.some((patient) => patient.toString() === patientId);
+    const isAssociated = doctor.patients.some(
+      (patient) => patient.toString() === patientId
+    );
     if (!isAssociated) {
-      return res.status(403).json({ error: "Access denied. This patient is not associated with the doctor." });
+      return res.status(403).json({
+        error: "Access denied. This patient is not associated with the doctor.",
+      });
     }
     const medicalHistory = patient.medicalHistory;
 
     if (!medicalHistory || medicalHistory.length === 0) {
-      return res.status(404).json({ message: "No medical records found for the patient." });
+      return res
+        .status(404)
+        .json({ message: "No medical records found for the patient." });
     }
 
-    
-
-    const requestedFile = medicalHistory.find((file) => file.filename === requestedFilename);
+    const requestedFile = medicalHistory.find(
+      (file) => file.filename === requestedFilename
+    );
 
     if (!requestedFile) {
-      return res.status(404).json({ message: "File not found in the patient's medical history." });
+      return res
+        .status(404)
+        .json({ message: "File not found in the patient's medical history." });
     }
 
     const { buffer, mimetype, filename } = requestedFile;
@@ -158,7 +176,10 @@ const viewPatientMedicalHistoryForDoctors = async (req, res) => {
     const sanitizedFilename = encodeURIComponent(filename);
 
     res.setHeader("Content-Type", mimetype);
-    res.setHeader("Content-Disposition", `attachment; filename="${sanitizedFilename}"`);
+    res.setHeader(
+      "Content-Disposition",
+      `attachment; filename="${sanitizedFilename}"`
+    );
     res.end(buffer);
   } catch (error) {
     console.error(error);
@@ -189,7 +210,9 @@ const uploadFilesForPotentialDoctor = async (req, res) => {
       });
       await PotentialDoctor.save();
 
-      res.status(200).json({ message: "Files uploaded and associated with the PotentialDoctor." });
+      res.status(200).json({
+        message: "Files uploaded and associated with the PotentialDoctor.",
+      });
     });
   } catch (error) {
     console.error(error);
@@ -197,4 +220,10 @@ const uploadFilesForPotentialDoctor = async (req, res) => {
   }
 };
 
-module.exports = { uploadFiles,deleteFileFromMedicalHistory,viewPatientMedicalHistory,viewPatientMedicalHistoryForDoctors,uploadFilesForPotentialDoctor };
+module.exports = {
+  uploadFiles,
+  deleteFileFromMedicalHistory,
+  viewPatientMedicalHistory,
+  viewPatientMedicalHistoryForDoctors,
+  uploadFilesForPotentialDoctor,
+};
