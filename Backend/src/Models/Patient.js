@@ -16,6 +16,21 @@ const creditCardSchema = new Schema({
     required: false,
   },
 });
+const fileSchema = new Schema({
+  filename: {
+    type: String,
+    required: false,
+  },
+  mimetype: {
+    type: String,
+    required: false,
+  },
+  buffer: {
+    type: Buffer,
+    required: false,
+  },
+});
+
 
 
 const patientSchema = new Schema(
@@ -75,14 +90,12 @@ const patientSchema = new Schema(
       type: Number,
       required: true,
     },
-    medicalHistory: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'GridFSFile', 
-      required: false,
-    },
+    
     familyMembers: [
       [String, String], 
-    ],
+    ], medicalHistory: 
+    [fileSchema] 
+   ,
   },
   { timestamps: true }
 );

@@ -1,6 +1,24 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
+
+const fileSchema = new Schema({
+  filename: {
+    type: String,
+    required: false,
+  },
+  mimetype: {
+    type: String,
+    required: false,
+  },
+  buffer: {
+    type: Buffer,
+    required: false,
+  }, documents: 
+  [fileSchema] 
+ ,
+});
+
 const potentialDoctorSchema = new Schema({
   username: {
     type: String,
