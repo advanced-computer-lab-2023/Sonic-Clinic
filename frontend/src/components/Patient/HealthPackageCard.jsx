@@ -80,19 +80,6 @@ export default function HealthPackageCard() {
     });
   };
 
-  // const handleBookAppointment = () => {
-  //   // Simulate a booking request (replace with actual API call)
-  //   setBookingStatus("booking"); // Show "Booking in progress" message
-  //   setTimeout(() => {
-  //     // Simulate a successful booking
-  //     setBookingStatus("success"); // Show "Booking success" message
-  //   }, 500); // Simulate a 2-second delay (replace with actual API call)
-
-  //   // In a real application, you would perform the booking logic and handle the response.
-
-  //   // Close the modal
-  //   // handleClose();
-  // };
   const handleBookAppointment = async () => {
     try {
       const response = await axios.post("/subscribeHealthPackage?type=Silver");
@@ -253,14 +240,20 @@ export default function HealthPackageCard() {
       </Carousel>
       <Modal show={showModal} onHide={handleClose}>
         <Modal.Header closeButton>
-          <Modal.Title>Book Appointment</Modal.Title>
+          <Modal.Title>Buy Health Package</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           {bookingStatus === "success" ? (
             <p>You have successfully booked your package.</p>
           ) : (
             <div>
-              <p>Package Name: {selectedPackage ? selectedPackage.type : ""}</p>
+              <p>
+                Package Name:{" "}
+                <span style={{ fontWeight: "bold" }}>
+                  {selectedPackage ? selectedPackage.type : ""}
+                </span>
+              </p>
+
               <Form>
                 <Form.Group controlId="bookingName">
                   <Form.Label>Booking Name</Form.Label>
@@ -338,13 +331,28 @@ export default function HealthPackageCard() {
               Close
             </Button>
           ) : (
-            <div>
-              <Button variant="success" onClick={handleBookAppointment}>
-                Book
-              </Button>
-              <Button variant="danger" onClick={handleClose}>
-                Cancel
-              </Button>
+            <div className="d-flex justify-content-between align-items-center w-100">
+              <div>
+                {" "}
+                <p>
+                  Total Amount:{" "}
+                  <span style={{ fontWeight: "bold" }}>
+                    ${selectedPackage ? selectedPackage.price : ""}
+                  </span>
+                </p>
+              </div>
+              <div className="d-flex">
+                <Button
+                  variant="success"
+                  className="mr-2"
+                  onClick={handleBookAppointment}
+                >
+                  Book
+                </Button>
+                <Button variant="danger" onClick={handleClose}>
+                  Cancel
+                </Button>
+              </div>
             </div>
           )}
         </Modal.Footer>
