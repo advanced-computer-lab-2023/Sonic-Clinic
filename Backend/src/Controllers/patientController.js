@@ -1106,9 +1106,16 @@ const viewWalletPatient = async (req, res) => {
 };
 const subscribeHealthPackageWallet = async (req, res) => {
   try {
-    const patient = await patientModel.findById(req.user.id);
+    const id = req.body._id;
+    let patient;
+    if (!id) {
+      patient = await patientModel.findById(req.user.id);
+    } else {
+      patient = await familyMemberModel.findById(id);
+    }
+
     if (!patient) {
-      return res.status(404).json({ message: "Patient not found." });
+      return res.status(404).json({ message: "User not found." });
     }
     const packageName = req.query.type;
     const package = await packagesModel.findOne({ type: packageName });
@@ -1135,7 +1142,13 @@ const subscribeHealthPackageWallet = async (req, res) => {
 };
 const payAppointmentWallet = async (req, res) => {
   try {
-    const patient = await patientModel.findById(req.user.id);
+    let patient;
+    const id = req.body.famID;
+    if (!id) {
+      patient = await patientModel.findById(req.user.id);
+    } else {
+      patient = await familyMemberModel.findById(id);
+    }
     if (!patient) {
       return res.status(404).json({ message: "Patient not found." });
     }

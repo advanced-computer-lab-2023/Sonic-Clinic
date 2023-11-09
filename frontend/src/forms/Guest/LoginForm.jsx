@@ -14,13 +14,11 @@ import { setCredentialsAdmin } from "../../state/loginAdminReducer";
 import { setCredentialsDoctor } from "../../state/loginDoctorReducer";
 
 const LoginForm = () => {
-  // console.log(baseUrl);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error1, setError] = useState(null);
-  const [message, setMessage] = useState(null);
   const [loading, isLoading] = useState(null);
   const [agree, setAgree] = useState(false);
   const [okay, setOkay] = useState(false);
@@ -76,8 +74,6 @@ const LoginForm = () => {
           navigate("/patient");
         }
         if (type === "Doctor") {
-          //check the flag to make sure eno doctor accepted the contract
-          //setShowAcceptModal(true);
           dispatch(
             setCredentialsDoctor({
               password: password,
@@ -95,9 +91,12 @@ const LoginForm = () => {
               isLoggedIn: true,
             })
           );
-
+          if (!user.contract) {
+            setShowAcceptModal(true);
+          } else {
+            navigate("/doctor");
+          }
           isLoading(false);
-          navigate("/doctor");
         }
         if (type === "Admin") {
           dispatch(
@@ -136,10 +135,31 @@ const LoginForm = () => {
     e.preventDefault();
     setError(null);
     isLoading(true);
-    //call method that changes the status of a new doctor to a regular
-    //call dispatcher
+    try {
+      const response = await axios.get("/acceptContract");
+      if (response.status === 200) {
+        setShowAcceptModal(false);
+        navigate("/doctor");
+      }
+    } catch (error) {
+      setError(error);
+    }
     isLoading(false);
-    navigate("/doctor");
+  };
+
+  const rejectContract = async () => {
+    try {
+      const response = await axios.get("/logout");
+      if (response.status === 200) {
+        console.log("LOGOUT");
+      }
+    } catch (error) {
+      console.log();
+    }
+    setShowAcceptModal(false);
+    setError(
+      "Unfortunately, you cannot join the platform without accepting the contract"
+    );
   };
 
   return (
@@ -163,7 +183,7 @@ const LoginForm = () => {
           <Button variant="success" onClick={loginNewDoctor}>
             Accept
           </Button>
-          <Button variant="danger" onClick={() => setShowAcceptModal(false)}>
+          <Button variant="danger" onClick={rejectContract}>
             Reject
           </Button>
         </Modal.Footer>

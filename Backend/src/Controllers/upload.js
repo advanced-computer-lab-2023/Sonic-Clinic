@@ -1,138 +1,229 @@
-// const path = require('path');
-// const multer = require('multer');
-// const patientModel = require('./patientModel');
-// const GridFS = require('gridfs-stream');
-// const mongoose = require('mongoose');
+const patientModel = require("../Models/Patient.js");
+const doctorModel = require("../Models/Doctor.js");
+const potentialDoctorModel = require("../Models/PotentialDoctor.js");
+const multer = require("multer");
 
-// const storage = multer.memoryStorage();
-// const upload = multer({
-//   storage: storage,
-//   fileFilter: function (req, file, callback) {
-//     if (
-//       file.mimetype === 'application/pdf' ||
-//       file.mimetype === 'image/jpeg' ||
-//       file.mimetype === 'image/jpg' ||
-//       file.mimetype === 'image/png'
-//     ) {
-//       callback(null, true);
-//     } else {
-//       console.log('File type not supported!');
-//       callback(null, false);
-//     }
-//   },
-//   limits: {
-//     fileSize: 1024 * 1024 * 2,
-//   },
-// }).array('files', 5);
+const storage = multer.memoryStorage();
+const upload = multer({
+  storage: storage,
+  fileFilter: function (req, file, callback) {
+    if (
+      file.mimetype === "application/pdf" ||
+      file.mimetype === "image/jpeg" ||
+      file.mimetype === "image/jpg" ||
+      file.mimetype === "image/png"
+    ) {
+      callback(null, true);
+    } else {
+      console.log("File type not supported!");
+      callback(null, false);
+    }
+  },
+  limits: {
+    fileSize: 1024 * 1024 * 2,
+  },
+}).array("files", 5);
 
-// const gfs = GridFS(mongoose.connection.db, mongoose.mongo);
+const uploadFiles = async (req, res) => {
+  try {
+    const patient = await patientModel.findById(req.user.id);
 
-// const uploadFiles = async (req, res) => {
-//   try {
-//     const patient = await patientModel.findById(req.user.id);
+    if (!patient) {
+      return res.status(404).json({ error: "Patient not found" });
+    }
 
-//     if (!patient) {
-//       return res.status(404).json({ error: 'Patient not found' });
-//     }
+    upload(req, res, async (err) => {
+      if (err) {
+        return res.status(400).json({ error: "File upload failed" });
+      }
+      patient.medicalHistory = patient.medicalHistory || [];
+      req.files.forEach((file) => {
+        patient.medicalHistory.push({
+          filename: file.originalname,
+          mimetype: file.mimetype,
+          buffer: file.buffer,
+        });
+      });
+      await patient.save();
 
-//     upload(req, res, async (err) => {
-//       if (err) {
-//         return res.status(400).json({ error: 'File upload failed' });
-//       }
+      res
+        .status(200)
+        .json({ message: "Files uploaded and associated with the patient." });
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+const deleteFileFromMedicalHistory = async (req, res) => {
+  try {
+    const patient = await patientModel.findById(req.user.id);
 
-//       const filePromises = req.files.map((file) => {
-//         return new Promise((resolve, reject) => {
-//           const writeStream = gfs.createWriteStream({
-//             filename: file.originalname,
-//             mode: 'w',
-//             content_type: file.mimetype,
-//           });
+    if (!patient) {
+      return res.status(404).json({ error: "Patient not found" });
+    }
 
-//           file.buffer
-//             .pipe(writeStream)
-//             .on('close', () => {
-//               resolve(writeStream._id); // Resolve with the GridFS ObjectID
-//             })
-//             .on('error', (err) => {
-//               reject(err);
-//             });
-//         });
-//       });
+    const filenameToDelete = req.body.filename;
 
-//       const fileIDs = await Promise.all(filePromises);
+    // Check if the specified filename exists in the patient's medicalHistory
+    const fileToDeleteIndex = patient.medicalHistory.findIndex(
+      (file) => file.filename === filenameToDelete
+    );
 
-//       // Concatenate the new file IDs with existing medicalHistory (if any)
-//       patient.medicalHistory = patient.medicalHistory
-//         ? [...patient.medicalHistory, ...fileIDs]
-//         : fileIDs;
+    if (fileToDeleteIndex === -1) {
+      return res.status(404).json({
+        error: `File with the specified filename "${filenameToDelete}" not found in medicalHistory.`,
+      });
+    }
 
-//       await patient.save();
+    // Remove the file from the medicalHistory
+    patient.medicalHistory.splice(fileToDeleteIndex, 1);
 
-//       res.status(200).json({ message: 'Files uploaded and associated with the patient.' });
-//     });
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ error: 'Internal server error' });
-//   }
-// };
+    // Save the patient document with the updated medicalHistory field
+    await patient.save();
 
-// const viewPatientMedicalHistory = async (req, res) => {
-//   try {
-//     const patientUsername = req.body.username;
-//     const patient = await patientModel.findById(patientUsername);
-//     if (!patient) {
-//       return res.status(404).json({ error: 'Patient not found' });
-//     }
+    res.status(200).json({ message: "File removed from medicalHistory." });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+const viewPatientMedicalHistory = async (req, res) => {
+  try {
+    const patient = await patientModel.findById(req.user.id);
 
-//     // Retrieve and send the files from the medicalHistory
-//     const files = await Promise.all(patient.medicalHistory.map(async (fileId) => {
-//       const file = await gfs.find({ _id: fileId }).toArray();
+    if (!patient) {
+      return res.status(404).json({ error: "Patient not found" });
+    }
 
-//       if (file.length === 0) {
-//         return null; // File not found in GridFS
-//       }
+    const medicalHistory = patient.medicalHistory;
 
-//       return {
-//         filename: file[0].filename,
-//         contentType: file[0].contentType,
-//         data: await gfs.createReadStream({ _id: fileId }),
-//       };
-//     }));
+    if (!medicalHistory || medicalHistory.length === 0) {
+      return res
+        .status(404)
+        .json({ message: "No medical records found for the patient." });
+    }
 
-//     // Remove null entries (files not found)
-//     const validFiles = files.filter((file) => file !== null);
+    const requestedFilename = req.body.filename;
 
-//     // Send the valid files in the response
-//     res.status(200).json({ files: validFiles });
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ error: 'Internal server error' });
-//   }
-// };
-// const removeFileFromMedicalHistory = async (req, res) => {
-//   try {
-   
-//     const fileIdToRemove = req.params.fileId;
-//     const patient = await patientModel.findById(req.user.id);
+    const requestedFile = medicalHistory.find(
+      (file) => file.filename === requestedFilename
+    );
 
-//     if (!patient) {
-//       return res.status(404).json({ error: 'Patient not found' });
-//     }
-//     const index = patient.medicalHistory.indexOf(fileIdToRemove);
+    if (!requestedFile) {
+      return res
+        .status(404)
+        .json({ message: "File not found in the patient's medical history." });
+    }
 
-//     if (index === -1) {
-//       return res.status(404).json({ error: 'File not found in medicalHistory' });
-//     }
+    const { buffer, mimetype, filename } = requestedFile;
 
-//     // Remove the fileId from the medicalHistory
-//     patient.medicalHistory.splice(index, 1);
+    const sanitizedFilename = encodeURIComponent(filename);
 
-//     await patient.save();
+    res.setHeader("Content-Type", mimetype);
+    res.setHeader(
+      "Content-Disposition",
+      `attachment; filename="${sanitizedFilename}"`
+    );
+    res.end(buffer);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+const viewPatientMedicalHistoryForDoctors = async (req, res) => {
+  try {
+    const doctor = await doctorModel.findById(req.user.id);
+    const patientId = req.body.id;
+    const requestedFilename = req.body.filename;
+    const patient = await patientModel.findById(patientId);
 
-//     res.status(200).json({ message: 'File removed from medicalHistory' });
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ error: 'Internal server error' });
-//   }
-// };
-// module.exports = { uploadFiles, viewPatientMedicalHistory, removeFileFromMedicalHistory,};
+    if (!doctor) {
+      return res.status(404).json({ error: "Doctor not found" });
+    }
+    if (!patient) {
+      return res.status(404).json({ error: "Patient not found" });
+    }
+
+    const isAssociated = doctor.patients.some(
+      (patient) => patient.toString() === patientId
+    );
+    if (!isAssociated) {
+      return res.status(403).json({
+        error: "Access denied. This patient is not associated with the doctor.",
+      });
+    }
+    const medicalHistory = patient.medicalHistory;
+
+    if (!medicalHistory || medicalHistory.length === 0) {
+      return res
+        .status(404)
+        .json({ message: "No medical records found for the patient." });
+    }
+
+    const requestedFile = medicalHistory.find(
+      (file) => file.filename === requestedFilename
+    );
+
+    if (!requestedFile) {
+      return res
+        .status(404)
+        .json({ message: "File not found in the patient's medical history." });
+    }
+
+    const { buffer, mimetype, filename } = requestedFile;
+
+    const sanitizedFilename = encodeURIComponent(filename);
+
+    res.setHeader("Content-Type", mimetype);
+    res.setHeader(
+      "Content-Disposition",
+      `attachment; filename="${sanitizedFilename}"`
+    );
+    res.end(buffer);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+const uploadFilesForPotentialDoctor = async (req, res) => {
+  try {
+    const patientId = req.body.id;
+
+    const PotentialDoctor = await potentialDoctorModel.findById(patientId);
+
+    if (!PotentialDoctor) {
+      return res.status(404).json({ error: "PotentialDoctor not found" });
+    }
+
+    upload(req, res, async (err) => {
+      if (err) {
+        return res.status(400).json({ error: "File upload failed" });
+      }
+      PotentialDoctor.documents = PotentialDoctor.documents || [];
+      req.files.forEach((file) => {
+        PotentialDoctor.documents.push({
+          filename: file.originalname,
+          mimetype: file.mimetype,
+          buffer: file.buffer,
+        });
+      });
+      await PotentialDoctor.save();
+
+      res.status(200).json({
+        message: "Files uploaded and associated with the PotentialDoctor.",
+      });
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+module.exports = {
+  uploadFiles,
+  deleteFileFromMedicalHistory,
+  viewPatientMedicalHistory,
+  viewPatientMedicalHistoryForDoctors,
+  uploadFilesForPotentialDoctor,
+};

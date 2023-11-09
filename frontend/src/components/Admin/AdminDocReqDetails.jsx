@@ -39,13 +39,12 @@ export default function AdminDocReqDetails({
 
   const acceptDoctor = async () => {
     try {
-      const response = await axios.post("/addDoctor", {
+      const response = await axios.post("/acceptPotientialDoc", {
         username: docUsername,
       });
-      if (response.status === 200) {
+      if (response.status === 201) {
         handleClose();
         fetchData();
-        //doctor accepted feedback
       }
     } catch (error) {
       if (error.response && error.response.status === 404) {
