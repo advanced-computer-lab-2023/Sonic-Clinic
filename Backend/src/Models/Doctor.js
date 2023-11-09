@@ -3,6 +3,21 @@ const Appointment = require("./Appointment");
 const Schema = mongoose.Schema;
 const bcrypt = require("bcrypt");
 
+const fileSchema = new Schema({
+  filename: {
+    type: String,
+    required: false,
+  },
+  mimetype: {
+    type: String,
+    required: false,
+  },
+  buffer: {
+    type: Buffer,
+    required: false,
+  }, 
+});
+
 const doctorSchema = new Schema(
   {
     username: {
@@ -63,6 +78,8 @@ const doctorSchema = new Schema(
       type: Boolean,
       required: false,
     },
+    documents: 
+    [fileSchema],
   },
   { timestamps: true }
 );

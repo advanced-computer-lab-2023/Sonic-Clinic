@@ -117,7 +117,10 @@ const {
   verifyOtp,
 } = require("./Controllers/authorization");
 ////////////////////////////////uploadController///////////////////////////////////////////
-const { uploadFiles } = require("./Controllers/upload");
+const { uploadFiles,deleteFileFromMedicalHistory,viewPatientMedicalHistory,viewPatientMedicalHistoryForDoctors
+,uploadFilesForPotentialDoctor } = require("./Controllers/upload");
+
+
 
 //el link bta3 el DB
 const MongoURI = process.env.MONGO_URI;
@@ -313,6 +316,12 @@ server.get(
   viewAllAppointmentsDoctor
 );
 server.get("/viewWalletDoc", requireAuth, viewWalletDoc);
+//upload
+server.post("/uploadFilesForPotentialDoctor", uploadFilesForPotentialDoctor);
+server.post("/uploadFiles", requireAuth, uploadFiles);
+server.get("/viewPatientMedicalHistoryForDoctors", requireAuth, viewPatientMedicalHistoryForDoctors);
+server.get("/viewPatientMedicalHistory", requireAuth, viewPatientMedicalHistory);
+server.delete("/deleteFileFromMedicalHistory", requireAuth, deleteFileFromMedicalHistory);
 ////////////////////////////////////////////////////PUT////////////////////////////////////////
 //admin
 server.put("/updatePackage", requireAuth, updatePackage);
