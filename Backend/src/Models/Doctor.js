@@ -17,6 +17,7 @@ const doctorSchema = new Schema(
     email: {
       type: String,
       required: true,
+      unique: [true, "this email is taken, please enter another email"],
     },
     password: {
       type: String,
@@ -56,6 +57,10 @@ const doctorSchema = new Schema(
     },
     wallet: {
       type: Number,
+      required: false,
+    },
+    contract: {
+      type: Boolean,
       required: false,
     },
   },

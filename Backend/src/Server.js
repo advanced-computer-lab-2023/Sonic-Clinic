@@ -75,6 +75,8 @@ const {
   addAppointmentByPatientID,
   viewAvailableSlots,
   viewWalletDoc,
+  acceptContract,
+  
 } = require("./Controllers/doctorController");
 
 ///////////////////////////////adminstratorController//////////////////////////////////////
@@ -101,6 +103,7 @@ const {
 const {
   addPatient,
   addPotentialDoctor,
+  acceptPotientialDoc,
 } = require("./Controllers/guestController");
 
 ////////////////////////////////authorizationController///////////////////////////////////////////
@@ -182,10 +185,11 @@ server.post("/addPackage", addPackage);
 server.post("/changePasswordForAdmin", requireAuth, changePasswordForAdmin);
 
 //guest
-
+server.post("/acceptPotientialDoc", acceptPotientialDoc);
 server.post("/addPatient", addPatient);
 server.post("/addPotentialDoctor", addPotentialDoctor);
 //doctor
+server.get("/acceptContract", requireAuth, acceptContract);
 server.post("/addPrescription", requireAuth, addPrescription);
 server.post("/addAvailableSlots", requireAuth, addAvailableSlots);
 server.post("/changePasswordForPatient", requireAuth, changePasswordForPatient);
