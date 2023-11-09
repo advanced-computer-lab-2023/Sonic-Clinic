@@ -1147,7 +1147,6 @@ const payAppointmentWallet = async (req, res) => {
     );
     let docWallet;
     let patientWallet;
-    console.log(sessionPrice);
 
     if (patient.wallet >= sessionPrice) {
       patientWallet = patient.wallet - sessionPrice;
