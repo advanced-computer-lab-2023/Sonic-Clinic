@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import doctorImg from "../../Assets/Patient/Doctor.jpg";
+import ChangePass from "../../forms/ChangePass";
 import { Button } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPenToSquare } from "@fortawesome/free-solid-svg-icons";
@@ -15,6 +16,7 @@ function DrProfileBox() {
     padding: "1rem",
     backgroundColor: "#ffffff",
     textAlign: "center",
+    marginLeft: "10rem",
   };
 
   const profileImageStyle = {
@@ -29,15 +31,15 @@ function DrProfileBox() {
     width: "18rem",
     padding: "8px",
     borderRadius: "8px",
-    border: "1px solid #ADB5BD",
+    border: "1px solid  #dee2e6 ",
   };
 
   const inputLabel = {
-    width: "7rem",
+    width: "12rem",
     marginRight: "0.5rem",
     fontWeight: "bold",
     color: "#adb5bd ",
-    fontSize: "1.1rem",
+    fontSize: "1rem",
     textAlign: "left",
   };
 
@@ -146,6 +148,17 @@ function DrProfileBox() {
         <p class="d-flex flex-row">
           <div style={inputLabel}>Username:</div>
           <span>{profileData.username}</span>
+        </p>
+
+        <p class="d-flex flex-row">
+          <div style={inputLabel}>Password:</div>
+          {isEditing ? (
+            <div>
+              <ChangePass mg={false} />
+            </div>
+          ) : (
+            <span>********</span>
+          )}
         </p>
         <p class="d-flex flex-row">
           <div style={inputLabel}>Email: </div>

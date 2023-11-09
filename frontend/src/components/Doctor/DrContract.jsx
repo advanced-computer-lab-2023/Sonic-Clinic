@@ -4,7 +4,7 @@ import contract from "../../Assets/EmploymentContract.pdf";
 
 function DrContract() {
   return (
-    <div>
+    <div style={{ marginLeft: "10rem" }}>
       <div style={{ width: "30rem" }}>
         <iframe
           src={contract}
