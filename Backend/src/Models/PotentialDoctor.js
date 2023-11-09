@@ -14,9 +14,7 @@ const fileSchema = new Schema({
   buffer: {
     type: Buffer,
     required: false,
-  }, documents: 
-  [fileSchema] 
- ,
+  }, 
 });
 
 const potentialDoctorSchema = new Schema({
@@ -55,7 +53,9 @@ const potentialDoctorSchema = new Schema({
   specialty: {
     type: String,
     required: true,
-  },
+  },documents: 
+  [fileSchema] 
+ ,
 }, { timestamps: true });
 
 const PotentialDoctor = mongoose.model('PotentialDoctor', potentialDoctorSchema);
