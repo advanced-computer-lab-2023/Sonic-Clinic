@@ -1055,10 +1055,9 @@ const addAppointmentForMyselfOrFam = async (req, res) => {
       if (dateS === date && timeS === time) {
         slot2 = slot;
         isAvailableSlot = true;
-        break; // Exiting the loop when a matching slot is found
+        break;
       }
     }
-    ew;
 
     if (!isAvailableSlot) {
       return res
@@ -1116,8 +1115,6 @@ const subscribeHealthPackageWallet = async (req, res) => {
     const price = package.price;
     const wallet = patient.wallet;
     let newWallet;
-    console.log(price);
-    console.log(wallet);
 
     if (wallet >= price && packageName !== patient.package) {
       patient.package = packageName;
@@ -1130,6 +1127,89 @@ const subscribeHealthPackageWallet = async (req, res) => {
         message:
           "You are already subscribed to that package or your funds are insufficient",
       });
+    }
+  } catch (error) {
+    console.error("Error:", error);
+    return res.status(500).json({ message: "Server Error" });
+  }
+};
+const payAppointmentWallet = async (req, res) => {
+  try {
+    const patient = await patientModel.findById(req.user.id);
+    if (!patient) {
+      return res.status(404).json({ message: "Patient not found." });
+    }
+    const appointment = await appointmentModel.findById(req.body._id);
+    const doctor = await doctorModel.findById(appointment.doctorID);
+    const sessionPrice = await calculateSessionPrice(
+      doctor.hourlyRate,
+      patient.package
+    );
+    let docWallet;
+    let patientWallet;
+
+    if (patient.wallet >= sessionPrice) {
+      patientWallet = patientWallet - sessionPrice;
+      patient.wallet = patientWallet;
+      await patient.save();
+      docWallet = doctor.wallet + sessionPrice;
+      doctor.wallet = docWallet;
+      await doctor.save();
+      return res.status(200).json({ patient });
+    } else {
+      return res.status(404).json({
+        message: "Your funds are insufficient",
+      });
+    }
+  } catch (error) {
+    console.error("Error:", error);
+    return res.status(500).json({ message: "Server Error" });
+  }
+};
+const payAppointmentStripe = async (req, res) => {
+  try {
+    const patient = await patientModel.findById(req.user.id);
+    const appointment = await appointmentModel.findbyId(req.query._id);
+    const doctor = await doctorModel.findById(appointment.doctorID);
+    const sessionPrice = await calculateSessionPrice(
+      doctor.hourlyRate,
+      patient.package
+    );
+    if (!patient) {
+      return res.status(404).json({ message: "Patient not found." });
+    }
+    const session = await stripe.checkout.sessions.create({
+      payment_methods_types: ["card"],
+      line_items: [
+        {
+          price_date: {
+            currency: "usd",
+            product_data: {
+              docName: doctor.name,
+              specialty: doctor.specialty,
+              date: appointment.date,
+              time: appointment.time,
+            },
+            unit_amount: sessionPrice,
+          },
+          quantity: 1,
+        },
+      ],
+      success_url: `${process.env.SERVER_URL}/patient/packages`,
+      cancel_url: `${process.env.SERVER_URL}/patient/packages`,
+    });
+    res.json({ url: session.url });
+    let docWallet;
+
+    if (session.url == success_url) {
+      docWallet = doctor.wallet + sessionPrice;
+      await doctor.save();
+
+      return res.status(200).json({ patient });
+    } else {
+      return res
+        .status(404)
+        .json({ message: "Error in payment, try again later." });
     }
   } catch (error) {
     console.error("Error:", error);
@@ -1171,4 +1251,6 @@ module.exports = {
   changePasswordForPatientForget,
   viewWalletPatient,
   subscribeHealthPackageWallet,
+  payAppointmentWallet,
+  payAppointmentStripe,
 };

@@ -54,6 +54,8 @@ const {
   changePasswordForPatientForget,
   viewWalletPatient,
   subscribeHealthPackageWallet,
+  payAppointmentWallet,
+  payAppointmentStripe,
 } = require("./Controllers/patientController");
 
 /////////////////////////////////doctorController//////////////////////////////////////////
@@ -213,6 +215,8 @@ server.post(
   addAppointmentForMyselfOrFam
 );
 server.post("/changePasswordForPatientForget", changePasswordForPatientForget);
+server.post("/payAppointmentWallet", requireAuth, payAppointmentWallet);
+server.post("/payAppointmentStripe", requireAuth, payAppointmentStripe);
 
 //////////////////////////////////////////// GET/////////////////////////////////////
 //admin

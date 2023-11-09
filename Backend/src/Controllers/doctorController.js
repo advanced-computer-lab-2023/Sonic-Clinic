@@ -362,6 +362,7 @@ const viewAvailableSlots = async (req, res) => {
     return res.status(500).json({ message: "Server Error" });
   }
 };
+
 const viewWalletDoc = async (req, res) => {
   try {
     const doc = await doctorModel.findById(req.user.id);
