@@ -170,7 +170,6 @@ const DrSignupForm = () => {
       isLoading(false);
       return;
     } else {
-      //ADD THE DOCUMENTS HENAAAA
       const user = {
         name,
         username,
@@ -436,20 +435,7 @@ const DrSignupForm = () => {
             Login
           </div>
         </div>
-        {error1 && (
-          <div
-            style={{
-              marginTop: "2rem",
-              backgroundColor: "#f44336", // Red background color
-              color: "white", // White text color
-              padding: "10px", // Padding around the message
-              borderRadius: "5px", // Rounded corners
-              boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.2)", // Box shadow for a subtle effect
-            }}
-          >
-            {error1}
-          </div>
-        )}
+        {error1 && <div className="error">{error1}</div>}
       </form>
     </div>
   );
