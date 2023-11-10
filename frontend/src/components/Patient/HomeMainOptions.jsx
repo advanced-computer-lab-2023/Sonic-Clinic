@@ -5,22 +5,40 @@ import {
   faHandHoldingHeart,
 } from "@fortawesome/free-solid-svg-icons";
 import { useState } from "react";
+import { Waypoint } from "react-waypoint";
+import { useSpring, animated } from "react-spring";
 
 function HomeMainOptions() {
+  const [ourDoctorsVisible, setOurDoctorsVisible] = useState(false);
+  const ourDoctorsSpring = useSpring({
+    opacity: ourDoctorsVisible ? 1 : 0,
+    transform: ourDoctorsVisible ? "translateX(0)" : "translateX(-50%)",
+    config: { duration: 1000 },
+  });
   return (
     <div className="d-flex flex-row justify-content-center">
-      <AdminHomeCard
-        location="/patient/health-packages"
-        cardText="Health Packages"
-        cardDetails="View all health packages"
-        icon={faHandHoldingHeart}
+      <Waypoint
+        onEnter={() => setOurDoctorsVisible(true)}
+        onLeave={() => setOurDoctorsVisible(false)}
       />
-      <AdminHomeCard
-        location="/patient/profile"
-        cardText="Wallet"
-        cardDetails="View my wallet"
-        icon={faWallet}
-      />
+      <animated.div style={ourDoctorsSpring} className="d-flex flex-row">
+        <div className="mr-2">
+          <AdminHomeCard
+            location="/patient/health-packages"
+            cardText="Health Packages"
+            cardDetails="View all health packages"
+            icon={faHandHoldingHeart}
+          />
+        </div>
+        <div>
+          <AdminHomeCard
+            location="/patient/profile"
+            cardText="Wallet"
+            cardDetails="View my wallet"
+            icon={faWallet}
+          />
+        </div>
+      </animated.div>
     </div>
   );
 }
