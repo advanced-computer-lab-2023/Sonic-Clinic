@@ -12,15 +12,12 @@ import axios from "axios";
 function DrShowPatients({ patients, setPatients, responseData, upcomingApp }) {
   const [searchTerm, setSearchTerm] = useState("");
   const [expandedPatient, setExpandedPatient] = useState(null);
+  const [selectedPatient, setSelectedPatient] = useState(null);
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const [uploadVisible, setUploadVisible] = useState(false);
   const [followUpModal, setFollowUpModal] = useState(false);
   const [followUpDateTime, setFollowUpDateTime] = useState(null);
-  const [existingFiles, setExistingFiles] = useState([
-    "file1.pdf",
-    "file2.pdf",
-    "file3.pdf",
-  ]);
+  const [existingFiles, setExistingFiles] = useState([]);
 
   const handleFileUpload = (e) => {
     const newFiles = Array.from(e.target.files);
@@ -57,17 +54,43 @@ function DrShowPatients({ patients, setPatients, responseData, upcomingApp }) {
     );
   };
 
-  const toggleExpand = (index) => {
+  const toggleExpand = (index, id) => {
     if (expandedPatient === index) {
       setExpandedPatient(null);
+      setSelectedPatient("");
     } else {
       setExpandedPatient(index);
+      setSelectedPatient(id);
+      loadMedicalHistory();
     }
   };
 
-  const addFiles = () => {
-    setUploadedFiles([]);
-    //fetch medical history tani
+  const loadMedicalHistory = async () => {
+    try {
+      const response = await axios.get("/viewPatientMedicalHistoryForDoctors", {
+        id: selectedPatient,
+      });
+      if (response.status === 200) {
+        setExistingFiles(response.medicalHistory);
+      }
+    } catch (error) {
+      console.log();
+    }
+  };
+
+  const addFiles = async () => {
+    //upload filesssssssssssssss
+    try {
+      const response = await axios.get("/addFilesDoctorToPatient", {
+        id: selectedPatient,
+      });
+      if (response.status === 200) {
+        setUploadedFiles([]);
+        loadMedicalHistory();
+      }
+    } catch (error) {
+      console.log();
+    }
   };
 
   const scheduleFollowUp = async (patientID) => {
@@ -127,7 +150,7 @@ function DrShowPatients({ patients, setPatients, responseData, upcomingApp }) {
         <Card className="mb-4 mx-3 bg-white" key={patient.username}>
           <Card.Header
             className="d-flex align-items-center justify-content-between"
-            onClick={() => toggleExpand(index)}
+            onClick={() => toggleExpand(index, patient._id)}
             style={{ cursor: "pointer" }}
           >
             <span>{patient.name}</span>

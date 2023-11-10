@@ -154,7 +154,7 @@ function DrProfileBox() {
           <div style={inputLabel}>Password:</div>
           {isEditing ? (
             <div>
-              <ChangePass mg={false} />
+              <ChangePass patient={false} api="/changePasswordForDoctor" />
             </div>
           ) : (
             <span>********</span>
