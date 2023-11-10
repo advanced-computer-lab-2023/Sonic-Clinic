@@ -265,7 +265,8 @@ const addFamilyMember = async (req, res) => {
       age,
       gender,
       relationToPatient,
-      patientID: patient.id, // Use patient's ID
+      patientID: patient.id,
+      package: "", // Use patient's ID
     });
 
     // Update the patient's familyMembers array
@@ -1116,6 +1117,7 @@ const subscribeHealthPackageWallet = async (req, res) => {
   try {
     const id = req.body._id;
     let patient;
+    const mainPatient = await patientModel.findById(req.user.id);
 
     if (!id) {
       patient = await patientModel.findById(req.user.id);
@@ -1129,43 +1131,34 @@ const subscribeHealthPackageWallet = async (req, res) => {
 
     const packageName = req.query.type;
 
-    // Check if the package already exists
-    const existingPackage = await packagesModel.findOne({ type: packageName });
+    const originalPackage = await packagesModel.findOne({ type: packageName });
+    console.log(originalPackage);
+    const newType = originalPackage.name + patient.name;
 
-    if (existingPackage) {
-      // If the package exists, update its details
-      existingPackage.status = "Active";
-      existingPackage.renewalDate = new Date().toLocaleDateString();
-      // Update other fields as needed
+    const newPackage = await packagesModel.create({
+      type: newType,
+      price: originalPackage.price,
+      sessionDiscount: originalPackage.sessionDiscount,
+      medicineDiscount: originalPackage.medicineDiscount,
+      packageDiscountFM: originalPackage.packageDiscountFM,
+      status: "Active",
+      renewalDate: new Date().toLocaleDateString(),
+      endDate: originalPackage.endDate,
+      patientID: patient._id,
+    });
 
-      await existingPackage.save();
-    } else {
-      // If the package doesn't exist, create a new one
-      const newPackage = await packagesModel.create({
-        type: packageName,
-        // Copy details from existingPackage or set default values
-        price: existingPackage?.price || 0,
-        sessionDiscount: existingPackage?.sessionDiscount || 0,
-        medicineDiscount: existingPackage?.medicineDiscount || 0,
-        packageDiscountFM: existingPackage?.packageDiscountFM || 0,
-        status: "Active",
-        renewalDate: new Date().toLocaleDateString(),
-        endDate: existingPackage?.endDate || null,
-        patientID: patient._id,
-      });
-
-      if (!newPackage) {
-        console.error("Error creating the package");
-        return res.status(500).json({ message: "Error creating the package" });
-      }
-
-      patient.package = newPackage._id;
+    if (!newPackage) {
+      console.error("Error creating the package");
+      return res.status(500).json({ message: "Error creating the package" });
     }
 
-    // Deduct package price from patient's wallet
-    patient.wallet = patient.wallet - (existingPackage?.price || 0);
-
+    patient.package = newPackage._id;
     await patient.save();
+
+    // Deduct package price from patient's wallet
+    mainPatient.wallet = mainPatient.wallet - newPackage.price;
+
+    await mainPatient.save();
 
     return res.status(200).json({ patient });
   } catch (error) {
