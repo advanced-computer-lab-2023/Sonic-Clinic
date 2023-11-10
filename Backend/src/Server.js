@@ -47,8 +47,8 @@ const {
   viewAvailableAppointmentsOfDoctor,
   cancelHealthPackage,
   cancelHealthPackageFam,
-  viewSubscribedPackage,
-  viewSubscribedPackageFam,
+  viewSubscribedPackages,
+
   changePasswordForPatient,
   //uploadPDF,
   addFamilyMemberExisting,
@@ -58,6 +58,8 @@ const {
   subscribeHealthPackageWallet,
   payAppointmentWallet,
   payAppointmentStripe,
+  handlePackageStripe,
+  handleAppointmentStripe,
 } = require("./Controllers/patientController");
 
 /////////////////////////////////doctorController//////////////////////////////////////////
@@ -231,6 +233,9 @@ server.post("/payAppointmentWallet", requireAuth, payAppointmentWallet);
 server.post("/payAppointmentStripe", requireAuth, payAppointmentStripe);
 server.get("/viewMedicalRecords", requireAuth, viewMedicalRecords);
 
+server.post("/handlePackageStripe", requireAuth, handlePackageStripe);
+server.post("/handleAppointmentStripe", requireAuth, handleAppointmentStripe);
+
 //////////////////////////////////////////// GET/////////////////////////////////////
 //admin
 server.get("/viewAllPatients", requireAuth, viewAllPatients);
@@ -313,8 +318,8 @@ server.post(
 );
 server.get("/searchPatientByName", requireAuth, searchPatientByName);
 server.post("/viewDocApp", requireAuth, viewDocApp);
-server.get("/viewSubscribedPackage", requireAuth, viewSubscribedPackage);
-server.post("/viewSubscribedPackageFam", requireAuth, viewSubscribedPackageFam);
+server.post("/viewSubscribedPackage", requireAuth, viewSubscribedPackages);
+//server.post("/viewSubscribedPackageFam", requireAuth, viewSubscribedPackageFam);
 server.get(
   "/viewAllAppointmentsDoctor",
   requireAuth,
