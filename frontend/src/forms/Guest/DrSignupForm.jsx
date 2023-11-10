@@ -22,7 +22,6 @@ const DrSignupForm = () => {
   const [medicalLicense, setMedicalLicense] = useState(null);
   const [medicalDegree, setMedicalDegree] = useState(null);
   const [error1, setError] = useState(null);
-  const [loading, isLoading] = useState(null);
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -40,7 +39,6 @@ const DrSignupForm = () => {
   const handleClick = async (e) => {
     e.preventDefault();
     setError(null);
-    isLoading(true);
 
     if (
       !name ||
@@ -59,12 +57,10 @@ const DrSignupForm = () => {
     ) {
       setError("Please fill in all fields");
       console.log(error1);
-      isLoading(false);
       return;
     }
     if (!username.trim()) {
       setError("Username is required.");
-      isLoading(false);
       return;
     }
     //Validation For Email input field
@@ -73,44 +69,33 @@ const DrSignupForm = () => {
 
     if (!email) {
       setError("Email field cannot be empty.");
-      isLoading(false);
       return;
     }
     if (!emailRegex.test(email)) {
       setError("Invalid email format.");
-      isLoading(false);
       return;
     }
     if (!englishOnlyRegex.test(email)) {
       setError("Email must be in English only.");
-      isLoading(false);
       return;
     }
     if (email.length > 320) {
       setError("Email exceeds maximum character limit (320).");
-      isLoading(false);
       return;
     }
     if (/[^\x00-\x7F]/.test(email)) {
       setError("Email cannot contain emojis or special characters.");
-      isLoading(false);
       return;
     }
     if (/\s/.test(email)) {
       setError("Email cannot contain spaces.");
-      isLoading(false);
       return;
     }
     // Validation for Last Name
-    const emojiRegex = /[\u{1F300}-\u{1F6FF}]/u;
-    const numberRegex = /\d/;
-    const symbolRegex = /[!@#$%^&*(),.?":{}|<>]/;
-    const languageRegex = /[^\x00-\x7F]/;
     const nameRegex = /^[^\s]+(\s[^\s]+)?$/;
 
     if (name.length < 2) {
       setError("name must be at least 2 characters.");
-      isLoading(false);
       return;
     }
 
@@ -118,7 +103,6 @@ const DrSignupForm = () => {
       setError(
         "Name must contain either one name or two names with only one space between them."
       );
-      isLoading(false);
       return;
     }
 
@@ -130,7 +114,6 @@ const DrSignupForm = () => {
 
     if (password.length < 8) {
       setError("Password must be at least 8 characters long");
-      isLoading(false);
       return;
     }
     const twentyYearsAgo = new Date();
@@ -138,36 +121,30 @@ const DrSignupForm = () => {
 
     if (new Date(birthdate) > twentyYearsAgo) {
       setError("You must be at least 20 years old to sign up.");
-      isLoading(false);
       return;
     }
 
     if (!uppercaseRegex.test(password)) {
       setError("Password must contain at least one uppercase letter");
-      isLoading(false);
       return;
     }
 
     if (!lowercaseRegex.test(password)) {
       setError("Password must contain at least one lowercase letter");
-      isLoading(false);
       return;
     }
 
     if (!digitRegex.test(password)) {
       setError("Password must contain at least one digit");
-      isLoading(false);
       return;
     }
 
     if (!specialCharRegex.test(password)) {
       setError("Password must contain at least one special character");
-      isLoading(false);
       return;
     }
     if (password !== confirmPassword) {
       setError("Passwords do not match");
-      isLoading(false);
       return;
     } else {
       const user = {
@@ -181,6 +158,7 @@ const DrSignupForm = () => {
         speciality,
         education,
       };
+
       try {
         const response = await axios.post("/addPotentialDoctor", {
           username: username,
@@ -195,12 +173,23 @@ const DrSignupForm = () => {
         });
 
         if (response.status === 201) {
-          isLoading(false);
-          setError(null);
-          navigate("/login");
+          try {
+            const response = await axios.post(
+              "/uploadFilesForPotentialDoctor",
+              {
+                username: username,
+                //doc1
+                //doc2
+                //doc3
+              }
+            );
+            if (response.status === 200) {
+              setError(null);
+              navigate("/login");
+            }
+          } catch (error) {}
         } else {
           setError("Signup failed");
-          isLoading(false);
         }
       } catch (error) {
         console.error("Error:", error);
@@ -214,8 +203,6 @@ const DrSignupForm = () => {
             "An error occurred while signing up. Please try again later."
           );
         }
-
-        isLoading(false);
       }
     }
   };
@@ -276,10 +263,7 @@ const DrSignupForm = () => {
               name="Educational Background"
               type="text"
               placeholder="MBA"
-              onChange={
-                (e) => setEducation(e.target.value)
-                // validateEmail();
-              }
+              onChange={(e) => setEducation(e.target.value)}
             />
           </div>
           <div className="col">
@@ -399,10 +383,7 @@ const DrSignupForm = () => {
           name="Email"
           type="email"
           placeholder="john.doe@ibm.com"
-          onChange={
-            (e) => setEmail(e.target.value)
-            // validateEmail();
-          }
+          onChange={(e) => setEmail(e.target.value)}
         />
         <FormPassword
           id="password"

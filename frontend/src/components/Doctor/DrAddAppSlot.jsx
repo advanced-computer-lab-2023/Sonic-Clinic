@@ -19,7 +19,8 @@ function DrAddAppSlot() {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get();
+      const response = await axios.get("/viewAvailableSlots");
+
       if (response.status === 200) {
         setResponseData(response.data.availableSlots);
       } else {
@@ -84,6 +85,20 @@ function DrAddAppSlot() {
       style: eventStyle,
     };
   };
+
+  const availableSlots = responseData.map((slot) => {
+    // Format the slot as required by your calendar
+    const slotTime = new Date(slot).toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+
+    return {
+      start: new Date(slot),
+      end: new Date(slot), // Assuming each slot is a single point in time
+      title: slotTime, // Display only the formatted time
+    };
+  });
 
   return (
     <div className="d-flex, column-flex">
@@ -150,12 +165,12 @@ function DrAddAppSlot() {
 
         <Calendar
           localizer={localizer}
-          events={responseData}
+          events={availableSlots}
           startAccessor="start"
           endAccessor="end"
           views={["month"]}
           defaultDate={new Date()}
-          style={{ height: 800, width: 1000, marginLeft: "1.5rem" }}
+          style={{ height: 1000, width: 1000, marginLeft: "1.5rem" }}
           eventPropGetter={eventStyleGetter} // Apply event styling
           // titleAccessor="time"
           components={{

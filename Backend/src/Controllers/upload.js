@@ -63,7 +63,7 @@ const deleteFileFromMedicalHistory = async (req, res) => {
       return res.status(404).json({ error: "Patient not found" });
     }
 
-    const filenameToDelete = req.body.filename;
+    const filenameToDelete = req.query.filename;
 
     // Check if the specified filename exists in the patient's medicalHistory
     const fileToDeleteIndex = patient.medicalHistory.findIndex(
@@ -104,7 +104,7 @@ const viewPatientMedicalHistory = async (req, res) => {
         .json({ message: "No medical records found for the patient." });
     }
 
-    const requestedFilename = req.body.filename;
+    const requestedFilename = req.params.filename;
 
     const requestedFile = medicalHistory.find(
       (file) => file.filename === requestedFilename
@@ -188,9 +188,10 @@ const viewPatientMedicalHistoryForDoctors = async (req, res) => {
 };
 const uploadFilesForPotentialDoctor = async (req, res) => {
   try {
-    const patientId = req.body.id;
-
-    const PotentialDoctor = await potentialDoctorModel.findById(patientId);
+    const potentialDoctorusername = req.body.username;
+    const PotentialDoctor = await potentialDoctorModel.findOne({
+      _username: potentialDoctorusername,
+    });
 
     if (!PotentialDoctor) {
       return res.status(404).json({ error: "PotentialDoctor not found" });

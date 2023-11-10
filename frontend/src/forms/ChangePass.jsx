@@ -3,7 +3,7 @@ import Form from "react-bootstrap/Form";
 import { Button } from "react-bootstrap";
 import axios from "axios";
 
-export default function ChangePass({ mg }) {
+export default function ChangePass({ patient, api }) {
   const [oldPass, setOldPass] = useState("");
   const [newPass, setNewPass] = useState("");
   const [confirmNewPass, setConfirmNewPass] = useState("");
@@ -45,7 +45,9 @@ export default function ChangePass({ mg }) {
     }
 
     try {
-      const response = await axios.post("/changePasswordForPatient", {
+      console.log("11");
+      const url = api;
+      const response = await axios.post(url, {
         currentPassword: oldPass,
         newPassword: newPass,
       });
@@ -65,9 +67,9 @@ export default function ChangePass({ mg }) {
   };
 
   const formStyle = {
-    fontSize: "0.9rem",
+    fontSize: "1rem",
     marginLeft: "0rem",
-    width: "20rem",
+    width: "16rem",
   };
 
   return (
@@ -108,7 +110,7 @@ export default function ChangePass({ mg }) {
             color: "#05afb9 ",
             fontWeight: "bold",
             fontSize: "0.9rem",
-            marginLeft: mg ? "9.5rem" : "0px",
+            marginLeft: patient ? "8rem" : "0px",
           }}
         >
           Save

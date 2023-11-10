@@ -1,14 +1,12 @@
 import axios from "axios";
 import * as React from "react";
 import { useState } from "react";
-import { Col, Container, Form, Row, Modal, Button } from "react-bootstrap";
+import { Container, Form, Modal, Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import FormPassword from "../FormPassword";
 import FormInput from "../FormInput";
 import contract from "../../Assets/EmploymentContract.pdf";
-import { setCredentials } from "../../state/loginPatientReducer";
-import { baseUrl } from "../../state/baseUrl";
 import { setCredentialsPatient } from "../../state/loginPatientReducer";
 import { setCredentialsAdmin } from "../../state/loginAdminReducer";
 import { setCredentialsDoctor } from "../../state/loginDoctorReducer";
@@ -51,6 +49,7 @@ const LoginForm = () => {
         const type = response.data.message;
 
         if (type === "Patient") {
+          // console.log(user.medicalHistory);
           dispatch(
             setCredentialsPatient({
               password: password,
@@ -64,6 +63,7 @@ const LoginForm = () => {
               userId: user._id,
               emergencyName: user.emergencyFullName,
               emergencyNumber: user.emergencyMobileNumber,
+              medicalHistory: user.medicalHistory,
               wallet: 0,
               family: user.familyMembers,
               isLoggedIn: true,

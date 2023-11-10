@@ -79,3 +79,15 @@ div.msg {
   border-radius: 4px;
   margin: 20px 0;
 }
+
+.about-us-section,
+.contact-us-section {
+  margin-top: 50px;
+  padding: 20px;
+  border-top: 1px solid #ccc;
+}
+
+.about-us-section h2,
+.contact-us-section h2 {
+  margin-bottom: 20px;
+}

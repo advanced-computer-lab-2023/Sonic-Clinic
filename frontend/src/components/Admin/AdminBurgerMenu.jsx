@@ -2,21 +2,16 @@ import {
   faHospitalUser,
   faUserDoctor,
   faUsers,
+  faUser,
   faBriefcaseMedical,
   faRightFromBracket,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState } from "react";
 import { slide as Menu } from "react-burger-menu";
-import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { logoutAdmin } from "../../state/loginAdminReducer";
-import axios from "axios";
 
 function HamburgerMenu() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
 
   const handleMenuClick = () => {
     setMenuOpen(!menuOpen);
@@ -167,6 +162,28 @@ function HamburgerMenu() {
               />
             </svg>
             Home
+          </a>
+          <hr className="menu-line" />
+          <a
+            id="profile"
+            className="menu-item"
+            href="/admin/profile"
+            onClick={closeMenu}
+            style={{
+              color: "var(--gray-600, #6C757D)",
+              fontFamily: "Roboto",
+              fontSize: "0.9375rem",
+              fontStyle: "normal",
+              fontWeight: 400,
+              lineHeight: "1rem" /* 106.667% */,
+              display: "flex",
+              alignItems: "center",
+              textDecoration: "none", // To remove underlines
+              padding: "0.5rem 0",
+            }}
+          >
+            <FontAwesomeIcon icon={faUser} style={{ marginRight: "0.5rem" }} />
+            My Profile
           </a>
           {/* Add a line between menu items */}
           <hr className="menu-line" />
