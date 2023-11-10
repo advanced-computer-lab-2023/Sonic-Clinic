@@ -35,13 +35,7 @@ function UploadDocuments() {
 
   const handleFileUpload = (e) => {
     const newFiles = Array.from(e.target.files);
-    const formData = new FormData();
-
-    newFiles.forEach((file, index) => {
-      formData.append(`files`, file);
-    });
-
-    setUploadedFiles([...uploadedFiles, ...formData]);
+    setUploadedFiles([...uploadedFiles, ...newFiles]);
   };
 
   const handleRemoveFile = (index) => {
@@ -53,7 +47,9 @@ function UploadDocuments() {
   const addFiles = async () => {
     console.log(uploadedFiles);
     try {
-      const response = await axios.post("/uploadFiles", uploadedFiles);
+      const response = await axios.post("/uploadFiles", {
+        files: uploadedFiles,
+      });
       if (response.status === 200) {
         setUploadedFiles([]);
         fetchData();
