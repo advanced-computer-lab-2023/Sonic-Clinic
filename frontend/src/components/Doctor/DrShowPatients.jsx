@@ -17,11 +17,7 @@ function DrShowPatients({ patients, setPatients, responseData, upcomingApp }) {
   const [uploadVisible, setUploadVisible] = useState(false);
   const [followUpModal, setFollowUpModal] = useState(false);
   const [followUpDateTime, setFollowUpDateTime] = useState(null);
-  const [existingFiles, setExistingFiles] = useState([
-    "file1.pdf",
-    "file2.pdf",
-    "file3.pdf",
-  ]);
+  const [existingFiles, setExistingFiles] = useState([]);
 
   const handleFileUpload = (e) => {
     const newFiles = Array.from(e.target.files);
@@ -75,17 +71,26 @@ function DrShowPatients({ patients, setPatients, responseData, upcomingApp }) {
         id: selectedPatient,
       });
       if (response.status === 200) {
-        setExistingFiles(response.healthRecords);
+        setExistingFiles(response.medicalHistory);
       }
     } catch (error) {
       console.log();
     }
   };
 
-  const addFiles = () => {
-    //upload files
-    setUploadedFiles([]);
-    loadMedicalHistory();
+  const addFiles = async () => {
+    //upload filesssssssssssssss
+    try {
+      const response = await axios.get("/addFilesDoctorToPatient", {
+        id: selectedPatient,
+      });
+      if (response.status === 200) {
+        setUploadedFiles([]);
+        loadMedicalHistory();
+      }
+    } catch (error) {
+      console.log();
+    }
   };
 
   const scheduleFollowUp = async (patientID) => {

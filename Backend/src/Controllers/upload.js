@@ -63,7 +63,7 @@ const deleteFileFromMedicalHistory = async (req, res) => {
       return res.status(404).json({ error: "Patient not found" });
     }
 
-    const filenameToDelete = req.params.filename;
+    const filenameToDelete = req.query.filename;
 
     // Check if the specified filename exists in the patient's medicalHistory
     const fileToDeleteIndex = patient.medicalHistory.findIndex(

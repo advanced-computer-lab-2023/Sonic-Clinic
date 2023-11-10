@@ -1,4 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+import { updateMyMedicalHistory } from "../../state/loginPatientReducer";
 import { Card, ListGroup } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faX, faTrashCan } from "@fortawesome/free-solid-svg-icons";
@@ -6,17 +9,15 @@ import axios from "axios";
 
 function UploadDocuments() {
   const [uploadedFiles, setUploadedFiles] = useState([]);
-  const [existingFiles, setExistingFiles] = useState([
-    //mn redux
-    "file1.pdf",
-    "file2.pdf",
-    "file3.pdf",
-  ]);
+  const [existingFiles, setExistingFiles] = useState({
+    medicalHistory: useSelector((state) => state.patientLogin.medicalHistory),
+  });
   const [uploadVisible, setUploadVisible] = useState(false);
+  const dispatch = useDispatch();
 
-  const fetchData = async () => {
-    //mafrod el medical history tkon fl redux
-  };
+  // useEffect(() => {
+  //   reloadMedicalHistory();
+  // }, []);
 
   const viewFile = async (file) => {
     console.log(file);
@@ -33,9 +34,24 @@ function UploadDocuments() {
     }
   };
 
+  const reloadMedicalHistory = () => {
+    //api yeraga3 el medical history bta3t el patient
+    // setExistingFiles({
+    //   medicalHistory: useSelector((state) => state.patientLogin.medicalHistory),
+    // });
+  };
+
   const handleFileUpload = (e) => {
     const newFiles = Array.from(e.target.files);
-    setUploadedFiles([...uploadedFiles, ...newFiles]);
+    const formattedFiles = newFiles.map((file) => ({
+      filename: file.name,
+      mimetype: file.type,
+      buffer: {
+        type: "Buffer",
+        data: Array.from(new Uint8Array(file)),
+      },
+    }));
+    setUploadedFiles([...uploadedFiles, ...formattedFiles]);
   };
 
   const handleRemoveFile = (index) => {
@@ -46,16 +62,38 @@ function UploadDocuments() {
 
   const addFiles = async () => {
     console.log(uploadedFiles);
+
     try {
-      const response = await axios.post("/uploadFiles", {
-        files: uploadedFiles,
+      const formData = new FormData();
+
+      uploadedFiles.forEach((file, index) => {
+        formData.append(`files[${index}].filename`, file.filename);
+        formData.append(`files[${index}].mimetype`, file.mimetype);
+        formData.append(
+          `files[${index}].buffer`,
+          new Blob([file.buffer.data], { type: file.mimetype }),
+          file.filename
+        );
       });
+
+      const response = await axios.post("/uploadFiles", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
       if (response.status === 200) {
+        reloadMedicalHistory();
+        // setExistingFiles(response.medicalHistory); !!!!!!!!!!!!!!!!!!!!!!
+        // dispatch(
+        //   updateMyMedicalHistory({
+        //     medicalHistory: existingFiles.medicalHistory,
+        //   })
+        // );
         setUploadedFiles([]);
-        fetchData();
       }
     } catch (error) {
-      console.log("oops");
+      console.log("Oops, not added", error);
     }
   };
 
@@ -66,10 +104,11 @@ function UploadDocuments() {
         `/deleteFileFromMedicalHistory?filename=${file}`
       );
       if (response.status === 200) {
-        fetchData();
+        console.log("wohoo");
+        reloadMedicalHistory();
       }
     } catch (error) {
-      console.log("oops");
+      console.log("error" + error);
     }
   };
 
@@ -118,7 +157,7 @@ function UploadDocuments() {
                 <ul>
                   {uploadedFiles.map((file, index) => (
                     <li key={index}>
-                      {file.name}
+                      {file.filename}
                       <FontAwesomeIcon
                         icon={faX}
                         style={{
@@ -149,23 +188,27 @@ function UploadDocuments() {
             )}
           </div>
 
-          {existingFiles.length > 0 ? (
+          {existingFiles.medicalHistory &&
+          existingFiles.medicalHistory.length > 0 ? (
             <div>
               <h6>Existing Documents:</h6>
               <ListGroup>
-                {existingFiles.map((file, index) => (
+                {existingFiles.medicalHistory.map((file, index) => (
                   <ListGroup.Item key={index}>
                     <a
-                      onClick={() => viewFile(file)}
+                      onClick={() => viewFile(file.filename)}
                       target="_blank"
                       rel="noopener noreferrer"
                       style={{ color: "#212529", cursor: "pointer" }}
                       className="d-flex justify-content-between"
                     >
-                      {file}
+                      {file.filename}
                       <FontAwesomeIcon
                         icon={faTrashCan}
-                        onClick={() => deleteFile(file)}
+                        onClick={(e) => {
+                          e.stopPropagation(); // Stop the event from reaching the parent (a tag)
+                          deleteFile(file.filename);
+                        }}
                         style={{
                           opacity: 1,
                           color: "#ff6b35",
