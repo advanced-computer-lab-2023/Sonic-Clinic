@@ -992,31 +992,39 @@ const cancelHealthPackageFam = async (req, res) => {
   }
 };
 
-const viewSubscribedPackage = async (req, res) => {
+const viewSubscribedPackages = async (req, res) => {
   try {
     const patient = await patientModel.findById(req.user.id);
-    if (patient.package != "") {
-      const package = patient.populate("packagesPatient");
-    }
-    return res.status(200).json({ package });
-  } catch (error) {
-    console.error("Error:", error);
-    return res.status(500).json({ message: "Server Error" });
-  }
-};
-const viewSubscribedPackageFam = async (req, res) => {
-  try {
-    const familyMember = await familyMemberModel.findById(req.query._id);
-    if (familyMember.package != "") {
-      const package = familyMember.populate("packagesPatient");
-    }
-    return res.status(200).json({ package });
-  } catch (error) {
-    console.error("Error:", error);
-    return res.status(500).json({ message: "Server Error" });
-  }
-};
+    const familyMembers = patient.familyMembers;
 
+    if (patient.package) {
+      patient.populate("packagesPatient");
+    }
+    const familyMemberDetails = await Promise.all(
+      familyMembers.map(async ([familyMemberId, relationship]) => {
+        try {
+          const familyMember = await familyMemberModel.findById(familyMemberId);
+          if (familyMember.package) {
+            await familyMember.populate("packagesFamily").execPopulate();
+          }
+          return {
+            familyMember,
+          };
+        } catch (familyMemberError) {
+          console.error("Error fetching family member:", familyMemberError);
+          return {
+            error: `Error fetching details for family member with ID ${familyMemberId}`,
+          };
+        }
+      })
+    );
+
+    return res.status(200).json({ patient, familyMemberDetails });
+  } catch (error) {
+    console.error("Error:", error);
+    return res.status(500).json({ message: "Server Error" });
+  }
+};
 const cancelHealthPackage = async (req, res) => {
   try {
     const patient = await patientModel.findById(req.user.id);
@@ -1124,28 +1132,38 @@ const subscribeHealthPackageWallet = async (req, res) => {
     // Check if the package already exists
     const existingPackage = await packagesModel.findOne({ type: packageName });
 
-    // Create a new package
-    const currentDate = new Date();
-    const renewalDateString = currentDate.toLocaleDateString(); // Format the current date as a string
-    const newPackage = await packagesModel.create({
-      type: packageName,
-      price: existingPackage.price,
-      sessionDiscount: existingPackage.sessionDiscount,
-      medicineDiscount: existingPackage.medicineDiscount,
-      packageDiscountFM: existingPackage.packageDiscountFM,
-      status: "Active",
-      renewalDate: renewalDateString, // Use the formatted date string
-      endDate: existingPackage.endDate,
-      patientID: patient._id,
-    });
+    if (existingPackage) {
+      // If the package exists, update its details
+      existingPackage.status = "Active";
+      existingPackage.renewalDate = new Date().toLocaleDateString();
+      // Update other fields as needed
 
-    if (!newPackage) {
-      console.error("Error creating the package");
-      return res.status(500).json({ message: "Error creating the package" });
+      await existingPackage.save();
+    } else {
+      // If the package doesn't exist, create a new one
+      const newPackage = await packagesModel.create({
+        type: packageName,
+        // Copy details from existingPackage or set default values
+        price: existingPackage?.price || 0,
+        sessionDiscount: existingPackage?.sessionDiscount || 0,
+        medicineDiscount: existingPackage?.medicineDiscount || 0,
+        packageDiscountFM: existingPackage?.packageDiscountFM || 0,
+        status: "Active",
+        renewalDate: new Date().toLocaleDateString(),
+        endDate: existingPackage?.endDate || null,
+        patientID: patient._id,
+      });
+
+      if (!newPackage) {
+        console.error("Error creating the package");
+        return res.status(500).json({ message: "Error creating the package" });
+      }
+
+      patient.package = newPackage._id;
     }
 
-    patient.package = newPackage._id;
-    patient.wallet = patient.wallet - newPackage.price;
+    // Deduct package price from patient's wallet
+    patient.wallet = patient.wallet - (existingPackage?.price || 0);
 
     await patient.save();
 
@@ -1155,8 +1173,6 @@ const subscribeHealthPackageWallet = async (req, res) => {
     return res.status(500).json({ message: "Server Error" });
   }
 };
-
-
 
 const payAppointmentWallet = async (req, res) => {
   try {
@@ -1275,8 +1291,8 @@ module.exports = {
   changePasswordForPatient,
   cancelHealthPackage,
   cancelHealthPackageFam,
-  viewSubscribedPackage,
-  viewSubscribedPackageFam,
+  viewSubscribedPackages,
+
   addFamilyMemberExisting,
   addAppointmentForMyselfOrFam,
   changePasswordForPatientForget,

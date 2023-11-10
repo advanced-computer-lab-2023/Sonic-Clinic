@@ -31,8 +31,6 @@ const fileSchema = new Schema({
   },
 });
 
-
-
 const patientSchema = new Schema(
   {
     username: {
@@ -90,12 +88,9 @@ const patientSchema = new Schema(
       type: Number,
       required: true,
     },
-    
-    familyMembers: [
-      [String, String], 
-    ], medicalHistory: 
-    [fileSchema] 
-   ,
+
+    familyMembers: [[String, String]],
+    medicalHistory: [fileSchema],
   },
   { timestamps: true }
 );
@@ -111,7 +106,7 @@ patientSchema.set("toJSON", { virtuals: true });
 patientSchema.virtual("packagesPatient", {
   ref: "Packages",
   localField: "package",
-  foreignField: "type",
+  foreignField: "_id",
 });
 
 patientSchema.pre("save", async function (next) {
