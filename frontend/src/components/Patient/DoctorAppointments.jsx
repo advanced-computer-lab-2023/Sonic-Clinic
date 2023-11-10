@@ -19,40 +19,9 @@ import axios from "axios";
 import { useSelector } from "react-redux";
 
 const DoctorAppointments = ({ onBookAppointment }) => {
-  const [doctorAppointments, setDoctorAppointments] = useState([
-    {
-      id: 1,
-      dateTime: "2023-11-15 10:00 AM",
-      location: "Medical Center A",
-    },
-    {
-      id: 2,
-      dateTime: "2023-11-15 2:30 PM",
-      location: "Health Clinic B",
-    },
-    {
-      id: 3,
-      dateTime: "2023-11-16 9:15 AM",
-      location: "Hospital XYZ",
-    },
-    {
-      id: 4,
-      dateTime: "2023-11-16 3:45 PM",
-      location: "City Hospital",
-    },
-    {
-      id: 5,
-      dateTime: "2023-11-17 11:30 AM",
-      location: "Clinic ABC",
-    },
-    {
-      id: 6,
-      dateTime: "2023-11-18 1:00 PM",
-      location: "Medical Center D",
-    },
-  ]);
   const [loading, setLoading] = useState(true);
   const [responseData, setResponseData] = useState([]);
+  const [responseUrl, setResponseUrl] = useState([]);
   const [error1, setError] = useState(null);
   const [appointmentBooked, setAppointmentBooked] = useState(null);
   const [showModal, setShowModal] = useState(false);
@@ -66,10 +35,16 @@ const DoctorAppointments = ({ onBookAppointment }) => {
     cvv: "",
   });
   const [selectedAppointment, setSelectedAppointment] = useState(null);
+  const [selectedFamilyMember, setSelectedFamilyMember] = useState("");
+  const [selectedFamilyMemberId, setSelectedFamilyMemberId] = useState("");
+  const doctorRate = useSelector(
+    (state) => state.selectedDoctorData.hourlyRate
+  );
 
   const handleClose = () => {
     setShowModal(false); // Close the modal first
-
+    setSelectedFamilyMember("");
+    setError(null);
     setTimeout(() => {
       setBookingStatus("booking"); // Reset the status after a short delay
     }, 200); // Adjust the delay as needed
@@ -81,6 +56,10 @@ const DoctorAppointments = ({ onBookAppointment }) => {
       cvv: "",
     });
     setSelectedAppointment(null);
+  };
+  const handleFamilyMemberChange = (e) => {
+    const selectedId = e.target.value;
+    setSelectedFamilyMemberId(selectedId === "myself" ? "" : selectedId);
   };
 
   const handleBookClick = (appointment) => {
@@ -111,18 +90,47 @@ const DoctorAppointments = ({ onBookAppointment }) => {
     });
   };
 
-  const handleBookAppointment = () => {
-    // Simulate a booking request (replace with actual API call)
-    setBookingStatus("booking"); // Show "Booking in progress" message
-    setTimeout(() => {
-      // Simulate a successful booking
-      setBookingStatus("success"); // Show "Booking success" message
-    }, 500); // Simulate a 2-second delay (replace with actual API call)
+  const handleBookAppointment = async () => {
+    try {
+      let apiUrl;
 
-    // In a real application, you would perform the booking logic and handle the response.
+      if (paymentMethod === "creditCard") {
+        apiUrl = "/addAppointmentForMyselfOrFam";
+      } else {
+        apiUrl = "/payAppointmentWallet";
+      }
 
-    // Close the modal
-    // handleClose();
+      let response;
+
+      if (paymentMethod === "creditCard") {
+        response = await axios.post(`${apiUrl}`);
+      } else {
+        response = await axios.post(`${apiUrl}`, {
+          _id: selectedFamilyMemberId,
+        });
+      }
+
+      if (response.status === 200) {
+        setBookingStatus("booking");
+
+        if (paymentMethod === "creditCard") {
+          setResponseUrl(response.data.url);
+          if (response.data.url) {
+            window.location.href = response.data.url;
+          }
+        } else {
+        }
+      }
+    } catch (error) {
+      if (error.response && error.response.status === 404) {
+        if (paymentMethod === "creditCard") {
+        } else {
+          setError(error.response.data.message);
+        }
+      } else {
+        setError("An error occurred. Please try again later");
+      }
+    }
   };
   const id = useSelector((state) => state.selectedDoctorData.id);
   useEffect(() => {
@@ -150,6 +158,7 @@ const DoctorAppointments = ({ onBookAppointment }) => {
     }
   };
   const neededData = responseData;
+  const familyMembers = useSelector((state) => state.patientLogin.family);
 
   return (
     <>
@@ -282,6 +291,96 @@ const DoctorAppointments = ({ onBookAppointment }) => {
       )}
       <Modal show={showModal} onHide={handleClose}>
         <Modal.Header closeButton>
+          <Modal.Title>Buy Health Package</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {bookingStatus === "success" ? (
+            <p>You have successfully booked your Appointment.</p>
+          ) : (
+            <div>
+              {/* Display error message */}
+              <p>
+                Date & Time:{" "}
+                <span style={{ fontWeight: "bold" }}>
+                  {selectedAppointment ? selectedAppointment : ""}
+                </span>
+              </p>
+              <Form>
+                <Form.Group controlId="bookingName">
+                  <Form.Label>Booking Name</Form.Label>
+                  <Form.Control
+                    as="select"
+                    value={selectedFamilyMemberId}
+                    onChange={handleFamilyMemberChange}
+                    defaultValue="myself" // Set "Myself" as the default value
+                  >
+                    <option value="myself" key="myself">
+                      Myself
+                    </option>{" "}
+                    {familyMembers.map((member) => (
+                      <option key={member[0]} value={member[0]}>
+                        {member[1]}
+                      </option>
+                    ))}
+                  </Form.Control>
+                </Form.Group>
+                <Form.Group>
+                  <Form.Label>Payment Method</Form.Label>
+                  <Form.Check
+                    type="radio"
+                    label="Wallet"
+                    name="paymentMethod"
+                    value="wallet"
+                    checked={paymentMethod === "wallet"}
+                    onChange={handlePaymentMethodChange}
+                  />
+                  <Form.Check
+                    type="radio"
+                    label="Credit Card"
+                    name="paymentMethod"
+                    value="creditCard"
+                    // checked={paymentMethod === "creditCard"}
+                    onChange={handlePaymentMethodChange}
+                  />
+                </Form.Group>
+                {error1 && <div className="error">{error1}</div>}
+              </Form>
+            </div>
+          )}
+        </Modal.Body>
+        <Modal.Footer>
+          {bookingStatus === "success" ? (
+            <Button variant="success" onClick={handleClose}>
+              Close
+            </Button>
+          ) : (
+            <div className="d-flex justify-content-between align-items-center w-100">
+              <div>
+                <p>
+                  Total Amount:{" "}
+                  <span style={{ fontWeight: "bold" }}>
+                    ${doctorRate ? doctorRate : ""}
+                  </span>
+                </p>
+              </div>
+              <div className="d-flex">
+                <Button
+                  variant="success"
+                  style={{ marginRight: "0.5rem" }}
+                  onClick={handleBookAppointment}
+                >
+                  Book
+                </Button>
+                <Button variant="danger" onClick={handleClose}>
+                  Cancel
+                </Button>
+              </div>
+            </div>
+          )}
+        </Modal.Footer>
+      </Modal>
+      {/* <Modal show={showModal} onHide={handleClose}>
+        <Modal.Header closeButton>
           <Modal.Title>Book Appointment</Modal.Title>
         </Modal.Header>
         <Modal.Body>
@@ -290,10 +389,7 @@ const DoctorAppointments = ({ onBookAppointment }) => {
           ) : (
             <div>
               <p>Appointment Details:</p>
-              {/* <p>
-                Location:{" "}
-                {selectedAppointment ? selectedAppointment.location : ""}
-              </p> */}
+     
               <p>
                 Date & Time: {selectedAppointment ? selectedAppointment : ""}
               </p>
@@ -384,7 +480,7 @@ const DoctorAppointments = ({ onBookAppointment }) => {
             </div>
           )}
         </Modal.Footer>
-      </Modal>
+      </Modal> */}
     </>
   );
 };

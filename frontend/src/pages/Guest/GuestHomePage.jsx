@@ -42,6 +42,16 @@ const GuestHomePage = () => {
     setOurDoctorsVisible(false);
     setOurPatientsVisible(false);
   }, []);
+  const logout = async () => {
+    try {
+      const response = await axios.get("/logout");
+      if (response.status === 200) {
+        console.log("LOGOUT");
+      }
+    } catch (error) {
+      console.log();
+    }
+  };
 
   return (
     <div>

@@ -32,6 +32,9 @@ import OTPVerification from "./pages/Guest/OTPVerification";
 import ResetPassword from "./pages/Guest/ResetPassword";
 import PasswordChanged from "./pages/Guest/PasswordChanged";
 
+import PatientHealthPackages from "./pages/Patient/PatientHealthPackages";
+import PatientPackageSuccess from "./pages/Patient/PatientPackageSuccess";
+
 function App() {
   return (
     <div className="bg-light">
@@ -77,6 +80,10 @@ function App() {
 
           <Route path="profile" element={<PatientProfile />} />
           <Route path="health-packages" element={<PatientHealthPackages />} />
+          <Route
+            path="health-packages-success"
+            element={<PatientPackageSuccess />}
+          />
         </Route>
 
         <Route path="doctor">
