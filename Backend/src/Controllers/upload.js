@@ -105,7 +105,7 @@ const viewPatientMedicalHistory = async (req, res) => {
         .json({ message: "No medical records found for the patient." });
     }
 
-    const requestedFilename = req.params.filename;
+    const requestedFilename = req.query.filename;
 
     const requestedFile = medicalHistory.find(
       (file) => file.filename === requestedFilename

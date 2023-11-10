@@ -21,14 +21,29 @@ function UploadDocuments() {
     console.log(file);
     try {
       const response = await axios.get(
-        `/viewPatientMedicalHistory?filename=${file}`
+        `/viewPatientMedicalHistory?filename=${file}`,
+        {
+          responseType: "blob", // Set the response type to 'blob'
+        }
       );
 
       if (response.status === 200) {
-        console.log("cool");
+        const blob = new Blob([response.data], {
+          type: response.headers["content-type"],
+        });
+
+        // Check if the blob is not empty
+        if (blob.size > 0) {
+          const url = window.URL.createObjectURL(blob);
+
+          // Open the file in a new tab
+          window.open(url, "_blank");
+        } else {
+          console.log("File content is empty");
+        }
       }
     } catch (error) {
-      console.log("oops");
+      console.log("not cool", error);
     }
   };
 
@@ -74,7 +89,8 @@ function UploadDocuments() {
       const formData = new FormData();
 
       uploadedFiles.forEach((file, index) => {
-        formData.append(`files[${index}]`, file); // Use the correct field name
+        const blob = new Blob([file.buffer.data], { type: file.mimetype });
+        formData.append("files", blob, file.filename);
       });
 
       const response = await axios.post("/uploadFiles", formData, {

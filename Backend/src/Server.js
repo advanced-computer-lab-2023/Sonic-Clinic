@@ -324,7 +324,7 @@ server.get("/viewWalletDoc", requireAuth, viewWalletDoc);
 //upload
 server.post("/uploadFilesForPotentialDoctor", uploadFilesForPotentialDoctor);
 server.post("/uploadFiles", requireAuth, uploadFiles);
-server.get(
+server.post(
   "/viewPatientMedicalHistoryForDoctors",
   requireAuth,
   viewPatientMedicalHistoryForDoctors
