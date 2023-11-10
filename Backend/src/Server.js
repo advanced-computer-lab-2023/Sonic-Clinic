@@ -58,6 +58,8 @@ const {
   subscribeHealthPackageWallet,
   payAppointmentWallet,
   payAppointmentStripe,
+  handlePackageStripe,
+  handleAppointmentStripe,
 } = require("./Controllers/patientController");
 
 /////////////////////////////////doctorController//////////////////////////////////////////
@@ -228,7 +230,8 @@ server.post(
 server.post("/changePasswordForPatientForget", changePasswordForPatientForget);
 server.post("/payAppointmentWallet", requireAuth, payAppointmentWallet);
 server.post("/payAppointmentStripe", requireAuth, payAppointmentStripe);
-
+server.post("/handlePackageStripe", requireAuth, handlePackageStripe);
+server.post("/handleAppointmentStripe", requireAuth, handleAppointmentStripe);
 //////////////////////////////////////////// GET/////////////////////////////////////
 //admin
 server.get("/viewAllPatients", requireAuth, viewAllPatients);
