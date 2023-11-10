@@ -1153,6 +1153,8 @@ const payAppointmentWallet = async (req, res) => {
       return res.status(404).json({ message: "Patient not found." });
     }
     const appointment = await appointmentModel.findById(req.body._id);
+
+    console.log(appointment);
     const doctor = await doctorModel.findById(appointment.doctorID);
     const sessionPrice = await calculateSessionPrice(
       doctor.hourlyRate,

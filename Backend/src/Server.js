@@ -117,10 +117,14 @@ const {
   verifyOtp,
 } = require("./Controllers/authorization");
 ////////////////////////////////uploadController///////////////////////////////////////////
-const { uploadFiles,deleteFileFromMedicalHistory,viewPatientMedicalHistory,viewPatientMedicalHistoryForDoctors
-,uploadFilesForPotentialDoctor } = require("./Controllers/upload");
-
-
+const {
+  uploadFiles,
+  deleteFileFromMedicalHistory,
+  viewPatientMedicalHistory,
+  viewPatientMedicalHistoryForDoctors,
+  uploadFilesForPotentialDoctor,
+  viewMedicalRecords,
+} = require("./Controllers/upload");
 
 //el link bta3 el DB
 const MongoURI = process.env.MONGO_URI;
@@ -225,6 +229,7 @@ server.post(
 server.post("/changePasswordForPatientForget", changePasswordForPatientForget);
 server.post("/payAppointmentWallet", requireAuth, payAppointmentWallet);
 server.post("/payAppointmentStripe", requireAuth, payAppointmentStripe);
+server.get("/viewMedicalRecords", requireAuth, viewMedicalRecords);
 
 //////////////////////////////////////////// GET/////////////////////////////////////
 //admin
@@ -319,9 +324,21 @@ server.get("/viewWalletDoc", requireAuth, viewWalletDoc);
 //upload
 server.post("/uploadFilesForPotentialDoctor", uploadFilesForPotentialDoctor);
 server.post("/uploadFiles", requireAuth, uploadFiles);
-server.get("/viewPatientMedicalHistoryForDoctors", requireAuth, viewPatientMedicalHistoryForDoctors);
-server.get("/viewPatientMedicalHistory", requireAuth, viewPatientMedicalHistory);
-server.delete("/deleteFileFromMedicalHistory", requireAuth, deleteFileFromMedicalHistory);
+server.get(
+  "/viewPatientMedicalHistoryForDoctors",
+  requireAuth,
+  viewPatientMedicalHistoryForDoctors
+);
+server.get(
+  "/viewPatientMedicalHistory",
+  requireAuth,
+  viewPatientMedicalHistory
+);
+server.delete(
+  "/deleteFileFromMedicalHistory",
+  requireAuth,
+  deleteFileFromMedicalHistory
+);
 ////////////////////////////////////////////////////PUT////////////////////////////////////////
 //admin
 server.put("/updatePackage", requireAuth, updatePackage);

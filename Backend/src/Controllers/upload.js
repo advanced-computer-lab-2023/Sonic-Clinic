@@ -34,6 +34,7 @@ const uploadFiles = async (req, res) => {
 
     upload(req, res, async (err) => {
       if (err) {
+        console.error("File upload failed:", err); // Log the error message
         return res.status(400).json({ error: "File upload failed" });
       }
       patient.medicalHistory = patient.medicalHistory || [];
@@ -221,10 +222,32 @@ const uploadFilesForPotentialDoctor = async (req, res) => {
   }
 };
 
+const viewMedicalRecords = async (req, res) => {
+  try {
+    const patient = await patientModel.findById(req.user.id);
+
+    if (!patient) {
+      return res.status(404).json({ error: "Patient not found" });
+    }
+
+    const medHistoryFilenames = patient.medicalHistory.map(
+      (file) => file.filename
+    );
+
+    res.status(200).json({
+      medHistory: medHistoryFilenames,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
 module.exports = {
   uploadFiles,
   deleteFileFromMedicalHistory,
   viewPatientMedicalHistory,
   viewPatientMedicalHistoryForDoctors,
   uploadFilesForPotentialDoctor,
+  viewMedicalRecords,
 };
