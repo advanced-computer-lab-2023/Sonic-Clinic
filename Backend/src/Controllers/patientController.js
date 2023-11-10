@@ -1108,6 +1108,7 @@ const subscribeHealthPackageWallet = async (req, res) => {
   try {
     const id = req.body._id;
     let patient;
+
     if (!id) {
       patient = await patientModel.findById(req.user.id);
     } else {
@@ -1117,29 +1118,46 @@ const subscribeHealthPackageWallet = async (req, res) => {
     if (!patient) {
       return res.status(404).json({ message: "User not found." });
     }
-    const packageName = req.query.type;
-    const package = await packagesModel.findOne({ type: packageName });
-    const price = package.price;
-    const wallet = patient.wallet;
-    let newWallet;
 
-    if (wallet >= price && packageName !== patient.package) {
-      patient.package = packageName;
-      newWallet = wallet - price;
-      patient.wallet = newWallet;
-      await patient.save();
-      return res.status(200).json({ patient });
-    } else {
-      return res.status(404).json({
-        message:
-          "You are already subscribed to that package or your funds are insufficient",
-      });
+    const packageName = req.query.type;
+
+    // Check if the package already exists
+    const existingPackage = await packagesModel.findOne({ type: packageName });
+
+    // Create a new package
+    const currentDate = new Date();
+    const renewalDateString = currentDate.toLocaleDateString(); // Format the current date as a string
+    const newPackage = await packagesModel.create({
+      type: packageName,
+      price: existingPackage.price,
+      sessionDiscount: existingPackage.sessionDiscount,
+      medicineDiscount: existingPackage.medicineDiscount,
+      packageDiscountFM: existingPackage.packageDiscountFM,
+      status: "Active",
+      renewalDate: renewalDateString, // Use the formatted date string
+      endDate: existingPackage.endDate,
+      patientID: patient._id,
+    });
+
+    if (!newPackage) {
+      console.error("Error creating the package");
+      return res.status(500).json({ message: "Error creating the package" });
     }
+
+    patient.package = newPackage._id;
+    patient.wallet = patient.wallet - newPackage.price;
+
+    await patient.save();
+
+    return res.status(200).json({ patient });
   } catch (error) {
     console.error("Error:", error);
     return res.status(500).json({ message: "Server Error" });
   }
 };
+
+
+
 const payAppointmentWallet = async (req, res) => {
   try {
     let patient;

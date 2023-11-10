@@ -54,8 +54,7 @@ const potentialDoctorSchema = new Schema({
     type: String,
     required: true,
   },documents: 
-  [fileSchema] 
- ,
+  [fileSchema],
 }, { timestamps: true });
 
 const PotentialDoctor = mongoose.model('PotentialDoctor', potentialDoctorSchema);
