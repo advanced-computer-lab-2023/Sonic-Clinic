@@ -995,18 +995,20 @@ const cancelHealthPackageFam = async (req, res) => {
 
 const viewSubscribedPackages = async (req, res) => {
   try {
-    const patient = await patientModel.findById(req.user.id);
+    let patient = await patientModel.findById(req.user.id);
     const familyMembers = patient.familyMembers;
 
     if (patient.package) {
-      patient.populate("packagesPatient");
+      patient = await patientModel
+        .findById(req.user.id)
+        .populate("packagesPatient");
     }
     const familyMemberDetails = await Promise.all(
       familyMembers.map(async ([familyMemberId, relationship]) => {
         try {
           const familyMember = await familyMemberModel.findById(familyMemberId);
           if (familyMember.package) {
-            await familyMember.populate("packagesFamily").execPopulate();
+            await familyMember.populate("packagesFamily");
           }
           return {
             familyMember,
@@ -1133,7 +1135,7 @@ const subscribeHealthPackageWallet = async (req, res) => {
 
     const originalPackage = await packagesModel.findOne({ type: packageName });
     console.log(originalPackage);
-    const newType = originalPackage.name + patient.name;
+    const newType = packageName + " " + patient.name;
 
     const newPackage = await packagesModel.create({
       type: newType,
