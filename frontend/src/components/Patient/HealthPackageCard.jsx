@@ -44,7 +44,7 @@ export default function HealthPackageCard() {
 
   const handleClose = () => {
     setShowModal(false); // Close the modal first
-
+    setError(null);
     setTimeout(() => {
       setBookingStatus("booking"); // Reset the status after a short delay
     }, 200); // Adjust the delay as needed
@@ -89,28 +89,39 @@ export default function HealthPackageCard() {
 
   const handleBookAppointment = async () => {
     try {
-      const response = await axios.post(
-        `/subscribeHealthPackage?type=${selectedPackage.type}`
-      );
+      let apiUrl;
+
+      if (paymentMethod === "creditCard") {
+        apiUrl = "/subscribeHealthPackage";
+      } else {
+        apiUrl = "/subscribeHealthPackageWallet";
+      }
+
+      let response;
+
+      if (paymentMethod === "creditCard") {
+        response = await axios.post(`${apiUrl}?type=${selectedPackage.type}`);
+      } else {
+        response = await axios.post(`${apiUrl}?type=${selectedPackage.type}`);
+      }
+
       if (response.status === 200) {
-        setResponseUrl(response.data.url);
-        setBookingStatus("booking"); // Show "Booking in progress" message
+        setBookingStatus("booking");
 
-        setTimeout(() => {
-          // Simulate a successful booking
-          setBookingStatus("success"); // Show "Booking success" message
-
-          // Open the responseUrl in a new tab
-          if (responseUrl) {
-            if (responseUrl) {
-              window.open(responseUrl, "_blank");
-            }
+        if (paymentMethod === "creditCard") {
+          setResponseUrl(response.data.url);
+          if (response.data.url) {
+            window.location.href = response.data.url;
           }
-        }, 500);
+        } else {
+        }
       }
     } catch (error) {
       if (error.response && error.response.status === 404) {
-        setError("Doctor not found");
+        if (paymentMethod === "creditCard") {
+        } else {
+          setError(error.response.data.message);
+        }
       } else {
         setError(
           "An error occurred while accepting the doctor. Please try again later"
@@ -265,13 +276,13 @@ export default function HealthPackageCard() {
             <p>You have successfully booked your package.</p>
           ) : (
             <div>
+              {/* Display error message */}
               <p>
                 Package Name:{" "}
                 <span style={{ fontWeight: "bold" }}>
                   {selectedPackage ? selectedPackage.type : ""}
                 </span>
               </p>
-
               <Form>
                 <Form.Group controlId="bookingName">
                   <Form.Label>Booking Name</Form.Label>
@@ -310,44 +321,7 @@ export default function HealthPackageCard() {
                     onChange={handlePaymentMethodChange}
                   />
                 </Form.Group>
-                {/* {paymentMethod === "creditCard" && (
-                  <div>
-                    <Form.Group controlId="creditCardNumber">
-                      <Form.Label>Credit Card Number</Form.Label>
-                      <Form.Control
-                        type="text"
-                        placeholder="Enter credit card number"
-                        name="cardNumber"
-                        value={creditCard.cardNumber}
-                        onChange={handleCreditCardChange}
-                      />
-                    </Form.Group>
-                    <Form.Group as={Row}>
-                      <Form.Label column sm={4}>
-                        Expiration Date
-                      </Form.Label>
-                      <Col sm={8}>
-                        <Form.Control
-                          type="text"
-                          placeholder="MM/YYYY"
-                          name="expirationDate"
-                          value={creditCard.expirationDate}
-                          onChange={handleCreditCardChange}
-                        />
-                      </Col>
-                    </Form.Group>
-                    <Form.Group controlId="cvv">
-                      <Form.Label>CVV</Form.Label>
-                      <Form.Control
-                        type="text"
-                        placeholder="Enter CVV"
-                        name="cvv"
-                        value={creditCard.cvv}
-                        onChange={handleCreditCardChange}
-                      />
-                    </Form.Group>
-                  </div>
-                )} */}
+                {error1 && <div className="error">{error1}</div>}
               </Form>
             </div>
           )}
@@ -360,7 +334,6 @@ export default function HealthPackageCard() {
           ) : (
             <div className="d-flex justify-content-between align-items-center w-100">
               <div>
-                {" "}
                 <p>
                   Total Amount:{" "}
                   <span style={{ fontWeight: "bold" }}>
@@ -371,7 +344,7 @@ export default function HealthPackageCard() {
               <div className="d-flex">
                 <Button
                   variant="success"
-                  className="mr-2"
+                  style={{ marginRight: "0.5rem" }}
                   onClick={handleBookAppointment}
                 >
                   Book

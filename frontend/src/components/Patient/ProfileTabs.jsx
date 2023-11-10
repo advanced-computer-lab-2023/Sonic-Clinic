@@ -8,6 +8,7 @@ import FamilyMembersList from "./FamilyMembersList";
 import ViewPersonalInfo from "./viewPersonalInfo";
 import UploadDocuments from "./UploadDocuments";
 import { useSelector } from "react-redux";
+import HealthPackagesList from "./HealthPackagesList";
 
 function ProfileTabs() {
   const [activeKey, setActiveKey] = useState("first");
@@ -120,7 +121,7 @@ function ProfileTabs() {
                     fontWeight: "600",
                   }}
                 >
-                  My Packages
+                  My Health Packages
                 </Nav.Link>
               </Nav.Item>
             </Nav>
@@ -169,7 +170,7 @@ function ProfileTabs() {
                 </div>
               </Tab.Pane>
               <Tab.Pane eventKey="fifth">
-                <ViewPersonalInfo />
+                <HealthPackagesList />
               </Tab.Pane>
             </Tab.Content>
           </Col>
