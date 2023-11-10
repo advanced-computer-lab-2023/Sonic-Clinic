@@ -1,7 +1,16 @@
 import { Card, Image } from "react-bootstrap";
 import mainImg from "../../Assets/Patient/HomeImg.png";
 import { useSelector } from "react-redux";
+import { Waypoint } from "react-waypoint";
+import { useSpring, animated } from "react-spring";
+import { useState } from "react";
 function MainImg() {
+  const [ourDoctorsVisible, setOurDoctorsVisible] = useState(false);
+  const ourDoctorsSpring = useSpring({
+    opacity: ourDoctorsVisible ? 1 : 0,
+    transform: ourDoctorsVisible ? "translateX(0)" : "translateX(-50%)",
+    config: { duration: 1000 },
+  });
   const name = useSelector((state) => state.patientLogin.name).split(" ")[0];
   return (
     <div>
@@ -25,19 +34,25 @@ function MainImg() {
             border: "none",
           }}
         >
-          <Card.Text
-            style={{
-              color: "#05AFB9",
-              textAlign: "center",
-              fontFamily: "fantasy",
-              fontSize: "7rem",
-              fontStyle: "normal",
-              fontWeight: 400,
-              lineHeight: "120%",
-            }}
-          >
-            Hello {name}
-          </Card.Text>
+          <Waypoint
+            onEnter={() => setOurDoctorsVisible(true)}
+            onLeave={() => setOurDoctorsVisible(false)}
+          />
+          <animated.div style={ourDoctorsSpring} className="d-flex flex-row">
+            <Card.Text
+              style={{
+                color: "#05AFB9",
+                textAlign: "center",
+                fontFamily: "fantasy",
+                fontSize: "7rem",
+                fontStyle: "normal",
+                fontWeight: 400,
+                lineHeight: "120%",
+              }}
+            >
+              Hello {name}
+            </Card.Text>
+          </animated.div>
         </Card>
       </Card>
     </div>
