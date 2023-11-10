@@ -22,7 +22,6 @@ function GuestHomePage() {
   }, []);
   const logout = async () => {
     try {
-      console.log("HHHHHHHH");
       const response = await axios.get("/logout");
       if (response.status === 200) {
         console.log("LOGOUT");

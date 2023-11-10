@@ -1,9 +1,9 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { Card, Col, Container, ListGroup, Row } from "react-bootstrap";
+import { Button, Card, Col, Container, ListGroup, Row } from "react-bootstrap";
 import { useSelector } from "react-redux";
 
-function FamilyMembersList({ refreshFlag }) {
+function HealthPackagesList({ refreshFlag }) {
   const [loading, setLoading] = useState(true);
   const [responseData, setResponseData] = useState([]);
   const [error1, setError] = useState(null);
@@ -37,20 +37,20 @@ function FamilyMembersList({ refreshFlag }) {
       <div
         className="d-flex justify-content-center align-items-center"
         style={{
-          fontSize: "2.5rem", // Increase font size for the title
+          fontSize: "2.5rem",
           fontWeight: "600",
           color: "#212529",
           lineHeight: "1.5",
         }}
       >
-        Family Members
+        Your Health Packages
       </div>
       {NeededData.map((member, index) => (
         <Card key={index} className="mb-4">
           <Card.Body>
             <div
               style={{
-                color: "#099BA0  ",
+                color: "#099BA0",
                 fontSize: "30px",
                 fontWeight: "600",
                 marginBottom: "10px",
@@ -59,26 +59,19 @@ function FamilyMembersList({ refreshFlag }) {
               {member.name}
             </div>
             <Row>
-              <Col md={4}>
-                <p>
-                  <strong>Gender:</strong> {member.gender}
-                </p>
-                <p>
-                  <strong>Age:</strong> {member.age}
-                </p>
-              </Col>
-              <Col md={4}>
-                <p>
-                  <strong>National ID:</strong> {member.nationalID}
-                </p>
-                <p>
-                  <strong>Relation:</strong> {member.relationToPatient}
-                </p>
-              </Col>
-              <Col md={4}>
+              <Col md={8}>
                 <p>
                   <strong>Package:</strong> {member.package}
                 </p>
+                <p>
+                  <strong>Package Status:</strong> {member.packageStatus}
+                </p>
+              </Col>
+              <Col
+                md={4}
+                className="d-flex align-items-end justify-content-end"
+              >
+                <Button variant="secondary">Cancel Package</Button>
               </Col>
             </Row>
           </Card.Body>
@@ -88,4 +81,4 @@ function FamilyMembersList({ refreshFlag }) {
   );
 }
 
-export default FamilyMembersList;
+export default HealthPackagesList;
