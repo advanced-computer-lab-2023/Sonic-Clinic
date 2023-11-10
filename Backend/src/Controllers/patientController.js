@@ -1137,30 +1137,31 @@ const subscribeHealthPackageWallet = async (req, res) => {
     console.log(originalPackage);
     const newType = packageName + " " + patient.name;
 
-    const newPackage = await packagesModel.create({
-      type: newType,
-      price: originalPackage.price,
-      sessionDiscount: originalPackage.sessionDiscount,
-      medicineDiscount: originalPackage.medicineDiscount,
-      packageDiscountFM: originalPackage.packageDiscountFM,
-      status: "Active",
-      renewalDate: new Date().toLocaleDateString(),
-      endDate: originalPackage.endDate,
-      patientID: patient._id,
-    });
+    if (mainPatient.walletllet >= originalPackage.price) {
+      const newPackage = await packagesModel.create({
+        type: newType,
+        price: originalPackage.price,
+        sessionDiscount: originalPackage.sessionDiscount,
+        medicineDiscount: originalPackage.medicineDiscount,
+        packageDiscountFM: originalPackage.packageDiscountFM,
+        status: "Active",
+        renewalDate: new Date().toLocaleDateString(),
+        endDate: originalPackage.endDate,
+        patientID: patient._id,
+      });
 
-    if (!newPackage) {
-      console.error("Error creating the package");
-      return res.status(500).json({ message: "Error creating the package" });
+      if (!newPackage) {
+        console.error("Error creating the package");
+        return res.status(500).json({ message: "Error creating the package" });
+      }
+      patient.package = newPackage._id;
+      await patient.save();
+
+      // Deduct package price from patient's wallet
+      mainPatient.wallet = mainPatient.wallet - newPackage.price;
+
+      await mainPatient.save();
     }
-
-    patient.package = newPackage._id;
-    await patient.save();
-
-    // Deduct package price from patient's wallet
-    mainPatient.wallet = mainPatient.wallet - newPackage.price;
-
-    await mainPatient.save();
 
     return res.status(200).json({ patient });
   } catch (error) {
@@ -1173,6 +1174,7 @@ const payAppointmentWallet = async (req, res) => {
   try {
     let patient;
     const id = req.body.famID;
+    const mainPatient = await patientModel.findById(req.user.id);
     if (!id) {
       patient = await patientModel.findById(req.user.id);
     } else {
@@ -1190,10 +1192,10 @@ const payAppointmentWallet = async (req, res) => {
     let docWallet;
     let patientWallet;
 
-    if (patient.wallet >= sessionPrice) {
-      patientWallet = patient.wallet - sessionPrice;
-      patient.wallet = patientWallet;
-      await patient.save();
+    if (mainPatient.wallet >= sessionPrice) {
+      patientWallet = mainPatient.wallet - sessionPrice;
+      mainPatient.wallet = patientWallet;
+      await mainPatient.save();
       docWallet = doctor.wallet + sessionPrice;
       doctor.wallet = docWallet;
       await doctor.save();
