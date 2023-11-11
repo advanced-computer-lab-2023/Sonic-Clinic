@@ -912,7 +912,7 @@ const viewAvailableAppointmentsOfDoctor = async (req, res) => {
 
 const changePasswordForPatient = async (req, res) => {
   const { currentPassword, newPassword } = req.body;
-  const patientID = req.body._id;
+  const patientID = req.user.id;
 
   try {
     const patient = await patientModel.findById(patientID);
