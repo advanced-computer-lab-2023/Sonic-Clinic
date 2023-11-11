@@ -6,6 +6,10 @@ import GuestBox from "../../components/Guest/GuestBox";
 import GuestBurgerMenu from "../../components/Guest/GuestBurgerMenu";
 import { Waypoint } from "react-waypoint";
 import { useSpring, animated } from "react-spring";
+import { logoutDoctor } from "../../state/loginDoctorReducer";
+import { logoutAdmin } from "../../state/loginAdminReducer";
+import { logoutPatient } from "../../state/loginPatientReducer";
+import { useDispatch } from "react-redux";
 import axios from "axios";
 
 const GuestHomePage = () => {
@@ -13,6 +17,7 @@ const GuestHomePage = () => {
   const [contactUsVisible, setContactUsVisible] = useState(false);
   const [ourDoctorsVisible, setOurDoctorsVisible] = useState(false);
   const [ourPatientsVisible, setOurPatientsVisible] = useState(false);
+  const dispatch = useDispatch();
 
   const aboutUsSpring = useSpring({
     opacity: aboutUsVisible ? 1 : 0,
@@ -42,7 +47,11 @@ const GuestHomePage = () => {
     setContactUsVisible(false);
     setOurDoctorsVisible(false);
     setOurPatientsVisible(false);
+    dispatch(logoutDoctor());
+    dispatch(logoutAdmin());
+    dispatch(logoutPatient());
   }, []);
+
   const logout = async () => {
     try {
       const response = await axios.get("/logout");

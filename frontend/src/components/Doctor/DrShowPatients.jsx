@@ -121,14 +121,15 @@ function DrShowPatients({
         formData.append("files", blob, file.filename);
       });
 
-      const response = await axios.post("/addFilesDoctorToPatient", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-        data: {
-          patientID: id,
-        },
-      });
+      const response = await axios.post(
+        `/uploadFilesbyDoctors?id=${id}`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
 
       if (response.status === 200) {
         setUploadedFiles([]);

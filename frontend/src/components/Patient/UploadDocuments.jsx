@@ -18,32 +18,32 @@ function UploadDocuments() {
   }, []);
 
   const viewFile = async (file) => {
-    console.log(file);
     try {
       const response = await axios.get(
         `/viewPatientMedicalHistory?filename=${file}`,
         {
-          responseType: "blob", // Set the response type to 'blob'
+          responseType: "arraybuffer",
         }
       );
+
+      console.log("Server Response Data:", response.data);
 
       if (response.status === 200) {
         const blob = new Blob([response.data], {
           type: response.headers["content-type"],
         });
 
-        // Check if the blob is not empty
+        console.log("Blob:", blob);
+
         if (blob.size > 0) {
           const url = window.URL.createObjectURL(blob);
-
-          // Open the file in a new tab
           window.open(url, "_blank");
         } else {
           console.log("File content is empty");
         }
       }
     } catch (error) {
-      console.log("not cool", error);
+      console.log("Error fetching file:", error);
     }
   };
 

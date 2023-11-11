@@ -160,18 +160,6 @@ const DrSignupForm = () => {
       setError("Passwords do not match");
       return;
     } else {
-      const user = {
-        name,
-        username,
-        email,
-        password,
-        birthdate,
-        rate,
-        affiliation,
-        speciality,
-        education,
-      };
-
       try {
         const response = await axios.post("/addPotentialDoctor", {
           username: username,
@@ -187,16 +175,32 @@ const DrSignupForm = () => {
 
         if (response.status === 201) {
           try {
-            const response = await axios.post(
-              "/uploadFilesForPotentialDoctor",
+            const formData = new FormData();
+            const formattedFiles = formatFilesForUpload([
+              medicalDegree,
+              medicalLicense,
+              doctorID,
+            ]);
+
+            formattedFiles.forEach((file, index) => {
+              formData.append(
+                `file${index + 1}`,
+                file.buffer.data,
+                file.filename
+              );
+            });
+
+            const response2 = await axios.post(
+              `/uploadFilesForPotentialDoctor?username=${username}`,
+              formData,
               {
-                username: username,
-                //doc1
-                //doc2
-                //doc3
+                headers: {
+                  "Content-Type": "multipart/form-data",
+                },
               }
             );
-            if (response.status === 200) {
+
+            if (response2.status === 200) {
               setError(null);
               navigate("/login");
             }
@@ -218,6 +222,17 @@ const DrSignupForm = () => {
         }
       }
     }
+  };
+
+  const formatFilesForUpload = (files) => {
+    return files.map((file) => ({
+      filename: file.name,
+      mimetype: file.type,
+      buffer: {
+        type: "Buffer",
+        data: Array.from(new Uint8Array(file)),
+      },
+    }));
   };
 
   return (

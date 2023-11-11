@@ -116,6 +116,4 @@ const acceptPotientialDoc = async (req, res) => {
   }
 };
 
-
-
 module.exports = { addPotentialDoctor, addPatient, acceptPotientialDoc };

@@ -1,6 +1,5 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
-
 
 const fileSchema = new Schema({
   filename: {
@@ -14,48 +13,54 @@ const fileSchema = new Schema({
   buffer: {
     type: Buffer,
     required: false,
-  }, 
+  },
 });
 
-const potentialDoctorSchema = new Schema({
-  username: {
-    type: String,
-    required: true,
+const potentialDoctorSchema = new Schema(
+  {
+    username: {
+      type: String,
+      required: true,
+    },
+    name: {
+      type: String,
+      required: true,
+    },
+    email: {
+      type: String,
+      required: true,
+    },
+    password: {
+      type: String,
+      required: true,
+    },
+    dateOfBirth: {
+      type: Date,
+      required: true,
+    },
+    hourlyRate: {
+      type: Number,
+      required: true,
+    },
+    affiliation: {
+      type: String,
+      required: true,
+    },
+    educationalBackground: {
+      type: String,
+      required: true,
+    },
+    specialty: {
+      type: String,
+      required: true,
+    },
+    documents: [fileSchema],
   },
-   name: {
-    type: String,
-    required: true,
-  },
-  email: {
-    type: String,
-    required: true
-  },
-  password: {
-    type: String,
-    required: true
-  },
-  dateOfBirth: {
-    type: Date,
-    required: true
-  },
-  hourlyRate: {
-    type: Number,
-    required: true
-  },
-  affiliation: {
-    type: String,
-    required: true
-  },
-  educationalBackground: {
-    type: String,
-    required: true
-  },
-  specialty: {
-    type: String,
-    required: true,
-  },documents: 
-  [fileSchema],
-}, { timestamps: true });
+  { timestamps: true }
+);
 
-const PotentialDoctor = mongoose.model('PotentialDoctor', potentialDoctorSchema);
+const PotentialDoctor = mongoose.model(
+  "PotentialDoctor",
+  potentialDoctorSchema
+);
 module.exports = PotentialDoctor;

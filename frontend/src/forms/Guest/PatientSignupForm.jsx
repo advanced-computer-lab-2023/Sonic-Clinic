@@ -19,6 +19,7 @@ const PatientSignupForm = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [username, setUsername] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
+  const [nationalID, setNationalID] = useState("");
   const [gender, setGender] = useState("");
   const [emergencyName, setEmergencyName] = useState("");
   const [emergencyPhone, setEmergencyPhone] = useState("");
@@ -33,12 +34,6 @@ const PatientSignupForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  };
-  const handleClose = () => {
-    setOpen(false);
-  };
-  const handleLink = () => {
-    setOpen(true);
   };
 
   const handleClick = async (e) => {
@@ -56,18 +51,23 @@ const PatientSignupForm = () => {
       !username ||
       !emergencyName ||
       !emergencyPhone ||
-      !phoneNumber
+      !phoneNumber ||
+      !nationalID
     ) {
       setError("Please fill in all fields");
       console.log(error1);
       isLoading(false);
       return;
     }
-    if (!username.trim()) {
-      setError("Username is required.");
+
+    //Validate national ID
+    const fourteenDigitsRegex = /^\d{14}$/;
+    if (!fourteenDigitsRegex.test(nationalID)) {
+      setError("National ID should be 14 digits");
       isLoading(false);
       return;
     }
+
     //Validation For Email input field
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const englishOnlyRegex = /^[\x00-\x7F]*$/;
@@ -217,6 +217,7 @@ const PatientSignupForm = () => {
           mobileNumber: phoneNumber,
           emergencyFullName: emergencyName,
           emergencyMobileNumber: emergencyPhone,
+          nationalID: nationalID,
         });
 
         if (response.status === 200) {
@@ -242,9 +243,6 @@ const PatientSignupForm = () => {
         isLoading(false);
       }
     }
-  };
-  const checkboxHandler = () => {
-    setAgree(!agree);
   };
 
   return (
@@ -291,21 +289,6 @@ const PatientSignupForm = () => {
             />
           </div>
           <div className="col">
-            {/* <Form.Group as={Row} className="mb-3">
-              <Col sm={12}>
-                <Form.Label htmlFor={name} className="form-input-label">
-                  {name}
-                </Form.Label>
-                <Form.Control
-                  type={}
-                  id={name}
-                  placeholder={placeholder}
-                  className="form-control"
-                  value={value}
-                  onChange={onChange}
-                />
-              </Col>
-            </Form.Group> */}
             <Form.Group controlId="genderSelect">
               <Form.Label
                 style={{
@@ -332,7 +315,12 @@ const PatientSignupForm = () => {
             </Form.Group>
           </div>
         </div>
-
+        <FormInput
+          name="National ID"
+          type="text"
+          placeholder="1234567890"
+          onChange={(e) => setNationalID(e.target.value)}
+        />
         <FormInput
           name="Email"
           type="email"

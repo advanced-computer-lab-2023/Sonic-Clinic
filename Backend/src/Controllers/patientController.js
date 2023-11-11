@@ -347,6 +347,7 @@ const viewAvailablePackages = async (req, res) => {
 const calculateSessionPrice = async (hourlyRate, patientPackage) => {
   try {
     // Fetch the package information based on the patient's package
+
     if(patientPackage === "  "){
       return hourlyRate;
     }
@@ -1243,7 +1244,7 @@ const payAppointmentWallet = async (req, res) => {
     });
 
     await appointment.save();
-    console.log(patient+"-------");
+
     const sessionPrice = await calculateSessionPrice(
       doctor.hourlyRate,
       patient.package
@@ -1251,8 +1252,8 @@ const payAppointmentWallet = async (req, res) => {
 
     let docWallet;
     let patientWallet;
-    console.log(sessionPrice+"PRICEEE");
-    console.log(patient.wallet+"PRICEEE");
+    console.log(sessionPrice + "PRICEEE");
+    console.log(patient.wallet + "PRICEEE");
 
     if (patient.wallet >= sessionPrice) {
       patientWallet = patient.wallet - sessionPrice;
@@ -1272,6 +1273,7 @@ const payAppointmentWallet = async (req, res) => {
     return res.status(500).json({ message: "Server Error" });
   }
 };
+
 const payAppointmentStripe = async (req, res) => {
   try {
     const patient = await patientModel.findById(req.user.id);
@@ -1301,8 +1303,8 @@ const payAppointmentStripe = async (req, res) => {
           quantity: 1,
         },
       ],
-      success_url: `${process.env.SERVER_URL}/patient/packages`,
-      cancel_url: `${process.env.SERVER_URL}/patient/packages`,
+      success_url: `${process.env.SERVER_URL}/patient/app-success`, ///////////??????????
+      cancel_url: `${process.env.SERVER_URL}/patient/app-success`,
     });
     res.status(200).json({ url: session.url });
   } catch (error) {

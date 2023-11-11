@@ -34,7 +34,6 @@ const uploadFiles = async (req, res) => {
 
     upload(req, res, async (err) => {
       if (err) {
-        console.error("File upload failed:", err); // Log the error message
         return res.status(400).json({ error: "File upload failed" });
       }
       patient.medicalHistory = patient.medicalHistory || [];
@@ -64,7 +63,7 @@ const deleteFileFromMedicalHistory = async (req, res) => {
       return res.status(404).json({ error: "Patient not found" });
     }
 
-    const filenameToDelete = req.query.filename;
+    const filenameToDelete = req.params.filename;
 
     // Check if the specified filename exists in the patient's medicalHistory
     const fileToDeleteIndex = patient.medicalHistory.findIndex(
@@ -105,7 +104,7 @@ const viewPatientMedicalHistory = async (req, res) => {
         .json({ message: "No medical records found for the patient." });
     }
 
-    const requestedFilename = req.query.filename;
+    const requestedFilename = req.params.filename;
 
     const requestedFile = medicalHistory.find(
       (file) => file.filename === requestedFilename
@@ -187,11 +186,17 @@ const viewPatientMedicalHistoryForDoctors = async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 };
+
 const uploadFilesForPotentialDoctor = async (req, res) => {
   try {
-    const potentialDoctorusername = req.body.username;
+    const username = req.query.username;
+
+    if (!username) {
+      return res.status(400).json({ error: "Username not provided" });
+    }
+
     const PotentialDoctor = await potentialDoctorModel.findOne({
-      _username: potentialDoctorusername,
+      username: username,
     });
 
     if (!PotentialDoctor) {
@@ -203,6 +208,7 @@ const uploadFilesForPotentialDoctor = async (req, res) => {
         return res.status(400).json({ error: "File upload failed" });
       }
       PotentialDoctor.documents = PotentialDoctor.documents || [];
+
       req.files.forEach((file) => {
         PotentialDoctor.documents.push({
           filename: file.originalname,
@@ -215,6 +221,52 @@ const uploadFilesForPotentialDoctor = async (req, res) => {
       res.status(200).json({
         message: "Files uploaded and associated with the PotentialDoctor.",
       });
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+const uploadFilesbyDoctors = async (req, res) => {
+  try {
+    const doctor = await doctorModel.findById(req.user.id);
+    const patientId = req.query.id;
+    const patient = await patientModel.findById(patientId);
+
+    if (!doctor) {
+      return res.status(404).json({ error: "Doctor not found" });
+    }
+    if (!patient) {
+      return res.status(404).json({ error: "Patient not found" });
+    }
+
+    const isAssociated = doctor.patients.some(
+      (patient) => patient.toString() === patientId
+    );
+    if (!isAssociated) {
+      return res.status(403).json({
+        error: "Access denied. This patient is not associated with the doctor.",
+      });
+    }
+
+    upload(req, res, async (err) => {
+      if (err) {
+        return res.status(400).json({ error: "File upload failed" });
+      }
+      patient.medicalHistory = patient.medicalHistory || [];
+      req.files.forEach((file) => {
+        patient.medicalHistory.push({
+          filename: file.originalname,
+          mimetype: file.mimetype,
+          buffer: file.buffer,
+        });
+      });
+      await patient.save();
+
+      res
+        .status(200)
+        .json({ message: "Files uploaded and associated with the patient." });
     });
   } catch (error) {
     console.error(error);
@@ -249,5 +301,6 @@ module.exports = {
   viewPatientMedicalHistory,
   viewPatientMedicalHistoryForDoctors,
   uploadFilesForPotentialDoctor,
+  uploadFilesbyDoctors,
   viewMedicalRecords,
 };
