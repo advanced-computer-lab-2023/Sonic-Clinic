@@ -955,7 +955,10 @@ const changePasswordForPatientForget = async (req, res) => {
         .json({ message: "Email and newPassword are required." });
     }
 
-    const patient = await patientModel.findOne({ email });
+    let patient = await patientModel.findOne({ email });
+    if(!patient){
+       patient = await doctorModel.findOne({ email });
+    }
     console.log(patient.name);
 
     if (!patient) {
