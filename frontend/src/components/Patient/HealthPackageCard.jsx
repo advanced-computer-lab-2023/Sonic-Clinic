@@ -9,6 +9,8 @@ import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { updatePatientPackage } from "../../state/loginPatientReducer";
 import { updatePatientWallet } from "../../state/loginPatientReducer";
+import { setNewPackage } from "../../state/loginPatientReducer";
+import { setForFam } from "../../state/loginPatientReducer";
 
 export default function HealthPackageCard() {
   const navigate = useNavigate();
@@ -39,6 +41,7 @@ export default function HealthPackageCard() {
     cvv: "",
   });
   const [selectedPackage, setSelectedPackage] = useState(null);
+  const familyMembers = useSelector((state) => state.patientLogin.family);
   const dispatch = useDispatch();
 
   const handleClose = () => {
@@ -77,16 +80,14 @@ export default function HealthPackageCard() {
     });
   };
 
-  const handleCreditCardChange = (e) => {
-    const { name, value } = e.target;
-    setCreditCard({
-      ...creditCard,
-      [name]: value,
-    });
-  };
-
   const handleBookAppointment = async () => {
     try {
+      dispatch(
+        setForFam({
+          forFam: selectedFamilyMemberId,
+        })
+      );
+
       let apiUrl;
 
       if (paymentMethod === "creditCard") {
@@ -106,25 +107,27 @@ export default function HealthPackageCard() {
       }
 
       if (response.status === 200) {
-        setBookingStatus("success");
-        //wallet??????????????
-        dispatch(
-          updatePatientWallet({
-            wallet: 0,
-          })
-        );
-        //package?????????????
-        dispatch(
-          updatePatientPackage({
-            packages: 0,
-          })
-        );
         if (paymentMethod === "creditCard") {
           setResponseUrl(response.data.url);
           if (response.data.url) {
             window.location.href = response.data.url;
+            dispatch(
+              setNewPackage({
+                newPackage: selectedPackage.type,
+              })
+            );
           }
         } else {
+          dispatch(
+            updatePatientPackage({
+              packages: response.data.patient.packagesPatient,
+            })
+          );
+          dispatch(
+            updatePatientWallet({
+              wallet: response.data.patient.wallet,
+            })
+          );
           setBookingStatus("success");
         }
       }
@@ -172,7 +175,6 @@ export default function HealthPackageCard() {
     fontSize: "20px",
     cursor: "pointer",
   };
-  const familyMembers = useSelector((state) => state.patientLogin.family);
 
   return (
     <div

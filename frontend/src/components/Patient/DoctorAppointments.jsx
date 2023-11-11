@@ -16,7 +16,9 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css/scrollbar";
 import axios from "axios";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { updatePatientWallet } from "../../state/loginPatientReducer";
+import { setForFam } from "../../state/loginPatientReducer";
 
 const DoctorAppointments = ({ onBookAppointment }) => {
   const [loading, setLoading] = useState(true);
@@ -26,20 +28,15 @@ const DoctorAppointments = ({ onBookAppointment }) => {
   const [appointmentBooked, setAppointmentBooked] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [bookingStatus, setBookingStatus] = useState("booking");
-
   const [bookingName, setBookingName] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("wallet");
-  const [creditCard, setCreditCard] = useState({
-    cardNumber: "",
-    expirationDate: "",
-    cvv: "",
-  });
   const [selectedAppointment, setSelectedAppointment] = useState(null);
   const [selectedFamilyMember, setSelectedFamilyMember] = useState("");
   const [selectedFamilyMemberId, setSelectedFamilyMemberId] = useState("");
   const doctorRate = useSelector(
     (state) => state.selectedDoctorData.hourlyRate
   );
+  const dispatch = useDispatch();
 
   const handleClose = () => {
     setShowModal(false); // Close the modal first
@@ -50,11 +47,6 @@ const DoctorAppointments = ({ onBookAppointment }) => {
     }, 200); // Adjust the delay as needed
     setBookingName("");
     setPaymentMethod("wallet");
-    setCreditCard({
-      cardNumber: "",
-      expirationDate: "",
-      cvv: "",
-    });
     setSelectedAppointment(null);
   };
   const handleFamilyMemberChange = (e) => {
@@ -73,25 +65,15 @@ const DoctorAppointments = ({ onBookAppointment }) => {
 
   const handlePaymentMethodChange = (e) => {
     setPaymentMethod(e.target.value);
-
-    // Clear credit card details when switching payment method
-    setCreditCard({
-      cardNumber: "",
-      expirationDate: "",
-      cvv: "",
-    });
-  };
-
-  const handleCreditCardChange = (e) => {
-    const { name, value } = e.target;
-    setCreditCard({
-      ...creditCard,
-      [name]: value,
-    });
   };
 
   const handleBookAppointment = async () => {
     try {
+      dispatch(
+        setForFam({
+          forFam: selectedFamilyMemberId,
+        })
+      );
       let apiUrl;
 
       if (paymentMethod === "creditCard") {
@@ -111,14 +93,18 @@ const DoctorAppointments = ({ onBookAppointment }) => {
       }
 
       if (response.status === 200) {
-        setBookingStatus("booking");
-
         if (paymentMethod === "creditCard") {
           setResponseUrl(response.data.url);
           if (response.data.url) {
             window.location.href = response.data.url;
           }
         } else {
+          dispatch(
+            updatePatientWallet({
+              wallet: response.data.patient.wallet,
+            })
+          );
+          setBookingStatus("success");
         }
       }
     } catch (error) {
@@ -291,7 +277,7 @@ const DoctorAppointments = ({ onBookAppointment }) => {
       )}
       <Modal show={showModal} onHide={handleClose}>
         <Modal.Header closeButton>
-          <Modal.Title>Buy Health Package</Modal.Title>
+          <Modal.Title>Book Appointment</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           {bookingStatus === "success" ? (
