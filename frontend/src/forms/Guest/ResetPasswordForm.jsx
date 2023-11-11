@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import FormPassword from "../FormPassword";
 import "../forms.css";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 
 const ResetPasswordForm = () => {
   const [password, setPassword] = useState("");
@@ -13,8 +13,6 @@ const ResetPasswordForm = () => {
   const [message, setMessage] = useState(null);
   const [loading, isLoading] = useState(null);
   const navigate = useNavigate();
-  const dispatch = useDispatch();
-
   const email = useSelector((state) => state.forgotEmail.email);
 
   //   const userEmail = useSelector((state) => state.login.userEmail);

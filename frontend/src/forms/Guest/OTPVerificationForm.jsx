@@ -61,7 +61,7 @@ const OTPVerificationForm = () => {
         <FormInput
           name="Enter Code"
           type="numeric"
-          placeholder="7789BM6X"
+          placeholder="862240"
           onChange={(e) => setCode(e.target.value)}
         />
 
