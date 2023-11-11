@@ -112,18 +112,29 @@ function DrShowPatients({
     }
   };
 
-  const addFiles = async () => {
-    //upload filesssssssssssssss
+  const addFiles = async (id) => {
     try {
-      const response = await axios.get("/addFilesDoctorToPatient", {
-        id: selectedPatient,
+      const formData = new FormData();
+
+      uploadedFiles.forEach((file, index) => {
+        const blob = new Blob([file.buffer.data], { type: file.mimetype });
+        formData.append("files", blob, file.filename);
       });
+
+      const response = await axios.post("/addFilesDoctorToPatient", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+        data: {
+          patientID: id,
+        },
+      });
+
       if (response.status === 200) {
         setUploadedFiles([]);
-        // loadMedicalHistory();
       }
     } catch (error) {
-      console.log();
+      console.log("Oops, not added", error);
     }
   };
 
@@ -317,7 +328,7 @@ function DrShowPatients({
                                   color: "#05afb9 ",
                                   fontWeight: "bold",
                                 }}
-                                onClick={addFiles}
+                                onClick={addFiles(patient._id)}
                               >
                                 Add
                               </div>
