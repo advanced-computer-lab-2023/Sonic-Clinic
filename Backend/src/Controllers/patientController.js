@@ -295,19 +295,23 @@ const addFamilyMemberExisting = async (req, res) => {
   const relationToPatient = req.body.relationToPatient;
   const phoneNumber = req.body.phoneNumber;
   const patient = await patientModel.findById(req.user.id);
+  let familyMember;
 
   try {
-    let familyMember = await patientModel.findOne({ email });
+    familyMember = await patientModel.findOne({ email: email });
 
-    if (!familyMember) {
-      familyMember = await patientModel.findOne({ phoneNumber });
+    if (!familyMember || email===null || email===undefined) {
+      familyMember = await patientModel.findOne({ mobileNumber:phoneNumber });
     }
 
     if (!familyMember) {
       return res.status(404).json({ error: "Patient not found" });
     }
 
-    const { name, nationalID, gender, age } = familyMember;
+    const name = familyMember.name;
+    const nationalID = familyMember.nationalID;
+    const gender = familyMember.gender;
+    const age = familyMember.age;
 
     const fam = await familyMemberModel.create({
       name,
@@ -315,18 +319,19 @@ const addFamilyMemberExisting = async (req, res) => {
       age,
       gender,
       relationToPatient,
-      patientID: req.user.id, // Assuming patientModel has an _id field
+      patientID: req.user.id,
     });
     patient.familyMembers = patient.familyMembers || [];
     patient.familyMembers.push([fam._id, name]);
     await patient.save();
 
-    console.log("Family member added!");
     res.status(200).json(fam);
   } catch (error) {
+    console.error("Error:", error);
     res.status(400).json({ error: error.message });
   }
 };
+
 const viewAvailablePackages = async (req, res) => {
   try {
     const packages = await packagesModel.find();
@@ -342,7 +347,8 @@ const viewAvailablePackages = async (req, res) => {
 const calculateSessionPrice = async (hourlyRate, patientPackage) => {
   try {
     // Fetch the package information based on the patient's package
-    if (patientPackage === "  ") {
+
+    if(patientPackage === "  "){
       return hourlyRate;
     }
     const packageInfo = await packagesModel.find(patientPackage);
@@ -958,7 +964,10 @@ const changePasswordForPatientForget = async (req, res) => {
         .json({ message: "Email and newPassword are required." });
     }
 
-    const patient = await patientModel.findOne({ email });
+    let patient = await patientModel.findOne({ email });
+    if(!patient){
+       patient = await doctorModel.findOne({ email });
+    }
     console.log(patient.name);
 
     if (!patient) {
@@ -1235,7 +1244,7 @@ const payAppointmentWallet = async (req, res) => {
     });
 
     await appointment.save();
-    console.log(patient + "-------");
+
     const sessionPrice = await calculateSessionPrice(
       doctor.hourlyRate,
       patient.package
@@ -1250,7 +1259,6 @@ const payAppointmentWallet = async (req, res) => {
       patientWallet = patient.wallet - sessionPrice;
       patient.wallet = patientWallet;
       await patient.save();
-      console.log(doctor.wallet + "WAAAALEET");
       docWallet = doctor.wallet + sessionPrice;
       doctor.wallet = docWallet;
       await doctor.save();

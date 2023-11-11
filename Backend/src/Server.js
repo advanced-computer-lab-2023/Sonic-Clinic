@@ -293,7 +293,7 @@ server.post("/cancelHealthPackageFam", requireAuth, cancelHealthPackageFam);
 server.post("/changePasswordForDoctor", requireAuth, changePasswordForDoctor);
 server.post("/addFamilyMemberExisting", requireAuth, addFamilyMemberExisting);
 //server.post("/uploadPdf",requireAuth, uploadPDF);
-server.post("/addFamilyMemberExisting", requireAuth, addFamilyMemberExisting);
+//server.post("/addFamilyMemberExisting", requireAuth, addFamilyMemberExisting);
 //server.post("/uploadFiles",requireAuth, uploadFiles);
 server.get("/viewWalletPatient", requireAuth, viewWalletPatient);
 server.post(

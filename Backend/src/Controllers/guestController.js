@@ -62,7 +62,7 @@ const addPatient = async (req, res) => {
       package, // Set the default value for package
       age,
       nationalID,
-      wallet: 5000,
+      wallet: 500000000,
     });
 
     console.log("Patient Created!");

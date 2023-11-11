@@ -55,6 +55,19 @@ const DrSignupForm = () => {
       !medicalLicense ||
       !doctorID
     ) {
+      console.log("name:"+name);
+      console.log("email:"+email);
+      console.log("password:"+password);
+      console.log("confirmPassword:"+confirmPassword);
+      console.log("birthdate:"+birthdate);
+      console.log("username:"+username);
+      console.log("education:"+education);
+      console.log("affiliation:"+affiliation);
+      console.log("speciality:"+speciality);
+      console.log("rate:"+rate);
+      console.log("medicalDegree:"+medicalDegree);
+      console.log("medicalLicense:"+medicalLicense);
+      console.log("doctorID:"+doctorID);
       setError("Please fill in all fields");
       console.log(error1);
       return;
