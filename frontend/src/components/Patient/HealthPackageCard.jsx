@@ -100,8 +100,7 @@ export default function HealthPackageCard() {
       if (paymentMethod === "creditCard") {
         response = await axios.post(`${apiUrl}?type=${selectedPackage.type}`);
       } else {
-        response = await axios.post(`${apiUrl}`, {
-          type: selectedPackage.type,
+        response = await axios.post(`${apiUrl}?type=${selectedPackage.type}`, {
           _id: selectedFamilyMemberId,
         });
       }
@@ -126,6 +125,7 @@ export default function HealthPackageCard() {
             window.location.href = response.data.url;
           }
         } else {
+          setBookingStatus("success");
         }
       }
     } catch (error) {
@@ -136,7 +136,7 @@ export default function HealthPackageCard() {
         }
       } else {
         setError(
-          "An error occurred while accepting the doctor. Please try again later"
+          "An error occurred while accepting the payment. Please try again later"
         );
       }
     }

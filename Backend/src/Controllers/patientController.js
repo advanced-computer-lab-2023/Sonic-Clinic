@@ -221,6 +221,11 @@ const viewFamilyMembers = async (req, res) => {
     if (!familyMembers || familyMembers.length === 0) {
       return res.status(404).json({ message: "No family members found." });
     }
+    await Promise.all(
+      familyMembers.map(async (familyMember) => {
+        await familyMember.populate("packagesFamily");
+      })
+    );
 
     res.status(200).json({ familyMembers });
   } catch (error) {
@@ -836,8 +841,6 @@ const subscribeHealthPackageStripe = async (req, res) => {
       return res.status(404).json({ message: "Patient not found." });
     }
 
-    console.log("Before the session");
-
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
       mode: "payment",
@@ -1131,15 +1134,21 @@ const subscribeHealthPackageWallet = async (req, res) => {
     if (!patient) {
       return res.status(404).json({ message: "User not found." });
     }
-
     const packageName = req.query.type;
-
+    if (patient.package) {
+      const patientPackage = await packagesModel.findOne({
+        _id: patient.package,
+      });
+      if (patientPackage.type.includes(packageName)) {
+        return res
+          .status(404)
+          .json({ message: "You are already subscribed to this package." });
+      }
+    }
     const originalPackage = await packagesModel.findOne({ type: packageName });
     const newType = packageName + " " + patient.name;
-    console.log(newType);
 
     if (mainPatient.wallet >= originalPackage.price) {
-      console.log(newType);
       const newPackage = await packagesModel.create({
         type: newType,
         price: originalPackage.price,
@@ -1270,7 +1279,6 @@ const handlePackageStripe = async (req, res) => {
     const packageName = req.query.type;
 
     const originalPackage = await packagesModel.findOne({ type: packageName });
-    console.log(originalPackage);
     const newType = packageName + " " + patient.name;
 
     const newPackage = await packagesModel.create({
