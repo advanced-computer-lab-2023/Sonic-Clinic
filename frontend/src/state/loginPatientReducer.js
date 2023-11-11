@@ -12,7 +12,7 @@ const initialState = {
   emergencyName: "",
   emergencyNumber: "",
   userId: "",
-  wallet: "0",
+  wallet: "",
   medicalHistory: [],
   family: [],
   isLoggedIn: false,
@@ -88,7 +88,7 @@ const loginSlice = createSlice({
       state.emergencyName = "";
       state.emergencyNumber = "";
       state.userId = "";
-      state.wallet = "0";
+      state.wallet = "";
       state.medicalHistory = [];
       state.family = [];
       state.isLoggedIn = false;

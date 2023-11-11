@@ -126,6 +126,7 @@ const {
   viewPatientMedicalHistoryForDoctors,
   uploadFilesForPotentialDoctor,
   viewMedicalRecords,
+  uploadFilesbyDoctors,
 } = require("./Controllers/upload");
 
 //el link bta3 el DB
@@ -329,6 +330,7 @@ server.get("/viewWalletDoc", requireAuth, viewWalletDoc);
 //upload
 server.post("/uploadFilesForPotentialDoctor", uploadFilesForPotentialDoctor);
 server.post("/uploadFiles", requireAuth, uploadFiles);
+server.post("/uploadFilesbyDoctors", requireAuth, uploadFilesbyDoctors);
 server.post(
   "/viewPatientMedicalHistoryForDoctors",
   requireAuth,

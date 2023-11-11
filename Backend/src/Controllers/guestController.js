@@ -101,6 +101,7 @@ const acceptPotientialDoc = async (req, res) => {
       specialty: potentialDoctor.specialty,
       documents: potentialDoctor.documents,
       contract: false,
+      wallet: 0,
     });
 
     // Save the new doctor to the doctorModel
@@ -114,7 +115,5 @@ const acceptPotientialDoc = async (req, res) => {
     res.status(400).json({ error: error.message });
   }
 };
-
-
 
 module.exports = { addPotentialDoctor, addPatient, acceptPotientialDoc };

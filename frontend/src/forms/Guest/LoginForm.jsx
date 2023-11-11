@@ -148,6 +148,10 @@ const LoginForm = () => {
 
   const rejectContract = async () => {
     try {
+      setShowAcceptModal(false);
+      setError(
+        "Unfortunately, you cannot join the platform without accepting the contract"
+      );
       const response = await axios.get("/logout");
       if (response.status === 200) {
         console.log("LOGOUT");
@@ -155,10 +159,6 @@ const LoginForm = () => {
     } catch (error) {
       console.log();
     }
-    setShowAcceptModal(false);
-    setError(
-      "Unfortunately, you cannot join the platform without accepting the contract"
-    );
   };
 
   return (

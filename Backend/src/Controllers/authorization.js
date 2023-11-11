@@ -34,7 +34,7 @@ const login = async (req, res) => {
     const doctor1 = await DoctorModel.findOne({ username });
     patient1 = await patientModel.findOne({ username });
 
-    if (patient1.package !== "  ") {
+    if (patient1 && patient1.package !== "  ") {
       patient1 = await patientModel
         .findOne({ username })
         .populate("packagesPatient");
