@@ -55,6 +55,7 @@ const uploadFiles = async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 };
+
 const deleteFileFromMedicalHistory = async (req, res) => {
   try {
     const patient = await patientModel.findById(req.user.id);
@@ -63,7 +64,7 @@ const deleteFileFromMedicalHistory = async (req, res) => {
       return res.status(404).json({ error: "Patient not found" });
     }
 
-    const filenameToDelete = req.params.filename;
+    const filenameToDelete = req.query.filename;
 
     // Check if the specified filename exists in the patient's medicalHistory
     const fileToDeleteIndex = patient.medicalHistory.findIndex(
@@ -88,6 +89,7 @@ const deleteFileFromMedicalHistory = async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 };
+
 const viewPatientMedicalHistory = async (req, res) => {
   try {
     const patient = await patientModel.findById(req.user.id);
@@ -104,7 +106,7 @@ const viewPatientMedicalHistory = async (req, res) => {
         .json({ message: "No medical records found for the patient." });
     }
 
-    const requestedFilename = req.params.filename;
+    const requestedFilename = req.query.filename;
 
     const requestedFile = medicalHistory.find(
       (file) => file.filename === requestedFilename
@@ -131,6 +133,7 @@ const viewPatientMedicalHistory = async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 };
+
 const viewPatientMedicalHistoryForDoctors = async (req, res) => {
   try {
     const doctor = await doctorModel.findById(req.user.id);
