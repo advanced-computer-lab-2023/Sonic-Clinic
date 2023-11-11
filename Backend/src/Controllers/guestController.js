@@ -62,7 +62,7 @@ const addPatient = async (req, res) => {
       package, // Set the default value for package
       age,
       nationalID,
-      wallet: 5000,
+      wallet: 500000000,
     });
 
     console.log("Patient Created!");
@@ -101,6 +101,7 @@ const acceptPotientialDoc = async (req, res) => {
       specialty: potentialDoctor.specialty,
       documents: potentialDoctor.documents,
       contract: false,
+      wallet: 0,
     });
 
     // Save the new doctor to the doctorModel

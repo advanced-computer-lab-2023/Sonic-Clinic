@@ -347,7 +347,10 @@ const viewAvailablePackages = async (req, res) => {
 const calculateSessionPrice = async (hourlyRate, patientPackage) => {
   try {
     // Fetch the package information based on the patient's package
-    const packageInfo = await packagesModel.findOne({ type: patientPackage });
+    if(patientPackage === "  "){
+      return hourlyRate;
+    }
+    const packageInfo = await packagesModel.find(patientPackage);
     if (!packageInfo) {
       return hourlyRate;
     } else {
@@ -1192,37 +1195,73 @@ const subscribeHealthPackageWallet = async (req, res) => {
 };
 
 const payAppointmentWallet = async (req, res) => {
-  try {
-    let patient;
-    const id = req.body.famID;
-    const mainPatient = await patientModel.findById(req.user.id);
-    if (!id) {
-      patient = await patientModel.findById(req.user.id);
-    } else {
-      patient = await familyMemberModel.findById(id);
-    }
-    if (!patient) {
-      return res.status(404).json({ message: "Patient not found." });
-    }
-    const appointment = await appointmentModel.findById(req.body._id);
+  let patientID = req.user.id; // Use let to make it reassignable
 
-    console.log(appointment);
-    const doctor = await doctorModel.findById(appointment.doctorID);
+  const { famID, doctorID, date, description, time } = req.body;
+
+  try {
+    const doctor = await doctorModel.findById(doctorID);
+    const patient = await patientModel.findById(req.user.id);
+    const doctorAvailableSlots = doctor.availableSlots;
+
+    // Check if the appointment date matches any of the doctor's available slots
+    let isAvailableSlot = false;
+    let slot2;
+    for (const slot of doctorAvailableSlots) {
+      const [dateS, timeS] = slot.split(" ");
+      if (dateS === date && timeS === time) {
+        slot2 = slot;
+        isAvailableSlot = true;
+        break;
+      }
+    }
+
+    if (!isAvailableSlot) {
+      return res
+        .status(400)
+        .json({ message: "Appointment date is not available." });
+    }
+
+    // If the date is available, remove it from the doctor's available slots
+    doctor.availableSlots = doctorAvailableSlots.filter((slot) => {
+      return slot !== slot2;
+    });
+
+    // Create the appointment and update the doctor's appointments
+    if (famID) {
+      patientID = famID;
+    }
+    const status = "upcoming";
+
+    const appointment = await appointmentModel.create({
+      date,
+      description,
+      patientID,
+      doctorID,
+      status,
+      time,
+    });
+
+    await appointment.save();
+    console.log(patient+"-------");
     const sessionPrice = await calculateSessionPrice(
       doctor.hourlyRate,
       patient.package
     );
+
     let docWallet;
     let patientWallet;
+    console.log(sessionPrice+"PRICEEE");
+    console.log(patient.wallet+"PRICEEE");
 
-    if (mainPatient.wallet >= sessionPrice) {
-      patientWallet = mainPatient.wallet - sessionPrice;
-      mainPatient.wallet = patientWallet;
-      await mainPatient.save();
+    if (patient.wallet >= sessionPrice) {
+      patientWallet = patient.wallet - sessionPrice;
+      patient.wallet = patientWallet;
+      await patient.save();
       docWallet = doctor.wallet + sessionPrice;
       doctor.wallet = docWallet;
       await doctor.save();
-      return res.status(200).json({ patient });
+      return res.status(200).json({ appointment });
     } else {
       return res.status(404).json({
         message: "Your funds are insufficient",
