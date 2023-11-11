@@ -6,6 +6,7 @@ import GuestBox from "../../components/Guest/GuestBox";
 import GuestBurgerMenu from "../../components/Guest/GuestBurgerMenu";
 import { Waypoint } from "react-waypoint";
 import { useSpring, animated } from "react-spring";
+import axios from "axios";
 
 const GuestHomePage = () => {
   const [aboutUsVisible, setAboutUsVisible] = useState(false);

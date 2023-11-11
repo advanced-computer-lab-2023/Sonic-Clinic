@@ -28,7 +28,7 @@ const loginSlice = createSlice({
       state.birthdate = action.payload.birthdate;
       state.userEmail = action.payload.userEmail;
       state.name = action.payload.name;
-      state.packages = action.payload.packages;
+      state.packages = action.payload.packagesPatient;
       state.gender = action.payload.gender;
       state.phoneNumber = action.payload.phoneNumber;
       state.userId = action.payload.userId;
@@ -40,12 +40,19 @@ const loginSlice = createSlice({
       state.family = action.payload.family;
     },
     updatePatientWallet: (state, action) => {
-      state = {
-        ...state,
-        wallet: action.payload.wallet,
-      };
+      state.wallet = action.payload.wallet;
+      // state = {
+      //   ...state,
+      //   wallet: action.payload.wallet,
+      // };
     },
-
+    updatePatientPackage: (state, action) => {
+      state.packages = action.payload.packages;
+      // state = {
+      //   ...state,
+      //   packages: action.payload.packages,
+      // };
+    },
     updateMyMedicalHistory: (state, action) => {
       state.medicalHistory = action.payload.medicalHistory;
     },
@@ -91,6 +98,7 @@ const loginSlice = createSlice({
 export const {
   setCredentialsPatient,
   updatePatientWallet,
+  updatePatientPackage,
   updateMyMedicalHistory,
   logoutPatient,
   clearPassword,

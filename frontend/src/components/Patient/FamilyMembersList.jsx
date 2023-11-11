@@ -77,7 +77,8 @@ function FamilyMembersList({ refreshFlag }) {
               </Col>
               <Col md={4}>
                 <p>
-                  <strong>Package:</strong> {member.package}
+                  <strong>Package:</strong>{" "}
+                  {member.packagesFamily[index].type.split(" ")[0]}
                 </p>
               </Col>
             </Row>

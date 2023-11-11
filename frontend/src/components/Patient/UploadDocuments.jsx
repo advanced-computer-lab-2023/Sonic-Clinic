@@ -9,36 +9,58 @@ import axios from "axios";
 
 function UploadDocuments() {
   const [uploadedFiles, setUploadedFiles] = useState([]);
-  const [existingFiles, setExistingFiles] = useState({
-    medicalHistory: useSelector((state) => state.patientLogin.medicalHistory),
-  });
+  const [existingFiles, setExistingFiles] = useState([]);
   const [uploadVisible, setUploadVisible] = useState(false);
   const dispatch = useDispatch();
 
-  // useEffect(() => {
-  //   reloadMedicalHistory();
-  // }, []);
+  useEffect(() => {
+    reloadMedicalHistory();
+  }, []);
 
   const viewFile = async (file) => {
     console.log(file);
     try {
       const response = await axios.get(
-        `/viewPatientMedicalHistory?filename=${file}`
+        `/viewPatientMedicalHistory?filename=${file}`,
+        {
+          responseType: "blob", // Set the response type to 'blob'
+        }
       );
 
       if (response.status === 200) {
-        console.log("cool");
+        const blob = new Blob([response.data], {
+          type: response.headers["content-type"],
+        });
+
+        // Check if the blob is not empty
+        if (blob.size > 0) {
+          const url = window.URL.createObjectURL(blob);
+
+          // Open the file in a new tab
+          window.open(url, "_blank");
+        } else {
+          console.log("File content is empty");
+        }
       }
     } catch (error) {
-      console.log("oops");
+      console.log("not cool", error);
     }
   };
 
-  const reloadMedicalHistory = () => {
-    //api yeraga3 el medical history bta3t el patient
-    // setExistingFiles({
-    //   medicalHistory: useSelector((state) => state.patientLogin.medicalHistory),
-    // });
+  const reloadMedicalHistory = async () => {
+    try {
+      const response = await axios.get("/viewMedicalRecords");
+      if (response.status === 200) {
+        setExistingFiles(response.data.medHistory);
+        dispatch(
+          updateMyMedicalHistory({
+            medicalHistory: existingFiles,
+          })
+        );
+      }
+    } catch (error) {
+      console.log("error" + error);
+    }
   };
 
   const handleFileUpload = (e) => {
@@ -61,19 +83,12 @@ function UploadDocuments() {
   };
 
   const addFiles = async () => {
-    console.log(uploadedFiles);
-
     try {
       const formData = new FormData();
 
       uploadedFiles.forEach((file, index) => {
-        formData.append(`files[${index}].filename`, file.filename);
-        formData.append(`files[${index}].mimetype`, file.mimetype);
-        formData.append(
-          `files[${index}].buffer`,
-          new Blob([file.buffer.data], { type: file.mimetype }),
-          file.filename
-        );
+        const blob = new Blob([file.buffer.data], { type: file.mimetype });
+        formData.append("files", blob, file.filename);
       });
 
       const response = await axios.post("/uploadFiles", formData, {
@@ -84,12 +99,6 @@ function UploadDocuments() {
 
       if (response.status === 200) {
         reloadMedicalHistory();
-        // setExistingFiles(response.medicalHistory); !!!!!!!!!!!!!!!!!!!!!!
-        // dispatch(
-        //   updateMyMedicalHistory({
-        //     medicalHistory: existingFiles.medicalHistory,
-        //   })
-        // );
         setUploadedFiles([]);
       }
     } catch (error) {
@@ -104,7 +113,6 @@ function UploadDocuments() {
         `/deleteFileFromMedicalHistory?filename=${file}`
       );
       if (response.status === 200) {
-        console.log("wohoo");
         reloadMedicalHistory();
       }
     } catch (error) {
@@ -188,26 +196,25 @@ function UploadDocuments() {
             )}
           </div>
 
-          {existingFiles.medicalHistory &&
-          existingFiles.medicalHistory.length > 0 ? (
+          {existingFiles && existingFiles.length > 0 ? (
             <div>
               <h6>Existing Documents:</h6>
               <ListGroup>
-                {existingFiles.medicalHistory.map((file, index) => (
+                {existingFiles.map((file, index) => (
                   <ListGroup.Item key={index}>
                     <a
-                      onClick={() => viewFile(file.filename)}
+                      onClick={() => viewFile(file)}
                       target="_blank"
                       rel="noopener noreferrer"
                       style={{ color: "#212529", cursor: "pointer" }}
                       className="d-flex justify-content-between"
                     >
-                      {file.filename}
+                      {file}
                       <FontAwesomeIcon
                         icon={faTrashCan}
                         onClick={(e) => {
                           e.stopPropagation(); // Stop the event from reaching the parent (a tag)
-                          deleteFile(file.filename);
+                          deleteFile(file);
                         }}
                         style={{
                           opacity: 1,

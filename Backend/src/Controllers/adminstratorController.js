@@ -313,15 +313,26 @@ const viewAllDoctors = async (req, res) => {
 
 const viewPackagesAdmin = async (req, res) => {
   try {
-    const packages = await packagesModel.find();
-    if (!packages || packages.length === 0) {
+    const allPackages = await packagesModel.find();
+
+    if (!allPackages || allPackages.length === 0) {
       return res.status(404).json({ message: "No packages found." });
     }
-    res.status(200).json(packages);
+
+    // Filter packages based on the condition (split on space)
+    const filteredPackages = allPackages.filter((package) => {
+      const packageType = package.type || "";
+      const typeElements = packageType.split(" ");
+      return typeElements.length <= 1;
+    });
+
+    res.status(200).json(filteredPackages);
   } catch (error) {
+    console.error("Error:", error);
     res.status(500).json({ message: "Server Error" });
   }
 };
+
 const viewAllAdmins = async (req, res) => {
   try {
     const admins = await administratorModel.find();

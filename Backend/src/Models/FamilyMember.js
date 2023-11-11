@@ -39,7 +39,7 @@ const familyMemberSchema = new Schema(
 familyMemberSchema.virtual("packagesFamily", {
   ref: "Packages",
   localField: "package",
-  foreignField: "type",
+  foreignField: "_id",
 });
 
 familyMemberSchema.set("toObject", { virtuals: true });

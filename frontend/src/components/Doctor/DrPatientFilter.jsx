@@ -11,9 +11,7 @@ function DrPatientFilter({ setPatients, responseData, setUpcomingApp }) {
   const handleFilter = async () => {
     if (selectedStatus === "upcoming") {
       try {
-        const response = await axios.post("/filterPatientsByAppointments", {
-          _id: _id,
-        });
+        const response = await axios.post("/filterPatientsByAppointments");
         if (response.status === 200) {
           console.log("yay");
           setPatients(response.data.patients);

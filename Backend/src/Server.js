@@ -47,8 +47,8 @@ const {
   viewAvailableAppointmentsOfDoctor,
   cancelHealthPackage,
   cancelHealthPackageFam,
-  viewSubscribedPackage,
-  viewSubscribedPackageFam,
+  viewSubscribedPackages,
+
   changePasswordForPatient,
   //uploadPDF,
   addFamilyMemberExisting,
@@ -58,6 +58,8 @@ const {
   subscribeHealthPackageWallet,
   payAppointmentWallet,
   payAppointmentStripe,
+  handlePackageStripe,
+  handleAppointmentStripe,
 } = require("./Controllers/patientController");
 
 /////////////////////////////////doctorController//////////////////////////////////////////
@@ -117,10 +119,14 @@ const {
   verifyOtp,
 } = require("./Controllers/authorization");
 ////////////////////////////////uploadController///////////////////////////////////////////
-const { uploadFiles,deleteFileFromMedicalHistory,viewPatientMedicalHistory,viewPatientMedicalHistoryForDoctors
-,uploadFilesForPotentialDoctor } = require("./Controllers/upload");
-
-
+const {
+  uploadFiles,
+  deleteFileFromMedicalHistory,
+  viewPatientMedicalHistory,
+  viewPatientMedicalHistoryForDoctors,
+  uploadFilesForPotentialDoctor,
+  viewMedicalRecords,
+} = require("./Controllers/upload");
 
 //el link bta3 el DB
 const MongoURI = process.env.MONGO_URI;
@@ -225,6 +231,10 @@ server.post(
 server.post("/changePasswordForPatientForget", changePasswordForPatientForget);
 server.post("/payAppointmentWallet", requireAuth, payAppointmentWallet);
 server.post("/payAppointmentStripe", requireAuth, payAppointmentStripe);
+server.get("/viewMedicalRecords", requireAuth, viewMedicalRecords);
+
+server.post("/handlePackageStripe", requireAuth, handlePackageStripe);
+server.post("/handleAppointmentStripe", requireAuth, handleAppointmentStripe);
 
 //////////////////////////////////////////// GET/////////////////////////////////////
 //admin
@@ -308,8 +318,8 @@ server.post(
 );
 server.get("/searchPatientByName", requireAuth, searchPatientByName);
 server.post("/viewDocApp", requireAuth, viewDocApp);
-server.get("/viewSubscribedPackage", requireAuth, viewSubscribedPackage);
-server.post("/viewSubscribedPackageFam", requireAuth, viewSubscribedPackageFam);
+server.post("/viewSubscribedPackage", requireAuth, viewSubscribedPackages);
+//server.post("/viewSubscribedPackageFam", requireAuth, viewSubscribedPackageFam);
 server.get(
   "/viewAllAppointmentsDoctor",
   requireAuth,
@@ -319,9 +329,21 @@ server.get("/viewWalletDoc", requireAuth, viewWalletDoc);
 //upload
 server.post("/uploadFilesForPotentialDoctor", uploadFilesForPotentialDoctor);
 server.post("/uploadFiles", requireAuth, uploadFiles);
-server.get("/viewPatientMedicalHistoryForDoctors", requireAuth, viewPatientMedicalHistoryForDoctors);
-server.get("/viewPatientMedicalHistory", requireAuth, viewPatientMedicalHistory);
-server.delete("/deleteFileFromMedicalHistory", requireAuth, deleteFileFromMedicalHistory);
+server.post(
+  "/viewPatientMedicalHistoryForDoctors",
+  requireAuth,
+  viewPatientMedicalHistoryForDoctors
+);
+server.get(
+  "/viewPatientMedicalHistory",
+  requireAuth,
+  viewPatientMedicalHistory
+);
+server.delete(
+  "/deleteFileFromMedicalHistory",
+  requireAuth,
+  deleteFileFromMedicalHistory
+);
 ////////////////////////////////////////////////////PUT////////////////////////////////////////
 //admin
 server.put("/updatePackage", requireAuth, updatePackage);

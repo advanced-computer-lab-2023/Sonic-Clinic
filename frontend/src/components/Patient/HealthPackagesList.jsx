@@ -8,6 +8,7 @@ function HealthPackagesList({ refreshFlag }) {
   const [responseData, setResponseData] = useState([]);
   const [error1, setError] = useState(null);
   const id = useSelector((state) => state.patientLogin.userId);
+
   useEffect(() => {
     fetchData();
   }, [refreshFlag]); // Fetch data when searchData changes
