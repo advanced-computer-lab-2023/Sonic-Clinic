@@ -49,7 +49,7 @@ const LoginForm = () => {
         const type = response.data.message;
 
         if (type === "Patient") {
-          // console.log(user.medicalHistory);
+          console.log(user.packagesPatient);
           dispatch(
             setCredentialsPatient({
               password: password,
@@ -57,14 +57,14 @@ const LoginForm = () => {
               birthdate: user.dateOfBirth,
               userEmail: user.email,
               name: user.name,
-              packages: user.package,
+              packages: user.packagesPatient,
               gender: user.gender,
               phoneNumber: user.mobileNumber,
               userId: user._id,
               emergencyName: user.emergencyFullName,
               emergencyNumber: user.emergencyMobileNumber,
               medicalHistory: user.medicalHistory,
-              wallet: 0,
+              wallet: user.wallet,
               family: user.familyMembers,
               isLoggedIn: true,
             })
@@ -87,7 +87,7 @@ const LoginForm = () => {
               patients: user.patients,
               speciality: user.specialty,
               userId: user._id,
-              wallet: 0,
+              wallet: user.wallet,
               isLoggedIn: true,
             })
           );

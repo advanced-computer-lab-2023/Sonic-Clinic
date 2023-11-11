@@ -83,8 +83,6 @@ function UploadDocuments() {
   };
 
   const addFiles = async () => {
-    console.log(uploadedFiles);
-
     try {
       const formData = new FormData();
 
