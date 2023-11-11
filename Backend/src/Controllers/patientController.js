@@ -1131,15 +1131,21 @@ const subscribeHealthPackageWallet = async (req, res) => {
     if (!patient) {
       return res.status(404).json({ message: "User not found." });
     }
-
     const packageName = req.query.type;
-
+    if (patient.package) {
+      const patientPackage = await packagesModel.findOne({
+        _id: patient.package,
+      });
+      if (patientPackage.type.includes(packageName)) {
+        return res
+          .status(404)
+          .json({ message: "You are already subscribed to this package." });
+      }
+    }
     const originalPackage = await packagesModel.findOne({ type: packageName });
     const newType = packageName + " " + patient.name;
-    console.log(newType);
 
     if (mainPatient.wallet >= originalPackage.price) {
-      console.log(newType);
       const newPackage = await packagesModel.create({
         type: newType,
         price: originalPackage.price,

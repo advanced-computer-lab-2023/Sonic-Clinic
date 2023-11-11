@@ -102,14 +102,13 @@ export default function HealthPackageCard() {
       if (paymentMethod === "creditCard") {
         response = await axios.post(`${apiUrl}?type=${selectedPackage.type}`);
       } else {
-        response = await axios.post(`${apiUrl}`, {
-          type: selectedPackage.type,
+        response = await axios.post(`${apiUrl}?type=${selectedPackage.type}`, {
           _id: selectedFamilyMemberId,
         });
       }
 
       if (response.status === 200) {
-        setBookingStatus("booking");
+        setBookingStatus("success");
 
         if (paymentMethod === "creditCard") {
           setResponseUrl(response.data.url);
