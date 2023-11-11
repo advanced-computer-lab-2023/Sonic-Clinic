@@ -1135,10 +1135,11 @@ const subscribeHealthPackageWallet = async (req, res) => {
     const packageName = req.query.type;
 
     const originalPackage = await packagesModel.findOne({ type: packageName });
-    console.log(originalPackage);
     const newType = packageName + " " + patient.name;
+    console.log(newType);
 
-    if (mainPatient.walletllet >= originalPackage.price) {
+    if (mainPatient.wallet >= originalPackage.price) {
+      console.log(newType);
       const newPackage = await packagesModel.create({
         type: newType,
         price: originalPackage.price,
