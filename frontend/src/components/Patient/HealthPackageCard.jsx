@@ -108,14 +108,13 @@ export default function HealthPackageCard() {
       }
 
       if (response.status === 200) {
-        setBookingStatus("success");
-
         if (paymentMethod === "creditCard") {
           setResponseUrl(response.data.url);
           if (response.data.url) {
             window.location.href = response.data.url;
           }
         } else {
+          setBookingStatus("success");
         }
       }
     } catch (error) {
@@ -126,7 +125,7 @@ export default function HealthPackageCard() {
         }
       } else {
         setError(
-          "An error occurred while accepting the doctor. Please try again later"
+          "An error occurred while accepting the payment. Please try again later"
         );
       }
     }

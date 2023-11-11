@@ -221,6 +221,11 @@ const viewFamilyMembers = async (req, res) => {
     if (!familyMembers || familyMembers.length === 0) {
       return res.status(404).json({ message: "No family members found." });
     }
+    await Promise.all(
+      familyMembers.map(async (familyMember) => {
+        await familyMember.populate("packagesFamily");
+      })
+    );
 
     res.status(200).json({ familyMembers });
   } catch (error) {
@@ -836,8 +841,6 @@ const subscribeHealthPackageStripe = async (req, res) => {
       return res.status(404).json({ message: "Patient not found." });
     }
 
-    console.log("Before the session");
-
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
       mode: "payment",
@@ -1276,7 +1279,6 @@ const handlePackageStripe = async (req, res) => {
     const packageName = req.query.type;
 
     const originalPackage = await packagesModel.findOne({ type: packageName });
-    console.log(originalPackage);
     const newType = packageName + " " + patient.name;
 
     const newPackage = await packagesModel.create({
