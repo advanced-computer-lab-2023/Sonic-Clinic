@@ -1,7 +1,6 @@
 import { Card, Image } from "react-bootstrap";
 import mainImg from "../../Assets/Admin/AdminHome.jpg";
 import { useSelector } from "react-redux";
-import loginAdminReducer from "../../state/loginAdminReducer";
 import { Waypoint } from "react-waypoint";
 import { useSpring, animated } from "react-spring";
 import { useState } from "react";
@@ -11,8 +10,8 @@ function AdminImg() {
   const [ourDoctorsVisible, setOurDoctorsVisible] = useState(false);
   const ourDoctorsSpring = useSpring({
     opacity: ourDoctorsVisible ? 1 : 0,
-    transform: ourDoctorsVisible ? "translateX(0)" : "translateX(-50%)",
-    config: { duration: 1000 },
+    transform: ourDoctorsVisible ? "translateY(0)" : "translateY(-40%)",
+    config: { duration: 800 },
   });
   return (
     <div>
@@ -50,7 +49,7 @@ function AdminImg() {
                 fontStyle: "normal",
                 fontWeight: 400,
                 lineHeight: "120%",
-                transform: "translateY(250px)",
+                transform: "translateY(200px)",
               }}
             >
               Hello {name}

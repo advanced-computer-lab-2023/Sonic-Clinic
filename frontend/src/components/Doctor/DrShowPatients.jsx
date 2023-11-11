@@ -1,5 +1,13 @@
 import React, { useState } from "react";
-import { Card, Col, Row, Form, Button, ListGroup } from "react-bootstrap";
+import {
+  Card,
+  Col,
+  Row,
+  Form,
+  Button,
+  ListGroup,
+  Spinner,
+} from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faChevronDown,
@@ -9,7 +17,13 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
 
-function DrShowPatients({ patients, setPatients, responseData, upcomingApp }) {
+function DrShowPatients({
+  patients,
+  setPatients,
+  responseData,
+  upcomingApp,
+  loading,
+}) {
   const [searchTerm, setSearchTerm] = useState("");
   const [expandedPatient, setExpandedPatient] = useState(null);
   const [selectedPatient, setSelectedPatient] = useState(null);
@@ -17,7 +31,7 @@ function DrShowPatients({ patients, setPatients, responseData, upcomingApp }) {
   const [uploadVisible, setUploadVisible] = useState(false);
   const [followUpModal, setFollowUpModal] = useState(false);
   const [followUpDateTime, setFollowUpDateTime] = useState(null);
-  const [existingFiles, setExistingFiles] = useState([]);
+  const [existingFiles, setExistingFiles] = useState();
 
   const handleFileUpload = (e) => {
     const newFiles = Array.from(e.target.files);
@@ -41,7 +55,6 @@ function DrShowPatients({ patients, setPatients, responseData, upcomingApp }) {
     const month = dateObj.getMonth() + 1; // Months are zero-based
     const year = dateObj.getFullYear();
 
-    // Format the date as "dd/mm/yyyy"
     return `${day}/${month}/${year}`;
   }
 
@@ -57,24 +70,45 @@ function DrShowPatients({ patients, setPatients, responseData, upcomingApp }) {
   const toggleExpand = (index, id) => {
     if (expandedPatient === index) {
       setExpandedPatient(null);
-      setSelectedPatient("");
     } else {
       setExpandedPatient(index);
       setSelectedPatient(id);
-      loadMedicalHistory();
+      if (patients && patients[index]) {
+        setExistingFiles(patients[index].medicalHistory);
+      }
     }
   };
 
-  const loadMedicalHistory = async () => {
+  const viewMedicalRecord = async (file) => {
     try {
-      const response = await axios.get("/viewPatientMedicalHistoryForDoctors", {
-        id: selectedPatient,
-      });
+      const response = await axios.post(
+        "/viewPatientMedicalHistoryForDoctors",
+        {
+          id: selectedPatient,
+          filename: file,
+        },
+        {
+          responseType: "blob", // Set the response type to 'blob'
+        }
+      );
+
       if (response.status === 200) {
-        setExistingFiles(response.medicalHistory);
+        const blob = new Blob([response.data], {
+          type: response.headers["content-type"],
+        });
+
+        // Check if the blob is not empty
+        if (blob.size > 0) {
+          const url = window.URL.createObjectURL(blob);
+
+          // Open the file in a new tab
+          window.open(url, "_blank");
+        } else {
+          console.log("File content is empty");
+        }
       }
     } catch (error) {
-      console.log();
+      console.log("not cool", error);
     }
   };
 
@@ -86,7 +120,7 @@ function DrShowPatients({ patients, setPatients, responseData, upcomingApp }) {
       });
       if (response.status === 200) {
         setUploadedFiles([]);
-        loadMedicalHistory();
+        // loadMedicalHistory();
       }
     } catch (error) {
       console.log();
@@ -146,136 +180,158 @@ function DrShowPatients({ patients, setPatients, responseData, upcomingApp }) {
           />
         </Button>
       </div>
-      {patients.map((patient, index) => (
-        <Card className="mb-4 mx-3 bg-white" key={patient.username}>
-          <Card.Header
-            className="d-flex align-items-center justify-content-between"
-            onClick={() => toggleExpand(index, patient._id)}
-            style={{ cursor: "pointer" }}
-          >
-            <span>{patient.name}</span>
-            <FontAwesomeIcon
-              icon={expandedPatient === index ? faChevronUp : faChevronDown}
-            />
-          </Card.Header>
-          {expandedPatient === index && (
-            <Card.Body>
-              <Row>
-                <Col lg={8}>
-                  <Card.Text>
-                    <Button
-                      style={{ marginBottom: "1rem" }}
-                      onClick={() =>
-                        followUpModal
-                          ? scheduleFollowUp(patient._id)
-                          : setFollowUpModal(true)
-                      }
-                    >
-                      {followUpModal ? "Save" : "Schedule Follow-up"}
-                    </Button>
-                    {followUpModal && (
-                      <div>
-                        <Form.Group style={{ marginBottom: "1rem" }}>
-                          <Form.Control
-                            type="datetime-local"
-                            value={followUpDateTime}
-                            onChange={(e) =>
-                              setFollowUpDateTime(e.target.value)
-                            }
-                          />
-                        </Form.Group>
-                      </div>
-                    )}
-
-                    {upcomingApp && <div>Has an upcoming appointment</div>}
-                    <div className="patient-info">
-                      <p>
-                        Date of birth: {formatDateOfBirth(patient.dateOfBirth)}
-                      </p>
-                      <p>Gender: {patient.gender}</p>
-                      <p style={{ fontWeight: "bold" }}>Medical History:</p>
-                      {existingFiles ? (
-                        <ListGroup>
-                          {existingFiles.map((file, index) => (
-                            <ListGroup.Item key={index}>
-                              <a
-                                href={file}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                style={{ color: "#212529" }}
-                              >
-                                {file}
-                              </a>
-                            </ListGroup.Item>
-                          ))}
-                        </ListGroup>
-                      ) : (
-                        <div>No previous history found</div>
-                      )}
-                      <label
-                        style={{
-                          marginTop: "1rem",
-                          cursor: "pointer",
-                          color: "#099BA0",
-                          textDecoration: "underline",
-                        }}
-                        onClick={() => setUploadVisible(!uploadVisible)}
-                        htmlFor="weee"
+      {loading && (
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <Spinner animation="border" role="status">
+            <span className="sr-only">Loading...</span>
+          </Spinner>
+        </div>
+      )}
+      {!loading &&
+        patients.map((patient, index) => (
+          <Card className="mb-4 mx-3 bg-white" key={patient.username}>
+            <Card.Header
+              className="d-flex align-items-center justify-content-between"
+              onClick={() => toggleExpand(index, patient._id)}
+              style={{ cursor: "pointer" }}
+            >
+              <span>{patient.name}</span>
+              <FontAwesomeIcon
+                icon={expandedPatient === index ? faChevronUp : faChevronDown}
+              />
+            </Card.Header>
+            {expandedPatient === index && (
+              <Card.Body>
+                <Row>
+                  <Col lg={8}>
+                    <Card.Text>
+                      <Button
+                        style={{ marginBottom: "1rem" }}
+                        onClick={() =>
+                          followUpModal
+                            ? scheduleFollowUp(patient._id)
+                            : setFollowUpModal(true)
+                        }
                       >
-                        Upload Health Records
-                      </label>
-                      <div>
-                        <input
-                          type="file"
-                          accept=".pdf, .jpeg, .jpg, .png"
-                          multiple
-                          onChange={handleFileUpload}
-                          style={{ display: "none" }}
-                          id="weee"
-                        />
+                        {followUpModal ? "Save" : "Schedule Follow-up"}
+                      </Button>
+                      {followUpModal && (
+                        <div>
+                          <Form.Group style={{ marginBottom: "1rem" }}>
+                            <Form.Control
+                              type="datetime-local"
+                              value={followUpDateTime}
+                              onChange={(e) =>
+                                setFollowUpDateTime(e.target.value)
+                              }
+                            />
+                          </Form.Group>
+                        </div>
+                      )}
 
-                        {uploadedFiles.length > 0 && (
-                          <div>
-                            <ul style={{ marginTop: "1rem" }}>
-                              {uploadedFiles.map((file, index) => (
-                                <li key={index}>
-                                  {file.name}
-                                  <FontAwesomeIcon
-                                    icon={faX}
-                                    style={{
-                                      opacity: 1,
-                                      color: "red",
-                                      fontSize: "15px",
-                                      marginLeft: "2rem",
-                                      cursor: "pointer",
-                                    }}
-                                    onClick={() => handleRemoveFile(index)}
-                                  />
-                                </li>
-                              ))}
-                            </ul>
-                            <div
-                              style={{
-                                marginLeft: "6rem",
-                                cursor: "pointer",
-                                color: "#05afb9 ",
-                                fontWeight: "bold",
-                              }}
-                              onClick={addFiles}
-                            >
-                              Add
-                            </div>
-                          </div>
+                      {upcomingApp && <div>Has an upcoming appointment</div>}
+                      <div className="patient-info">
+                        <p>
+                          Date of birth:{" "}
+                          {formatDateOfBirth(patient.dateOfBirth)}
+                        </p>
+                        <p>Gender: {patient.gender}</p>
+                        <p style={{ fontWeight: "bold" }}>Medical History:</p>
+                        {existingFiles ? (
+                          <ListGroup>
+                            {existingFiles.map((file, index) => (
+                              <ListGroup.Item key={index}>
+                                <a
+                                  onClick={() =>
+                                    viewMedicalRecord(file.filename)
+                                  }
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  style={{
+                                    color: "#212529",
+                                    textDecoration: "underline",
+                                    cursor: "pointer",
+                                  }}
+                                >
+                                  {file.filename}
+                                </a>
+                              </ListGroup.Item>
+                            ))}
+                          </ListGroup>
+                        ) : (
+                          <div>No previous history found</div>
                         )}
+
+                        <label
+                          style={{
+                            marginTop: "1rem",
+                            cursor: "pointer",
+                            color: "#099BA0",
+                            textDecoration: "underline",
+                          }}
+                          onClick={() => setUploadVisible(!uploadVisible)}
+                          htmlFor="weee"
+                        >
+                          Upload Health Records
+                        </label>
+                        <div>
+                          <input
+                            type="file"
+                            accept=".pdf, .jpeg, .jpg, .png"
+                            multiple
+                            onChange={handleFileUpload}
+                            style={{ display: "none" }}
+                            id="weee"
+                          />
+
+                          {uploadedFiles.length > 0 && (
+                            <div>
+                              <ul style={{ marginTop: "1rem" }}>
+                                {uploadedFiles.map((file, index) => (
+                                  <li key={index}>
+                                    {file.name}
+                                    <FontAwesomeIcon
+                                      icon={faX}
+                                      style={{
+                                        opacity: 1,
+                                        color: "red",
+                                        fontSize: "15px",
+                                        marginLeft: "2rem",
+                                        cursor: "pointer",
+                                      }}
+                                      onClick={() => handleRemoveFile(index)}
+                                    />
+                                  </li>
+                                ))}
+                              </ul>
+                              <div
+                                style={{
+                                  marginLeft: "6rem",
+                                  cursor: "pointer",
+                                  color: "#05afb9 ",
+                                  fontWeight: "bold",
+                                }}
+                                onClick={addFiles}
+                              >
+                                Add
+                              </div>
+                            </div>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  </Card.Text>
-                </Col>
-              </Row>
-            </Card.Body>
-          )}
-        </Card>
-      ))}
+                    </Card.Text>
+                  </Col>
+                </Row>
+              </Card.Body>
+            )}
+          </Card>
+        ))}
     </div>
   );
 }

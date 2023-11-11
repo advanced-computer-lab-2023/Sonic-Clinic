@@ -511,9 +511,10 @@ const getDoctorsWithSessionPrice = async (req, res) => {
 
 const addAppointment = async (req, res) => {
   try {
-    // Create a new appointment
     const appointment = await appointmentModel.create(req.body);
-
+    const doctor = await doctorModel.findById(req.body.doctorID);
+    doctor.patients.push(req.body.patientID);
+    await doctor.save();
     res
       .status(201)
       .json({ message: "Appointment added successfully.", appointment });
@@ -1185,6 +1186,8 @@ const payAppointmentWallet = async (req, res) => {
       return res.status(404).json({ message: "Patient not found." });
     }
     const appointment = await appointmentModel.findById(req.body._id);
+
+    console.log(appointment);
     const doctor = await doctorModel.findById(appointment.doctorID);
     const sessionPrice = await calculateSessionPrice(
       doctor.hourlyRate,

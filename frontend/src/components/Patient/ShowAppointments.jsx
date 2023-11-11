@@ -67,6 +67,22 @@ function ShowAppointments() {
     );
   });
 
+  const getStatusColor = (status) => {
+    const lowerCaseStatus = status.toLowerCase();
+    switch (lowerCaseStatus) {
+      case "upcoming":
+        return "#05afb9"; // Blue for Upcoming
+      case "completed":
+        return "#adb5bd "; // Grey for Completed
+      case "cancelled":
+        return "#ff6b35 "; // Orange for Cancelled
+      case "rescheduled":
+        return "#c4e6e6  "; // Light Blue for Rescheduled
+      default:
+        return "#ff6b35"; // Default color
+    }
+  };
+
   return (
     <div>
       {loading && (
@@ -83,7 +99,6 @@ function ShowAppointments() {
           </Spinner>
         </div>
       )}
-      {/* {error1 && <div style={{ color: "red" }}>{error1}</div>} */}
       {filteredAppointments.length === 0 && !loading && (
         <div style={{ textAlign: "center", marginTop: "20px" }}>{error1}</div>
       )}
@@ -110,54 +125,106 @@ function ShowAppointments() {
 
           return (
             <Link
-              to={`/prescription/${appointment._id}`}
+              // to={`/prescription/${appointment._id}`}
               key={appointment.prescriptionId}
               className="text-decoration-none"
             >
               <Card
-                className="mb-4 mx-3~ bg-light"
-                style={{ cursor: "pointer" }}
+                style={{
+                  cursor: "pointer",
+                  borderRadius: "10px",
+                  boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                  transition: "transform 0.3s",
+                  marginBottom: "2rem",
+                  marginRight: "2rem",
+                  height: "12rem",
+                }}
               >
                 <Row>
-                  <Col lg={4}>
-                    <div className="prescription-icon-container">
-                      <Image
-                        src={prescriptionImg}
-                        fluid
-                        className="doctor-image"
-                      />
+                  <Col lg={1}>
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "column", // Vertical arrangement
+                        justifyContent: "center",
+                        alignItems: "center",
+                        backgroundColor: getStatusColor(appointment.status),
+                        borderRadius: "10px 0 0 10px",
+                        height: "12rem",
+                      }}
+                    >
+                      {appointment.status.split("").map((letter, index) => (
+                        <span
+                          key={index}
+                          style={{ fontSize: "0.8rem", color: "white" }}
+                        >
+                          {letter}
+                        </span>
+                      ))}
                     </div>
                   </Col>
-                  <Col lg={8}>
+                  <Col lg={5}>
                     <Card.Body className="p-4">
-                      <Card.Title className="show-more-title">
+                      <Card.Title
+                        style={{
+                          marginTop: "1.5rem",
+                          fontSize: "1.5rem",
+                          fontWeight: "bold",
+                          color: "#212529",
+                          marginBottom: "1rem",
+                        }}
+                      >
                         Dr{" "}
                         {appointment.doctor.length === 1 &&
                           appointment.doctor[0].name}
                       </Card.Title>
-                      <div>
+                      <div
+                        style={{
+                          marginBottom: "1rem",
+                          fontSize: "1.2rem",
+                          color: "#099BA0 ",
+                        }}
+                      >
                         {appointment.doctor.length === 1 &&
                           appointment.doctor[0].specialty}
                       </div>
                       <Card.Text>
-                        <div className="show-more-date">
+                        <div style={{ marginBottom: "1rem", fontSize: "1rem" }}>
+                          {appointment.description}
+                        </div>
+                      </Card.Text>
+                    </Card.Body>
+                  </Col>
+                  <Col lg={5}>
+                    <Card.Body className="p-4">
+                      <Card.Text>
+                        <div
+                          style={{
+                            marginTop: "2rem",
+                            marginBottom: "1rem",
+                            fontSize: "1.1rem",
+                          }}
+                        >
                           <FontAwesomeIcon
                             icon={faCalendar}
-                            style={{ marginRight: "0.5rem" }}
+                            style={{
+                              marginRight: "0.5rem",
+                              fontSize: "1.1rem",
+                            }}
                           />
-                          {/* {formattedDate} */}
                           {appointment.date}
                         </div>
-                        <div className="show-more-date">
+                        <div
+                          style={{ marginBottom: "1rem", fontSize: "1.1rem" }}
+                        >
                           <FontAwesomeIcon
                             icon={faClock}
-                            style={{ marginRight: "0.5rem" }}
+                            style={{
+                              marginRight: "0.5rem",
+                              fontSize: "1.1rem",
+                            }}
                           />
-                          {/* {formattedTime} */}
                           {appointment.time}
-                        </div>
-                        <div className="show-more-date">
-                          {appointment.status}
                         </div>
                       </Card.Text>
                     </Card.Body>

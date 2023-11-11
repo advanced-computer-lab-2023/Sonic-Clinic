@@ -10,7 +10,7 @@ function DrMainImg() {
   const [ourDoctorsVisible, setOurDoctorsVisible] = useState(false);
   const ourDoctorsSpring = useSpring({
     opacity: ourDoctorsVisible ? 1 : 0,
-    transform: ourDoctorsVisible ? "translateX(0)" : "translateX(-50%)",
+    transform: ourDoctorsVisible ? "translateY(0)" : "translateY(-50%)",
     config: { duration: 1000 },
   });
   return (
