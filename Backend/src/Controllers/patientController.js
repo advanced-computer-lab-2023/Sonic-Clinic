@@ -840,7 +840,7 @@ const subscribeHealthPackageStripe = async (req, res) => {
     if (!patient) {
       return res.status(404).json({ message: "Patient not found." });
     }
-
+    console.log("before session");
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
       mode: "payment",
@@ -1126,9 +1126,11 @@ const subscribeHealthPackageWallet = async (req, res) => {
     const mainPatient = await patientModel.findById(req.user.id);
 
     if (!id) {
-      patient = await patientModel.findById(req.user.id);
+      patient = await patientModel
+        .findById(req.user.id)
+        .populate("packagesPatient");
     } else {
-      patient = await familyMemberModel.findById(id);
+      patient = await familyMemberModel.findById(id).populate("packagesFamily");
     }
 
     if (!patient) {

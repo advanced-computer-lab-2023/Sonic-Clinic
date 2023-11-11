@@ -28,12 +28,17 @@ const createToken = (id) => {
 
 const login = async (req, res) => {
   const { username, password } = req.body;
+  let patient1;
 
   try {
     const doctor1 = await DoctorModel.findOne({ username });
-    const patient1 = await patientModel
-      .findOne({ username })
-      .populate("packagesPatient");
+    patient1 = await patientModel.findOne({ username });
+
+    if (patient1.package !== "  ") {
+      patient1 = await patientModel
+        .findOne({ username })
+        .populate("packagesPatient");
+    }
     console.log(patient1);
     const admin1 = await administratorModel.findOne({ username });
 

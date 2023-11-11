@@ -49,7 +49,6 @@ const LoginForm = () => {
         const type = response.data.message;
 
         if (type === "Patient") {
-          console.log(user.packagesPatient);
           dispatch(
             setCredentialsPatient({
               password: password,

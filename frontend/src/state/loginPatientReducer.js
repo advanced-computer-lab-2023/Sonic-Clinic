@@ -16,6 +16,9 @@ const initialState = {
   medicalHistory: [],
   family: [],
   isLoggedIn: false,
+  newPackage: "",
+  forFam: "",
+  newApp: "",
 };
 
 const loginSlice = createSlice({
@@ -28,7 +31,7 @@ const loginSlice = createSlice({
       state.birthdate = action.payload.birthdate;
       state.userEmail = action.payload.userEmail;
       state.name = action.payload.name;
-      state.packages = action.payload.packagesPatient;
+      state.packages = action.payload.packages;
       state.gender = action.payload.gender;
       state.phoneNumber = action.payload.phoneNumber;
       state.userId = action.payload.userId;
@@ -41,17 +44,27 @@ const loginSlice = createSlice({
     },
     updatePatientWallet: (state, action) => {
       state.wallet = action.payload.wallet;
-      // state = {
-      //   ...state,
-      //   wallet: action.payload.wallet,
-      // };
     },
     updatePatientPackage: (state, action) => {
       state.packages = action.payload.packages;
-      // state = {
-      //   ...state,
-      //   packages: action.payload.packages,
-      // };
+    },
+    setNewPackage: (state, action) => {
+      state.newPackage = action.payload.newPackage;
+    },
+    removeNewPackage: (state, action) => {
+      state.newPackage = "";
+    },
+    setForFam: (state, action) => {
+      state.forFam = action.payload.forFam;
+    },
+    removeForFam: (state, action) => {
+      state.forFam = "";
+    },
+    setNewApp: (state, action) => {
+      state.newApp = action.payload.newApp;
+    },
+    removeNewApp: (state, action) => {
+      state.newAPp = "";
     },
     updateMyMedicalHistory: (state, action) => {
       state.medicalHistory = action.payload.medicalHistory;
@@ -79,6 +92,9 @@ const loginSlice = createSlice({
       state.medicalHistory = [];
       state.family = [];
       state.isLoggedIn = false;
+      state.newPackage = "";
+      state.forFam = "";
+      state.newApp = "";
     },
     clearPassword: (state, action) => {
       state = {
@@ -100,6 +116,12 @@ export const {
   updatePatientWallet,
   updatePatientPackage,
   updateMyMedicalHistory,
+  removeNewPackage,
+  setNewPackage,
+  removeForFam,
+  setForFam,
+  removeNewApp,
+  setNewApp,
   logoutPatient,
   clearPassword,
   setUserId,
