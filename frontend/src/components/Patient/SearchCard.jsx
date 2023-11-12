@@ -94,7 +94,7 @@ function SearchCard() {
                 >
                   <option>Select specialty</option>
                   <option>Cardiology</option>
-                  <option>Pediatric</option>
+                  <option>Pediatrics</option>
                   <option>Dermatology</option>
                   <option>Oncology</option>
                   <option>Neurology</option>
