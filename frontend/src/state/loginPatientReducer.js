@@ -75,6 +75,10 @@ const loginSlice = createSlice({
         family: action.payload.family,
       };
     },
+    addFamilyMemberState: (state, action) => {
+      const newFamilyMember = action.payload;
+      state.family = [...state.family, newFamilyMember];
+    },
 
     logoutPatient: (state, action) => {
       state.userName = "";
@@ -126,5 +130,6 @@ export const {
   clearPassword,
   setUserId,
   updatePatientFamily,
+  addFamilyMemberState,
 } = loginSlice.actions;
 export default loginSlice.reducer;
