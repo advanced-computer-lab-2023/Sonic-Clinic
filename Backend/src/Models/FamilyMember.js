@@ -32,6 +32,10 @@ const familyMemberSchema = new Schema(
       type: String,
       required: false,
     },
+    canceledHealthPackage: {
+      type: [String],
+      required: false,
+    },
   },
   { timestamps: true }
 );

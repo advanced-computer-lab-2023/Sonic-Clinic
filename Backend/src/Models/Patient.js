@@ -88,6 +88,10 @@ const patientSchema = new Schema(
       type: Number,
       required: true,
     },
+    canceledHealthPackage: {
+      type: [String],
+      required: false,
+    },
 
     familyMembers: [[String, String]],
     medicalHistory: [fileSchema],
