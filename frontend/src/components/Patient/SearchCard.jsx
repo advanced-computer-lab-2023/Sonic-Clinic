@@ -93,11 +93,11 @@ function SearchCard() {
                   }}
                 >
                   <option>Select specialty</option>
-                  <option>Cardiologist</option>
-                  <option>Pediatrician</option>
-                  <option>Dermatologist</option>
-                  <option>Oncologist</option>
-                  <option>Neurologist</option>
+                  <option>Cardiology</option>
+                  <option>Pediatric</option>
+                  <option>Dermatology</option>
+                  <option>Oncology</option>
+                  <option>Neurology</option>
                 </Form.Control>
               </Form.Group>
 
