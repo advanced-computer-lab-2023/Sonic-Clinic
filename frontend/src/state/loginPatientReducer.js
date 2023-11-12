@@ -76,8 +76,7 @@ const loginSlice = createSlice({
       };
     },
     addFamilyMemberState: (state, action) => {
-      const newFamilyMember = action.payload;
-      state.family = [...state.family, newFamilyMember];
+      state.family = [...state.family, action.payload.family];
     },
 
     logoutPatient: (state, action) => {

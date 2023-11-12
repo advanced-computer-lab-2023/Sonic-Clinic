@@ -80,8 +80,10 @@ function FamilyMembersList({ refreshFlag }) {
                 <Col md={4}>
                   <p>
                     <strong>Package:</strong>{" "}
-                    {member.packagesFamily
-                      ? member.packagesFamily[index].type.split(" ")[0]
+                    {member.packagesFamily && member.packagesFamily[0]
+                      ? member.packagesFamily[0].type.split(" ")[0]
+                      : member.package && member.package.trim() !== ""
+                      ? member.package
                       : "No Packages"}
                   </p>
                 </Col>
