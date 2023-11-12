@@ -56,6 +56,7 @@ export default function DrViewPatients() {
             setPatients={setPatients}
             upcomingApp={upcomingApp}
             loading={loading}
+            fetchData={fetchData}
           />
         </div>
       </Container>

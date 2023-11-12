@@ -23,6 +23,7 @@ function DrShowPatients({
   responseData,
   upcomingApp,
   loading,
+  fetchData,
 }) {
   const [searchTerm, setSearchTerm] = useState("");
   const [expandedPatient, setExpandedPatient] = useState(null);
@@ -35,7 +36,15 @@ function DrShowPatients({
 
   const handleFileUpload = (e) => {
     const newFiles = Array.from(e.target.files);
-    setUploadedFiles([...uploadedFiles, ...newFiles]);
+    const formattedFiles = newFiles.map((file) => ({
+      filename: file.name,
+      mimetype: file.type,
+      buffer: {
+        type: "Buffer",
+        data: Array.from(new Uint8Array(file)),
+      },
+    }));
+    setUploadedFiles([...uploadedFiles, ...formattedFiles]);
   };
 
   const handleRemoveFile = (index) => {
@@ -114,6 +123,7 @@ function DrShowPatients({
 
   const addFiles = async (id) => {
     try {
+      console.log(id);
       const formData = new FormData();
 
       uploadedFiles.forEach((file, index) => {
@@ -132,6 +142,9 @@ function DrShowPatients({
       );
 
       if (response.status === 200) {
+        fetchData();
+
+        setExistingFiles((prevFiles) => [...prevFiles, ...uploadedFiles]);
         setUploadedFiles([]);
       }
     } catch (error) {
@@ -307,7 +320,7 @@ function DrShowPatients({
                               <ul style={{ marginTop: "1rem" }}>
                                 {uploadedFiles.map((file, index) => (
                                   <li key={index}>
-                                    {file.name}
+                                    {file.filename}
                                     <FontAwesomeIcon
                                       icon={faX}
                                       style={{
@@ -329,7 +342,7 @@ function DrShowPatients({
                                   color: "#05afb9 ",
                                   fontWeight: "bold",
                                 }}
-                                onClick={addFiles(patient._id)}
+                                onClick={() => addFiles(patient._id)}
                               >
                                 Add
                               </div>

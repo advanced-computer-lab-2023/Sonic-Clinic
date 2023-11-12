@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Card, Button, Modal } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck, faX } from "@fortawesome/free-solid-svg-icons";
@@ -13,13 +13,34 @@ export default function AdminDocReqDetails({
   docBirthDate,
   fetchData,
   docUsername,
-  docMedicalLicense,
-  docMedicalDegree,
-  docDocID,
+  docDocuments,
 }) {
   const [showRejectModal, setShowRejectModal] = useState(false);
   const [showAcceptModal, setShowAcceptModal] = useState(false);
   const [error, setError] = useState(null);
+  // const [files, setFiles] = useState(null);
+
+  // useEffect(() => {
+  //   fetchData();
+  // }, []);
+
+  // const fetchData = async () => {
+  //   try {
+  //     const response = await axios.post("/viewPtlDocDocumentsbyAdmins", {});
+  //     if (response.status === 200) {
+  //       setFiles(response.data.potentialDoctors);
+  //     } else {
+  //       console.log("Server error");
+  //     }
+  //     setLoading(false);
+  //   } catch (error) {
+  //     if (error.response && error.response.status === 404) {
+  //       setError("No potential doctors found.");
+  //     } else if (error.response && error.response.status === 500) {
+  //       setError("Server Error");
+  //     }
+  //   }
+  // };
 
   const rowStyle = {
     display: "flex",
@@ -201,30 +222,38 @@ export default function AdminDocReqDetails({
                 <span style={titleStyle}>Educational Background:</span>
                 {docEducation}
               </div>
-              <div className="d-flex flex-row">
-                <span style={titleStyle}>Doctor ID: </span>
-                <a style={linkStyle} onClick={() => viewFile({ docDocID })}>
-                  {docDocID}
-                </a>
-              </div>
-              <div className="d-flex flex-row">
-                <span style={titleStyle}>Medical Degree: </span>
-                <a
-                  style={linkStyle}
-                  onClick={() => viewFile({ docMedicalDegree })}
-                >
-                  {docMedicalDegree}
-                </a>
-              </div>
-              <div className="d-flex flex-row">
-                <span style={titleStyle}>Medical License: </span>
-                <a
-                  style={linkStyle}
-                  onClick={() => viewFile({ docMedicalLicense })}
-                >
-                  {docMedicalLicense}
-                </a>
-              </div>
+              {docDocuments > 0 && (
+                <div>
+                  {" "}
+                  <div className="d-flex flex-row">
+                    <span style={titleStyle}>Doctor ID: </span>
+                    <a
+                      style={linkStyle}
+                      onClick={() => viewFile({ docDocuments })}
+                    >
+                      {docDocuments[0].filename}
+                    </a>
+                  </div>
+                  <div className="d-flex flex-row">
+                    <span style={titleStyle}>Medical Degree: </span>
+                    <a
+                      style={linkStyle}
+                      onClick={() => viewFile({ docDocuments })}
+                    >
+                      {docDocuments[1].filename}
+                    </a>
+                  </div>
+                  <div className="d-flex flex-row">
+                    <span style={titleStyle}>Medical License: </span>
+                    <a
+                      style={linkStyle}
+                      onClick={() => viewFile({ docDocuments })}
+                    >
+                      {docDocuments[2].filename}
+                    </a>
+                  </div>
+                </div>
+              )}
             </div>
           </Card.Text>
         </Card.Body>
