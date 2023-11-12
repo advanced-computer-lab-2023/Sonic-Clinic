@@ -673,9 +673,6 @@ const viewAllAppointmentsPatient = async (req, res) => {
 const filterDoctorsAfterSearchDocName = async (req, res) => {
   const name = req.query.name;
   const { specialty, date, time } = req.query;
-  const status = "free";
-
-  query = { date, time, status };
 
   const doctorQuery = { specialty };
   if (name) {
@@ -683,44 +680,32 @@ const filterDoctorsAfterSearchDocName = async (req, res) => {
   }
 
   try {
-    const doctors = await doctorModel.find();
+    let doctors;
+
     if (specialty) {
       doctors = await doctorModel.find(doctorQuery);
+    } else {
+      doctors = await doctorModel.find();
     }
 
     if (!doctors || doctors.length === 0) {
       return res.status(404).json({ message: "No doctors found." });
     }
 
-    await doctors.forEach(async (doctor) => {
-      await doctor.getAppointments();
-    });
-    console.log(doctors);
-
-    if (date && !time) {
-      return res.status(405).json({ message: "Please enter time" });
-    }
-    if (!date && time) {
-      return res.status(406).json({ message: "Please enter date" });
-    }
-
-    const appointments = await appointmentModel.find(query);
-
-    if (!appointments || appointments.length === 0) {
-      return res.status(404).json({ message: "No doctors found." });
-    }
-
-    const availableDoctors = doctors.filter((doctor) =>
-      appointments.some(
-        (appointment) =>
-          appointment.doctorID.toString() === doctor._id.toString() &&
-          (specialty
-            ? doctor.specialty.toString() === specialty.toString()
-            : true)
+    // Filter doctors based on available slots
+    const filteredDoctors = doctors.filter((doctor) =>
+      doctor.availableSlots.some(
+        (slot) =>
+          slot === `${date} ${time}` && // Check for matching date and time
+          (!specialty || doctor.specialty.toString() === specialty.toString()) // Check for matching specialty if specified
       )
     );
 
-    const patientId = req.user.id; // Assuming _id is in the request body
+    if (filteredDoctors.length === 0) {
+      return res.status(404).json({ message: "No available doctors found." });
+    }
+
+    const patientId = req.user.id;
     const patient = await patientModel.findById(patientId);
 
     if (!patient) {
@@ -728,7 +713,7 @@ const filterDoctorsAfterSearchDocName = async (req, res) => {
     }
 
     const doctorsWithSessionPrice = await Promise.all(
-      availableDoctors.map(async (doctor) => {
+      filteredDoctors.map(async (doctor) => {
         const sessionPrice = await calculateSessionPrice(
           doctor.hourlyRate,
           patient.package
@@ -743,11 +728,13 @@ const filterDoctorsAfterSearchDocName = async (req, res) => {
     );
 
     res.status(200).json({ doctorsWithSessionPrice });
-    // res.status(200).json(appointments);
+    
   } catch (error) {
+    console.error(error);
     res.status(500).json({ message: "Server Error" });
   }
 };
+
 const removeFamilyMember = async (req, res) => {
   try {
     const id = req.query._id;
