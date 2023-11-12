@@ -319,9 +319,9 @@ const addAppointmentByPatientID = async (req, res) => {
   try {
     const doctorID = req.user.id;
 
-    console.log(doctorID);
+    
     const { date, description, patientID, status, time } = req.body;
-    console.log(patientID);
+    
 
     // Create a new appointment with doctorID, patientID, and other details
     const appointment = await appointmentModel.create({
@@ -332,6 +332,11 @@ const addAppointmentByPatientID = async (req, res) => {
       status,
       time,
     });
+
+  
+  const doctor= await doctorModel.findById(req.user.id);
+  doctor.patients.push(patientID);
+ await  doctor.save();
 
     res
       .status(201)
