@@ -22,18 +22,14 @@ function UploadDocuments() {
       const response = await axios.get(
         `/viewPatientMedicalHistory?filename=${file}`,
         {
-          responseType: "arraybuffer",
+          responseType: "blob", // Set the responseType to 'blob'
         }
       );
-
-      console.log("Server Response Data:", response.data);
 
       if (response.status === 200) {
         const blob = new Blob([response.data], {
           type: response.headers["content-type"],
         });
-
-        console.log("Blob:", blob);
 
         if (blob.size > 0) {
           const url = window.URL.createObjectURL(blob);
@@ -42,6 +38,8 @@ function UploadDocuments() {
           const a = document.createElement("a");
           a.href = url;
           a.download = file; // Specify the desired filename
+
+          // Append the anchor to the body
           document.body.appendChild(a);
 
           // Trigger a click event to initiate download
@@ -49,6 +47,9 @@ function UploadDocuments() {
 
           // Remove the anchor from the DOM
           document.body.removeChild(a);
+
+          // Release the object URL
+          window.URL.revokeObjectURL(url);
         } else {
           console.log("File content is empty");
         }

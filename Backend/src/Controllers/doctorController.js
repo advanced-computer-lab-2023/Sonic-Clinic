@@ -118,7 +118,7 @@ const viewPatients = async (req, res) => {
   //const id = req.user.id;
 
   try {
-    const doctor = await doctorModel.findOne(req.user.id);
+    const doctor = await doctorModel.findById(req.user.id);
     if (!doctor) {
       return res.status(404).json({ message: "Doctor not found." });
     }
@@ -130,15 +130,17 @@ const viewPatients = async (req, res) => {
     const actualPatients = [];
 
     for (const patientId of patients) {
+
       const patient = await patientModel
         .findOne({ _id: patientId })
         .populate("prescriptions").execPopulate();
+
       if (patient) {
         actualPatients.push(patient);
       }
     }
 
-    res.status(200).json({ patients: actualPatients });
+    // res.status(200).json(patients actualPatients);
   } catch (error) {
     res.status(500).json({ message: "Server Error" });
   }

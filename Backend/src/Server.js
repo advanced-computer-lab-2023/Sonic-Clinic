@@ -130,6 +130,7 @@ const {
   uploadFilesForPotentialDoctor,
   viewMedicalRecords,
   uploadFilesbyDoctors,
+  viewPtlDocDocumentsbyAdmins
 } = require("./Controllers/upload");
 
 //el link bta3 el DB
@@ -339,6 +340,12 @@ server.post(
   requireAuth,
   viewPatientMedicalHistoryForDoctors
 );
+server.post(
+  "/viewPtlDocDocumentsbyAdmins",
+  requireAuth,
+  viewPtlDocDocumentsbyAdmins
+);
+
 server.get(
   "/viewPatientMedicalHistory",
   requireAuth,

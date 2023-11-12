@@ -134,6 +134,7 @@ export default function HealthPackageCard() {
     } catch (error) {
       if (error.response && error.response.status === 404) {
         if (paymentMethod === "creditCard") {
+          setError(error.response.data.message);
         } else {
           setError(error.response.data.message);
         }
