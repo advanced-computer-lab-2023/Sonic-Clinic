@@ -728,7 +728,7 @@ const filterDoctorsAfterSearchDocName = async (req, res) => {
     );
 
     res.status(200).json({ doctorsWithSessionPrice });
-    
+
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server Error" });
@@ -1179,7 +1179,7 @@ const subscribeHealthPackageWallet = async (req, res) => {
     }
 
     const packageName = req.query.type;
-    if (patient.package !== " ") {
+    if (patient.package !== "  ") {
       const patientPackage = await packagesModel.findOne({
         _id: patient.package,
       });
