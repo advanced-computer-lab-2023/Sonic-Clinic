@@ -17,7 +17,7 @@ const DrSignupForm = () => {
   const [rate, setRate] = useState("");
   const [affiliation, setAffiliation] = useState("");
   const [education, setEducation] = useState("");
-  const [speciality, setSpeciality] = useState("");
+  const [speciality, setSpeciality] = useState("Cardiology");
   const [doctorID, setdoctorID] = useState(null);
   const [medicalLicense, setMedicalLicense] = useState(null);
   const [medicalDegree, setMedicalDegree] = useState(null);
@@ -28,12 +28,6 @@ const DrSignupForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  };
-  const handleClose = () => {
-    setOpen(false);
-  };
-  const handleLink = () => {
-    setOpen(true);
   };
 
   const handleClick = async (e) => {
@@ -55,19 +49,6 @@ const DrSignupForm = () => {
       !medicalLicense ||
       !doctorID
     ) {
-      console.log("name:"+name);
-      console.log("email:"+email);
-      console.log("password:"+password);
-      console.log("confirmPassword:"+confirmPassword);
-      console.log("birthdate:"+birthdate);
-      console.log("username:"+username);
-      console.log("education:"+education);
-      console.log("affiliation:"+affiliation);
-      console.log("speciality:"+speciality);
-      console.log("rate:"+rate);
-      console.log("medicalDegree:"+medicalDegree);
-      console.log("medicalLicense:"+medicalLicense);
-      console.log("doctorID:"+doctorID);
       setError("Please fill in all fields");
       console.log(error1);
       return;
@@ -176,20 +157,24 @@ const DrSignupForm = () => {
         if (response.status === 201) {
           try {
             const formData = new FormData();
-            const formattedFiles = formatFilesForUpload([
-              medicalDegree,
-              medicalLicense,
-              doctorID,
-            ]);
 
-            formattedFiles.forEach((file, index) => {
-              formData.append(
-                `file${index + 1}`,
-                file.buffer.data,
-                file.filename
-              );
-            });
+            if (medicalDegree) {
+              const formattedMedicalDegree = formatFileForUpload(medicalDegree);
+              formData.append("files", formattedMedicalDegree);
+            }
 
+            // Format and append medicalLicense file
+            if (medicalLicense) {
+              const formattedMedicalLicense =
+                formatFileForUpload(medicalLicense);
+              formData.append("files", formattedMedicalLicense);
+            }
+
+            // Format and append doctorID file
+            if (doctorID) {
+              const formattedDoctorID = formatFileForUpload(doctorID);
+              formData.append("files", formattedDoctorID);
+            }
             const response2 = await axios.post(
               `/uploadFilesForPotentialDoctor?username=${username}`,
               formData,
@@ -199,7 +184,6 @@ const DrSignupForm = () => {
                 },
               }
             );
-
             if (response2.status === 200) {
               setError(null);
               navigate("/login");
@@ -224,16 +208,14 @@ const DrSignupForm = () => {
     }
   };
 
-  const formatFilesForUpload = (files) => {
-    return files.map((file) => ({
-      filename: file.name,
-      mimetype: file.type,
-      buffer: {
-        type: "Buffer",
-        data: Array.from(new Uint8Array(file)),
-      },
-    }));
-  };
+  const formatFileForUpload = (file) => ({
+    filename: file.name,
+    mimetype: file.type,
+    buffer: {
+      type: "Buffer",
+      data: Array.from(new Uint8Array(file)),
+    },
+  });
 
   return (
     <div className="col-9 form-container">
