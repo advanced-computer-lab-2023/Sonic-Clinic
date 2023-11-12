@@ -124,7 +124,9 @@ const viewPatients = async (req, res) => {
     }
 
     const patients = doctor.patients;
-    console.log(patients + "  Patiennnnttss");
+   if(!patients){
+    return res.status(404).json({ message: "No patients found." });
+   }
     const actualPatients = [];
 
     for (const patientId of patients) {
