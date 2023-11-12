@@ -3,11 +3,13 @@ import { Link } from "react-router-dom";
 import {
   faCalendar,
   faClock,
-  faTimesCircle,
+  faCancel,
+  faCheck,
+  faPause,
+  faCheckDouble,
 } from "@fortawesome/free-solid-svg-icons";
-import { Card, Col, Row, Image, Spinner } from "react-bootstrap";
+import { Card, Col, Row, Spinner } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import prescriptionImg from "../../Assets/Prescription.jpg";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import { useState } from "react";
@@ -67,6 +69,22 @@ function ShowAppointments() {
     );
   });
 
+  const getStatusIcon = (status) => {
+    const lowerCaseStatus = status.toLowerCase();
+    switch (lowerCaseStatus) {
+      case "upcoming":
+        return faCheck; // Blue for Upcoming
+      case "completed":
+        return faCheckDouble; // Grey for Completed
+      case "cancelled":
+        return faCancel; // Orange for Cancelled
+      case "rescheduled":
+        return faPause; // Light Blue for Rescheduled
+      default:
+        return faPause; // Default color
+    }
+  };
+
   const getStatusColor = (status) => {
     const lowerCaseStatus = status.toLowerCase();
     switch (lowerCaseStatus) {
@@ -107,7 +125,6 @@ function ShowAppointments() {
         filteredAppointments.map((appointment, index) => {
           // Parse the date string into a Date object
           const appointmentDate = new Date(appointment.date);
-
           // Format the date as "dd/mm/yyyy"
           const formattedDate = `${appointmentDate
             .getDate()
@@ -117,7 +134,6 @@ function ShowAppointments() {
             .padStart(2, "0")}/${appointmentDate.getFullYear()}`;
           const hours = appointmentDate.getHours();
           const minutes = appointmentDate.getMinutes();
-
           // Format the time as HH:MM (24-hour format)
           const formattedTime = `${hours.toString().padStart(2, "0")}:${minutes
             .toString()
@@ -153,14 +169,13 @@ function ShowAppointments() {
                         height: "12rem",
                       }}
                     >
-                      {appointment.status.split("").map((letter, index) => (
-                        <span
-                          key={index}
-                          style={{ fontSize: "0.8rem", color: "white" }}
-                        >
-                          {letter}
-                        </span>
-                      ))}
+                      <FontAwesomeIcon
+                        icon={getStatusIcon(appointment.status)}
+                        style={{
+                          fontSize: "1.5em",
+                          color: "white",
+                        }}
+                      />
                     </div>
                   </Col>
                   <Col lg={5}>

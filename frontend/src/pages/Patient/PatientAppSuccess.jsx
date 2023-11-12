@@ -4,26 +4,27 @@ import AppNavbar from "../../components/AppNavigation/AppNavbar";
 import HamburgerMenu from "../../components/Patient/HamburgerMenu";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { removeNewPackage } from "../../state/loginPatientReducer";
+import { removeNewApp } from "../../state/loginPatientReducer";
 import { removeForFam } from "../../state/loginPatientReducer";
 import axios from "axios";
 
-function PatientPackageSuccess() {
+function PatientAppSuccess() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const packageName = useSelector((state) => state.patientLogin.newPackage);
+  const app = useSelector((state) => state.patientLogin.newApp);
   const famID = useSelector((state) => state.patientLogin.forFam);
 
   useEffect(async () => {
     try {
-      const response = await axios.post(
-        `/handlePackageStripe?type=${packageName}`,
-        {
-          _id: famID,
-        }
-      );
+      const response = await axios.post(`/addAppointmentForMyselfOrFam`, {
+        famID: famID,
+        doctorID: app.doctorID,
+        date: app.date,
+        description: app.description,
+        time: app.time,
+      });
       if (response.status === 200) {
-        dispatch(removeNewPackage());
+        dispatch(removeNewApp());
         dispatch(removeForFam());
       }
     } catch (error) {
@@ -49,7 +50,7 @@ function PatientPackageSuccess() {
                 }}
                 className="d-flex align-items-center justify-content-center mt-5"
               >
-                You have successfully subscribed to the health package!
+                You have successfully booked the appointment!
               </div>
               <Button
                 variant="primary"
@@ -66,4 +67,4 @@ function PatientPackageSuccess() {
   );
 }
 
-export default PatientPackageSuccess;
+export default PatientAppSuccess;

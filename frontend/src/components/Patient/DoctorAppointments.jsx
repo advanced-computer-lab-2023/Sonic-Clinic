@@ -1,14 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  Card,
-  Button,
-  Container,
-  Modal,
-  Form,
-  Col,
-  Row,
-  Spinner,
-} from "react-bootstrap";
+import { Card, Button, Container, Modal, Form, Spinner } from "react-bootstrap";
 import { Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
@@ -16,30 +7,36 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css/scrollbar";
 import axios from "axios";
-import { useSelector } from "react-redux";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCalendar, faClock } from "@fortawesome/free-solid-svg-icons";
+import { useSelector, useDispatch } from "react-redux";
+import { updatePatientWallet } from "../../state/loginPatientReducer";
+import { setForFam } from "../../state/loginPatientReducer";
+import { setNewApp } from "../../state/loginPatientReducer";
 
 const DoctorAppointments = ({ onBookAppointment }) => {
   const [loading, setLoading] = useState(true);
   const [responseData, setResponseData] = useState([]);
   const [responseUrl, setResponseUrl] = useState([]);
   const [error1, setError] = useState(null);
-  const [appointmentBooked, setAppointmentBooked] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [bookingStatus, setBookingStatus] = useState("booking");
-
   const [bookingName, setBookingName] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("wallet");
-  const [creditCard, setCreditCard] = useState({
-    cardNumber: "",
-    expirationDate: "",
-    cvv: "",
-  });
   const [selectedAppointment, setSelectedAppointment] = useState(null);
+  const [description, setDescription] = useState("");
   const [selectedFamilyMember, setSelectedFamilyMember] = useState("");
   const [selectedFamilyMemberId, setSelectedFamilyMemberId] = useState("");
   const doctorRate = useSelector(
     (state) => state.selectedDoctorData.hourlyRate
   );
+  const doctorID = useSelector((state) => state.selectedDoctorData.id);
+  const doctorLoc = useSelector(
+    (state) => state.selectedDoctorData.affiliation
+  );
+  const wallet = useSelector((state) => state.patientLogin.wallet);
+
+  const dispatch = useDispatch();
 
   const handleClose = () => {
     setShowModal(false); // Close the modal first
@@ -50,11 +47,7 @@ const DoctorAppointments = ({ onBookAppointment }) => {
     }, 200); // Adjust the delay as needed
     setBookingName("");
     setPaymentMethod("wallet");
-    setCreditCard({
-      cardNumber: "",
-      expirationDate: "",
-      cvv: "",
-    });
+    setDescription("");
     setSelectedAppointment(null);
   };
   const handleFamilyMemberChange = (e) => {
@@ -67,35 +60,21 @@ const DoctorAppointments = ({ onBookAppointment }) => {
     setShowModal(true);
   };
 
-  const handleBookingNameChange = (e) => {
-    setBookingName(e.target.value);
-  };
-
   const handlePaymentMethodChange = (e) => {
     setPaymentMethod(e.target.value);
-
-    // Clear credit card details when switching payment method
-    setCreditCard({
-      cardNumber: "",
-      expirationDate: "",
-      cvv: "",
-    });
-  };
-
-  const handleCreditCardChange = (e) => {
-    const { name, value } = e.target;
-    setCreditCard({
-      ...creditCard,
-      [name]: value,
-    });
   };
 
   const handleBookAppointment = async () => {
     try {
+      dispatch(
+        setForFam({
+          forFam: selectedFamilyMemberId,
+        })
+      );
       let apiUrl;
 
       if (paymentMethod === "creditCard") {
-        apiUrl = "/addAppointmentForMyselfOrFam";
+        apiUrl = "/payAppointmentStripe";
       } else {
         apiUrl = "/payAppointmentWallet";
       }
@@ -103,22 +82,50 @@ const DoctorAppointments = ({ onBookAppointment }) => {
       let response;
 
       if (paymentMethod === "creditCard") {
-        response = await axios.post(`${apiUrl}`);
+        response = await axios.post(`${apiUrl}`, {
+          famID: selectedFamilyMemberId,
+          doctorID: doctorID,
+          date: selectedAppointment.split(" ")[0],
+          description: description,
+          time: selectedAppointment.split(" ")[1],
+        });
       } else {
         response = await axios.post(`${apiUrl}`, {
-          _id: selectedFamilyMemberId,
+          famID: selectedFamilyMemberId,
+          doctorID: doctorID,
+          date: selectedAppointment.split(" ")[0],
+          description: description,
+          time: selectedAppointment.split(" ")[1],
         });
       }
 
-      if (response.status === 200) {
-        setBookingStatus("booking");
+      const newAppointment = {
+        famID: selectedFamilyMemberId,
+        doctorID: doctorID,
+        date: selectedAppointment.split(" ")[0],
+        description: description,
+        time: selectedAppointment.split(" ")[1],
+      };
 
+      if (response.status === 200) {
         if (paymentMethod === "creditCard") {
           setResponseUrl(response.data.url);
           if (response.data.url) {
+            dispatch(
+              setNewApp({
+                newApp: newAppointment,
+              })
+            );
             window.location.href = response.data.url;
           }
         } else {
+          setBookingStatus("success");
+          setError(null);
+          dispatch(
+            updatePatientWallet({
+              wallet: wallet - doctorRate,
+            })
+          );
         }
       }
     } catch (error) {
@@ -189,6 +196,7 @@ const DoctorAppointments = ({ onBookAppointment }) => {
               xmlns="http://www.w3.org/2000/svg"
               width="16"
               height="16"
+              marginRight="20"
               viewBox="0 0 16 16"
               fill="none"
             >
@@ -237,7 +245,7 @@ const DoctorAppointments = ({ onBookAppointment }) => {
                   >
                     <Card.Body className="p-2 w-100">
                       <Card.Title className="carousel-sub-card-title">
-                        {appointment.location}
+                        {doctorLoc}
                       </Card.Title>
                       <Card.Text className="carousel-sub-card-description">
                         <div
@@ -249,32 +257,30 @@ const DoctorAppointments = ({ onBookAppointment }) => {
                         >
                           <div>
                             <div>
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="16"
-                                height="16"
-                                viewBox="0 0 16 16"
-                                fill="none"
-                              >
-                                <g clip-path="url(#clip0_2821_6351)">
-                                  <path
-                                    d="M8 16C8 16 14 10.314 14 6C14 4.4087 13.3679 2.88258 12.2426 1.75736C11.1174 0.632141 9.5913 0 8 0C6.4087 0 4.88258 0.632141 3.75736 1.75736C2.63214 2.88258 2 4.4087 2 6C2 10.314 8 16 8 16ZM8 9C7.20435 9 6.44129 8.68393 5.87868 8.12132C5.31607 7.55871 5 6.79565 5 6C5 5.20435 5.31607 4.44129 5.87868 3.87868C6.44129 3.31607 7.20435 3 8 3C8.79565 3 9.55871 3.31607 10.1213 3.87868C10.6839 4.44129 11 5.20435 11 6C11 6.79565 10.6839 7.55871 10.1213 8.12132C9.55871 8.68393 8.79565 9 8 9Z"
-                                    fill="#495057"
-                                  />
-                                </g>
-                                <defs>
-                                  <clipPath id="clip0_2821_6351">
-                                    <rect width="16" height="16" fill="white" />
-                                  </clipPath>
-                                </defs>
-                              </svg>
-                              {appointment}
+                              <FontAwesomeIcon
+                                icon={faCalendar}
+                                style={{
+                                  marginRight: "0.5rem",
+                                  fontSize: "1rem",
+                                }}
+                              />
+                              {appointment.split(" ")[0]}
+                            </div>
+                            <div>
+                              <FontAwesomeIcon
+                                icon={faClock}
+                                style={{
+                                  marginRight: "0.5rem",
+                                  fontSize: "1rem",
+                                }}
+                              />
+                              {appointment.split(" ")[1]}
                             </div>
                           </div>
                         </div>
                         <div className="d-flex align-items-center justify-content-center">
                           <Button
-                            className="btn-secondary mt-4 w-50"
+                            className="btn-primary mt-4 w-50"
                             onClick={() => handleBookClick(appointment)}
                           >
                             Book
@@ -291,7 +297,7 @@ const DoctorAppointments = ({ onBookAppointment }) => {
       )}
       <Modal show={showModal} onHide={handleClose}>
         <Modal.Header closeButton>
-          <Modal.Title>Buy Health Package</Modal.Title>
+          <Modal.Title>Book Appointment</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           {bookingStatus === "success" ? (
@@ -324,6 +330,14 @@ const DoctorAppointments = ({ onBookAppointment }) => {
                     ))}
                   </Form.Control>
                 </Form.Group>
+                <Form.Group controlId="bookingDes">
+                  <Form.Label>Description</Form.Label>
+                  <Form.Control
+                    as="input"
+                    onChange={(e) => setDescription(e.target.value)}
+                    placeholder="Brief appointment description"
+                  ></Form.Control>
+                </Form.Group>
                 <Form.Group>
                   <Form.Label>Payment Method</Form.Label>
                   <Form.Check
@@ -339,7 +353,6 @@ const DoctorAppointments = ({ onBookAppointment }) => {
                     label="Credit Card"
                     name="paymentMethod"
                     value="creditCard"
-                    // checked={paymentMethod === "creditCard"}
                     onChange={handlePaymentMethodChange}
                   />
                 </Form.Group>

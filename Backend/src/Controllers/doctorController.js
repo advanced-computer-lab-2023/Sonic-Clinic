@@ -281,7 +281,7 @@ const viewAllAppointmentsDoctor = async (req, res) => {
 };
 const changePasswordForDoctor = async (req, res) => {
   const { currentPassword, newPassword } = req.body;
-  const doctorID = req.body._id;
+  const doctorID = req.user.id;
 
   try {
     const doctor = await doctorModel.findById(doctorID);

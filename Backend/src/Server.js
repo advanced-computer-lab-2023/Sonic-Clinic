@@ -126,6 +126,7 @@ const {
   viewPatientMedicalHistoryForDoctors,
   uploadFilesForPotentialDoctor,
   viewMedicalRecords,
+  uploadFilesbyDoctors,
 } = require("./Controllers/upload");
 
 //el link bta3 el DB
@@ -292,7 +293,7 @@ server.post("/cancelHealthPackageFam", requireAuth, cancelHealthPackageFam);
 server.post("/changePasswordForDoctor", requireAuth, changePasswordForDoctor);
 server.post("/addFamilyMemberExisting", requireAuth, addFamilyMemberExisting);
 //server.post("/uploadPdf",requireAuth, uploadPDF);
-server.post("/addFamilyMemberExisting", requireAuth, addFamilyMemberExisting);
+//server.post("/addFamilyMemberExisting", requireAuth, addFamilyMemberExisting);
 //server.post("/uploadFiles",requireAuth, uploadFiles);
 server.get("/viewWalletPatient", requireAuth, viewWalletPatient);
 server.post(
@@ -329,6 +330,7 @@ server.get("/viewWalletDoc", requireAuth, viewWalletDoc);
 //upload
 server.post("/uploadFilesForPotentialDoctor", uploadFilesForPotentialDoctor);
 server.post("/uploadFiles", requireAuth, uploadFiles);
+server.post("/uploadFilesbyDoctors", requireAuth, uploadFilesbyDoctors);
 server.post(
   "/viewPatientMedicalHistoryForDoctors",
   requireAuth,

@@ -295,19 +295,23 @@ const addFamilyMemberExisting = async (req, res) => {
   const relationToPatient = req.body.relationToPatient;
   const phoneNumber = req.body.phoneNumber;
   const patient = await patientModel.findById(req.user.id);
+  let familyMember;
 
   try {
-    let familyMember = await patientModel.findOne({ email });
+    familyMember = await patientModel.findOne({ email: email });
 
-    if (!familyMember) {
-      familyMember = await patientModel.findOne({ phoneNumber });
+    if (!familyMember || email===null || email===undefined) {
+      familyMember = await patientModel.findOne({ mobileNumber:phoneNumber });
     }
 
     if (!familyMember) {
       return res.status(404).json({ error: "Patient not found" });
     }
 
-    const { name, nationalID, gender, age } = familyMember;
+    const name = familyMember.name;
+    const nationalID = familyMember.nationalID;
+    const gender = familyMember.gender;
+    const age = familyMember.age;
 
     const fam = await familyMemberModel.create({
       name,
@@ -315,18 +319,19 @@ const addFamilyMemberExisting = async (req, res) => {
       age,
       gender,
       relationToPatient,
-      patientID: req.user.id, // Assuming patientModel has an _id field
+      patientID: req.user.id,
     });
     patient.familyMembers = patient.familyMembers || [];
     patient.familyMembers.push([fam._id, name]);
     await patient.save();
 
-    console.log("Family member added!");
     res.status(200).json(fam);
   } catch (error) {
+    console.error("Error:", error);
     res.status(400).json({ error: error.message });
   }
 };
+
 const viewAvailablePackages = async (req, res) => {
   try {
     const packages = await packagesModel.find();
@@ -342,7 +347,11 @@ const viewAvailablePackages = async (req, res) => {
 const calculateSessionPrice = async (hourlyRate, patientPackage) => {
   try {
     // Fetch the package information based on the patient's package
-    const packageInfo = await packagesModel.findOne({ type: patientPackage });
+
+    if(patientPackage === "  "){
+      return hourlyRate;
+    }
+    const packageInfo = await packagesModel.find(patientPackage);
     if (!packageInfo) {
       return hourlyRate;
     } else {
@@ -841,7 +850,7 @@ const subscribeHealthPackageStripe = async (req, res) => {
     if (!patient) {
       return res.status(404).json({ message: "Patient not found." });
     }
-
+    console.log("before session");
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
       mode: "payment",
@@ -913,7 +922,7 @@ const viewAvailableAppointmentsOfDoctor = async (req, res) => {
 
 const changePasswordForPatient = async (req, res) => {
   const { currentPassword, newPassword } = req.body;
-  const patientID = req.body._id;
+  const patientID = req.user.id;
 
   try {
     const patient = await patientModel.findById(patientID);
@@ -956,7 +965,10 @@ const changePasswordForPatientForget = async (req, res) => {
         .json({ message: "Email and newPassword are required." });
     }
 
-    const patient = await patientModel.findOne({ email });
+    let patient = await patientModel.findOne({ email });
+    if(!patient){
+       patient = await doctorModel.findOne({ email });
+    }
     console.log(patient.name);
 
     if (!patient) {
@@ -1127,9 +1139,11 @@ const subscribeHealthPackageWallet = async (req, res) => {
     const mainPatient = await patientModel.findById(req.user.id);
 
     if (!id) {
-      patient = await patientModel.findById(req.user.id);
+      patient = await patientModel
+        .findById(req.user.id)
+        .populate("packagesPatient");
     } else {
-      patient = await familyMemberModel.findById(id);
+      patient = await familyMemberModel.findById(id).populate("packagesFamily");
     }
 
     if (!patient) {
@@ -1183,37 +1197,73 @@ const subscribeHealthPackageWallet = async (req, res) => {
 };
 
 const payAppointmentWallet = async (req, res) => {
-  try {
-    let patient;
-    const id = req.body.famID;
-    const mainPatient = await patientModel.findById(req.user.id);
-    if (!id) {
-      patient = await patientModel.findById(req.user.id);
-    } else {
-      patient = await familyMemberModel.findById(id);
-    }
-    if (!patient) {
-      return res.status(404).json({ message: "Patient not found." });
-    }
-    const appointment = await appointmentModel.findById(req.body._id);
+  let patientID = req.user.id; // Use let to make it reassignable
 
-    console.log(appointment);
-    const doctor = await doctorModel.findById(appointment.doctorID);
+  const { famID, doctorID, date, description, time } = req.body;
+
+  try {
+    const doctor = await doctorModel.findById(doctorID);
+    const patient = await patientModel.findById(req.user.id);
+    const doctorAvailableSlots = doctor.availableSlots;
+
+    // Check if the appointment date matches any of the doctor's available slots
+    let isAvailableSlot = false;
+    let slot2;
+    for (const slot of doctorAvailableSlots) {
+      const [dateS, timeS] = slot.split(" ");
+      if (dateS === date && timeS === time) {
+        slot2 = slot;
+        isAvailableSlot = true;
+        break;
+      }
+    }
+
+    if (!isAvailableSlot) {
+      return res
+        .status(400)
+        .json({ message: "Appointment date is not available." });
+    }
+
+    // If the date is available, remove it from the doctor's available slots
+    doctor.availableSlots = doctorAvailableSlots.filter((slot) => {
+      return slot !== slot2;
+    });
+
+    // Create the appointment and update the doctor's appointments
+    if (famID) {
+      patientID = famID;
+    }
+    const status = "upcoming";
+
+    const appointment = await appointmentModel.create({
+      date,
+      description,
+      patientID,
+      doctorID,
+      status,
+      time,
+    });
+
+    await appointment.save();
+
     const sessionPrice = await calculateSessionPrice(
       doctor.hourlyRate,
       patient.package
     );
+
     let docWallet;
     let patientWallet;
+    console.log(sessionPrice + "PRICEEE");
+    console.log(patient.wallet + "PRICEEE");
 
-    if (mainPatient.wallet >= sessionPrice) {
-      patientWallet = mainPatient.wallet - sessionPrice;
-      mainPatient.wallet = patientWallet;
-      await mainPatient.save();
+    if (patient.wallet >= sessionPrice) {
+      patientWallet = patient.wallet - sessionPrice;
+      patient.wallet = patientWallet;
+      await patient.save();
       docWallet = doctor.wallet + sessionPrice;
       doctor.wallet = docWallet;
       await doctor.save();
-      return res.status(200).json({ patient });
+      return res.status(200).json({ appointment });
     } else {
       return res.status(404).json({
         message: "Your funds are insufficient",
@@ -1224,6 +1274,7 @@ const payAppointmentWallet = async (req, res) => {
     return res.status(500).json({ message: "Server Error" });
   }
 };
+
 const payAppointmentStripe = async (req, res) => {
   try {
     const patient = await patientModel.findById(req.user.id);
@@ -1250,8 +1301,8 @@ const payAppointmentStripe = async (req, res) => {
           quantity: 1,
         },
       ],
-      success_url: `${process.env.SERVER_URL}/patient/packages`,
-      cancel_url: `${process.env.SERVER_URL}/patient/packages`,
+      success_url: `${process.env.SERVER_URL}/patient/app-success`, ///////////??????????
+      cancel_url: `${process.env.SERVER_URL}/patient/app-success`,
     });
     res.status(200).json({ url: session.url });
   } catch (error) {

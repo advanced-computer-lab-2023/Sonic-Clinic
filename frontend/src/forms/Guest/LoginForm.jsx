@@ -49,7 +49,6 @@ const LoginForm = () => {
         const type = response.data.message;
 
         if (type === "Patient") {
-          // console.log(user.medicalHistory);
           dispatch(
             setCredentialsPatient({
               password: password,
@@ -57,14 +56,14 @@ const LoginForm = () => {
               birthdate: user.dateOfBirth,
               userEmail: user.email,
               name: user.name,
-              packages: user.package,
+              packages: user.packagesPatient,
               gender: user.gender,
               phoneNumber: user.mobileNumber,
               userId: user._id,
               emergencyName: user.emergencyFullName,
               emergencyNumber: user.emergencyMobileNumber,
               medicalHistory: user.medicalHistory,
-              wallet: 0,
+              wallet: user.wallet,
               family: user.familyMembers,
               isLoggedIn: true,
             })
@@ -87,7 +86,7 @@ const LoginForm = () => {
               patients: user.patients,
               speciality: user.specialty,
               userId: user._id,
-              wallet: 0,
+              wallet: user.wallet,
               isLoggedIn: true,
             })
           );
@@ -149,6 +148,10 @@ const LoginForm = () => {
 
   const rejectContract = async () => {
     try {
+      setShowAcceptModal(false);
+      setError(
+        "Unfortunately, you cannot join the platform without accepting the contract"
+      );
       const response = await axios.get("/logout");
       if (response.status === 200) {
         console.log("LOGOUT");
@@ -156,10 +159,6 @@ const LoginForm = () => {
     } catch (error) {
       console.log();
     }
-    setShowAcceptModal(false);
-    setError(
-      "Unfortunately, you cannot join the platform without accepting the contract"
-    );
   };
 
   return (

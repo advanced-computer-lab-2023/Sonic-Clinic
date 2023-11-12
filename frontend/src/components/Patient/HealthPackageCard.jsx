@@ -6,7 +6,11 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faShoppingBasket } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { updatePatientPackage } from "../../state/loginPatientReducer";
+import { updatePatientWallet } from "../../state/loginPatientReducer";
+import { setNewPackage } from "../../state/loginPatientReducer";
+import { setForFam } from "../../state/loginPatientReducer";
 
 export default function HealthPackageCard() {
   const navigate = useNavigate();
@@ -22,18 +26,14 @@ export default function HealthPackageCard() {
     "Discount on any medicine ordered from pharmacy platform",
     "Discount on the subscribtion of any family member in any package",
   ];
-  const [showAddPackage, setShowAddPackage] = useState(false);
   const [loading, setLoading] = useState(true);
   const [responseData, setResponseData] = useState([]);
   const [responseUrl, setResponseUrl] = useState([]);
   const [error1, setError] = useState(null);
-
   const [showModal, setShowModal] = useState(false);
   const [bookingStatus, setBookingStatus] = useState("booking");
-
   const [selectedFamilyMember, setSelectedFamilyMember] = useState("");
   const [selectedFamilyMemberId, setSelectedFamilyMemberId] = useState("");
-
   const [paymentMethod, setPaymentMethod] = useState("wallet");
   const [creditCard, setCreditCard] = useState({
     cardNumber: "",
@@ -41,6 +41,8 @@ export default function HealthPackageCard() {
     cvv: "",
   });
   const [selectedPackage, setSelectedPackage] = useState(null);
+  const familyMembers = useSelector((state) => state.patientLogin.family);
+  const dispatch = useDispatch();
 
   const handleClose = () => {
     setShowModal(false); // Close the modal first
@@ -70,7 +72,6 @@ export default function HealthPackageCard() {
 
   const handlePaymentMethodChange = (e) => {
     setPaymentMethod(e.target.value);
-
     // Clear credit card details when switching payment method
     setCreditCard({
       cardNumber: "",
@@ -79,16 +80,14 @@ export default function HealthPackageCard() {
     });
   };
 
-  const handleCreditCardChange = (e) => {
-    const { name, value } = e.target;
-    setCreditCard({
-      ...creditCard,
-      [name]: value,
-    });
-  };
-
   const handleBookAppointment = async () => {
     try {
+      dispatch(
+        setForFam({
+          forFam: selectedFamilyMemberId,
+        })
+      );
+
       let apiUrl;
 
       if (paymentMethod === "creditCard") {
@@ -112,8 +111,23 @@ export default function HealthPackageCard() {
           setResponseUrl(response.data.url);
           if (response.data.url) {
             window.location.href = response.data.url;
+            dispatch(
+              setNewPackage({
+                newPackage: selectedPackage.type,
+              })
+            );
           }
         } else {
+          dispatch(
+            updatePatientPackage({
+              packages: response.data.patient.packagesPatient,
+            })
+          );
+          dispatch(
+            updatePatientWallet({
+              wallet: response.data.patient.wallet,
+            })
+          );
           setBookingStatus("success");
         }
       }
@@ -155,17 +169,12 @@ export default function HealthPackageCard() {
   };
   const packages = responseData;
 
-  const toggleAddPackage = () => {
-    setShowAddPackage(!showAddPackage);
-  };
-
   const iconStyle = {
     opacity: 1,
     color: "white",
     fontSize: "20px",
     cursor: "pointer",
   };
-  const familyMembers = useSelector((state) => state.patientLogin.family);
 
   return (
     <div

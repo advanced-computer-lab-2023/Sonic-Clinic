@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import { updateMyMedicalHistory } from "../../state/loginPatientReducer";
 import { Card, ListGroup } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faX, faTrashCan } from "@fortawesome/free-solid-svg-icons";
+import { saveAs } from "file-saver";
 import axios from "axios";
 
 function UploadDocuments() {
@@ -18,32 +18,43 @@ function UploadDocuments() {
   }, []);
 
   const viewFile = async (file) => {
-    console.log(file);
     try {
       const response = await axios.get(
         `/viewPatientMedicalHistory?filename=${file}`,
         {
-          responseType: "blob", // Set the response type to 'blob'
+          responseType: "arraybuffer",
         }
       );
+
+      console.log("Server Response Data:", response.data);
 
       if (response.status === 200) {
         const blob = new Blob([response.data], {
           type: response.headers["content-type"],
         });
 
-        // Check if the blob is not empty
+        console.log("Blob:", blob);
+
         if (blob.size > 0) {
           const url = window.URL.createObjectURL(blob);
 
-          // Open the file in a new tab
-          window.open(url, "_blank");
+          // Create an anchor element
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = file; // Specify the desired filename
+          document.body.appendChild(a);
+
+          // Trigger a click event to initiate download
+          a.click();
+
+          // Remove the anchor from the DOM
+          document.body.removeChild(a);
         } else {
           console.log("File content is empty");
         }
       }
     } catch (error) {
-      console.log("not cool", error);
+      console.log("Error fetching file:", error);
     }
   };
 
@@ -83,8 +94,6 @@ function UploadDocuments() {
   };
 
   const addFiles = async () => {
-    console.log(uploadedFiles);
-
     try {
       const formData = new FormData();
 
@@ -109,7 +118,6 @@ function UploadDocuments() {
   };
 
   const deleteFile = async (file) => {
-    console.log(file);
     try {
       const response = await axios.delete(
         `/deleteFileFromMedicalHistory?filename=${file}`

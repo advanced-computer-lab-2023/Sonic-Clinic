@@ -12,10 +12,13 @@ const initialState = {
   emergencyName: "",
   emergencyNumber: "",
   userId: "",
-  wallet: "0",
+  wallet: "",
   medicalHistory: [],
   family: [],
   isLoggedIn: false,
+  newPackage: "",
+  forFam: "",
+  newApp: "",
 };
 
 const loginSlice = createSlice({
@@ -40,12 +43,29 @@ const loginSlice = createSlice({
       state.family = action.payload.family;
     },
     updatePatientWallet: (state, action) => {
-      state = {
-        ...state,
-        wallet: action.payload.wallet,
-      };
+      state.wallet = action.payload.wallet;
     },
-
+    updatePatientPackage: (state, action) => {
+      state.packages = action.payload.packages;
+    },
+    setNewPackage: (state, action) => {
+      state.newPackage = action.payload.newPackage;
+    },
+    removeNewPackage: (state, action) => {
+      state.newPackage = "";
+    },
+    setForFam: (state, action) => {
+      state.forFam = action.payload.forFam;
+    },
+    removeForFam: (state, action) => {
+      state.forFam = "";
+    },
+    setNewApp: (state, action) => {
+      state.newApp = action.payload.newApp;
+    },
+    removeNewApp: (state, action) => {
+      state.newAPp = "";
+    },
     updateMyMedicalHistory: (state, action) => {
       state.medicalHistory = action.payload.medicalHistory;
     },
@@ -68,10 +88,13 @@ const loginSlice = createSlice({
       state.emergencyName = "";
       state.emergencyNumber = "";
       state.userId = "";
-      state.wallet = "0";
+      state.wallet = "";
       state.medicalHistory = [];
       state.family = [];
       state.isLoggedIn = false;
+      state.newPackage = "";
+      state.forFam = "";
+      state.newApp = "";
     },
     clearPassword: (state, action) => {
       state = {
@@ -91,7 +114,14 @@ const loginSlice = createSlice({
 export const {
   setCredentialsPatient,
   updatePatientWallet,
+  updatePatientPackage,
   updateMyMedicalHistory,
+  removeNewPackage,
+  setNewPackage,
+  removeForFam,
+  setForFam,
+  removeNewApp,
+  setNewApp,
   logoutPatient,
   clearPassword,
   setUserId,

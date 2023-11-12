@@ -387,7 +387,7 @@ const viewAllDocApp = async (req, res) => {
 };
 const changePasswordForAdmin = async (req, res) => {
   const { currentPassword, newPassword } = req.body;
-  const adminID = req.body._id;
+  const adminID = req.user.id;
 
   try {
     const Admin = await administratorModel.findById(adminID);
