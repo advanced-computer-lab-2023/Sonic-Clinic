@@ -13,23 +13,33 @@ export default function AdminDocReqDetails({
   docBirthDate,
   fetchData,
   docUsername,
+  docMedicalLicense,
+  docMedicalDegree,
+  docDocID,
 }) {
   const [showRejectModal, setShowRejectModal] = useState(false);
   const [showAcceptModal, setShowAcceptModal] = useState(false);
   const [error, setError] = useState(null);
-  const [loadingg, isLoading] = useState(null);
 
   const rowStyle = {
     display: "flex",
     flexDirection: "row",
-    marginBottom: "5px",
+    marginBottom: "0.8rem",
+  };
+
+  const linkStyle = {
+    display: "flex",
+    flexDirection: "row",
+    marginBottom: "0.8rem",
+    cursor: "pointer",
+    textDecoration: "underline",
   };
 
   const titleStyle = {
     color: "#212529",
-    marginRight: "5px",
+    marginRight: "0.5rem",
     fontWeight: "bold",
-    fontSize: "15px",
+    fontSize: "1rem",
   };
 
   const handleClose = () => {
@@ -66,7 +76,6 @@ export default function AdminDocReqDetails({
       if (response.status === 200) {
         handleClose();
         fetchData();
-        //doctor rejected feedback
       }
     } catch (error) {
       if (error.response && error.response.status === 404) {
@@ -77,6 +86,10 @@ export default function AdminDocReqDetails({
         );
       }
     }
+  };
+
+  const viewFile = async (file) => {
+    console.log("view");
   };
 
   return (
@@ -187,6 +200,30 @@ export default function AdminDocReqDetails({
               <div style={rowStyle}>
                 <span style={titleStyle}>Educational Background:</span>
                 {docEducation}
+              </div>
+              <div className="d-flex flex-row">
+                <span style={titleStyle}>Doctor ID: </span>
+                <a style={linkStyle} onClick={() => viewFile({ docDocID })}>
+                  {docDocID}
+                </a>
+              </div>
+              <div className="d-flex flex-row">
+                <span style={titleStyle}>Medical Degree: </span>
+                <a
+                  style={linkStyle}
+                  onClick={() => viewFile({ docMedicalDegree })}
+                >
+                  {docMedicalDegree}
+                </a>
+              </div>
+              <div className="d-flex flex-row">
+                <span style={titleStyle}>Medical License: </span>
+                <a
+                  style={linkStyle}
+                  onClick={() => viewFile({ docMedicalLicense })}
+                >
+                  {docMedicalLicense}
+                </a>
               </div>
             </div>
           </Card.Text>

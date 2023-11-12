@@ -13,6 +13,7 @@ function PatientAppSuccess() {
   const dispatch = useDispatch();
   const app = useSelector((state) => state.patientLogin.newApp);
   const famID = useSelector((state) => state.patientLogin.forFam);
+  const [message, setMessage] = useState("");
 
   useEffect(async () => {
     try {
@@ -24,11 +25,14 @@ function PatientAppSuccess() {
         time: app.time,
       });
       if (response.status === 200) {
+        setMessage("You have successfully booked the appointment");
         dispatch(removeNewApp());
         dispatch(removeForFam());
+      } else {
+        setMessage(response.data.message);
       }
     } catch (error) {
-      console.log(error);
+      setMessage(error);
     }
   }, []);
 
@@ -50,7 +54,7 @@ function PatientAppSuccess() {
                 }}
                 className="d-flex align-items-center justify-content-center mt-5"
               >
-                You have successfully booked the appointment!
+                {message}
               </div>
               <Button
                 variant="primary"

@@ -83,11 +83,7 @@ const DoctorAppointments = ({ onBookAppointment }) => {
 
       if (paymentMethod === "creditCard") {
         response = await axios.post(`${apiUrl}`, {
-          famID: selectedFamilyMemberId,
           doctorID: doctorID,
-          date: selectedAppointment.split(" ")[0],
-          description: description,
-          time: selectedAppointment.split(" ")[1],
         });
       } else {
         response = await axios.post(`${apiUrl}`, {
@@ -130,10 +126,7 @@ const DoctorAppointments = ({ onBookAppointment }) => {
       }
     } catch (error) {
       if (error.response && error.response.status === 404) {
-        if (paymentMethod === "creditCard") {
-        } else {
-          setError(error.response.data.message);
-        }
+        setError(error.response.data.message);
       } else {
         setError("An error occurred. Please try again later");
       }
@@ -392,108 +385,6 @@ const DoctorAppointments = ({ onBookAppointment }) => {
           )}
         </Modal.Footer>
       </Modal>
-      {/* <Modal show={showModal} onHide={handleClose}>
-        <Modal.Header closeButton>
-          <Modal.Title>Book Appointment</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          {bookingStatus === "success" ? (
-            <p>You have successfully booked your appointment.</p>
-          ) : (
-            <div>
-              <p>Appointment Details:</p>
-     
-              <p>
-                Date & Time: {selectedAppointment ? selectedAppointment : ""}
-              </p>
-              <Form>
-                <Form.Group controlId="bookingName">
-                  <Form.Label>Booking Name</Form.Label>
-                  <Form.Control
-                    type="text"
-                    placeholder="Enter booking name"
-                    value={bookingName}
-                    onChange={handleBookingNameChange}
-                  />
-                </Form.Group>
-                <Form.Group>
-                  <Form.Label>Payment Method</Form.Label>
-                  <Form.Check
-                    type="radio"
-                    label="Wallet"
-                    name="paymentMethod"
-                    value="wallet"
-                    checked={paymentMethod === "wallet"}
-                    onChange={handlePaymentMethodChange}
-                  />
-                  <Form.Check
-                    type="radio"
-                    label="Credit Card"
-                    name="paymentMethod"
-                    value="creditCard"
-                    checked={paymentMethod === "creditCard"}
-                    onChange={handlePaymentMethodChange}
-                  />
-                </Form.Group>
-                {paymentMethod === "creditCard" && (
-                  <div>
-                    <Form.Group controlId="creditCardNumber">
-                      <Form.Label>Credit Card Number</Form.Label>
-                      <Form.Control
-                        type="text"
-                        placeholder="Enter credit card number"
-                        name="cardNumber"
-                        value={creditCard.cardNumber}
-                        onChange={handleCreditCardChange}
-                      />
-                    </Form.Group>
-                    <Form.Group as={Row}>
-                      <Form.Label column sm={4}>
-                        Expiration Date
-                      </Form.Label>
-                      <Col sm={8}>
-                        <Form.Control
-                          type="text"
-                          placeholder="MM/YYYY"
-                          name="expirationDate"
-                          value={creditCard.expirationDate}
-                          onChange={handleCreditCardChange}
-                        />
-                      </Col>
-                    </Form.Group>
-                    <Form.Group controlId="cvv">
-                      <Form.Label>CVV</Form.Label>
-                      <Form.Control
-                        type="text"
-                        placeholder="Enter CVV"
-                        name="cvv"
-                        value={creditCard.cvv}
-                        onChange={handleCreditCardChange}
-                      />
-                    </Form.Group>
-                  </div>
-                )}
-              </Form>
-            </div>
-          )}
-        </Modal.Body>
-        <Modal.Footer>
-          {bookingStatus === "success" ? (
-            <Button variant="success" onClick={handleClose}>
-              Close
-            </Button>
-          ) : (
-            <div>
-              <Button variant="success" onClick={handleBookAppointment}>
-                Book
-              </Button>
-              <Button variant="danger" onClick={handleClose}>
-                Cancel
-              </Button>
-            </div>
-          )}
-        </Modal.Footer>
-      </Modal> */}
     </>
   );
 };

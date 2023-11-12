@@ -74,6 +74,9 @@ export default function AdminDocReqs() {
           docAffiliation={user.affiliation}
           docEducation={user.educationalBackground}
           docUsername={user.username}
+          docDocID={user.username}
+          docMedicalDegree={user.username}
+          docMedicalLicense={user.username}
           fetchData={fetchData}
         />
       ))}
