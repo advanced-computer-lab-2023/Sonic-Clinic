@@ -62,18 +62,37 @@ function HealthPackagesList({ refreshFlag }) {
             <Row>
               <Col md={8}>
                 <p>
-                  <strong>Package:</strong> {member.package}
+                  <strong>Package:</strong>{" "}
+                  {member.packagesFamily[0] &&
+                    member.packagesFamily[0].type.split(" ")[0]}
                 </p>
                 <p>
-                  <strong>Package Status:</strong> {member.packageStatus}
+                  <strong>Package Status:</strong>{" "}
+                  {member.packagesFamily[0] && member.packagesFamily[0].status}
                 </p>
               </Col>
               <Col
                 md={4}
                 className="d-flex align-items-end justify-content-end"
               >
-                <Button variant="secondary">Cancel Package</Button>
+                {member.packagesFamily[0] &&
+                  member.packagesFamily[0].status === "Subscribed" && (
+                    <Button variant="secondary">Cancel Package</Button>
+                  )}
               </Col>
+            </Row>
+            <Row>
+              {member.canceledHealthPackage &&
+                member.canceledHealthPackage.map((packagee, index) => (
+                  <Col md={8} key={index}>
+                    <p>
+                      <strong>Package:</strong> {packagee.type.split(" ")[0]}
+                    </p>
+                    <p>
+                      <strong>Package Status:</strong> {packagee.status}
+                    </p>
+                  </Col>
+                ))}
             </Row>
           </Card.Body>
         </Card>
