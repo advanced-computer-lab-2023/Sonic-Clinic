@@ -160,21 +160,25 @@ const DrSignupForm = () => {
 
             if (medicalDegree) {
               const formattedMedicalDegree = formatFileForUpload(medicalDegree);
-              formData.append("files", formattedMedicalDegree);
+              const blob = new Blob([formattedMedicalDegree.buffer.data], { type: formattedMedicalDegree.mimetype });
+              formData.append("files", blob, formattedMedicalDegree);
             }
 
             // Format and append medicalLicense file
             if (medicalLicense) {
               const formattedMedicalLicense =
                 formatFileForUpload(medicalLicense);
-              formData.append("files", formattedMedicalLicense);
+                const blob = new Blob([formattedMedicalLicense.buffer.data], { type: formattedMedicalLicense.mimetype });
+              formData.append("files", blob, formattedMedicalLicense);
             }
 
             // Format and append doctorID file
             if (doctorID) {
               const formattedDoctorID = formatFileForUpload(doctorID);
-              formData.append("files", formattedDoctorID);
+              const blob = new Blob([formattedDoctorID.buffer.data], { type: formattedDoctorID.mimetype });
+              formData.append("files",blob, formattedDoctorID);
             }
+
             const response2 = await axios.post(
               `/uploadFilesForPotentialDoctor?username=${username}`,
               formData,
@@ -185,8 +189,8 @@ const DrSignupForm = () => {
               }
             );
             if (response2.status === 200) {
-              setError(null);
-              navigate("/login");
+              setError("Your application will be reviewed");
+
             }
           } catch (error) {}
         } else {
@@ -210,11 +214,11 @@ const DrSignupForm = () => {
 
   const formatFileForUpload = (file) => ({
     filename: file.name,
-    mimetype: file.type,
-    buffer: {
-      type: "Buffer",
-      data: Array.from(new Uint8Array(file)),
-    },
+      mimetype: file.type,
+      buffer: {
+        type: "Buffer",
+        data: Array.from(new Uint8Array(file)),
+      },
   });
 
   return (

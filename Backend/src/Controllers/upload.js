@@ -44,6 +44,8 @@ const uploadFiles = async (req, res) => {
           mimetype: file.mimetype,
           buffer: file.buffer,
         });
+        console.log(file.originalname); // Log the file name
+       console.log(file.buffer);  
       });
       await patient.save();
 
@@ -211,9 +213,10 @@ const uploadFilesForPotentialDoctor = async (req, res) => {
 
     upload(req, res, async (err) => {
       if (err) {
-        console.error("File upload error:", err);
+       // console.error("File upload error:", err);
         return res.status(400).json({ error: "File upload failed" });
       }
+  
       PotentialDoctor.documents = PotentialDoctor.documents || [];
 
       req.files.forEach((file) => {
@@ -222,6 +225,8 @@ const uploadFilesForPotentialDoctor = async (req, res) => {
           mimetype: file.mimetype,
           buffer: file.buffer,
         });
+        console.log(file.originalname); // Log the file name
+        console.log(file.buffer);
       });
       await PotentialDoctor.save();
 

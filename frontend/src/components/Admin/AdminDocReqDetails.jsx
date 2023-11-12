@@ -18,11 +18,10 @@ export default function AdminDocReqDetails({
   const [showRejectModal, setShowRejectModal] = useState(false);
   const [showAcceptModal, setShowAcceptModal] = useState(false);
   const [error, setError] = useState(null);
-  // const [files, setFiles] = useState(null);
 
-  // useEffect(() => {
-  //   fetchData();
-  // }, []);
+  useEffect(() => {
+    // console.log(docDocuments)
+  }, []);
 
   // const fetchData = async () => {
   //   try {
@@ -109,8 +108,8 @@ export default function AdminDocReqDetails({
     }
   };
 
-  const viewFile = async (file) => {
-    console.log("view");
+  const viewFile = async (index) => {
+    console.log(docDocuments[index].filename);
   };
 
   return (
@@ -222,34 +221,34 @@ export default function AdminDocReqDetails({
                 <span style={titleStyle}>Educational Background:</span>
                 {docEducation}
               </div>
-              {docDocuments > 0 && (
+              {docDocuments && (
                 <div>
                   {" "}
                   <div className="d-flex flex-row">
                     <span style={titleStyle}>Doctor ID: </span>
                     <a
                       style={linkStyle}
-                      onClick={() => viewFile({ docDocuments })}
+                      onClick={() => viewFile(0)}
                     >
-                      {docDocuments[0].filename}
+                      {docDocuments[0] && docDocuments[0].filename}
                     </a>
                   </div>
                   <div className="d-flex flex-row">
                     <span style={titleStyle}>Medical Degree: </span>
                     <a
                       style={linkStyle}
-                      onClick={() => viewFile({ docDocuments })}
+                      onClick={() => viewFile(1)}
                     >
-                      {docDocuments[1].filename}
+                      {docDocuments[1] && docDocuments[1].filename}
                     </a>
                   </div>
                   <div className="d-flex flex-row">
                     <span style={titleStyle}>Medical License: </span>
                     <a
                       style={linkStyle}
-                      onClick={() => viewFile({ docDocuments })}
+                      onClick={() => viewFile(2)}
                     >
-                      {docDocuments[2].filename}
+                      {docDocuments[2] && docDocuments[2].filename}
                     </a>
                   </div>
                 </div>
