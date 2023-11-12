@@ -47,6 +47,7 @@ const LoginForm = () => {
       if (response.status === 200) {
         const user = response.data.user;
         const type = response.data.message;
+        console.log("HELOO", user.packagesPatient[0].type);
 
         if (type === "Patient") {
           dispatch(
@@ -56,7 +57,7 @@ const LoginForm = () => {
               birthdate: user.dateOfBirth,
               userEmail: user.email,
               name: user.name,
-              packages: user.packagesPatient,
+              packages: user.packagesPatient[0].type,
               gender: user.gender,
               phoneNumber: user.mobileNumber,
               userId: user._id,

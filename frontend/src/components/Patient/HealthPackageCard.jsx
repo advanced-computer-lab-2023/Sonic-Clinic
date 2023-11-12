@@ -120,12 +120,12 @@ export default function HealthPackageCard() {
         } else {
           dispatch(
             updatePatientPackage({
-              packages: response.data.patient.packagesPatient,
+              packages: response.data.originalPackage.type,
             })
           );
           dispatch(
             updatePatientWallet({
-              wallet: response.data.patient.wallet,
+              wallet: response.data.wallet,
             })
           );
           setBookingStatus("success");

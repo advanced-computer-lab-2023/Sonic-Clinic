@@ -225,7 +225,9 @@ const viewFamilyMembers = async (req, res) => {
   
     await Promise.all(
       familyMembers.map(async (familyMember) => {
-        await familyMember.populate("packagesFamily");
+        if (familyMember.package !== " ") {
+          await familyMember.populate("packagesFamily");
+        }
       })
     );
 
@@ -273,7 +275,7 @@ const addFamilyMember = async (req, res) => {
       gender,
       relationToPatient,
       patientID: patient.id,
-      package: "", // Use patient's ID
+      package: " ", // Use patient's ID
     });
 
     // Update the patient's familyMembers array
@@ -508,7 +510,7 @@ const getDoctorsWithSessionPrice = async (req, res) => {
       doctors.map(async (doctor) => {
         const sessionPrice = await calculateSessionPrice(
           doctor.hourlyRate,
-          patient.package
+          patient.packagesPatient
         );
 
         // Include all fields from the doctor object along with sessionPrice
@@ -852,7 +854,17 @@ const subscribeHealthPackageStripe = async (req, res) => {
     if (!patient) {
       return res.status(404).json({ message: "Patient not found." });
     }
-    console.log("before session");
+    if (patient.package !== "  ") {
+      const patientPackage = await packagesModel.findOne({
+        _id: patient.package,
+      });
+      if (patientPackage.type.includes(packageName)) {
+        return res
+          .status(404)
+          .json({ message: "You are already subscribed to this package." });
+      }
+    }
+
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
       mode: "payment",
@@ -861,7 +873,7 @@ const subscribeHealthPackageStripe = async (req, res) => {
           price_data: {
             currency: "usd",
             product_data: { name: package.type },
-            unit_amount: package.price,
+            unit_amount: package.price * 100,
           },
           quantity: 1,
         },
@@ -1143,8 +1155,7 @@ const subscribeHealthPackageWallet = async (req, res) => {
     const mainPatient = await patientModel.findById(req.user.id);
 
     if (!id) {
-      patient = await patientModel
-        .findById(req.user.id);
+      patient = await patientModel.findById(req.user.id);
     } else {
       patient = await patientModel.findById(id);
     }
@@ -1167,10 +1178,10 @@ const subscribeHealthPackageWallet = async (req, res) => {
 
     const originalPackage = await packagesModel.findOne({ type: packageName });
     const newType = packageName + " " + patient.username;
-    
-let newPackage;
+
+    let newPackage;
     if (mainPatient.wallet >= originalPackage.price) {
-       newPackage = await packagesModel.create({
+      newPackage = await packagesModel.create({
         type: newType,
         price: originalPackage.price,
         sessionDiscount: originalPackage.sessionDiscount,
@@ -1183,22 +1194,21 @@ let newPackage;
       });
     }
 
-      if (!newPackage) {
-        return res.status(500).json({ message: "Insufficient funds" });
-      }
-      patient.package = newPackage._id;
-      await patient.save();
+    if (!newPackage) {
+      return res.status(500).json({ message: "Insufficient funds" });
+    }
+    patient.package = newPackage._id;
+    await patient.save();
 
-      // Deduct package price from patient's wallet
-      mainPatient.wallet = mainPatient.wallet - newPackage.price;
+    // Deduct package price from patient's wallet
+    mainPatient.wallet = mainPatient.wallet - newPackage.price;
 
-      await mainPatient.save();
-    
+    await mainPatient.save();
 
-      return res.status(200).json({
-        originalPackage: originalPackage,
-        wallet: mainPatient.wallet,
-      });
+    return res.status(200).json({
+      originalPackage: originalPackage,
+      wallet: mainPatient.wallet,
+    });
   } catch (error) {
     console.error("Error:", error);
     return res.status(500).json({ message: "Server Error" });
@@ -1309,7 +1319,7 @@ const payAppointmentStripe = async (req, res) => {
               name: doctor.name, // Use 'name' instead of 'docName'
               description: doctor.specialty, // Use 'description' instead of 'specialty'
             },
-            unit_amount: sessionPrice,
+            unit_amount: sessionPrice * 100,
           },
           quantity: 1,
         },

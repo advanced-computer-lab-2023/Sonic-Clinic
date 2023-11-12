@@ -124,6 +124,7 @@ const viewPatients = async (req, res) => {
     }
 
     const patients = doctor.patients;
+    console.log(patients + "  Patiennnnttss");
     const actualPatients = [];
 
     for (const patientId of patients) {
@@ -377,12 +378,12 @@ const viewWalletDoc = async (req, res) => {
 const acceptContract = async (req, res) => {
   try {
     const doc = await doctorModel.findById(req.user.id);
-    
+
     if (!doc) {
       return res.status(404).json({ message: "Doctor not found" });
     }
 
-    doc.contract = true; 
+    doc.contract = true;
     await doc.save();
 
     res.status(200).json("Contract Accepted");
@@ -391,7 +392,6 @@ const acceptContract = async (req, res) => {
     return res.status(500).json({ message: "Server Error" });
   }
 };
-
 
 module.exports = {
   selectPatient,

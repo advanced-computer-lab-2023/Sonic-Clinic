@@ -15,7 +15,7 @@ const fileSchema = new Schema({
   buffer: {
     type: Buffer,
     required: false,
-  }, 
+  },
 });
 
 const doctorSchema = new Schema(
@@ -78,8 +78,7 @@ const doctorSchema = new Schema(
       type: Boolean,
       required: false,
     },
-    documents: 
-    [fileSchema],
+    documents: [fileSchema],
   },
   { timestamps: true }
 );
@@ -109,5 +108,15 @@ doctorSchema.pre("save", async function (next) {
   this.password = await bcrypt.hash(this.password, salt);
   next();
 });
+
+// doctorSchema.virtual("patient", {
+//   ref: "Patient",
+//   localField: "patients",
+//   foreignField: "_id",
+// });
+
+// doctorSchema.set("toObject", { virtuals: true });
+// doctorSchema.set("toJSON", { virtuals: true });
+
 const Doctor = mongoose.model("Doctor", doctorSchema);
 module.exports = Doctor;
