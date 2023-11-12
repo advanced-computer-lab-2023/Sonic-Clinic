@@ -1060,8 +1060,15 @@ const viewSubscribedPackages = async (req, res) => {
   }
 };
 const cancelHealthPackage = async (req, res) => {
+  let patient;
   try {
-    const patient = await patientModel.findById(req.user.id);
+    const famID=req.body.famID;
+    if(famID){
+     patient= await patientModel.findById(famID);
+    }
+    else{
+     patient = await patientModel.findById(req.user.id);
+    }
     if (!patient) {
       return res.status(404).json({ message: "Patient not found." });
     }
