@@ -1065,12 +1065,15 @@ const cancelHealthPackage = async (req, res) => {
     const famID=req.body.famID;
     if(famID){
      patient= await patientModel.findById(famID);
+     if(!patient){
+      patient= await familyMemberModel.findById(famID);
+     }
     }
     else{
      patient = await patientModel.findById(req.user.id);
     }
     if (!patient) {
-      return res.status(404).json({ message: "Patient not found." });
+      return res.status(404).json({ message: "User not found." });
     }
     if (patient.package != "  ") {
       patient.package = "  ";
