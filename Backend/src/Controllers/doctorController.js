@@ -132,9 +132,7 @@ const viewPatients = async (req, res) => {
     for (const patientId of patients) {
 
       const patient = await patientModel
-        .findOne({ _id: patientId })
-        .populate("prescriptions").execPopulate();
-
+        .findOne({ _id: patientId });
       if (patient) {
         actualPatients.push(patient);
       }
