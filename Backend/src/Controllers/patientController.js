@@ -1370,6 +1370,7 @@ const handlePackageStripe = async (req, res) => {
     }
     patient.package = newPackage._id;
     await patient.save();
+    await patient.populate("packagesPatient");
     return res.status(200).json({ patient });
   } catch (error) {
     console.error("Error:", error);
