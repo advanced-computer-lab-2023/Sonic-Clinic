@@ -222,7 +222,7 @@ const viewFamilyMembers = async (req, res) => {
       return res.status(404).json({ message: "No family members found." });
     }
     console.log("fkkfnkdnfreg");
-  
+
     await Promise.all(
       familyMembers.map(async (familyMember) => {
         if (familyMember.package !== " ") {
@@ -324,6 +324,7 @@ const addFamilyMemberExisting = async (req, res) => {
       gender,
       relationToPatient,
       patientID: req.user.id,
+      package: " ",
     });
     patient.familyMembers = patient.familyMembers || [];
     patient.familyMembers.push([fam._id, name]);
@@ -1062,15 +1063,14 @@ const viewSubscribedPackages = async (req, res) => {
 const cancelHealthPackage = async (req, res) => {
   let patient;
   try {
-    const famID=req.body.famID;
-    if(famID){
-     patient= await patientModel.findById(famID);
-     if(!patient){
-      patient= await familyMemberModel.findById(famID);
-     }
-    }
-    else{
-     patient = await patientModel.findById(req.user.id);
+    const famID = req.body.famID;
+    if (famID) {
+      patient = await patientModel.findById(famID);
+      if (!patient) {
+        patient = await familyMemberModel.findById(famID);
+      }
+    } else {
+      patient = await patientModel.findById(req.user.id);
     }
     if (!patient) {
       return res.status(404).json({ message: "User not found." });
@@ -1168,6 +1168,9 @@ const subscribeHealthPackageWallet = async (req, res) => {
       patient = await patientModel.findById(req.user.id);
     } else {
       patient = await patientModel.findById(id);
+      if (!patient) {
+        patient = await familyMemberModel.findById(id);
+      }
     }
 
     if (!patient) {
@@ -1175,7 +1178,7 @@ const subscribeHealthPackageWallet = async (req, res) => {
     }
 
     const packageName = req.query.type;
-    if (patient.package !== "  ") {
+    if (patient.package !== " ") {
       const patientPackage = await packagesModel.findOne({
         _id: patient.package,
       });
@@ -1190,6 +1193,7 @@ const subscribeHealthPackageWallet = async (req, res) => {
     const newType = packageName + " " + patient.username;
 
     let newPackage;
+    console.log("abl el creation bta3 new package");
     if (mainPatient.wallet >= originalPackage.price) {
       newPackage = await packagesModel.create({
         type: newType,

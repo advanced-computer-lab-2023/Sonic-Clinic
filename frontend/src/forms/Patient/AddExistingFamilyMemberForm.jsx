@@ -1,7 +1,8 @@
 import axios from "axios";
 import React, { useState } from "react";
 import { Form, Button, Col } from "react-bootstrap";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { addFamilyMemberState } from "../../state/loginPatientReducer";
 
 function AddExistingFamilyMemberForm({ onRefresh, toggleForm }) {
   const [error1, setError] = useState(null);
@@ -21,6 +22,7 @@ function AddExistingFamilyMemberForm({ onRefresh, toggleForm }) {
       [name]: value,
     });
   };
+  const dispatch = useDispatch();
   const handleClick = async (e) => {
     e.preventDefault();
     setError(null);
@@ -69,6 +71,11 @@ function AddExistingFamilyMemberForm({ onRefresh, toggleForm }) {
         if (response.status === 200) {
           isLoading(false);
           onRefresh();
+          dispatch(
+            addFamilyMemberState({
+              family: [response.data._id, response.data.name],
+            })
+          );
         } else {
           setError("Server Error");
           isLoading(false);
