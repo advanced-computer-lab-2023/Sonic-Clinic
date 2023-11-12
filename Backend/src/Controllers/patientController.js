@@ -65,7 +65,7 @@ const filterDoctors = async (req, res) => {
   const { specialties, date, time } = req.query;
 
   query = { date, time, status: "not filled" };
-  console.log(specialties);
+  
 
   try {
     if (specialties.length === 0) {
@@ -79,7 +79,7 @@ const filterDoctors = async (req, res) => {
     const doctors = await doctorModel.find({
       specialty: { $in: specialties },
     });
-    console.log(doctors);
+    //console.log(doctors);
 
     //const doctors = await doctorModel.find({ specialty: specialty });
 
@@ -98,7 +98,7 @@ const filterDoctors = async (req, res) => {
     }
 
     const appointments = await appointmentModel.find(query);
-    console.log(appointments);
+    //console.log(appointments);
 
     if (!appointments || appointments.length === 0) {
       return res.status(404).json({ message: "No doctors found." });
@@ -184,7 +184,7 @@ const filterPrescriptions = async (req, res) => {
     }
 
     if (status) {
-      console.log(status);
+     // console.log(status);
       query.status = status;
     }
 
@@ -221,7 +221,7 @@ const viewFamilyMembers = async (req, res) => {
     if (!familyMembers || familyMembers.length === 0) {
       return res.status(404).json({ message: "No family members found." });
     }
-    console.log("fkkfnkdnfreg");
+    //console.log("fkkfnkdnfreg");
 
     await Promise.all(
       familyMembers.map(async (familyMember) => {
@@ -285,9 +285,7 @@ const addFamilyMember = async (req, res) => {
     // Save the updated patient document
     await patient.save();
 
-    console.log(
-      "Family member Created and added to the patient's familyMembers array!"
-    );
+    
     res.status(200).send(newFamilyMember);
   } catch (error) {
     res.status(400).send({ error: error.message });
@@ -645,9 +643,18 @@ const filterDoctorsAfterSearch = async (req, res) => {
 };
 const viewAllAppointmentsPatient = async (req, res) => {
   try {
-    const id = req.user.id;
+    const patientId = req.user.id;
+
+    // Fetch the patient's family members
+    const patient = await patientModel.findById(patientId);
+    const familyMembers = patient.familyMembers || [];
+
+    // Get the IDs of the patient and their family members
+    const memberIds = [patientId, ...familyMembers.map(([id, _]) => id)];
+
+    // Find appointments for the patient and their family members
     const appointments = await appointmentModel
-      .find({ patientID: id })
+      .find({ patientID: { $in: memberIds } })
       .populate("doctor");
 
     if (!appointments || appointments.length === 0) {
@@ -656,6 +663,7 @@ const viewAllAppointmentsPatient = async (req, res) => {
 
     res.status(200).json(appointments);
   } catch (error) {
+    console.error(error);
     res.status(500).json({ message: "Server Error" });
   }
 };
@@ -663,9 +671,6 @@ const viewAllAppointmentsPatient = async (req, res) => {
 const filterDoctorsAfterSearchDocName = async (req, res) => {
   const name = req.query.name;
   const { specialty, date, time } = req.query;
-  const status = "free";
-
-  query = { date, time, status };
 
   const doctorQuery = { specialty };
   if (name) {
@@ -673,44 +678,32 @@ const filterDoctorsAfterSearchDocName = async (req, res) => {
   }
 
   try {
-    const doctors = await doctorModel.find();
+    let doctors;
+
     if (specialty) {
       doctors = await doctorModel.find(doctorQuery);
+    } else {
+      doctors = await doctorModel.find();
     }
 
     if (!doctors || doctors.length === 0) {
       return res.status(404).json({ message: "No doctors found." });
     }
 
-    await doctors.forEach(async (doctor) => {
-      await doctor.getAppointments();
-    });
-    console.log(doctors);
-
-    if (date && !time) {
-      return res.status(405).json({ message: "Please enter time" });
-    }
-    if (!date && time) {
-      return res.status(406).json({ message: "Please enter date" });
-    }
-
-    const appointments = await appointmentModel.find(query);
-
-    if (!appointments || appointments.length === 0) {
-      return res.status(404).json({ message: "No doctors found." });
-    }
-
-    const availableDoctors = doctors.filter((doctor) =>
-      appointments.some(
-        (appointment) =>
-          appointment.doctorID.toString() === doctor._id.toString() &&
-          (specialty
-            ? doctor.specialty.toString() === specialty.toString()
-            : true)
+    // Filter doctors based on available slots
+    const filteredDoctors = doctors.filter((doctor) =>
+      doctor.availableSlots.some(
+        (slot) =>
+          slot === `${date} ${time}` && // Check for matching date and time
+          (!specialty || doctor.specialty.toString() === specialty.toString()) // Check for matching specialty if specified
       )
     );
 
-    const patientId = req.user.id; // Assuming _id is in the request body
+    if (filteredDoctors.length === 0) {
+      return res.status(404).json({ message: "No available doctors found." });
+    }
+
+    const patientId = req.user.id;
     const patient = await patientModel.findById(patientId);
 
     if (!patient) {
@@ -718,7 +711,7 @@ const filterDoctorsAfterSearchDocName = async (req, res) => {
     }
 
     const doctorsWithSessionPrice = await Promise.all(
-      availableDoctors.map(async (doctor) => {
+      filteredDoctors.map(async (doctor) => {
         const sessionPrice = await calculateSessionPrice(
           doctor.hourlyRate,
           patient.package
@@ -733,11 +726,13 @@ const filterDoctorsAfterSearchDocName = async (req, res) => {
     );
 
     res.status(200).json({ doctorsWithSessionPrice });
-    // res.status(200).json(appointments);
+
   } catch (error) {
+    console.error(error);
     res.status(500).json({ message: "Server Error" });
   }
 };
+
 const removeFamilyMember = async (req, res) => {
   try {
     const id = req.query._id;
@@ -1042,7 +1037,7 @@ const changePasswordForPatientForget = async (req, res) => {
     if (!patient) {
       patient = await doctorModel.findOne({ email });
     }
-    console.log(patient.name);
+    //console.log(patient.name);
 
     if (!patient) {
       return res.status(404).json({ message: "Email does not exist." });
@@ -1263,7 +1258,7 @@ const subscribeHealthPackageWallet = async (req, res) => {
     const newType = packageName + " " + patient.username;
 
     let newPackage;
-    console.log("abl el creation bta3 new package");
+   
     if (mainPatient.wallet >= originalPackage.price) {
       newPackage = await packagesModel.create({
         type: newType,
@@ -1362,8 +1357,7 @@ const payAppointmentWallet = async (req, res) => {
 
     let docWallet;
     let patientWallet;
-    console.log(sessionPrice + "PRICEEE");
-    console.log(patient.wallet + "PRICEEE");
+    
 
     if (patient.wallet >= sessionPrice) {
       patientWallet = patient.wallet - sessionPrice;
