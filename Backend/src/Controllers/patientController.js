@@ -300,8 +300,8 @@ const addFamilyMemberExisting = async (req, res) => {
   try {
     familyMember = await patientModel.findOne({ email: email });
 
-    if (!familyMember || email===null || email===undefined) {
-      familyMember = await patientModel.findOne({ mobileNumber:phoneNumber });
+    if (!familyMember || email === null || email === undefined) {
+      familyMember = await patientModel.findOne({ mobileNumber: phoneNumber });
     }
 
     if (!familyMember) {
@@ -348,7 +348,7 @@ const calculateSessionPrice = async (hourlyRate, patientPackage) => {
   try {
     // Fetch the package information based on the patient's package
 
-    if(patientPackage === "  "){
+    if (patientPackage === "  ") {
       return hourlyRate;
     }
     const packageInfo = await packagesModel.find(patientPackage);
@@ -966,8 +966,8 @@ const changePasswordForPatientForget = async (req, res) => {
     }
 
     let patient = await patientModel.findOne({ email });
-    if(!patient){
-       patient = await doctorModel.findOne({ email });
+    if (!patient) {
+      patient = await doctorModel.findOne({ email });
     }
     console.log(patient.name);
 
@@ -1278,7 +1278,6 @@ const payAppointmentWallet = async (req, res) => {
     return res.status(500).json({ message: "Server Error" });
   }
 };
-
 const payAppointmentStripe = async (req, res) => {
   try {
     const patient = await patientModel.findById(req.user.id);
@@ -1291,21 +1290,22 @@ const payAppointmentStripe = async (req, res) => {
       return res.status(404).json({ message: "Patient not found." });
     }
     const session = await stripe.checkout.sessions.create({
-      payment_methods_types: ["card"],
+      payment_method_types: ["card"],
+      mode: "payment",
       line_items: [
         {
-          price_date: {
+          price_data: {
             currency: "usd",
             product_data: {
-              docName: doctor.name,
-              specialty: doctor.specialty,
+              name: doctor.name, // Use 'name' instead of 'docName'
+              description: doctor.specialty, // Use 'description' instead of 'specialty'
             },
             unit_amount: sessionPrice,
           },
           quantity: 1,
         },
       ],
-      success_url: `${process.env.SERVER_URL}/patient/app-success`, ///////////??????????
+      success_url: `${process.env.SERVER_URL}/patient/app-success`,
       cancel_url: `${process.env.SERVER_URL}/patient/app-success`,
     });
     res.status(200).json({ url: session.url });
@@ -1314,6 +1314,7 @@ const payAppointmentStripe = async (req, res) => {
     return res.status(500).json({ message: "Server Error" });
   }
 };
+
 const handlePackageStripe = async (req, res) => {
   try {
     const id = req.body._id;

@@ -52,15 +52,18 @@ function DrAddAppSlot() {
   };
 
   const addSlot = async () => {
+    if (!selectedDate || !selectedTime) {
+      setError("Please select both a date and a time");
+      return;
+    }
     try {
-      console.log(selectedDate);
-      console.log(selectedTime);
       const response = await axios.post("/addAvailableSlots", {
         slots: [selectedDate + " " + selectedTime],
       });
 
       if (response.status === 200) {
         fetchData();
+        setError(null);
       } else {
         setError("Error");
       }
@@ -150,6 +153,7 @@ function DrAddAppSlot() {
           </Button>
         </Container>
       </div>
+      {error1 && <div className="error">{error1}</div>}
 
       <div>
         <style>{`
