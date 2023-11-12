@@ -45,46 +45,49 @@ function FamilyMembersList({ refreshFlag }) {
       >
         Family Members
       </div>
-      {NeededData.map((member, index) => (
-        <Card key={index} className="mb-4">
-          <Card.Body>
-            <div
-              style={{
-                color: "#099BA0  ",
-                fontSize: "30px",
-                fontWeight: "600",
-                marginBottom: "10px",
-              }}
-            >
-              {member.name}
-            </div>
-            <Row>
-              <Col md={4}>
-                <p>
-                  <strong>Gender:</strong> {member.gender}
-                </p>
-                <p>
-                  <strong>Age:</strong> {member.age}
-                </p>
-              </Col>
-              <Col md={4}>
-                <p>
-                  <strong>National ID:</strong> {member.nationalID}
-                </p>
-                <p>
-                  <strong>Relation:</strong> {member.relationToPatient}
-                </p>
-              </Col>
-              <Col md={4}>
-                <p>
-                  <strong>Package:</strong>{" "}
-                  {member.packagesFamily[index].type.split(" ")[0]}
-                </p>
-              </Col>
-            </Row>
-          </Card.Body>
-        </Card>
-      ))}
+      {NeededData &&
+        NeededData.map((member, index) => (
+          <Card key={member} className="mb-4">
+            <Card.Body>
+              <div
+                style={{
+                  color: "#099BA0  ",
+                  fontSize: "30px",
+                  fontWeight: "600",
+                  marginBottom: "10px",
+                }}
+              >
+                {member.name}
+              </div>
+              <Row>
+                <Col md={4}>
+                  <p>
+                    <strong>Gender:</strong> {member.gender}
+                  </p>
+                  <p>
+                    <strong>Age:</strong> {member.age}
+                  </p>
+                </Col>
+                <Col md={4}>
+                  <p>
+                    <strong>National ID:</strong> {member.nationalID}
+                  </p>
+                  <p>
+                    <strong>Relation:</strong> {member.relationToPatient}
+                  </p>
+                </Col>
+                <Col md={4}>
+                  <p>
+                    <strong>Package:</strong>{" "}
+                    {member.packagesFamily
+                      ? member.packagesFamily[index].type.split(" ")[0]
+                      : "No Packages"}
+                  </p>
+                </Col>
+              </Row>
+            </Card.Body>
+          </Card>
+        ))}
     </Container>
   );
 }
