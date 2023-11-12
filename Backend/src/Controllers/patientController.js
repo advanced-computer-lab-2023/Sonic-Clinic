@@ -607,10 +607,10 @@ const filterDoctorsAfterSearch = async (req, res) => {
   const doctors = req.body;
   const { date, time } = req.query;
 
-  query = { date, time, status: "not filled" };
+
   try {
     if (!date && !time) {
-      res.status(200).json({ doctors });
+      return res.status(200).json({ doctors });
     }
     if (date && !time) {
       return res.status(405).json({ message: "Please enter time" });
@@ -619,28 +619,26 @@ const filterDoctorsAfterSearch = async (req, res) => {
       return res.status(406).json({ message: "Please enter date" });
     }
 
-    const appointments = await appointmentModel.find(query);
-
-    if (!appointments || appointments.length === 0) {
-      return res.status(404).json({ message: "No doctors found." });
-    }
-
-    const availableAppointments = appointments.filter(
-      (appointment) => appointment.status !== "filled"
-    );
+    // Filter doctors based on available slots
     const availableDoctors = doctors.filter((doctor) =>
-      availableAppointments.some(
-        (appointment) =>
-          appointment.doctorID.toString() === doctor._id.toString() &&
-          doctor.specialty.toString() === specialty.toString()
-      )
-    );
+    doctor.availableSlots.some((slot) => {
+      const [slotDate, slotTime] = slot.split(" ");
+      return slotDate === date && slotTime === time;
+    })
+  );
+
+    if (availableDoctors.length === 0) {
+      return res.status(404).json({ message: "No available doctors found." });
+    }
 
     res.status(200).json({ availableDoctors });
   } catch (error) {
+    console.error(error);
     res.status(500).json({ message: "Server Error" });
   }
 };
+
+
 const viewAllAppointmentsPatient = async (req, res) => {
   try {
     const patientId = req.user.id;
@@ -690,14 +688,14 @@ const filterDoctorsAfterSearchDocName = async (req, res) => {
       return res.status(404).json({ message: "No doctors found." });
     }
 
-    // Filter doctors based on available slots
     const filteredDoctors = doctors.filter((doctor) =>
-      doctor.availableSlots.some(
-        (slot) =>
-          slot === `${date} ${time}` && // Check for matching date and time
-          (!specialty || doctor.specialty.toString() === specialty.toString()) // Check for matching specialty if specified
-      )
-    );
+    doctor.availableSlots.some((slot) => {
+      const [slotDate, slotTime] = slot.split(" ");
+      return slotDate === date && slotTime === time && (!specialty || doctor.specialty.toString() === specialty.toString());
+    })
+  );
+    // Filter doctors based on available slots
+    
 
     if (filteredDoctors.length === 0) {
       return res.status(404).json({ message: "No available doctors found." });
