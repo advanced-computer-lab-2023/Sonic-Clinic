@@ -1,7 +1,7 @@
 const patientModel = require("../Models/Patient.js");
 const doctorModel = require("../Models/Doctor.js");
 const potentialDoctorModel = require("../Models/PotentialDoctor.js");
-const adminModel = require("./Models/Adminstrator");
+const adminModel = require("../Models/Adminstrator");
 const multer = require("multer");
 
 const storage = multer.memoryStorage();
@@ -306,7 +306,8 @@ const viewPtlDocDocumentsbyAdmins = async (req, res) => {
     const admin = await adminModel.findById(req.user.id);
     const PotentialDoctorID = req.body.id;
     const requestedFilename = req.body.filename;
-    const PotentialDoctor = await potentialDoctorModel.findById(PotentialDoctorID);
+    const PotentialDoctor =
+      await potentialDoctorModel.findById(PotentialDoctorID);
 
     if (!admin) {
       return res.status(404).json({ error: "Admin not found" });
@@ -314,7 +315,7 @@ const viewPtlDocDocumentsbyAdmins = async (req, res) => {
     if (!PotentialDoctor) {
       return res.status(404).json({ error: "PotentialDoctor not found" });
     }
- 
+
     const douments = PotentialDoctor.documents;
 
     if (!douments || douments.length === 0) {
@@ -328,9 +329,9 @@ const viewPtlDocDocumentsbyAdmins = async (req, res) => {
     );
 
     if (!requestedFile) {
-      return res
-        .status(404)
-        .json({ message: "File not found in the PotentialDoctor's Documents." });
+      return res.status(404).json({
+        message: "File not found in the PotentialDoctor's Documents.",
+      });
     }
 
     const { buffer, mimetype, filename } = requestedFile;
@@ -349,7 +350,6 @@ const viewPtlDocDocumentsbyAdmins = async (req, res) => {
   }
 };
 
-
 module.exports = {
   uploadFiles,
   deleteFileFromMedicalHistory,
@@ -358,5 +358,5 @@ module.exports = {
   uploadFilesForPotentialDoctor,
   uploadFilesbyDoctors,
   viewMedicalRecords,
-  viewPtlDocDocumentsbyAdmins
+  viewPtlDocDocumentsbyAdmins,
 };
