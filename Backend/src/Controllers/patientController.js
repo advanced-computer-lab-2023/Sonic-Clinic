@@ -205,22 +205,24 @@ const filterPrescriptions = async (req, res) => {
 };
 
 const viewFamilyMembers = async (req, res) => {
-  const patientID = req.user.id;
+  const patientId = req.user.id;
 
   try {
-    const patient = await patientModel.findOne({ _id: patientID });
+    const patient = await patientModel.findById(req.user.id);
 
     if (!patient) {
       return res.status(404).json({ message: "Patient not found." });
     }
 
     const familyMembers = await familyMemberModel.find({
-      patientID: patientID,
+      patientID: patientId,
     });
 
     if (!familyMembers || familyMembers.length === 0) {
       return res.status(404).json({ message: "No family members found." });
     }
+    console.log("fkkfnkdnfreg");
+  
     await Promise.all(
       familyMembers.map(async (familyMember) => {
         await familyMember.populate("packagesFamily");
@@ -1113,7 +1115,7 @@ const addAppointmentForMyselfOrFam = async (req, res) => {
       time,
     });
     const patient = await patientModel.findById(patientID);
-    doctor.patients = doctor.patients.push(patient);
+    doctor.patients.push(patient._id);
 
     await doctor.save();
 
@@ -1253,7 +1255,7 @@ const payAppointmentWallet = async (req, res) => {
 
     await appointment.save();
 
-    doctor.patients = doctor.patients.push(patient);
+    doctor.patients.push(patient._id);
 
     await doctor.save();
 

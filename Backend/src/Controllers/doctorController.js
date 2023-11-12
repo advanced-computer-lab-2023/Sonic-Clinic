@@ -115,10 +115,10 @@ const updateDoctorProfile = async (req, res) => {
 };
 
 const viewPatients = async (req, res) => {
-  const id = req.user.id;
+  //const id = req.user.id;
 
   try {
-    const doctor = await doctorModel.findOne({ _id: id });
+    const doctor = await doctorModel.findOne(req.user.id);
     if (!doctor) {
       return res.status(404).json({ message: "Doctor not found." });
     }
@@ -129,7 +129,7 @@ const viewPatients = async (req, res) => {
     for (const patientId of patients) {
       const patient = await patientModel
         .findOne({ _id: patientId })
-        .populate("prescriptions");
+        .populate("prescriptions").execPopulate();
       if (patient) {
         actualPatients.push(patient);
       }
