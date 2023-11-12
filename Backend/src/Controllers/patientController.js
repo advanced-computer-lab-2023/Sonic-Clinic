@@ -65,7 +65,7 @@ const filterDoctors = async (req, res) => {
   const { specialties, date, time } = req.query;
 
   query = { date, time, status: "not filled" };
-  console.log(specialties);
+  
 
   try {
     if (specialties.length === 0) {
@@ -79,7 +79,7 @@ const filterDoctors = async (req, res) => {
     const doctors = await doctorModel.find({
       specialty: { $in: specialties },
     });
-    console.log(doctors);
+    //console.log(doctors);
 
     //const doctors = await doctorModel.find({ specialty: specialty });
 
@@ -98,7 +98,7 @@ const filterDoctors = async (req, res) => {
     }
 
     const appointments = await appointmentModel.find(query);
-    console.log(appointments);
+    //console.log(appointments);
 
     if (!appointments || appointments.length === 0) {
       return res.status(404).json({ message: "No doctors found." });
@@ -184,7 +184,7 @@ const filterPrescriptions = async (req, res) => {
     }
 
     if (status) {
-      console.log(status);
+     // console.log(status);
       query.status = status;
     }
 
@@ -221,7 +221,7 @@ const viewFamilyMembers = async (req, res) => {
     if (!familyMembers || familyMembers.length === 0) {
       return res.status(404).json({ message: "No family members found." });
     }
-    console.log("fkkfnkdnfreg");
+    //console.log("fkkfnkdnfreg");
 
     await Promise.all(
       familyMembers.map(async (familyMember) => {
@@ -285,9 +285,7 @@ const addFamilyMember = async (req, res) => {
     // Save the updated patient document
     await patient.save();
 
-    console.log(
-      "Family member Created and added to the patient's familyMembers array!"
-    );
+    
     res.status(200).send(newFamilyMember);
   } catch (error) {
     res.status(400).send({ error: error.message });
@@ -981,7 +979,7 @@ const changePasswordForPatientForget = async (req, res) => {
     if (!patient) {
       patient = await doctorModel.findOne({ email });
     }
-    console.log(patient.name);
+    //console.log(patient.name);
 
     if (!patient) {
       return res.status(404).json({ message: "Email does not exist." });
@@ -1194,7 +1192,7 @@ const subscribeHealthPackageWallet = async (req, res) => {
     const newType = packageName + " " + patient.username;
 
     let newPackage;
-    console.log("abl el creation bta3 new package");
+   
     if (mainPatient.wallet >= originalPackage.price) {
       newPackage = await packagesModel.create({
         type: newType,
@@ -1293,8 +1291,7 @@ const payAppointmentWallet = async (req, res) => {
 
     let docWallet;
     let patientWallet;
-    console.log(sessionPrice + "PRICEEE");
-    console.log(patient.wallet + "PRICEEE");
+    
 
     if (patient.wallet >= sessionPrice) {
       patientWallet = patient.wallet - sessionPrice;
