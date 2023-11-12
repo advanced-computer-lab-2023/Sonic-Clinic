@@ -5,9 +5,10 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faCalendar,
   faClock,
-  faCheckCircle,
-  faTimesCircle,
-  faBan,
+  faCancel,
+  faCheck,
+  faPause,
+  faCheckDouble,
 } from "@fortawesome/free-solid-svg-icons";
 import { useSelector, useDispatch } from "react-redux";
 import { deleteFilterDrAppointments } from "../../state/Doctor/filterDrAppointments";
@@ -43,6 +44,22 @@ function DrShowAppointments({ fetchData, appointments, loading }) {
         return "#c4e6e6  "; // Light Blue for Rescheduled
       default:
         return "#ff6b35"; // Default color
+    }
+  };
+
+  const getStatusIcon = (status) => {
+    const lowerCaseStatus = status.toLowerCase();
+    switch (lowerCaseStatus) {
+      case "upcoming":
+        return faCheck; // Blue for Upcoming
+      case "completed":
+        return faCheckDouble; // Grey for Completed
+      case "cancelled":
+        return faCancel; // Orange for Cancelled
+      case "rescheduled":
+        return faPause; // Light Blue for Rescheduled
+      default:
+        return faPause; // Default color
     }
   };
 
@@ -135,14 +152,13 @@ function DrShowAppointments({ fetchData, appointments, loading }) {
                         height: "12rem",
                       }}
                     >
-                      {appointment.status.split("").map((letter, index) => (
-                        <span
-                          key={index}
-                          style={{ fontSize: "0.8rem", color: "white" }}
-                        >
-                          {letter}
-                        </span>
-                      ))}
+                      <FontAwesomeIcon
+                        icon={getStatusIcon(appointment.status)}
+                        style={{
+                          fontSize: "1.5em",
+                          color: "white",
+                        }}
+                      />
                     </div>
                   </Col>
                   <Col lg={5}>

@@ -169,14 +169,13 @@ function ShowAppointments() {
                         height: "12rem",
                       }}
                     >
-                      {appointment.status.split("").map((letter, index) => (
-                        <span
-                          key={index}
-                          style={{ fontSize: "0.8rem", color: "white" }}
-                        >
-                          {letter}
-                        </span>
-                      ))}
+                      <FontAwesomeIcon
+                        icon={getStatusIcon(appointment.status)}
+                        style={{
+                          fontSize: "1.5em",
+                          color: "white",
+                        }}
+                      />
                     </div>
                   </Col>
                   <Col lg={5}>

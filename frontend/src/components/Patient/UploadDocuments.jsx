@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import { updateMyMedicalHistory } from "../../state/loginPatientReducer";
 import { Card, ListGroup } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faX, faTrashCan } from "@fortawesome/free-solid-svg-icons";
+import { saveAs } from "file-saver";
 import axios from "axios";
 
 function UploadDocuments() {
@@ -37,7 +37,18 @@ function UploadDocuments() {
 
         if (blob.size > 0) {
           const url = window.URL.createObjectURL(blob);
-          window.open(url, "_blank");
+
+          // Create an anchor element
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = file; // Specify the desired filename
+          document.body.appendChild(a);
+
+          // Trigger a click event to initiate download
+          a.click();
+
+          // Remove the anchor from the DOM
+          document.body.removeChild(a);
         } else {
           console.log("File content is empty");
         }
@@ -107,7 +118,6 @@ function UploadDocuments() {
   };
 
   const deleteFile = async (file) => {
-    console.log(file);
     try {
       const response = await axios.delete(
         `/deleteFileFromMedicalHistory?filename=${file}`
