@@ -6,6 +6,9 @@ import { useNavigate } from "react-router-dom";
 
 function PatientPackageSuccess() {
   const navigate = useNavigate();
+  useEffect(() => {
+    api.post("/handlePackageStripe", {});
+  });
   return (
     <div>
       <AppNavbar hamburgerMenu={<HamburgerMenu />} />

@@ -368,6 +368,7 @@ const dummyDoctorsSession = [
     hourlyRate: 150,
     sessionPrice: 150,
     appointments: [],
+
     affiliation: "City Hospital",
     educationalBackground: "M.D. from University of Medical Sciences",
     patients: [],
@@ -1226,8 +1227,7 @@ const payAppointmentWallet = async (req, res) => {
 const payAppointmentStripe = async (req, res) => {
   try {
     const patient = await patientModel.findById(req.user.id);
-    const appointment = await appointmentModel.findbyId(req.query._id);
-    const doctor = await doctorModel.findById(appointment.doctorID);
+    const doctor = await doctorModel.findById(req.body.doctorID);
     const sessionPrice = await calculateSessionPrice(
       doctor.hourlyRate,
       patient.package
@@ -1244,8 +1244,6 @@ const payAppointmentStripe = async (req, res) => {
             product_data: {
               docName: doctor.name,
               specialty: doctor.specialty,
-              date: appointment.date,
-              time: appointment.time,
             },
             unit_amount: sessionPrice,
           },
