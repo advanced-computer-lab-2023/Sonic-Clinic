@@ -124,8 +124,10 @@ const viewPatientMedicalHistory = async (req, res) => {
 
     res.setHeader("Content-Type", mimetype);
     res.setHeader(
-      "Content-Disposition",
-      `attachment; filename="${sanitizedFilename}"`
+      res.setHeader(
+        "Content-Disposition",
+        `attachment: filename="${sanitizedFilename}"`
+      )
     );
     res.end(buffer);
   } catch (error) {
@@ -208,6 +210,7 @@ const uploadFilesForPotentialDoctor = async (req, res) => {
 
     upload(req, res, async (err) => {
       if (err) {
+        console.error("File upload error:", err);
         return res.status(400).json({ error: "File upload failed" });
       }
       PotentialDoctor.documents = PotentialDoctor.documents || [];
