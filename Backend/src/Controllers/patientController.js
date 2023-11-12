@@ -225,7 +225,7 @@ const viewFamilyMembers = async (req, res) => {
 
     await Promise.all(
       familyMembers.map(async (familyMember) => {
-        if (familyMember.package !== " ") {
+        if (familyMember.package !== "  ") {
           await familyMember.populate("packagesFamily");
         }
       })
@@ -275,7 +275,7 @@ const addFamilyMember = async (req, res) => {
       gender,
       relationToPatient,
       patientID: patient.id,
-      package: " ", // Use patient's ID
+      package: "  ", // Use patient's ID
     });
 
     // Update the patient's familyMembers array
@@ -780,30 +780,88 @@ const viewHealthPackages = async (req, res) => {
     const familyMembers = await familyMemberModel.find({ patientID });
 
     // Create an array to store health packages
-    const healthPackages = [];
+    let healthPackages = [];
 
-    // Add the patient's package to the result
-    const patientWithPackage = {
-      name: patient.name,
-      package: patient.package,
-    };
-    healthPackages.push(patientWithPackage);
+    if (patient.package && patient.package !== "  ") {
+      const packagePatient = await packagesModel.findById(patient.package);
+      const patientWithPackage = {
+        name: patient.name,
+        package: packagePatient,
+      };
+      healthPackages.push(patientWithPackage);
+    }
 
-    // Add family members and their health packages to the result if they exist
-    if (familyMembers.length > 0) {
-      familyMembers.forEach((familyMember) => {
-        healthPackages.push({
-          name: familyMember.name,
-          package: familyMember.package,
-        });
+    if (
+      patient.canceledHealthPackage &&
+      patient.canceledHealthPackage.length > 0
+    ) {
+      const cancelledPackagesPromises = patient.canceledHealthPackage.map(
+        async (cancelledPackageId) => {
+          const cancelledPackage =
+            await packagesModel.findById(cancelledPackageId);
+          return cancelledPackage;
+        }
+      );
+
+      const cancelledPackages = await Promise.all(cancelledPackagesPromises);
+      healthPackages.push({
+        name: patient.name,
+        package: cancelledPackages, // Add array of cancelled packages
       });
+    }
+
+    if (familyMembers.length > 0) {
+      const familyPromises = familyMembers.map(async (familyMember) => {
+        let famWithPackage = {};
+
+        if (
+          familyMember.package &&
+          familyMember.package !== "  " &&
+          familyMember.package !== "undefined"
+        ) {
+          // If family member has a package, retrieve it
+          const packageFam = await packagesModel.findById(familyMember.package);
+          famWithPackage = {
+            name: familyMember.name,
+            package: packageFam,
+          };
+        }
+        if (
+          familyMember.canceledHealthPackage &&
+          familyMember.canceledHealthPackage.length > 0
+        ) {
+          // If family member has cancelled health packages, retrieve them
+          const cancelledPackagesPromises =
+            familyMember.canceledHealthPackage.map(
+              async (cancelledPackageId) => {
+                const cancelledPackage =
+                  await packagesModel.findById(cancelledPackageId);
+                return cancelledPackage;
+              }
+            );
+
+          const cancelledPackages = await Promise.all(
+            cancelledPackagesPromises
+          );
+          famWithPackage = {
+            name: familyMember.name,
+            package: cancelledPackages, // Add array of cancelled packages
+          };
+        }
+        return famWithPackage;
+      });
+
+      const familyResults = await Promise.all(familyPromises);
+      healthPackages = healthPackages.concat(familyResults.filter(Boolean));
     }
 
     res.status(200).json({ healthPackages });
   } catch (error) {
+    console.error(error);
     res.status(500).json({ message: "Server Error" });
   }
 };
+
 const viewWalletAmount = async (req, res) => {
   try {
     const patientId = req.user.id;
@@ -1062,6 +1120,7 @@ const viewSubscribedPackages = async (req, res) => {
 };
 const cancelHealthPackage = async (req, res) => {
   let patient;
+  let cancel;
   try {
     const famID = req.body.famID;
     if (famID) {
@@ -1075,7 +1134,14 @@ const cancelHealthPackage = async (req, res) => {
     if (!patient) {
       return res.status(404).json({ message: "User not found." });
     }
-    if (patient.package != "  ") {
+    // console.log("khara patient" + patient);
+
+    if (patient.package !== "  ") {
+      console.log(patient.package);
+      cancel = await packagesModel.findById(patient.package);
+      cancel.status = "Cancelled";
+      await cancel.save();
+      patient.canceledHealthPackage.push(patient.package);
       patient.package = "  ";
       await patient.save();
       return res.status(200).json({ patient });
@@ -1137,9 +1203,9 @@ const addAppointmentForMyselfOrFam = async (req, res) => {
       time,
     });
     let patient;
-     patient = await patientModel.findById(patientID);
-    if(!patient){
-      patient= await familyMemberModel.findById(famID);
+    patient = await patientModel.findById(patientID);
+    if (!patient) {
+      patient = await familyMemberModel.findById(famID);
     }
     doctor.patients.push(patient._id);
 
@@ -1182,7 +1248,7 @@ const subscribeHealthPackageWallet = async (req, res) => {
     }
 
     const packageName = req.query.type;
-    if (patient.package !== " ") {
+    if (patient.package !== "  ") {
       const patientPackage = await packagesModel.findOne({
         _id: patient.package,
       });
