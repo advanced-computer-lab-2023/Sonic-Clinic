@@ -645,9 +645,18 @@ const filterDoctorsAfterSearch = async (req, res) => {
 };
 const viewAllAppointmentsPatient = async (req, res) => {
   try {
-    const id = req.user.id;
+    const patientId = req.user.id;
+
+    // Fetch the patient's family members
+    const patient = await patientModel.findById(patientId);
+    const familyMembers = patient.familyMembers || [];
+
+    // Get the IDs of the patient and their family members
+    const memberIds = [patientId, ...familyMembers.map(([id, _]) => id)];
+
+    // Find appointments for the patient and their family members
     const appointments = await appointmentModel
-      .find({ patientID: id })
+      .find({ patientID: { $in: memberIds } })
       .populate("doctor");
 
     if (!appointments || appointments.length === 0) {
@@ -656,6 +665,7 @@ const viewAllAppointmentsPatient = async (req, res) => {
 
     res.status(200).json(appointments);
   } catch (error) {
+    console.error(error);
     res.status(500).json({ message: "Server Error" });
   }
 };
