@@ -93,7 +93,6 @@ function DoctorFilter({ patients, responseData, setPatients }) {
     );
     if (selectedDate !== "" || selectedTime !== "") {
       const queryParameters = new URLSearchParams({
-        _id: _id,
         specialty: searchDataSpec,
         date: selectedDate,
         time: selectedTime,
