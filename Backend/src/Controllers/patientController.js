@@ -1250,6 +1250,10 @@ const payAppointmentWallet = async (req, res) => {
 
     await appointment.save();
 
+    doctor.patients = doctor.patients.push(patient);
+
+    await doctor.save();
+
     const sessionPrice = await calculateSessionPrice(
       doctor.hourlyRate,
       patient.package
