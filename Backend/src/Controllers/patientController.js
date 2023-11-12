@@ -205,22 +205,24 @@ const filterPrescriptions = async (req, res) => {
 };
 
 const viewFamilyMembers = async (req, res) => {
-  const patientID = req.user.id;
+  const patientId = req.user.id;
 
   try {
-    const patient = await patientModel.findOne({ _id: patientID });
+    const patient = await patientModel.findById(req.user.id);
 
     if (!patient) {
       return res.status(404).json({ message: "Patient not found." });
     }
 
     const familyMembers = await familyMemberModel.find({
-      patientID: patientID,
+      patientID: patientId,
     });
 
     if (!familyMembers || familyMembers.length === 0) {
       return res.status(404).json({ message: "No family members found." });
     }
+    console.log("fkkfnkdnfreg");
+  
     await Promise.all(
       familyMembers.map(async (familyMember) => {
         if (familyMember.package !== " ") {
@@ -508,7 +510,7 @@ const getDoctorsWithSessionPrice = async (req, res) => {
       doctors.map(async (doctor) => {
         const sessionPrice = await calculateSessionPrice(
           doctor.hourlyRate,
-          patient.package
+          patient.packagesPatient
         );
 
         // Include all fields from the doctor object along with sessionPrice
@@ -1058,10 +1060,20 @@ const viewSubscribedPackages = async (req, res) => {
   }
 };
 const cancelHealthPackage = async (req, res) => {
+  let patient;
   try {
-    const patient = await patientModel.findById(req.user.id);
+    const famID=req.body.famID;
+    if(famID){
+     patient= await patientModel.findById(famID);
+     if(!patient){
+      patient= await familyMemberModel.findById(famID);
+     }
+    }
+    else{
+     patient = await patientModel.findById(req.user.id);
+    }
     if (!patient) {
-      return res.status(404).json({ message: "Patient not found." });
+      return res.status(404).json({ message: "User not found." });
     }
     if (patient.package != "  ") {
       patient.package = "  ";
@@ -1125,7 +1137,7 @@ const addAppointmentForMyselfOrFam = async (req, res) => {
       time,
     });
     const patient = await patientModel.findById(patientID);
-    doctor.patients = doctor.patients.push(patient);
+    doctor.patients.push(patient._id);
 
     await doctor.save();
 
@@ -1265,7 +1277,7 @@ const payAppointmentWallet = async (req, res) => {
 
     await appointment.save();
 
-    doctor.patients = doctor.patients.push(patient);
+    doctor.patients.push(patient._id);
 
     await doctor.save();
 
@@ -1374,7 +1386,7 @@ const handlePackageStripe = async (req, res) => {
     }
     patient.package = newPackage._id;
     await patient.save();
-
+    await patient.populate("packagesPatient");
     return res.status(200).json({ patient });
   } catch (error) {
     console.error("Error:", error);

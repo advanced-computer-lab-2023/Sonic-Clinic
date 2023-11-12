@@ -115,29 +115,30 @@ const updateDoctorProfile = async (req, res) => {
 };
 
 const viewPatients = async (req, res) => {
-  const id = req.user.id;
+  //const id = req.user.id;
 
   try {
-    const doctor = await doctorModel.findOne({ _id: id });
+    const doctor = await doctorModel.findById(req.user.id);
     if (!doctor) {
       return res.status(404).json({ message: "Doctor not found." });
     }
 
     const patients = doctor.patients;
-    console.log(patients + "  Patiennnnttss");
+   if(!patients){
+    return res.status(404).json({ message: "No patients found." });
+   }
     const actualPatients = [];
 
     for (const patientId of patients) {
+
       const patient = await patientModel
-        .findOne({ _id: patientId })
-        .populate("prescriptions")
-        .execPopulate();
+        .findOne({ _id: patientId });
       if (patient) {
         actualPatients.push(patient);
       }
     }
 
-    res.status(200).json({ patients: actualPatients });
+    // res.status(200).json(patients actualPatients);
   } catch (error) {
     res.status(500).json({ message: "Server Error" });
   }
@@ -320,9 +321,9 @@ const addAppointmentByPatientID = async (req, res) => {
   try {
     const doctorID = req.user.id;
 
-    console.log(doctorID);
+    
     const { date, description, patientID, status, time } = req.body;
-    console.log(patientID);
+    
 
     // Create a new appointment with doctorID, patientID, and other details
     const appointment = await appointmentModel.create({
@@ -333,6 +334,11 @@ const addAppointmentByPatientID = async (req, res) => {
       status,
       time,
     });
+
+  
+//   const doctor= await doctorModel.findById(req.user.id);
+//   doctor.patients.push(patientID);
+//  await  doctor.save();
 
     res
       .status(201)

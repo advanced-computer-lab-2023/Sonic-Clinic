@@ -154,6 +154,75 @@ const verifyOtp = async (req, res) => {
   }
 };
 
+const requireAdminAuth = (req, res, next) => {
+  const token = req.cookies.jwt;
+
+  if (token) {
+    jwt.verify(token, "secret-unkown", async (err, decodedToken) => {
+      if (err) {
+        console.log(err.message);
+        res.redirect("/login");
+      } else {
+        const admin = await administratorModel.findById(decodedToken.id);
+        if (!admin) {
+          res.redirect("/login");
+        } else {
+          req.user = decodedToken;
+          next();
+        }
+      }
+    });
+  } else {
+    res.redirect("/login");
+  }
+};
+
+const requireDoctorAuth = (req, res, next) => {
+  const token = req.cookies.jwt;
+
+  if (token) {
+    jwt.verify(token, "secret-unkown", async (err, decodedToken) => {
+      if (err) {
+        console.log(err.message);
+        res.redirect("/login");
+      } else {
+        const doctor = await DoctorModel.findById(decodedToken.id);
+        if (!doctor) {
+          res.redirect("/login");
+        } else {
+          req.user = decodedToken;
+          next();
+        }
+      }
+    });
+  } else {
+    res.redirect("/login");
+  }
+};
+
+const requirePatientAuth = (req, res, next) => {
+  const token = req.cookies.jwt;
+
+  if (token) {
+    jwt.verify(token, "secret-unkown", async (err, decodedToken) => {
+      if (err) {
+        console.log(err.message);
+        res.redirect("/login");
+      } else {
+        const patient = await patientModel.findById(decodedToken.id);
+        if (!patient) {
+          res.redirect("/login");
+        } else {
+          req.user = decodedToken;
+          next();
+        }
+      }
+    });
+  } else {
+    res.redirect("/login");
+  }
+};
+
 module.exports = {
   login,
   requireAuth,
@@ -161,4 +230,7 @@ module.exports = {
   updateUserInfoInCookie,
   otp,
   verifyOtp,
+  requireAdminAuth,
+  requirePatientAuth,
+  requireDoctorAuth,
 };

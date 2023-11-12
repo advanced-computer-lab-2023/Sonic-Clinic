@@ -120,12 +120,12 @@ export default function HealthPackageCard() {
         } else {
           dispatch(
             updatePatientPackage({
-              packages: response.data.patient.packagesPatient,
+              packages: response.data.originalPackage.type,
             })
           );
           dispatch(
             updatePatientWallet({
-              wallet: response.data.patient.wallet,
+              wallet: response.data.wallet,
             })
           );
           setBookingStatus("success");
@@ -134,6 +134,7 @@ export default function HealthPackageCard() {
     } catch (error) {
       if (error.response && error.response.status === 404) {
         if (paymentMethod === "creditCard") {
+          setError(error.response.data.message);
         } else {
           setError(error.response.data.message);
         }

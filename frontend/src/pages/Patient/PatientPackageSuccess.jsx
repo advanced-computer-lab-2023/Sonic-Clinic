@@ -4,7 +4,10 @@ import AppNavbar from "../../components/AppNavigation/AppNavbar";
 import HamburgerMenu from "../../components/Patient/HamburgerMenu";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { removeNewPackage } from "../../state/loginPatientReducer";
+import {
+  removeNewPackage,
+  updatePatientPackage,
+} from "../../state/loginPatientReducer";
 import { removeForFam } from "../../state/loginPatientReducer";
 import axios from "axios";
 
@@ -14,22 +17,32 @@ function PatientPackageSuccess() {
   const packageName = useSelector((state) => state.patientLogin.newPackage);
   const famID = useSelector((state) => state.patientLogin.forFam);
 
-  useEffect(async () => {
-    try {
-      const response = await axios.post(
-        `/handlePackageStripe?type=${packageName}`,
-        {
-          _id: famID,
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.post(
+          `/handlePackageStripe?type=${packageName}`,
+          {
+            _id: famID,
+          }
+        );
+
+        if (response.status === 200) {
+          dispatch(
+            updatePatientPackage({
+              packages: response.data.patient.packagesPatient[0].type,
+            })
+          );
+          dispatch(removeNewPackage());
+          dispatch(removeForFam());
         }
-      );
-      if (response.status === 200) {
-        dispatch(removeNewPackage());
-        dispatch(removeForFam());
+      } catch (error) {
+        console.log(error);
       }
-    } catch (error) {
-      console.log(error);
-    }
-  }, []);
+    };
+
+    fetchData(); // Call the async function here
+  }, []); // Empty dependency array means this effect runs once after the initial render
 
   return (
     <div>

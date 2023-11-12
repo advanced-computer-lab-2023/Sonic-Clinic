@@ -43,31 +43,58 @@ const LoginForm = () => {
         username: username,
         password: password,
       });
+      console.log(response.status);
 
       if (response.status === 200) {
         const user = response.data.user;
         const type = response.data.message;
 
         if (type === "Patient") {
-          dispatch(
-            setCredentialsPatient({
-              password: password,
-              userName: username,
-              birthdate: user.dateOfBirth,
-              userEmail: user.email,
-              name: user.name,
-              packages: user.packagesPatient,
-              gender: user.gender,
-              phoneNumber: user.mobileNumber,
-              userId: user._id,
-              emergencyName: user.emergencyFullName,
-              emergencyNumber: user.emergencyMobileNumber,
-              medicalHistory: user.medicalHistory,
-              wallet: user.wallet,
-              family: user.familyMembers,
-              isLoggedIn: true,
-            })
-          );
+          if (
+            user.packagesPatient &&
+            user.packagesPatient.length > 0 &&
+            user.packagesPatient[0].type
+          ) {
+            dispatch(
+              setCredentialsPatient({
+                password: password,
+                userName: username,
+                birthdate: user.dateOfBirth,
+                userEmail: user.email,
+                name: user.name,
+                packages: user.packagesPatient[0].type,
+                gender: user.gender,
+                phoneNumber: user.mobileNumber,
+                userId: user._id,
+                emergencyName: user.emergencyFullName,
+                emergencyNumber: user.emergencyMobileNumber,
+                medicalHistory: user.medicalHistory,
+                wallet: user.wallet,
+                family: user.familyMembers,
+                isLoggedIn: true,
+              })
+            );
+          } else {
+            dispatch(
+              setCredentialsPatient({
+                password: password,
+                userName: username,
+                birthdate: user.dateOfBirth,
+                userEmail: user.email,
+                name: user.name,
+                gender: user.gender,
+                phoneNumber: user.mobileNumber,
+                userId: user._id,
+                packages: "",
+                emergencyName: user.emergencyFullName,
+                emergencyNumber: user.emergencyMobileNumber,
+                medicalHistory: user.medicalHistory,
+                wallet: user.wallet,
+                family: user.familyMembers,
+                isLoggedIn: true,
+              })
+            );
+          }
 
           isLoading(false);
           navigate("/patient");
