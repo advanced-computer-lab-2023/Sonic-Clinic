@@ -1112,6 +1112,8 @@ const addAppointmentForMyselfOrFam = async (req, res) => {
       status,
       time,
     });
+    const patient = await patientModel.findById(patientID);
+    doctor.patients = doctor.patients.push(patient);
 
     await doctor.save();
 
