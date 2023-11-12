@@ -96,7 +96,7 @@ function AddFamilyMemberForm({ onRefresh, toggleForm }) {
           onRefresh();
           dispatch(
             addFamilyMemberState({
-              newFamilyMember: [response.data._id, response.data.name],
+              family: [response.data._id, response.data.name],
             })
           );
         } else {

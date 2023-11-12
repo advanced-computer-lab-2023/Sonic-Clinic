@@ -131,10 +131,14 @@ const viewPatients = async (req, res) => {
 
     for (const patientId of patients) {
       const patient = await patientModel.findOne({ _id: patientId });
-      //.populate("prescriptions").execPopulate();
 
       if (patient) {
         actualPatients.push(patient);
+      } else {
+        const familyMember = await familyMemberModel.findOne({
+          _id: patientId,
+        });
+        actualPatients.push(familyMember);
       }
     }
 
@@ -143,7 +147,6 @@ const viewPatients = async (req, res) => {
     res.status(500).json({ message: "Server Error" });
   }
 };
-
 const viewInfoAndHealthRecord = async (req, res) => {
   const patientUsername = req.body.username;
 
