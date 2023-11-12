@@ -1,7 +1,8 @@
 import axios from "axios";
 import React, { useState } from "react";
 import { Form, Button, Col } from "react-bootstrap";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { addFamilyMemberState } from "../state/loginPatientReducer";
 
 function AddFamilyMemberForm({ onRefresh, toggleForm }) {
   const [error1, setError] = useState(null);
@@ -16,6 +17,7 @@ function AddFamilyMemberForm({ onRefresh, toggleForm }) {
     gender: "Male",
     relation: "",
   });
+  const dispatch = useDispatch();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -92,6 +94,11 @@ function AddFamilyMemberForm({ onRefresh, toggleForm }) {
         if (response.status === 200) {
           isLoading(false);
           onRefresh();
+          dispatch(
+            addFamilyMemberState({
+              newFamilyMember: [response.data._id, response.data.name],
+            })
+          );
         } else {
           setError("Signup failed");
           isLoading(false);

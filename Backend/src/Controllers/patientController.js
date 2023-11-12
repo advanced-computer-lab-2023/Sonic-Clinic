@@ -1027,7 +1027,7 @@ const viewSubscribedPackages = async (req, res) => {
     let patient = await patientModel.findById(req.user.id);
     const familyMembers = patient.familyMembers;
 
-    if (patient.package) {
+    if (patient.package !== " ") {
       patient = await patientModel
         .findById(req.user.id)
         .populate("packagesPatient");
@@ -1036,7 +1036,7 @@ const viewSubscribedPackages = async (req, res) => {
       familyMembers.map(async ([familyMemberId, relationship]) => {
         try {
           const familyMember = await familyMemberModel.findById(familyMemberId);
-          if (familyMember.package) {
+          if (familyMember.package !== " ") {
             await familyMember.populate("packagesFamily");
           }
           return {
@@ -1185,8 +1185,10 @@ const subscribeHealthPackageWallet = async (req, res) => {
         sessionDiscount: originalPackage.sessionDiscount,
         medicineDiscount: originalPackage.medicineDiscount,
         packageDiscountFM: originalPackage.packageDiscountFM,
-        status: "Active",
-        renewalDate: new Date().toLocaleDateString(),
+        status: "Subscribed",
+        renewalDate: new Date(
+          new Date().setFullYear(new Date().getFullYear() + 1)
+        ).toLocaleDateString(),
         endDate: originalPackage.endDate,
         patientID: patient._id,
       });
@@ -1203,10 +1205,10 @@ const subscribeHealthPackageWallet = async (req, res) => {
 
     await mainPatient.save();
 
-      return res.status(200).json({
-        originalPackage: originalPackage,
-        wallet: mainPatient.wallet,
-      });
+    return res.status(200).json({
+      originalPackage: originalPackage,
+      wallet: mainPatient.wallet,
+    });
   } catch (error) {
     console.error("Error:", error);
     return res.status(500).json({ message: "Server Error" });
@@ -1358,8 +1360,10 @@ const handlePackageStripe = async (req, res) => {
       sessionDiscount: originalPackage.sessionDiscount,
       medicineDiscount: originalPackage.medicineDiscount,
       packageDiscountFM: originalPackage.packageDiscountFM,
-      status: "Active",
-      renewalDate: new Date().toLocaleDateString(),
+      status: "Subscribed",
+      renewalDate: new Date(
+        new Date().setFullYear(new Date().getFullYear() + 1)
+      ).toLocaleDateString(),
       endDate: originalPackage.endDate,
       patientID: patient._id,
     });
@@ -1370,6 +1374,7 @@ const handlePackageStripe = async (req, res) => {
     }
     patient.package = newPackage._id;
     await patient.save();
+
     return res.status(200).json({ patient });
   } catch (error) {
     console.error("Error:", error);
