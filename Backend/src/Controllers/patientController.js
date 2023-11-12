@@ -689,39 +689,48 @@ const filterDoctorsAfterSearchDocName = async (req, res) => {
     }
 
     const filteredDoctors = doctors.filter((doctor) =>
-    doctor.availableSlots.some((slot) => {
-      const [slotDate, slotTime] = slot.split(" ");
+      doctor.availableSlots?.some((slot) => {
+        if (!slot) {
+          return false; // If availableSlots is null or undefined, return false
+        }
+
+        const [slotDate, slotTime] = slot.split(" ");
       return slotDate === date && slotTime === time && (!specialty || doctor.specialty.toString() === specialty.toString());
-    })
-  );
+      })
+    );
     // Filter doctors based on available slots
     
 
-    if (filteredDoctors.length === 0) {
+    if (filteredDoctors.length === 0 || !filteredDoctors) {
       return res.status(404).json({ message: "No available doctors found." });
     }
 
-    const patientId = req.user.id;
-    const patient = await patientModel.findById(patientId);
+    //const patientId = req.user.id;
+    //const patient = await patientModel.findById(patientId);
 
     if (!patient) {
       return res.status(404).json({ message: "Patient not found." });
     }
+    
 
     const doctorsWithSessionPrice = await Promise.all(
-      filteredDoctors.map(async (doctor) => {
-        const sessionPrice = await calculateSessionPrice(
-          doctor.hourlyRate,
-          patient.package
-        );
-
-        // Include all fields from the doctor object along with sessionPrice
-        return {
-          ...doctor.toObject(),
-          sessionPrice: sessionPrice,
-        };
-      })
+      filteredDoctors
+        .filter((doctor) => typeof doctor === 'object' && doctor !== null) // Check if doctor is an object
+        .map(async (doctor) => {
+          const sessionPrice = await calculateSessionPrice(
+            doctor.hourlyRate,
+            patient.package
+          );
+    
+          // Include all fields from the doctor object along with sessionPrice
+          return {
+            ...doctor.toObject(),
+            sessionPrice: sessionPrice,
+          };
+        })
     );
+    
+    
 
     res.status(200).json({ doctorsWithSessionPrice });
 
