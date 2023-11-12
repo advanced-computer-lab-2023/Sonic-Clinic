@@ -24,6 +24,7 @@ function ViewPersonalInfo() {
   const toggleChangePass = () => {
     setShowChangePass(!showChangePass);
   };
+  console.log("FFFF", user.packages.split(" ")[0]);
 
   return (
     <div>
@@ -69,7 +70,7 @@ function ViewPersonalInfo() {
           </div>
           <div style={listItemStyle}>
             <span style={{ color: "#099BA0" }}>Packages:</span>{" "}
-            {user.packages ?  user.packages[0].type.split(" ")[0] :  "No Packages"}
+            {user.packages ? user.packages.split(" ")[0] : "No Packages"}
           </div>
           <div style={listItemStyle}>
             <span style={{ color: "#099BA0" }}>Emergency Name:</span>{" "}

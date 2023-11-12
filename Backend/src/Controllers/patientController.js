@@ -508,7 +508,7 @@ const getDoctorsWithSessionPrice = async (req, res) => {
       doctors.map(async (doctor) => {
         const sessionPrice = await calculateSessionPrice(
           doctor.hourlyRate,
-          patient.package
+          patient.packagesPatient
         );
 
         // Include all fields from the doctor object along with sessionPrice
@@ -1203,10 +1203,10 @@ const subscribeHealthPackageWallet = async (req, res) => {
 
     await mainPatient.save();
 
-      return res.status(200).json({
-        originalPackage: originalPackage,
-        wallet: mainPatient.wallet,
-      });
+    return res.status(200).json({
+      originalPackage: originalPackage,
+      wallet: mainPatient.wallet,
+    });
   } catch (error) {
     console.error("Error:", error);
     return res.status(500).json({ message: "Server Error" });
