@@ -7,6 +7,7 @@ import { useDispatch } from "react-redux";
 import { useEffect } from "react";
 import { deleteSearchData } from "../../state/Patient/SearchDoctor";
 import { deleteFilterAppointments } from "../../state/Patient/filterAppointments";
+import HomeMainOptions from "../../components/Patient/HomeMainOptions";
 
 function PatientHomePage() {
   const dispatch = useDispatch();
@@ -23,6 +24,9 @@ function PatientHomePage() {
             <MainImg />
             <div>
               <SearchCard />
+            </div>
+            <div>
+              <HomeMainOptions />
             </div>
           </Row>
         </Container>

@@ -1,29 +1,27 @@
 import axios from "axios";
 import * as React from "react";
-import { useState, useEffect } from "react";
-import { Col, Container, Form, Row } from "react-bootstrap";
+import { useState } from "react";
+import { Container, Form, Modal, Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import FormPassword from "../FormPassword";
 import FormInput from "../FormInput";
-import { setCredentials } from "../../state/loginPatientReducer";
-import { baseUrl } from "../../state/baseUrl";
+import contract from "../../Assets/EmploymentContract.pdf";
 import { setCredentialsPatient } from "../../state/loginPatientReducer";
 import { setCredentialsAdmin } from "../../state/loginAdminReducer";
 import { setCredentialsDoctor } from "../../state/loginDoctorReducer";
 
 const LoginForm = () => {
-  // console.log(baseUrl);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error1, setError] = useState(null);
-  const [message, setMessage] = useState(null);
   const [loading, isLoading] = useState(null);
   const [agree, setAgree] = useState(false);
   const [okay, setOkay] = useState(false);
   const [open, setOpen] = React.useState(false);
+  const [showAcceptModal, setShowAcceptModal] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -45,28 +43,58 @@ const LoginForm = () => {
         username: username,
         password: password,
       });
+      console.log(response.status);
 
       if (response.status === 200) {
         const user = response.data.user;
         const type = response.data.message;
 
         if (type === "Patient") {
-          dispatch(
-            setCredentialsPatient({
-              password: password,
-              userName: username,
-              birthdate: user.dateOfBirth,
-              userEmail: user.email,
-              name: user.name,
-              packages: user.package,
-              gender: user.gender,
-              phoneNumber: user.mobileNumber,
-              userId: user._id,
-              emergencyName: user.emergencyFullName,
-              emergencyNumber: user.emergencyMobileNumber,
-              isLoggedIn: true,
-            })
-          );
+          if (
+            user.packagesPatient &&
+            user.packagesPatient.length > 0 &&
+            user.packagesPatient[0].type
+          ) {
+            dispatch(
+              setCredentialsPatient({
+                password: password,
+                userName: username,
+                birthdate: user.dateOfBirth,
+                userEmail: user.email,
+                name: user.name,
+                packages: user.packagesPatient[0].type,
+                gender: user.gender,
+                phoneNumber: user.mobileNumber,
+                userId: user._id,
+                emergencyName: user.emergencyFullName,
+                emergencyNumber: user.emergencyMobileNumber,
+                medicalHistory: user.medicalHistory,
+                wallet: user.wallet,
+                family: user.familyMembers,
+                isLoggedIn: true,
+              })
+            );
+          } else {
+            dispatch(
+              setCredentialsPatient({
+                password: password,
+                userName: username,
+                birthdate: user.dateOfBirth,
+                userEmail: user.email,
+                name: user.name,
+                gender: user.gender,
+                phoneNumber: user.mobileNumber,
+                userId: user._id,
+                packages: "",
+                emergencyName: user.emergencyFullName,
+                emergencyNumber: user.emergencyMobileNumber,
+                medicalHistory: user.medicalHistory,
+                wallet: user.wallet,
+                family: user.familyMembers,
+                isLoggedIn: true,
+              })
+            );
+          }
 
           isLoading(false);
           navigate("/patient");
@@ -85,12 +113,16 @@ const LoginForm = () => {
               patients: user.patients,
               speciality: user.specialty,
               userId: user._id,
+              wallet: user.wallet,
               isLoggedIn: true,
             })
           );
-
+          if (!user.contract) {
+            setShowAcceptModal(true);
+          } else {
+            navigate("/doctor");
+          }
           isLoading(false);
-          navigate("/doctor");
         }
         if (type === "Admin") {
           dispatch(
@@ -125,9 +157,63 @@ const LoginForm = () => {
     }
   };
 
+  const loginNewDoctor = async (e) => {
+    e.preventDefault();
+    setError(null);
+    isLoading(true);
+    try {
+      const response = await axios.get("/acceptContract");
+      if (response.status === 200) {
+        setShowAcceptModal(false);
+        navigate("/doctor");
+      }
+    } catch (error) {
+      setError(error);
+    }
+    isLoading(false);
+  };
+
+  const rejectContract = async () => {
+    try {
+      setShowAcceptModal(false);
+      setError(
+        "Unfortunately, you cannot join the platform without accepting the contract"
+      );
+      const response = await axios.get("/logout");
+      if (response.status === 200) {
+        console.log("LOGOUT");
+      }
+    } catch (error) {
+      console.log();
+    }
+  };
+
   return (
     <div className="col-9 form-container">
       <div className="form-title">Welcome Back!</div>
+      <Modal show={showAcceptModal} onHide={() => setShowAcceptModal(false)}>
+        <Modal.Header>
+          <Modal.Title>Employment Contract</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <object
+            data={contract}
+            type="application/pdf"
+            width="100%"
+            height="500"
+          >
+            PDF Viewer is not supported in this browser.
+          </object>
+        </Modal.Body>
+        <Modal.Footer className="d-flex align-items-center justify-content-center">
+          <Button variant="success" onClick={loginNewDoctor}>
+            Accept
+          </Button>
+          <Button variant="danger" onClick={rejectContract}>
+            Reject
+          </Button>
+        </Modal.Footer>
+      </Modal>
       <Form className="rounded-3" onSubmit={handleSubmit}>
         <FormInput
           name="Username"
@@ -141,15 +227,15 @@ const LoginForm = () => {
           placeholder="**************"
           onChange={(e) => setPassword(e.target.value)}
         />
-        {/* <Container className="forgot-password-container">
+        <Container className="forgot-password-container">
           <div
             className="forgot-password text-decoration-none"
             style={{ cursor: "pointer" }}
-            onClick={() => navigate("forgot-password")}
+            onClick={() => navigate("/forgot-password")}
           >
             Forgot Password?
           </div>
-        </Container> */}
+        </Container>
         <button
           className="w-100 btn-sm custom-button"
           disabled={loading}
@@ -168,20 +254,7 @@ const LoginForm = () => {
             Sign Up
           </div>
         </div> */}
-        {error1 && (
-          <div
-            style={{
-              marginTop: "2rem",
-              backgroundColor: "#f44336", // Red background color
-              color: "white", // White text color
-              padding: "10px", // Padding around the message
-              borderRadius: "5px", // Rounded corners
-              boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.2)", // Box shadow for a subtle effect
-            }}
-          >
-            {error1}
-          </div>
-        )}
+        {error1 && <div className="error">{error1}</div>}
       </Form>
     </div>
   );

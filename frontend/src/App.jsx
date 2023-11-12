@@ -1,31 +1,39 @@
 import React from "react";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
-import AppNavbar from "./components/AppNavigation/AppNavbar";
+import { Route, Routes } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
+
 import PatientHomePage from "./pages/Patient/PatientHomePage";
 import PatientViewDoctors from "./pages/Patient/PatientViewDoctors";
 import PatientProfile from "./pages/Patient/PatientProfile";
+import PatientViewPrescriptions from "./pages/Patient/PatientViewPrescriptions";
+import PatientViewAppointments from "./pages/Patient/PatientViewAppointments";
+import PatientOneDoctor from "./pages/Patient/PatientOneDoctor";
+import PatientOnePrescription from "./pages/Patient/PatientOnePrescription";
+import PatientHealthPackages from "./pages/Patient/PatientHealthPackages";
+
 import AdminHomePage from "./pages/Admin/AdminHomePage";
 import AdminPatientsPage from "./pages/Admin/AdminPatientsPage";
 import AdminDoctorsPage from "./pages/Admin/AdminDoctorsPage";
-import PatientViewPrescriptions from "./pages/Patient/PatientViewPrescriptions";
-import PatientViewAppointments from "./pages/Patient/PatientViewAppointments";
-import DrHomePage from "./pages/Doctor/DrHomePage";
 import AdminPackagesPage from "./pages/Admin/AdminPackagesPage";
 import AdminAdminsPage from "./pages/Admin/AdminAdminsPage";
+import AdminProfilePage from "./pages/Admin/AdminProfilePage";
+
+import DrHomePage from "./pages/Doctor/DrHomePage";
+import DrAppointments from "./pages/Doctor/DrAppointments";
+import DrProfile from "./pages/Doctor/DrProfile";
+import DrPatients from "./pages/Doctor/DrPatients";
 
 import GuestHomePage from "./pages/Guest/GuestHomePage";
-
 import Login from "./pages/Guest/Login";
 import PatientSignup from "./pages/Guest/PatientSignup";
 import DrSignup from "./pages/Guest/DrSignup";
-import DrAppointments from "./pages/Doctor/DrAppointments";
+import ForgotPassword from "./pages/Guest/ForgotPassword";
+import OTPVerification from "./pages/Guest/OTPVerification";
+import ResetPassword from "./pages/Guest/ResetPassword";
+import PasswordChanged from "./pages/Guest/PasswordChanged";
 
-import DrProfile from "./pages/Doctor/DrProfile";
-
-import DrPatients from "./pages/Doctor/DrPatients";
-import PatientOneDoctor from "./pages/Patient/PatientOneDoctor";
-import PatientOnePrescription from "./pages/Patient/PatientOnePrescription";
+import PatientPackageSuccess from "./pages/Patient/PatientPackageSuccess";
+import PatientAppSuccess from "./pages/Patient/PatientAppSuccess";
 
 function App() {
   return (
@@ -35,6 +43,13 @@ function App() {
 
         <Route path="login">
           <Route index element={<Login />} />
+        </Route>
+
+        <Route path="forgot-password">
+          <Route path="otp-verification" element={<OTPVerification />} />
+          <Route path="reset-password" element={<ResetPassword />} />
+          <Route path="password-changed" element={<PasswordChanged />} />
+          <Route index element={<ForgotPassword />} />
         </Route>
 
         <Route path="patient-signup">
@@ -64,6 +79,12 @@ function App() {
           </Route>
 
           <Route path="profile" element={<PatientProfile />} />
+          <Route path="health-packages" element={<PatientHealthPackages />} />
+          <Route
+            path="health-packages-success"
+            element={<PatientPackageSuccess />}
+          />
+          <Route path="app-success" element={<PatientAppSuccess />} />
         </Route>
 
         <Route path="doctor">
@@ -83,6 +104,7 @@ function App() {
           <Route path="patients-list" element={<AdminPatientsPage />} />
           <Route path="admins-list" element={<AdminAdminsPage />} />
           <Route path="packages" element={<AdminPackagesPage />} />
+          <Route path="profile" element={<AdminProfilePage />} />
         </Route>
         <Route path="*" element={<>Page not found</>} />
       </Routes>

@@ -1,10 +1,13 @@
-import { Button, Card, Image } from "react-bootstrap";
 import { useNavigate } from "react-router";
 import AdminHomeCard from "../Admin/AdminHomeCard";
 import {
   faHospitalUser,
   faCalendarCheck,
+  faWallet,
 } from "@fortawesome/free-solid-svg-icons";
+import { Waypoint } from "react-waypoint";
+import { useSpring, animated } from "react-spring";
+import { useState } from "react";
 
 function DrMainOptions() {
   const navigate = useNavigate();
@@ -14,97 +17,46 @@ function DrMainOptions() {
   const handleAppointments = () => {
     navigate("/doctor/doctor-appointments");
   };
+  const [ourDoctorsVisible, setOurDoctorsVisible] = useState(false);
+  const ourDoctorsSpring = useSpring({
+    opacity: ourDoctorsVisible ? 1 : 0,
+    transform: ourDoctorsVisible ? "translateX(0)" : "translateX(-50%)",
+    config: { duration: 1000 },
+  });
 
   return (
     <div className="d-flex flex-row justify-content-center">
-      <AdminHomeCard
-        location="/doctor/doctor-patients"
-        cardText="Patients"
-        cardDetails="View my patients"
-        icon={faHospitalUser}
+      <Waypoint
+        onEnter={() => setOurDoctorsVisible(true)}
+        onLeave={() => setOurDoctorsVisible(false)}
       />
-      <AdminHomeCard
-        location="/doctor/doctor-appointments"
-        cardText="Appointments"
-        cardDetails="View my appointments"
-        icon={faCalendarCheck}
-      />
+      <animated.div style={ourDoctorsSpring} className="d-flex flex-row">
+        <div className="mr-2">
+          <AdminHomeCard
+            location="/doctor/doctor-patients"
+            cardText="Patients"
+            cardDetails="View my patients"
+            icon={faHospitalUser}
+          />
+        </div>
+        <div>
+          <AdminHomeCard
+            location="/doctor/doctor-appointments"
+            cardText="Appointments"
+            cardDetails="View/manage my appointments"
+            icon={faCalendarCheck}
+          />
+        </div>
+        <div>
+          <AdminHomeCard
+            location="/doctor/doctor-appointments"
+            cardText="Wallet"
+            cardDetails="View my wallet"
+            icon={faWallet}
+          />
+        </div>
+      </animated.div>
     </div>
-    // <div
-    //   className="d-flex align-items-center justify-content-between gap-3"
-    //   style={{ marginRight: "10rem", marginLeft: "10rem", marginTop: "-8rem" }}
-    // >
-    //   <Card
-    //     className="p-4 d-flex align-items-center justify-content-center"
-    //     style={{
-    //       borderRadius: "1.5625rem",
-    //       background: "var(--blue-100, #E0F8F8)",
-    //       boxShadow: "0px 4px 4px 0px #05AFB9",
-    //       width: "22.8rem",
-    //       height: "20rem",
-    //       cursor: "pointer",
-    //     }}
-    //     onClick={handlePatients}
-    //   >
-    //     <div
-    //       style={{
-    //         color: "var(--blue-700, #099BA0)",
-    //         fontSize: "1.5rem",
-    //         fontStyle: "normal",
-    //         fontWeight: "700",
-    //         lineHeight: " 120%",
-    //       }}
-    //     >
-    //       Patients
-    //     </div>
-    //     <div
-    //       style={{
-    //         color: "var(--gray-500, #ADB5BD)",
-    //         fontSize: "1rem",
-    //         fontStyle: "normal",
-    //         fontWeight: "400",
-    //         lineHeight: " 120%",
-    //       }}
-    //     >
-    //       View All my Patients
-    //     </div>
-    //   </Card>
-    //   <Card
-    //     className="p-4 d-flex align-items-center justify-content-center"
-    //     style={{
-    //       borderRadius: "1.5625rem",
-    //       background: "var(--blue-100, #E0F8F8)",
-    //       boxShadow: "0px 4px 4px 0px #05AFB9",
-    //       width: "22.8rem",
-    //       height: "20rem",
-    //       cursor: "pointer",
-    //     }}
-    //     onClick={handleAppointments}
-    //   >
-    //     <div
-    //       style={{
-    //         color: "var(--blue-700, #099BA0)",
-    //         fontSize: "1.5rem",
-    //         fontStyle: "normal",
-    //         fontWeight: "700",
-    //         lineHeight: " 120%",
-    //       }}
-    //     >
-    //       Appointments
-    //     </div>
-    //     <div
-    //       style={{
-    //         color: "var(--gray-500, #ADB5BD)",
-    //         fontSize: "1rem",
-    //         fontStyle: "normal",
-    //         fontWeight: "400",
-    //         lineHeight: " 120%",
-    //       }}
-    //     >
-    //       View all my Appointments
-    //     </div>
-    //   </Card>
-    // </div>
   );
 }
 

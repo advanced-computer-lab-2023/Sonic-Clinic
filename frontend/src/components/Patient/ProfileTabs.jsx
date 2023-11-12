@@ -6,10 +6,14 @@ import Tab from "react-bootstrap/Tab";
 import AddFamilyMember from "./AddFamilyMember";
 import FamilyMembersList from "./FamilyMembersList";
 import ViewPersonalInfo from "./viewPersonalInfo";
+import UploadDocuments from "./UploadDocuments";
+import { useSelector } from "react-redux";
+import HealthPackagesList from "./HealthPackagesList";
 
 function ProfileTabs() {
   const [activeKey, setActiveKey] = useState("first");
   const [refreshFlag, setRefreshFlag] = useState(false);
+  const wallet = useSelector((state) => state.patientLogin.wallet);
 
   const handleSelect = (selectedKey) => {
     setActiveKey(selectedKey);
@@ -58,11 +62,66 @@ function ProfileTabs() {
                       activeKey === "second"
                         ? "none"
                         : "1px solid rgb(189, 189, 189)",
+                    marginBottom: "1rem",
                     fontSize: "1.2rem",
                     fontWeight: "600",
                   }}
                 >
                   Family Members
+                </Nav.Link>
+              </Nav.Item>
+              <Nav.Item>
+                <Nav.Link
+                  eventKey="third"
+                  style={{
+                    background: activeKey === "third" ? "#05afb9" : "white",
+                    color: activeKey === "third" ? "white" : "black",
+                    border:
+                      activeKey === "third"
+                        ? "none"
+                        : "1px solid rgb(189, 189, 189)",
+                    marginBottom: "1rem",
+                    fontSize: "1.2rem",
+                    fontWeight: "600",
+                  }}
+                >
+                  Medical History
+                </Nav.Link>
+              </Nav.Item>
+              <Nav.Item>
+                <Nav.Link
+                  eventKey="fourth"
+                  style={{
+                    background: activeKey === "fourth" ? "#05afb9" : "white",
+                    color: activeKey === "fourth" ? "white" : "black",
+                    border:
+                      activeKey === "fourth"
+                        ? "none"
+                        : "1px solid rgb(189, 189, 189)",
+                    marginBottom: "1rem",
+                    fontSize: "1.2rem",
+                    fontWeight: "600",
+                  }}
+                >
+                  My Wallet
+                </Nav.Link>
+              </Nav.Item>
+              <Nav.Item>
+                <Nav.Link
+                  eventKey="fifth"
+                  style={{
+                    background: activeKey === "fifth" ? "#05afb9" : "white",
+                    color: activeKey === "fifth" ? "white" : "black",
+                    border:
+                      activeKey === "fifth"
+                        ? "none"
+                        : "1px solid rgb(189, 189, 189)",
+                    marginBottom: "1rem",
+                    fontSize: "1.2rem",
+                    fontWeight: "600",
+                  }}
+                >
+                  My Health Packages
                 </Nav.Link>
               </Nav.Item>
             </Nav>
@@ -77,6 +136,41 @@ function ProfileTabs() {
                   <FamilyMembersList refreshFlag={refreshFlag} />
                   <AddFamilyMember onRefresh={handleRefresh} />
                 </div>
+              </Tab.Pane>
+              <Tab.Pane eventKey="third">
+                <UploadDocuments />
+              </Tab.Pane>
+              <Tab.Pane eventKey="fourth">
+                <div>
+                  <div
+                    className="d-flex justify-content-center align-items-center"
+                    style={{
+                      fontSize: "2.5rem", // Increase font size for the title
+                      fontWeight: "600",
+                      color: "#212529",
+                      lineHeight: "1.5",
+                    }}
+                  >
+                    My Wallet
+                  </div>
+                  <div
+                    style={{
+                      color: "#099BA0  ",
+                      fontSize: "30px",
+                      fontWeight: "600",
+                      marginBottom: "10px",
+                      marginLeft: "22rem",
+                      marginTop: "3rem",
+                    }}
+                  >
+                    Balance: ${wallet}
+                  </div>
+
+                  {/* You can add more wallet-related content here */}
+                </div>
+              </Tab.Pane>
+              <Tab.Pane eventKey="fifth">
+                <HealthPackagesList />
               </Tab.Pane>
             </Tab.Content>
           </Col>

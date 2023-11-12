@@ -1,6 +1,5 @@
 import React from "react";
 import AdminViewTable from "../../components/Admin/AdminViewTable";
-import AdminSearchBar from "../../components/Admin/AdminSearchBar";
 import AppNavbar from "../../components/AppNavigation/AppNavbar";
 import { Container } from "react-bootstrap";
 import AdminBurgerMenu from "../../components/Admin/AdminBurgerMenu";
@@ -30,8 +29,7 @@ export default function AdminPatientsPage() {
           marginLeft: "100px",
         }}
       >
-        <AdminSearchBar />
-        <AdminViewTable onAdmins={false} api={"/viewAllPatients"}/>
+        <AdminViewTable onAdmins={false} api={"/viewAllPatients"} />
       </Container>
     </>
   );

@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { Card, ListGroup } from "react-bootstrap";
+import { Card, Col, Container, ListGroup, Row } from "react-bootstrap";
 import { useSelector } from "react-redux";
 
 function FamilyMembersList({ refreshFlag }) {
@@ -14,9 +14,7 @@ function FamilyMembersList({ refreshFlag }) {
 
   const fetchData = async () => {
     try {
-      const response = await axios.post("/viewFamilyMembers", {
-        _id: id,
-      });
+      const response = await axios.post("/viewFamilyMembers");
 
       if (response.status === 200) {
         setResponseData(response.data.familyMembers);
@@ -33,46 +31,67 @@ function FamilyMembersList({ refreshFlag }) {
   };
 
   const NeededData = responseData;
+  console.log("ZZZZZZZZZ", NeededData);
 
   return (
-    <div>
+    <Container>
       <div
         className="d-flex justify-content-center align-items-center"
         style={{
-          fontSize: "2rem",
+          fontSize: "2.5rem", // Increase font size for the title
           fontWeight: "600",
-          color: "#212529  ",
-          // textDecoration: "underline",
+          color: "#212529",
+          lineHeight: "1.5",
         }}
       >
         Family Members
       </div>
-      <ListGroup variant="flush">
-        {NeededData.map((member, index) => (
-          <ListGroup.Item key={index}>
-            {/* <strong style ={{color:}}>Name:</strong> {member.name} */}
-            <div
-              style={{
-                color: "#099BA0  ",
-                fontSize: "20px",
-                fontWeight: "600",
-                marginBottom: "10px",
-              }}
-            >
-              {member.name}
-            </div>
-            {/* <br /> */}
-            <strong>National ID:</strong> {member.nationalID}
-            <br />
-            <strong>Age:</strong> {member.age}
-            <br />
-            <strong>Gender:</strong> {member.gender}
-            <br />
-            <strong>Relation:</strong> {member.relationToPatient}
-          </ListGroup.Item>
+      {NeededData &&
+        NeededData.map((member, index) => (
+          <Card key={member} className="mb-4">
+            <Card.Body>
+              <div
+                style={{
+                  color: "#099BA0  ",
+                  fontSize: "30px",
+                  fontWeight: "600",
+                  marginBottom: "10px",
+                }}
+              >
+                {member.name}
+              </div>
+              <Row>
+                <Col md={4}>
+                  <p>
+                    <strong>Gender:</strong> {member.gender}
+                  </p>
+                  <p>
+                    <strong>Age:</strong> {member.age}
+                  </p>
+                </Col>
+                <Col md={4}>
+                  <p>
+                    <strong>National ID:</strong> {member.nationalID}
+                  </p>
+                  <p>
+                    <strong>Relation:</strong> {member.relationToPatient}
+                  </p>
+                </Col>
+                <Col md={4}>
+                  <p>
+                    <strong>Package:</strong>{" "}
+                    {member.packagesFamily && member.packagesFamily[0]
+                      ? member.packagesFamily[0].type.split(" ")[0]
+                      : member.package && member.package.trim() !== ""
+                      ? member.package
+                      : "No Packages"}
+                  </p>
+                </Col>
+              </Row>
+            </Card.Body>
+          </Card>
         ))}
-      </ListGroup>
-    </div>
+    </Container>
   );
 }
 

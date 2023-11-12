@@ -12,7 +12,13 @@ const initialState = {
   emergencyName: "",
   emergencyNumber: "",
   userId: "",
+  wallet: "",
+  medicalHistory: [],
+  family: [],
   isLoggedIn: false,
+  newPackage: "",
+  forFam: "",
+  newApp: "",
 };
 
 const loginSlice = createSlice({
@@ -31,8 +37,48 @@ const loginSlice = createSlice({
       state.userId = action.payload.userId;
       state.emergencyName = action.payload.emergencyName;
       state.emergencyNumber = action.payload.emergencyNumber;
+      state.medicalHistory = action.payload.medicalHistory;
       state.isLoggedIn = action.payload.isLoggedIn;
+      state.wallet = action.payload.wallet;
+      state.family = action.payload.family;
     },
+    updatePatientWallet: (state, action) => {
+      state.wallet = action.payload.wallet;
+    },
+    updatePatientPackage: (state, action) => {
+      state.packages = action.payload.packages;
+    },
+    setNewPackage: (state, action) => {
+      state.newPackage = action.payload.newPackage;
+    },
+    removeNewPackage: (state, action) => {
+      state.newPackage = "";
+    },
+    setForFam: (state, action) => {
+      state.forFam = action.payload.forFam;
+    },
+    removeForFam: (state, action) => {
+      state.forFam = "";
+    },
+    setNewApp: (state, action) => {
+      state.newApp = action.payload.newApp;
+    },
+    removeNewApp: (state, action) => {
+      state.newAPp = "";
+    },
+    updateMyMedicalHistory: (state, action) => {
+      state.medicalHistory = action.payload.medicalHistory;
+    },
+    updatePatientFamily: (state, action) => {
+      state = {
+        ...state,
+        family: action.payload.family,
+      };
+    },
+    addFamilyMemberState: (state, action) => {
+      state.family = [...state.family, action.payload.family];
+    },
+
     logoutPatient: (state, action) => {
       state.userName = "";
       state.name = "";
@@ -45,7 +91,13 @@ const loginSlice = createSlice({
       state.emergencyName = "";
       state.emergencyNumber = "";
       state.userId = "";
+      state.wallet = "";
+      state.medicalHistory = [];
+      state.family = [];
       state.isLoggedIn = false;
+      state.newPackage = "";
+      state.forFam = "";
+      state.newApp = "";
     },
     clearPassword: (state, action) => {
       state = {
@@ -64,9 +116,19 @@ const loginSlice = createSlice({
 
 export const {
   setCredentialsPatient,
+  updatePatientWallet,
+  updatePatientPackage,
+  updateMyMedicalHistory,
+  removeNewPackage,
+  setNewPackage,
+  removeForFam,
+  setForFam,
+  removeNewApp,
+  setNewApp,
   logoutPatient,
   clearPassword,
-
   setUserId,
+  updatePatientFamily,
+  addFamilyMemberState,
 } = loginSlice.actions;
 export default loginSlice.reducer;

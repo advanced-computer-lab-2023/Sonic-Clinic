@@ -1,9 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import { ListGroup } from "react-bootstrap";
 import { useSelector } from "react-redux";
+import ChangePass from "../../forms/ChangePass";
 
 function ViewPersonalInfo() {
   const user = useSelector((state) => state.patientLogin);
+  const [showChangePass, setShowChangePass] = useState(false);
 
   const listItemStyle = {
     fontSize: "1rem", // Font size for all information
@@ -11,6 +13,18 @@ function ViewPersonalInfo() {
     verticalAlign: "top", // Align items at the top of each column
     fontWeight: "600", // Bold font weight for information title
   };
+
+  const labelStyle = {
+    cursor: "pointer",
+    fontWeight: "lighter",
+    textDecoration: "underline",
+    color: "inherit",
+  };
+
+  const toggleChangePass = () => {
+    setShowChangePass(!showChangePass);
+  };
+  console.log("FFFF", user.packages.split(" ")[0]);
 
   return (
     <div>
@@ -34,6 +48,20 @@ function ViewPersonalInfo() {
             <span style={{ color: "#099BA0" }}>Username:</span> {user.userName}
           </div>
           <div style={listItemStyle}>
+            <span style={{ color: "#099BA0" }}>Password:</span>{" "}
+            <span>
+              <label
+                style={labelStyle}
+                onClick={toggleChangePass} // Add your click handler here
+              >
+                {showChangePass ? "close" : "change password"}
+              </label>
+            </span>
+            {showChangePass && (
+              <ChangePass patient={true} api="/changePasswordForPatient" />
+            )}
+          </div>
+          <div style={listItemStyle}>
             <span style={{ color: "#099BA0" }}>Email:</span> {user.userEmail}
           </div>
           <div style={listItemStyle}>
@@ -42,7 +70,7 @@ function ViewPersonalInfo() {
           </div>
           <div style={listItemStyle}>
             <span style={{ color: "#099BA0" }}>Packages:</span>{" "}
-            {user.packages || "No Packages"}
+            {user.packages ? user.packages.split(" ")[0] : "No Packages"}
           </div>
           <div style={listItemStyle}>
             <span style={{ color: "#099BA0" }}>Emergency Name:</span>{" "}

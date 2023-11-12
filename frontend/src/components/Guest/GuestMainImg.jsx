@@ -1,7 +1,16 @@
 import { Card, Image } from "react-bootstrap";
 import mainImg from "../../Assets/Patient/HomeImg.png";
-import GuestBox from "./GuestBox";
+import { Waypoint } from "react-waypoint";
+import { useSpring, animated } from "react-spring";
+import { useState } from "react";
 function GuestMainImg() {
+  const [ourDoctorsVisible, setOurDoctorsVisible] = useState(false);
+  const ourDoctorsSpring = useSpring({
+    opacity: ourDoctorsVisible ? 1 : 0,
+    transform: ourDoctorsVisible ? "translateY(0)" : "translateY(-50%)",
+    config: { duration: 500 },
+  });
+
   return (
     <div>
       <Card
@@ -24,26 +33,29 @@ function GuestMainImg() {
             border: "none",
           }}
         >
-          <Card.Text
-            style={{
-              color: "#05AFB9",
-              textAlign: "center",
-              fontFamily: "Vibur",
-              fontSize: "7rem",
-              fontStyle: "normal",
-              fontWeight: 400,
-              lineHeight: "120%",
-           
-            }}
-          >
-            Welcome to El7a2ny!
-          </Card.Text>
+          <Waypoint
+            onEnter={() => setOurDoctorsVisible(true)}
+            onLeave={() => setOurDoctorsVisible(false)}
+          />
+          <animated.div style={ourDoctorsSpring} className="d-flex flex-row">
+            <Card.Text
+              style={{
+                color: "#05AFB9",
+                textAlign: "center",
+                fontFamily: "fantasy",
+                fontSize: "7rem",
+                fontStyle: "normal",
+                fontWeight: 400,
+                lineHeight: "100%",
+              }}
+            >
+              Welcome to El7a2ny!
+            </Card.Text>
+          </animated.div>
         </Card>
       </Card>
     </div>
   );
 }
 
-
 export default GuestMainImg;
-

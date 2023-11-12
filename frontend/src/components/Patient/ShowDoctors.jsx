@@ -32,58 +32,11 @@ function ShowDoctors({ patients, responseData, setPatients, loading, error1 }) {
         educationalBackground: doctor.educationalBackground,
         speciality: doctor.specialty,
         photoLink: doctor.photoLink,
+        id: doctor.id,
       })
     );
     navigate(`/patient/view-doctors/${index}`);
   };
-
-  // useEffect(() => {
-  //   // setPatients(patients);
-  //   console.log("gom m3aya show docs ", patients);
-  // }, {}); // Fetch data when searchData changes
-
-  // const fetchData = async () => {
-  //   const config = {
-  //     headers: {
-  //       _id: _id,
-  //     },
-  //   };
-  //   try {
-  //     const response = await axios.post(
-  //       "/getDoctorsWithSessionPrice",
-  //       { _id: _id },
-  //       config
-  //     );
-  //     if (response.status === 200) {
-  //       console.log("RESPONSE:", response.data);
-  //       setResponseData(response.data.allDoctors);
-  //     } else {
-  //       console.log("Server error");
-  //     }
-  //     setLoading(false);
-  //   } catch (error) {
-  //     if (error.response && error.response.status === 404) {
-  //       setError("No doctors found.");
-  //     } else if (error.response && error.response.status === 500) {
-  //       setError("Server Error");
-  //     } else {
-  //       setError("An error occurred. Please try again later.");
-  //     }
-  //     setLoading(false);
-  //   }
-  // };
-
-  // const NeededData = responseData;
-  // const filteredDoctors = NeededData.filter((doctor) => {
-  //   const name = doctor.name ? doctor.name.toLowerCase() : "";
-  //   const speciality = doctor.speciality ? doctor.speciality.toLowerCase() : "";
-
-  //   return (
-  //     (searchDataName === "" || name.includes(searchDataName.toLowerCase())) &&
-  //     (searchDataSpec === "" ||
-  //       speciality.includes(searchDataSpec.toLowerCase()))
-  //   );
-  // });
 
   return (
     <div>
@@ -166,7 +119,7 @@ function ShowDoctors({ patients, responseData, setPatients, loading, error1 }) {
                         }}
                         className="d-flex align-items-center justify-content-end"
                       >
-                        ${doctor.sessionPrice} / Session
+                        ${doctor.hourlyRate} / Session
                       </div>
                     </Card.Text>
                   </Card.Body>

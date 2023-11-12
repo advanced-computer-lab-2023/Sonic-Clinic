@@ -20,6 +20,7 @@ import filterAppointments from "./Patient/filterAppointments";
 import filterPrescriptions from "./Patient/filterPrescriptions";
 import filterDrAppointments from "./Doctor/filterDrAppointments";
 import prescriptionIdReducer from "./prescriptionIdReducer";
+import forgotEmail from "./forgotEmail";
 
 const persistConfig = {
   key: "root",
@@ -38,6 +39,7 @@ const rootReducer = combineReducers({
   filterAppointments: filterAppointments,
   filterPrescriptions: filterPrescriptions,
   filterDrAppointments: filterDrAppointments,
+  forgotEmail: forgotEmail,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

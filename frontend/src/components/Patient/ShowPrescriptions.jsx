@@ -43,9 +43,7 @@ function ShowPrescriptions() {
 
   const fetchData = async () => {
     try {
-      const response = await axios.post("/viewPrescriptions", {
-        _id: id,
-      });
+      const response = await axios.post("/viewPrescriptions");
       if (response.status === 200) {
         console.log("RESPONSE:", response.data);
         setResponseData(response.data);

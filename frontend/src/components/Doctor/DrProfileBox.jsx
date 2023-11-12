@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import doctorImg from "../../Assets/Patient/Doctor.jpg";
+import ChangePass from "../../forms/ChangePass";
 import { Button } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPenToSquare } from "@fortawesome/free-solid-svg-icons";
@@ -11,18 +12,11 @@ import axios from "axios";
 
 function DrProfileBox() {
   const profileBoxStyle = {
-    width: "28rem",
+    width: "30rem",
     padding: "1rem",
     backgroundColor: "#ffffff",
     textAlign: "center",
-  };
-
-  const profilePageStyle = {
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    height: "100vh",
-    backgroundColor: "#f0f0f0",
+    marginLeft: "10rem",
   };
 
   const profileImageStyle = {
@@ -37,15 +31,15 @@ function DrProfileBox() {
     width: "18rem",
     padding: "8px",
     borderRadius: "8px",
-    border: "1px solid #ADB5BD",
+    border: "1px solid  #dee2e6 ",
   };
 
   const inputLabel = {
-    width: "7rem",
+    width: "12rem",
     marginRight: "0.5rem",
     fontWeight: "bold",
     color: "#adb5bd ",
-    fontSize: "1.1rem",
+    fontSize: "1rem",
     textAlign: "left",
   };
 
@@ -90,7 +84,6 @@ function DrProfileBox() {
       })
     );
     const queryParameters = new URLSearchParams({
-      _id: _id,
       email: profileData.email,
       hourlyRate: profileData.hourlyRate,
       affiliation: profileData.affiliation,
@@ -120,94 +113,99 @@ function DrProfileBox() {
   };
 
   return (
-    <div style={profilePageStyle}>
-      <div style={profileBoxStyle}>
-        <div className="d-flex justify-content-end">
-          {!isEditing ? (
-            <FontAwesomeIcon
-              icon={faPenToSquare}
-              style={{
-                opacity: 1,
-                color: "#099BA0 ",
-                fontSize: "20px",
-                cursor: "pointer",
-                marginBottom: "5px",
-              }}
-              onClick={handleEditClick}
+    <div style={profileBoxStyle}>
+      <div className="d-flex justify-content-end">
+        {!isEditing ? (
+          <FontAwesomeIcon
+            icon={faPenToSquare}
+            style={{
+              opacity: 1,
+              color: "#099BA0 ",
+              fontSize: "20px",
+              cursor: "pointer",
+              marginBottom: "5px",
+            }}
+            onClick={handleEditClick}
+          />
+        ) : (
+          <FontAwesomeIcon
+            icon={faPenToSquare}
+            style={{
+              opacity: 0,
+            }}
+            onClick={handleEditClick}
+          />
+        )}
+      </div>
+      <img src={profileData.photo || defaultImg} style={profileImageStyle} />
+      <h2 style={{ marginBottom: "1rem" }}>
+        <strong>Dr. {profileData.name}</strong>
+      </h2>
+      <h2 style={{ marginBottom: "2rem", fontSize: "20px", color: "#05afb9 " }}>
+        <strong>{profileData.speciality}</strong>
+      </h2>
+      <div className="d-flex flex-column align-items-start">
+        <p class="d-flex flex-row">
+          <div style={inputLabel}>Username:</div>
+          <span>{profileData.username}</span>
+        </p>
+
+        <p class="d-flex flex-row">
+          <div style={inputLabel}>Password:</div>
+          {isEditing ? (
+            <div>
+              <ChangePass patient={false} api="/changePasswordForDoctor" />
+            </div>
+          ) : (
+            <span>********</span>
+          )}
+        </p>
+        <p class="d-flex flex-row">
+          <div style={inputLabel}>Email: </div>
+          {isEditing ? (
+            <input
+              type="email"
+              value={profileData.email}
+              onChange={(e) => handleInputChange(e, "email")}
+              style={inputStyle}
             />
           ) : (
-            <FontAwesomeIcon
-              icon={faPenToSquare}
-              style={{
-                opacity: 0,
-              }}
-              onClick={handleEditClick}
-            />
+            <span>{profileData.email}</span>
           )}
-        </div>
-        <img src={profileData.photo || defaultImg} style={profileImageStyle} />
-        <h2 style={{ marginBottom: "1rem" }}>
-          <strong>Dr. {profileData.name}</strong>
-        </h2>
-        <h2
-          style={{ marginBottom: "2rem", fontSize: "20px", color: "#05afb9 " }}
-        >
-          <strong>{profileData.speciality}</strong>
-        </h2>
-        <div className="d-flex flex-column align-items-start">
-          <p class="d-flex flex-row">
-            <div style={inputLabel}>Username:</div>
-            <span>{profileData.username}</span>
-          </p>
-          <p class="d-flex flex-row">
-            <div style={inputLabel}>Email: </div>
-            {isEditing ? (
-              <input
-                type="email"
-                value={profileData.email}
-                onChange={(e) => handleInputChange(e, "email")}
-                style={inputStyle}
-              />
-            ) : (
-              <span>{profileData.email}</span>
-            )}
-          </p>
-          <p class="d-flex flex-row">
-            <div style={inputLabel}>Affiliation: </div>
-            {isEditing ? (
-              <input
-                type="text"
-                value={profileData.affiliation}
-                onChange={(e) => handleInputChange(e, "affiliation")}
-                style={inputStyle}
-              />
-            ) : (
-              <span>{profileData.affiliation}</span>
-            )}
-          </p>
-          <p class="d-flex flex-row">
-            <div style={inputLabel}>Hourly Rate:</div>
-            {isEditing ? (
-              <input
-                type="number"
-                value={profileData.hourlyRate}
-                onChange={(e) => handleInputChange(e, "hourlyRate")}
-                style={inputStyle}
-              />
-            ) : (
-              <span>{profileData.hourlyRate} LE/hr</span>
-            )}
-          </p>
-        </div>
-        <p class="d-flex flex-row">
-          <div style={inputLabel}>Educational Background:</div>
-          <span>{profileData.educationalBackground}</span>
         </p>
-        <div>
-          {isEditing && (
-            <Button onClick={handleSaveChanges}>Save Changes</Button>
+        <p class="d-flex flex-row">
+          <div style={inputLabel}>Affiliation: </div>
+          {isEditing ? (
+            <input
+              type="text"
+              value={profileData.affiliation}
+              onChange={(e) => handleInputChange(e, "affiliation")}
+              style={inputStyle}
+            />
+          ) : (
+            <span>{profileData.affiliation}</span>
           )}
-        </div>
+        </p>
+        <p class="d-flex flex-row">
+          <div style={inputLabel}>Hourly Rate:</div>
+          {isEditing ? (
+            <input
+              type="number"
+              value={profileData.hourlyRate}
+              onChange={(e) => handleInputChange(e, "hourlyRate")}
+              style={inputStyle}
+            />
+          ) : (
+            <span>{profileData.hourlyRate} LE/hr</span>
+          )}
+        </p>
+      </div>
+      <p class="d-flex flex-row">
+        <div style={inputLabel}>Educational Background:</div>
+        <span>{profileData.educationalBackground}</span>
+      </p>
+      <div>
+        {isEditing && <Button onClick={handleSaveChanges}>Save Changes</Button>}
       </div>
     </div>
   );

@@ -2,6 +2,7 @@ const { default: mongoose } = require("mongoose");
 
 const potentialDoctorModel = require("../Models/PotentialDoctor.js");
 const patientModel = require("../Models/Patient.js");
+const doctorModel = require("../Models/Doctor.js");
 
 const addPotentialDoctor = async (req, res) => {
   const { username } = req.body;
@@ -32,10 +33,12 @@ const addPatient = async (req, res) => {
     mobileNumber,
     emergencyFullName,
     emergencyMobileNumber,
+    age,
+    nationalID,
   } = req.body;
 
   // Set default values for non-required fields
-  
+
   const package = req.body.package || "  ";
 
   try {
@@ -57,6 +60,9 @@ const addPatient = async (req, res) => {
       emergencyFullName,
       emergencyMobileNumber,
       package, // Set the default value for package
+      age,
+      nationalID,
+      wallet: 500000000,
     });
 
     console.log("Patient Created!");
@@ -66,4 +72,48 @@ const addPatient = async (req, res) => {
   }
 };
 
-module.exports = { addPotentialDoctor, addPatient };
+const acceptPotientialDoc = async (req, res) => {
+  const { username } = req.body;
+
+  try {
+    const fakePotential = await doctorModel.findOne({ username });
+    if (fakePotential) {
+      return res.status(409).json("Doctor already got accepted");
+    }
+
+    // Find the potential doctor by username
+    const potentialDoctor = await potentialDoctorModel.findOne({ username });
+
+    if (!potentialDoctor) {
+      return res.status(409).json({ message: "Invalid username" });
+    }
+
+    // Create a new doctor using the fields of the potential doctor
+    const doctor = new doctorModel({
+      username: potentialDoctor.username,
+      name: potentialDoctor.name,
+      email: potentialDoctor.email,
+      password: potentialDoctor.password,
+      dateOfBirth: potentialDoctor.dateOfBirth,
+      hourlyRate: potentialDoctor.hourlyRate,
+      affiliation: potentialDoctor.affiliation,
+      educationalBackground: potentialDoctor.educationalBackground,
+      specialty: potentialDoctor.specialty,
+      documents: potentialDoctor.documents,
+      contract: false,
+      wallet: 0,
+    });
+
+    // Save the new doctor to the doctorModel
+    await doctor.save();
+
+    // Remove the potential doctor from the potentialDoctorModel
+    await potentialDoctorModel.deleteOne({ username });
+
+    res.status(201).json({ message: "Doctor created successfully", doctor });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
+module.exports = { addPotentialDoctor, addPatient, acceptPotientialDoc };

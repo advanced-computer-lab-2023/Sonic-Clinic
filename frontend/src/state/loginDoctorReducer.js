@@ -14,6 +14,7 @@ const initialState = {
   patients: [],
   speciality: "",
   photo: "",
+  wallet: "",
   isLoggedIn: false,
 };
 
@@ -35,11 +36,15 @@ const loginSlice = createSlice({
       state.patients = action.payload.patients;
       state.speciality = action.payload.speciality;
       state.isLoggedIn = action.payload.isLoggedIn;
+      state.wallet = action.payload.wallet;
     },
     setUpdatesDoctor: (state, action) => {
       state.email = action.payload.email;
       state.hourlyRate = action.payload.hourlyRate;
       state.affiliation = action.payload.affiliation;
+    },
+    updateDoctorWallet: (state, action) => {
+      state.wallet = action.payload.wallet;
     },
     logoutDoctor: (state, action) => {
       state.userName = "";
@@ -54,6 +59,7 @@ const loginSlice = createSlice({
       state.userId = "";
       state.patients = [];
       state.speciality = "";
+      state.wallet = "";
       state.isLoggedIn = false;
     },
 
@@ -75,6 +81,7 @@ const loginSlice = createSlice({
 export const {
   setCredentialsDoctor,
   setUpdatesDoctor,
+  updateDoctorWallet,
   logoutDoctor,
   clearPasswordDoctor,
   setUserIdDoctor,

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
-import AdminSearchBar from "../../components/Admin/AdminSearchBar";
-import { Container } from "react-bootstrap";
+import { Container, Form } from "react-bootstrap";
 import AdminDocReqCard from "./AdminDocReqCard";
 import axios from "axios";
 
@@ -8,6 +7,7 @@ export default function AdminDocReqs() {
   const [loading, setLoading] = useState(true);
   const [responseData, setResponseData] = useState([]);
   const [error1, setError] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     fetchData();
@@ -33,6 +33,9 @@ export default function AdminDocReqs() {
   };
 
   const users = responseData;
+  const filteredUsers = users.filter((user) =>
+    user.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <Container
@@ -44,9 +47,23 @@ export default function AdminDocReqs() {
         marginLeft: "100px",
       }}
     >
-      <AdminSearchBar />
-
-      {users.map((user, index) => (
+      <div
+        className="justify-content-between"
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          width: "1000px",
+          marginBottom: "1rem",
+        }}
+      >
+        <Form.Control
+          type="Text"
+          placeholder="Search"
+          style={{ height: "2.5rem" }}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+      </div>
+      {filteredUsers.map((user, index) => (
         <AdminDocReqCard
           key={index}
           docName={user.name}
@@ -56,6 +73,9 @@ export default function AdminDocReqs() {
           docRate={user.hourlyRate}
           docAffiliation={user.affiliation}
           docEducation={user.educationalBackground}
+          docUsername={user.username}
+          docDocuments={user.documents}
+          fetchData={fetchData}
         />
       ))}
     </Container>

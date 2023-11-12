@@ -1,12 +1,29 @@
 const mongoose = require("mongoose");
 const Appointment = require("./Appointment");
 const Schema = mongoose.Schema;
+const bcrypt = require("bcrypt");
+
+const fileSchema = new Schema({
+  filename: {
+    type: String,
+    required: false,
+  },
+  mimetype: {
+    type: String,
+    required: false,
+  },
+  buffer: {
+    type: Buffer,
+    required: false,
+  },
+});
 
 const doctorSchema = new Schema(
   {
     username: {
       type: String,
       required: true,
+      unique: [true, "this username is taken, please enter another username"],
     },
     name: {
       type: String,
@@ -15,6 +32,7 @@ const doctorSchema = new Schema(
     email: {
       type: String,
       required: true,
+      unique: [true, "this email is taken, please enter another email"],
     },
     password: {
       type: String,
@@ -37,7 +55,7 @@ const doctorSchema = new Schema(
       required: true,
     },
     patients: {
-      type: Array,
+      type:[String],
       required: false,
     },
     specialty: {
@@ -46,7 +64,21 @@ const doctorSchema = new Schema(
     },
     appointments: {
       type: [Object],
+      required: false,
     },
+    availableSlots: {
+      type: [String],
+      required: false,
+    },
+    wallet: {
+      type: Number,
+      required: false,
+    },
+    contract: {
+      type: Boolean,
+      required: false,
+    },
+    documents: [fileSchema],
   },
   { timestamps: true }
 );
@@ -70,5 +102,21 @@ doctorSchema.methods.getAppointments = async function () {
     throw error;
   }
 };
+
+doctorSchema.pre("save", async function (next) {
+  const salt = await bcrypt.genSalt();
+  this.password = await bcrypt.hash(this.password, salt);
+  next();
+});
+
+// doctorSchema.virtual("patient", {
+//   ref: "Patient",
+//   localField: "patients",
+//   foreignField: "_id",
+// });
+
+// doctorSchema.set("toObject", { virtuals: true });
+// doctorSchema.set("toJSON", { virtuals: true });
+
 const Doctor = mongoose.model("Doctor", doctorSchema);
 module.exports = Doctor;

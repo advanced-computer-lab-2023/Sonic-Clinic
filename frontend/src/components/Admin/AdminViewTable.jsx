@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Table from "react-bootstrap/Table";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrashCan, faXmark, faPlus } from "@fortawesome/free-solid-svg-icons";
-import { Button, Modal } from "react-bootstrap";
+import { Button, Modal, Form } from "react-bootstrap";
 import AddNewAdmin from "../../forms/AddNewAdmin";
 import axios from "axios";
 
@@ -10,6 +10,7 @@ export default function AdminViewTable({ onAdmins, api }) {
   const [loading, setLoading] = useState(true);
   const [responseData, setResponseData] = useState([]);
   const [username, setUsername] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
   const [error, setError] = useState(null);
   const [loadingg, isLoading] = useState(null);
   const [showModal, setShowModal] = useState(false);
@@ -27,6 +28,8 @@ export default function AdminViewTable({ onAdmins, api }) {
         if (api === "/viewAllDoctors") setResponseData(response.data.doctors);
         if (api === "/viewAllPatients") setResponseData(response.data.patients);
         if (api === "/viewAllAdmins") setResponseData(response.data.admins);
+      } else if (response.status === 304) {
+        if (api === "/viewAllAdmins") setResponseData(response.data.admins);
       } else {
         console.log("Server error");
       }
@@ -42,6 +45,10 @@ export default function AdminViewTable({ onAdmins, api }) {
   };
 
   const users = responseData;
+  console.log(users);
+  const filteredUsers = users.filter((user) =>
+    user.username.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   useEffect(() => {}, [username]);
 
@@ -107,6 +114,22 @@ export default function AdminViewTable({ onAdmins, api }) {
           </Button>
         </Modal.Footer>
       </Modal>
+      <div
+        className="justify-content-between"
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          width: "1000px",
+          marginBottom: "1rem",
+        }}
+      >
+        <Form.Control
+          type="Text"
+          placeholder="Search Username"
+          style={{ height: "2.5rem" }}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+      </div>
       {onAdmins && (
         <Button style={btnStyle} id="newAdminForm" onClick={toggleAddNewAdmin}>
           {addBtnText}
@@ -131,7 +154,7 @@ export default function AdminViewTable({ onAdmins, api }) {
         </thead>
         <tbody>
           {users &&
-            users.map((user) => (
+            filteredUsers.map((user) => (
               <tr key={user._id}>
                 {!onAdmins && <td>{user.name}</td>}
                 <td>{user.username} </td>

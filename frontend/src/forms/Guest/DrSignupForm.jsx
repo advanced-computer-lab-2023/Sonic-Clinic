@@ -2,12 +2,9 @@ import axios from "axios";
 import * as React from "react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-
 import { useDispatch } from "react-redux";
-
 import FormPassword from "../FormPassword";
 import FormInput from "../FormInput";
-import { setCredentialsDoctor } from "../../state/loginDoctorReducer";
 import { Form } from "react-bootstrap";
 
 const DrSignupForm = () => {
@@ -20,12 +17,11 @@ const DrSignupForm = () => {
   const [rate, setRate] = useState("");
   const [affiliation, setAffiliation] = useState("");
   const [education, setEducation] = useState("");
-  const [speciality, setSpeciality] = useState("");
+  const [speciality, setSpeciality] = useState("Cardiology");
+  const [doctorID, setdoctorID] = useState(null);
+  const [medicalLicense, setMedicalLicense] = useState(null);
+  const [medicalDegree, setMedicalDegree] = useState(null);
   const [error1, setError] = useState(null);
-  const [message, setMessage] = useState(null);
-  const [loading, isLoading] = useState(null);
-  const [agree, setAgree] = useState(false);
-  const [okay, setOkay] = useState(false);
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -33,17 +29,10 @@ const DrSignupForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
   };
-  const handleClose = () => {
-    setOpen(false);
-  };
-  const handleLink = () => {
-    setOpen(true);
-  };
 
   const handleClick = async (e) => {
     e.preventDefault();
     setError(null);
-    isLoading(true);
 
     if (
       !name ||
@@ -55,16 +44,17 @@ const DrSignupForm = () => {
       !education ||
       !affiliation ||
       !speciality ||
-      !rate
+      !rate ||
+      !medicalDegree ||
+      !medicalLicense ||
+      !doctorID
     ) {
       setError("Please fill in all fields");
       console.log(error1);
-      isLoading(false);
       return;
     }
     if (!username.trim()) {
       setError("Username is required.");
-      isLoading(false);
       return;
     }
     //Validation For Email input field
@@ -73,44 +63,33 @@ const DrSignupForm = () => {
 
     if (!email) {
       setError("Email field cannot be empty.");
-      isLoading(false);
       return;
     }
     if (!emailRegex.test(email)) {
       setError("Invalid email format.");
-      isLoading(false);
       return;
     }
     if (!englishOnlyRegex.test(email)) {
       setError("Email must be in English only.");
-      isLoading(false);
       return;
     }
     if (email.length > 320) {
       setError("Email exceeds maximum character limit (320).");
-      isLoading(false);
       return;
     }
     if (/[^\x00-\x7F]/.test(email)) {
       setError("Email cannot contain emojis or special characters.");
-      isLoading(false);
       return;
     }
     if (/\s/.test(email)) {
       setError("Email cannot contain spaces.");
-      isLoading(false);
       return;
     }
     // Validation for Last Name
-    const emojiRegex = /[\u{1F300}-\u{1F6FF}]/u;
-    const numberRegex = /\d/;
-    const symbolRegex = /[!@#$%^&*(),.?":{}|<>]/;
-    const languageRegex = /[^\x00-\x7F]/;
     const nameRegex = /^[^\s]+(\s[^\s]+)?$/;
 
     if (name.length < 2) {
       setError("name must be at least 2 characters.");
-      isLoading(false);
       return;
     }
 
@@ -118,7 +97,6 @@ const DrSignupForm = () => {
       setError(
         "Name must contain either one name or two names with only one space between them."
       );
-      isLoading(false);
       return;
     }
 
@@ -130,7 +108,6 @@ const DrSignupForm = () => {
 
     if (password.length < 8) {
       setError("Password must be at least 8 characters long");
-      isLoading(false);
       return;
     }
     const twentyYearsAgo = new Date();
@@ -138,49 +115,32 @@ const DrSignupForm = () => {
 
     if (new Date(birthdate) > twentyYearsAgo) {
       setError("You must be at least 20 years old to sign up.");
-      isLoading(false);
       return;
     }
 
     if (!uppercaseRegex.test(password)) {
       setError("Password must contain at least one uppercase letter");
-      isLoading(false);
       return;
     }
 
     if (!lowercaseRegex.test(password)) {
       setError("Password must contain at least one lowercase letter");
-      isLoading(false);
       return;
     }
 
     if (!digitRegex.test(password)) {
       setError("Password must contain at least one digit");
-      isLoading(false);
       return;
     }
 
     if (!specialCharRegex.test(password)) {
       setError("Password must contain at least one special character");
-      isLoading(false);
       return;
     }
     if (password !== confirmPassword) {
       setError("Passwords do not match");
-      isLoading(false);
       return;
     } else {
-      const user = {
-        name,
-        username,
-        email,
-        password,
-        birthdate,
-        rate,
-        affiliation,
-        speciality,
-        education,
-      };
       try {
         const response = await axios.post("/addPotentialDoctor", {
           username: username,
@@ -195,12 +155,46 @@ const DrSignupForm = () => {
         });
 
         if (response.status === 201) {
-          isLoading(false);
-          setError(null);
-          navigate("/login");
+          try {
+            const formData = new FormData();
+
+            if (medicalDegree) {
+              const formattedMedicalDegree = formatFileForUpload(medicalDegree);
+              const blob = new Blob([formattedMedicalDegree.buffer.data], { type: formattedMedicalDegree.mimetype });
+              formData.append("files", blob, formattedMedicalDegree);
+            }
+
+            // Format and append medicalLicense file
+            if (medicalLicense) {
+              const formattedMedicalLicense =
+                formatFileForUpload(medicalLicense);
+                const blob = new Blob([formattedMedicalLicense.buffer.data], { type: formattedMedicalLicense.mimetype });
+              formData.append("files", blob, formattedMedicalLicense);
+            }
+
+            // Format and append doctorID file
+            if (doctorID) {
+              const formattedDoctorID = formatFileForUpload(doctorID);
+              const blob = new Blob([formattedDoctorID.buffer.data], { type: formattedDoctorID.mimetype });
+              formData.append("files",blob, formattedDoctorID);
+            }
+
+            const response2 = await axios.post(
+              `/uploadFilesForPotentialDoctor?username=${username}`,
+              formData,
+              {
+                headers: {
+                  "Content-Type": "multipart/form-data",
+                },
+              }
+            );
+            if (response2.status === 200) {
+              setError("Your application will be reviewed");
+
+            }
+          } catch (error) {}
         } else {
           setError("Signup failed");
-          isLoading(false);
         }
       } catch (error) {
         console.error("Error:", error);
@@ -214,18 +208,21 @@ const DrSignupForm = () => {
             "An error occurred while signing up. Please try again later."
           );
         }
-
-        isLoading(false);
       }
     }
   };
-  const checkboxHandler = () => {
-    setAgree(!agree);
-  };
+
+  const formatFileForUpload = (file) => ({
+    filename: file.name,
+      mimetype: file.type,
+      buffer: {
+        type: "Buffer",
+        data: Array.from(new Uint8Array(file)),
+      },
+  });
 
   return (
     <div className="col-9 form-container">
-      <div className="form-title">Hello!</div>
       <div className="form-title">Submit a Request to Get Started</div>
       <form className="rounded-3" onSubmit={handleSubmit}>
         <div className="col">
@@ -239,7 +236,6 @@ const DrSignupForm = () => {
             />
           </div>
         </div>
-
         <div className="row">
           <div className="col">
             <FormInput
@@ -281,14 +277,11 @@ const DrSignupForm = () => {
               name="Educational Background"
               type="text"
               placeholder="MBA"
-              onChange={
-                (e) => setEducation(e.target.value)
-                // validateEmail();
-              }
+              onChange={(e) => setEducation(e.target.value)}
             />
           </div>
           <div className="col">
-            <Form.Group controlId="genderSelect">
+            <Form.Group controlId="SpecialtySelect">
               <Form.Label
                 style={{
                   width: "7.75rem",
@@ -316,16 +309,95 @@ const DrSignupForm = () => {
               </Form.Control>
             </Form.Group>
           </div>
+          <div className="col">
+            <label
+              htmlFor="fileInput"
+              style={{
+                width: "7.75rem",
+                height: "1.1875rem",
+                flexShrink: 0,
+                color: "var(--flowkit-charcoal, #222)",
+                fontSize: "0.75rem",
+                fontStyle: "normal",
+                fontWeight: 700,
+                lineHeight: "normal",
+              }}
+            >
+              Medical License
+            </label>
+            <input
+              type="file"
+              accept=".pdf"
+              onChange={(e) => setMedicalLicense(e.target.files[0])}
+              style={{
+                color: "#05afb9",
+                fontSize: "0.93rem",
+                marginBottom: "1rem",
+              }}
+              id="licenseInput"
+            />
+          </div>
+          <div className="col">
+            <label
+              htmlFor="fileInput"
+              style={{
+                width: "7.75rem",
+                height: "1.1875rem",
+                flexShrink: 0,
+                color: "var(--flowkit-charcoal, #222)",
+                fontSize: "0.75rem",
+                fontStyle: "normal",
+                fontWeight: 700,
+                lineHeight: "normal",
+              }}
+            >
+              Medical Degree
+            </label>
+            <input
+              type="file"
+              accept=".pdf"
+              onChange={(e) => setMedicalDegree(e.target.files[0])}
+              style={{
+                color: "#05afb9",
+                fontSize: "0.93rem",
+                marginBottom: "1rem",
+              }}
+              id="degreeInput"
+            />
+          </div>
+          <div className="col">
+            <label
+              style={{
+                width: "7.75rem",
+                height: "1.1875rem",
+                flexShrink: 0,
+                color: "var(--flowkit-charcoal, #222)",
+                fontSize: "0.75rem",
+                fontStyle: "normal",
+                fontWeight: 700,
+                lineHeight: "normal",
+              }}
+            >
+              Doctor ID
+            </label>
+            <input
+              type="file"
+              accept=".pdf"
+              onChange={(e) => setdoctorID(e.target.files[0])}
+              style={{
+                color: "#05afb9",
+                fontSize: "0.93rem",
+                marginBottom: "0.75rem",
+              }}
+              id="IdInput"
+            />
+          </div>
         </div>
-
         <FormInput
           name="Email"
           type="email"
           placeholder="john.doe@ibm.com"
-          onChange={
-            (e) => setEmail(e.target.value)
-            // validateEmail();
-          }
+          onChange={(e) => setEmail(e.target.value)}
         />
         <FormPassword
           id="password"
@@ -358,20 +430,7 @@ const DrSignupForm = () => {
             Login
           </div>
         </div>
-        {error1 && (
-          <div
-            style={{
-              marginTop: "2rem",
-              backgroundColor: "#f44336", // Red background color
-              color: "white", // White text color
-              padding: "10px", // Padding around the message
-              borderRadius: "5px", // Rounded corners
-              boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.2)", // Box shadow for a subtle effect
-            }}
-          >
-            {error1}
-          </div>
-        )}
+        {error1 && <div className="error">{error1}</div>}
       </form>
     </div>
   );

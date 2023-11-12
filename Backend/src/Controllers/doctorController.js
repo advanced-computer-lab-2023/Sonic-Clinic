@@ -26,7 +26,7 @@ const searchPatientByName = async (req, res) => {
 
 const filterPatientsByAppointments = async (req, res) => {
   try {
-    const doctor = await doctorModel.findOne(req.body);
+    const doctor = await doctorModel.findOne(req.user.id);
     console.log(doctor);
     if (!doctor) {
       return res.status(401).json({ error: "Doctor not authenticated" });
@@ -64,7 +64,7 @@ const filterApointmentsByDateOrStatusDoc = async (req, res) => {
   const { date, status } = req.query;
 
   try {
-    const doctorID = req.body._id;
+    const doctorID = req.user.id;
 
     let query = { doctorID };
 
@@ -91,7 +91,7 @@ const filterApointmentsByDateOrStatusDoc = async (req, res) => {
 const updateDoctorProfile = async (req, res) => {
   const { email, hourlyRate, affiliation } = req.query; // Extract fields from req.query
 
-  const id = req.query._id;
+  const id = req.user.id;
 
   try {
     const doctor = await doctorModel.findOne({ _id: id });
@@ -115,23 +115,30 @@ const updateDoctorProfile = async (req, res) => {
 };
 
 const viewPatients = async (req, res) => {
-  const id = req.body._id;
+  //const id = req.user.id;
 
   try {
-    const doctor = await doctorModel.findOne({ _id: id });
+    const doctor = await doctorModel.findById(req.user.id);
     if (!doctor) {
       return res.status(404).json({ message: "Doctor not found." });
     }
 
     const patients = doctor.patients;
+    if (!patients) {
+      return res.status(404).json({ message: "No patients found." });
+    }
     const actualPatients = [];
 
     for (const patientId of patients) {
-      const patient = await patientModel
-        .findOne({ _id: patientId })
-        .populate("prescriptions");
+      const patient = await patientModel.findOne({ _id: patientId });
+
       if (patient) {
         actualPatients.push(patient);
+      } else {
+        const familyMember = await familyMemberModel.findOne({
+          _id: patientId,
+        });
+        actualPatients.push(familyMember);
       }
     }
 
@@ -140,7 +147,6 @@ const viewPatients = async (req, res) => {
     res.status(500).json({ message: "Server Error" });
   }
 };
-
 const viewInfoAndHealthRecord = async (req, res) => {
   const patientUsername = req.body.username;
 
@@ -185,7 +191,7 @@ const viewInfoAndHealthRecord = async (req, res) => {
 };
 
 const selectPatient = async (req, res) => {
-  const doctorId = req.query._id;
+  const doctorId = req.user.id;
   const { patientUsername } = req.body;
 
   try {
@@ -225,7 +231,7 @@ const addPrescription = async (req, res) => {
 const viewDocApp = async (req, res) => {
   try {
     const appointments = await appointmentModel
-      .find({ doctorID: req.body._id })
+      .find({ doctorID: req.user.id })
       .populate("patient");
     res.status(200).json(appointments);
   } catch (error) {
@@ -238,6 +244,162 @@ function parseDateString(dateString) {
   return new Date(year, month - 1, day); // Month is 0-indexed in JavaScript Date
 }
 
+const addAvailableSlots = async (req, res) => {
+  const slots = req.body.slots;
+
+  try {
+    // Find the doctor by ID
+    const doctor = await doctorModel.findById(req.user.id);
+
+    if (!doctor) {
+      return res.status(404).json({ message: "Doctor not found." });
+    }
+
+    doctor.availableSlots = doctor.availableSlots.concat(slots);
+
+    // Save the updated doctor document
+    await doctor.save();
+
+    res.status(200).json({
+      message: "Available slots added successfully.",
+      slots,
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Server Error", error });
+  }
+};
+
+const viewAllAppointmentsDoctor = async (req, res) => {
+  try {
+    const id = req.user.id;
+    const appointments = await appointmentModel
+      .find({ doctorID: id })
+      .populate("patient");
+
+    if (!appointments || appointments.length === 0) {
+      return res.status(404).json({ message: "No appointments found." });
+    }
+
+    res.status(200).json(appointments);
+  } catch (error) {
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+const changePasswordForDoctor = async (req, res) => {
+  const { currentPassword, newPassword } = req.body;
+  const doctorID = req.user.id;
+
+  try {
+    const doctor = await doctorModel.findById(doctorID);
+
+    if (!doctor) {
+      return res.status(404).json({ message: "Doctor not found." });
+    }
+
+    const isPasswordCorrect = await bcrypt.compare(
+      currentPassword,
+      doctor.password
+    );
+
+    if (!isPasswordCorrect) {
+      return res
+        .status(401)
+        .json({ message: "Current password is incorrect." });
+    }
+
+    // Hash the new password and update it in the database
+    const salt = await bcrypt.genSalt();
+    const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+    doctor.password = hashedPassword;
+    await doctor.save();
+
+    res.status(200).json({ message: "Password changed successfully." });
+  } catch (error) {
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+
+const addAppointmentByPatientID = async (req, res) => {
+  try {
+    const doctorID = req.user.id;
+
+    const { date, description, patientID, status, time } = req.body;
+
+    // Create a new appointment with doctorID, patientID, and other details
+    const appointment = await appointmentModel.create({
+      date,
+      description,
+      patientID,
+      doctorID,
+      status,
+      time,
+    });
+
+    //   const doctor= await doctorModel.findById(req.user.id);
+    //   doctor.patients.push(patientID);
+    //  await  doctor.save();
+
+    res
+      .status(201)
+      .json({ message: "Appointment added successfully.", appointment });
+  } catch (error) {
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+
+const viewAvailableSlots = async (req, res) => {
+  try {
+    const doctor = await doctorModel.findById(req.user.id);
+    if (!doctor) {
+      return res.status(404).json({ message: "Doctor not found." });
+    }
+
+    // Get the available slots of the doctor
+    const availableSlots = doctor.availableSlots || [];
+
+    if (availableSlots.length === 0) {
+      return res
+        .status(404)
+        .json({ message: "This doctor has no available slots." });
+    }
+
+    return res.status(200).json({ availableSlots });
+  } catch (error) {
+    console.error("Error:", error);
+    return res.status(500).json({ message: "Server Error" });
+  }
+};
+
+const viewWalletDoc = async (req, res) => {
+  try {
+    const doc = await doctorModel.findById(req.user.id);
+    const wallet = doc.wallet;
+    res.status(200).json(wallet);
+  } catch (error) {
+    console.error("Error:", error);
+    return res.status(500).json({ message: "Server Error" });
+  }
+};
+
+const acceptContract = async (req, res) => {
+  try {
+    const doc = await doctorModel.findById(req.user.id);
+
+    if (!doc) {
+      return res.status(404).json({ message: "Doctor not found" });
+    }
+
+    doc.contract = true;
+    await doc.save();
+
+    res.status(200).json("Contract Accepted");
+  } catch (error) {
+    console.error("Error:", error);
+    return res.status(500).json({ message: "Server Error" });
+  }
+};
+
 module.exports = {
   selectPatient,
   viewInfoAndHealthRecord,
@@ -248,4 +410,11 @@ module.exports = {
   searchPatientByName,
   addPrescription,
   viewDocApp,
+  addAvailableSlots,
+  viewAllAppointmentsDoctor,
+  changePasswordForDoctor,
+  viewAvailableSlots,
+  addAppointmentByPatientID,
+  viewWalletDoc,
+  acceptContract,
 };
