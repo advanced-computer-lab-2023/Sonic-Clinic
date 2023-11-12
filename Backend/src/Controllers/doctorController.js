@@ -336,9 +336,9 @@ const addAppointmentByPatientID = async (req, res) => {
     });
 
   
-  const doctor= await doctorModel.findById(req.user.id);
-  doctor.patients.push(patientID);
- await  doctor.save();
+//   const doctor= await doctorModel.findById(req.user.id);
+//   doctor.patients.push(patientID);
+//  await  doctor.save();
 
     res
       .status(201)
