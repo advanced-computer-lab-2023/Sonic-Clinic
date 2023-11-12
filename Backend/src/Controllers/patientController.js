@@ -1140,17 +1140,17 @@ const subscribeHealthPackageWallet = async (req, res) => {
 
     if (!id) {
       patient = await patientModel
-        .findById(req.user.id)
-        .populate("packagesPatient");
+        .findById(req.user.id);
     } else {
-      patient = await familyMemberModel.findById(id).populate("packagesFamily");
+      patient = await patientModel.findById(id);
     }
 
     if (!patient) {
       return res.status(404).json({ message: "User not found." });
     }
+
     const packageName = req.query.type;
-    if (patient.package) {
+    if (patient.package !== "  ") {
       const patientPackage = await packagesModel.findOne({
         _id: patient.package,
       });
@@ -1160,11 +1160,13 @@ const subscribeHealthPackageWallet = async (req, res) => {
           .json({ message: "You are already subscribed to this package." });
       }
     }
-    const originalPackage = await packagesModel.findOne({ type: packageName });
-    const newType = packageName + " " + patient.name;
 
+    const originalPackage = await packagesModel.findOne({ type: packageName });
+    const newType = packageName + " " + patient.username;
+    
+let newPackage;
     if (mainPatient.wallet >= originalPackage.price) {
-      const newPackage = await packagesModel.create({
+       newPackage = await packagesModel.create({
         type: newType,
         price: originalPackage.price,
         sessionDiscount: originalPackage.sessionDiscount,
@@ -1175,10 +1177,10 @@ const subscribeHealthPackageWallet = async (req, res) => {
         endDate: originalPackage.endDate,
         patientID: patient._id,
       });
+    }
 
       if (!newPackage) {
-        console.error("Error creating the package");
-        return res.status(500).json({ message: "Error creating the package" });
+        return res.status(500).json({ message: "Insufficient funds" });
       }
       patient.package = newPackage._id;
       await patient.save();
@@ -1187,7 +1189,7 @@ const subscribeHealthPackageWallet = async (req, res) => {
       mainPatient.wallet = mainPatient.wallet - newPackage.price;
 
       await mainPatient.save();
-    }
+    
 
     return res.status(200).json({ patient });
   } catch (error) {
