@@ -12,6 +12,7 @@ function UploadDocuments() {
   const [existingFiles, setExistingFiles] = useState([]);
   const [uploadVisible, setUploadVisible] = useState(false);
   const dispatch = useDispatch();
+  console.log(existingFiles);
 
   useEffect(() => {
     reloadMedicalHistory();
@@ -22,12 +23,19 @@ function UploadDocuments() {
       const response = await axios.get(
         `/viewPatientMedicalHistory?filename=${file}`,
         {
-          responseType: "blob", // Set the responseType to 'blob'
+          responseType: "text", // Set the responseType to 'text'
         }
       );
 
       if (response.status === 200) {
-        const blob = new Blob([response.data], {
+        const byteString = response.data;
+        const byteNumbers = byteString.split(",").map(Number);
+
+        // Create a Uint8Array from the byte numbers
+        const uint8Array = new Uint8Array(byteNumbers);
+
+        // Create a Blob from the Uint8Array
+        const blob = new Blob([uint8Array], {
           type: response.headers["content-type"],
         });
 
@@ -53,9 +61,12 @@ function UploadDocuments() {
         } else {
           console.log("File content is empty");
         }
+      } else {
+        console.log(`Failed to download file. Status: ${response.status}`);
       }
     } catch (error) {
-      console.log("Error fetching file:", error);
+      console.error("Error fetching file:", error);
+      // Handle the error appropriately
     }
   };
 
@@ -75,18 +86,51 @@ function UploadDocuments() {
     }
   };
 
-  const handleFileUpload = (e) => {
+  const handleFileUpload = async (e) => {
     const newFiles = Array.from(e.target.files);
-    const formattedFiles = newFiles.map((file) => ({
-      filename: file.name,
-      mimetype: file.type,
-      buffer: {
-        type: "Buffer",
-        data: Array.from(new Uint8Array(file)),
-      },
-    }));
-    setUploadedFiles([...uploadedFiles, ...formattedFiles]);
+
+    // Check for duplicate files
+    const uniqueNewFiles = newFiles.filter((newFile) => {
+      return !uploadedFiles.some(
+        (uploadedFile) => uploadedFile.filename === newFile.name
+      );
+    });
+
+    // Format and validate files
+    const formattedFiles = await Promise.all(
+      uniqueNewFiles.map(async (file) => {
+        try {
+          // Read the file data as a Uint8Array
+          const fileArrayBuffer = await file.arrayBuffer();
+          const fileUint8Array = new Uint8Array(fileArrayBuffer);
+
+          // Format the file
+          const formattedFile = {
+            filename: file.name,
+            mimetype: file.type,
+            buffer: {
+              type: "Buffer",
+              data: Array.from(fileUint8Array),
+            },
+          };
+
+          // Log the buffer data
+          console.log(`Buffer data for ${file.name}:`, formattedFile.buffer);
+
+          return formattedFile;
+        } catch (error) {
+          console.error(`Error processing file ${file.name}:`, error);
+          return null; // Skip invalid files
+        }
+      })
+    );
+
+    const validFiles = formattedFiles.filter(Boolean);
+
+    setUploadedFiles([...uploadedFiles, ...validFiles]);
   };
+
+  console.log(uploadedFiles);
 
   const handleRemoveFile = (index) => {
     const updatedFiles = [...uploadedFiles];
@@ -97,11 +141,15 @@ function UploadDocuments() {
   const addFiles = async () => {
     try {
       const formData = new FormData();
-
       uploadedFiles.forEach((file, index) => {
         const blob = new Blob([file.buffer.data], { type: file.mimetype });
+
+        const blobUrl = URL.createObjectURL(blob);
+        console.log(blobUrl);
+
         formData.append("files", blob, file.filename);
       });
+      console.log("FILE DATA ", formData);
 
       const response = await axios.post("/uploadFiles", formData, {
         headers: {
