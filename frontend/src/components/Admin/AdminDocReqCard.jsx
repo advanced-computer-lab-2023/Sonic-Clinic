@@ -15,9 +15,7 @@ export default function AdminDocReqCard({
   docBirthDate,
   fetchData,
   docUsername,
-  docMedicalLicense,
-  docMedicalDegree,
-  docDocID,
+  docDocuments,
 }) {
   return (
     <Container style={{ width: "1000px", padding: "0px" }}>
@@ -49,9 +47,7 @@ export default function AdminDocReqCard({
               docEducation={docEducation}
               fetchData={fetchData}
               docUsername={docUsername}
-              docDocID={docDocID}
-              docMedicalDegree={docMedicalDegree}
-              docMedicalLicense={docMedicalLicense}
+              docDocuments={docDocuments}
             />
           </AccordionBody>
         </Accordion.Item>
