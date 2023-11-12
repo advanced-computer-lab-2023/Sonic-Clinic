@@ -1,6 +1,7 @@
 const patientModel = require("../Models/Patient.js");
 const doctorModel = require("../Models/Doctor.js");
 const potentialDoctorModel = require("../Models/PotentialDoctor.js");
+const adminModel = require("./Models/Adminstrator");
 const multer = require("multer");
 
 const storage = multer.memoryStorage();
@@ -297,6 +298,54 @@ const viewMedicalRecords = async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 };
+const viewPtlDocDocumentsbyAdmins = async (req, res) => {
+  try {
+    const admin = await adminModel.findById(req.user.id);
+    const PotentialDoctorID = req.body.id;
+    const requestedFilename = req.body.filename;
+    const PotentialDoctor = await potentialDoctorModel.findById(PotentialDoctorID);
+
+    if (!admin) {
+      return res.status(404).json({ error: "Admin not found" });
+    }
+    if (!PotentialDoctor) {
+      return res.status(404).json({ error: "PotentialDoctor not found" });
+    }
+ 
+    const douments = PotentialDoctor.documents;
+
+    if (!douments || douments.length === 0) {
+      return res
+        .status(404)
+        .json({ message: "No douments  found for the PotentialDoctor." });
+    }
+
+    const requestedFile = douments.find(
+      (file) => file.filename === requestedFilename
+    );
+
+    if (!requestedFile) {
+      return res
+        .status(404)
+        .json({ message: "File not found in the PotentialDoctor's Documents." });
+    }
+
+    const { buffer, mimetype, filename } = requestedFile;
+
+    const sanitizedFilename = encodeURIComponent(filename);
+
+    res.setHeader("Content-Type", mimetype);
+    res.setHeader(
+      "Content-Disposition",
+      `attachment; filename="${sanitizedFilename}"`
+    );
+    res.end(buffer);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
 
 module.exports = {
   uploadFiles,
@@ -306,4 +355,5 @@ module.exports = {
   uploadFilesForPotentialDoctor,
   uploadFilesbyDoctors,
   viewMedicalRecords,
+  viewPtlDocDocumentsbyAdmins
 };
