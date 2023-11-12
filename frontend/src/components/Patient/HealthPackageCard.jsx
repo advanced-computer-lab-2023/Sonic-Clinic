@@ -187,7 +187,7 @@ export default function HealthPackageCard() {
       >
         {packages.map((packagee, index) => {
           const dynamicTextsForPackage = [
-            packagee.price,
+            "$ " + packagee.price,
             packagee.sessionDiscount + " %",
             packagee.medicineDiscount + " %",
             packagee.packageDiscountFM + " %",
