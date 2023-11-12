@@ -117,6 +117,9 @@ const {
   logout,
   otp,
   verifyOtp,
+  requireAdminAuth,
+  requirePatientAuth,
+  requireDoctorAuth,
 } = require("./Controllers/authorization");
 ////////////////////////////////uploadController///////////////////////////////////////////
 const {
@@ -211,7 +214,7 @@ server.post(
 );
 
 //patient
-server.post("/addFamilyMember", requireAuth, addFamilyMember);
+server.post("/addFamilyMember", requirePatientAuth, addFamilyMember);
 server.post("/addAppointment", requireAuth, addAppointment);
 server.post(
   "/subscribeHealthPackage",
