@@ -506,7 +506,7 @@ const getDoctorsWithSessionPrice = async (req, res) => {
       doctors.map(async (doctor) => {
         const sessionPrice = await calculateSessionPrice(
           doctor.hourlyRate,
-          patient.package
+          patient.packagesPatient
         );
 
         // Include all fields from the doctor object along with sessionPrice
@@ -1141,8 +1141,7 @@ const subscribeHealthPackageWallet = async (req, res) => {
     const mainPatient = await patientModel.findById(req.user.id);
 
     if (!id) {
-      patient = await patientModel
-        .findById(req.user.id);
+      patient = await patientModel.findById(req.user.id);
     } else {
       patient = await patientModel.findById(id);
     }
@@ -1165,10 +1164,10 @@ const subscribeHealthPackageWallet = async (req, res) => {
 
     const originalPackage = await packagesModel.findOne({ type: packageName });
     const newType = packageName + " " + patient.username;
-    
-let newPackage;
+
+    let newPackage;
     if (mainPatient.wallet >= originalPackage.price) {
-       newPackage = await packagesModel.create({
+      newPackage = await packagesModel.create({
         type: newType,
         price: originalPackage.price,
         sessionDiscount: originalPackage.sessionDiscount,
@@ -1181,22 +1180,21 @@ let newPackage;
       });
     }
 
-      if (!newPackage) {
-        return res.status(500).json({ message: "Insufficient funds" });
-      }
-      patient.package = newPackage._id;
-      await patient.save();
+    if (!newPackage) {
+      return res.status(500).json({ message: "Insufficient funds" });
+    }
+    patient.package = newPackage._id;
+    await patient.save();
 
-      // Deduct package price from patient's wallet
-      mainPatient.wallet = mainPatient.wallet - newPackage.price;
+    // Deduct package price from patient's wallet
+    mainPatient.wallet = mainPatient.wallet - newPackage.price;
 
-      await mainPatient.save();
-    
+    await mainPatient.save();
 
-      return res.status(200).json({
-        originalPackage: originalPackage,
-        wallet: mainPatient.wallet,
-      });
+    return res.status(200).json({
+      originalPackage: originalPackage,
+      wallet: mainPatient.wallet,
+    });
   } catch (error) {
     console.error("Error:", error);
     return res.status(500).json({ message: "Server Error" });

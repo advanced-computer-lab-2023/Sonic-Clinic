@@ -27,7 +27,7 @@ function ShowDoctors({ patients, responseData, setPatients, loading, error1 }) {
         name: doctor.name,
         email: doctor.email,
         dateOfBirth: doctor.dateOfBirth,
-        hourlyRate: doctor.sessionPrice.toFixed(2),
+        hourlyRate: doctor.hourlyRate,
         affiliation: doctor.affiliation,
         educationalBackground: doctor.educationalBackground,
         speciality: doctor.specialty,
@@ -119,7 +119,7 @@ function ShowDoctors({ patients, responseData, setPatients, loading, error1 }) {
                         }}
                         className="d-flex align-items-center justify-content-end"
                       >
-                        ${doctor.sessionPrice.toFixed(2)} / Session
+                        ${doctor.hourlyRate} / Session
                       </div>
                     </Card.Text>
                   </Card.Body>
