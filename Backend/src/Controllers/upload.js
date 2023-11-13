@@ -32,7 +32,7 @@ const uploadFiles = async (req, res) => {
     if (!patient) {
       return res.status(404).json({ error: "Patient not found" });
     }
-    console.log(req);
+    // console.log(req);
     upload(req, res, async (err) => {
       if (err) {
         console.error("Multer error:", err);
@@ -46,9 +46,9 @@ const uploadFiles = async (req, res) => {
           mimetype: file.mimetype,
           buffer: file.buffer,
         });
-        console.log(file.originalname, "NAME"); // Log the file name
-        console.log(file.mimetype, "MIM"); // Log the file name
-        console.log(file.buffer, "BUFFER");
+        // console.log(file.originalname, "NAME"); // Log the file name
+        // console.log(file.mimetype, "MIM"); // Log the file name
+        // console.log(file.buffer, "BUFFER");
       });
       await patient.save();
 
@@ -125,7 +125,7 @@ const viewPatientMedicalHistory = async (req, res) => {
     }
 
     const { buffer, mimetype, filename } = requestedFile;
-    console.log("Buffer size:", buffer.length);
+    // console.log("Buffer size:", buffer.length);
 
     const sanitizedFilename = encodeURIComponent(filename);
 
@@ -183,7 +183,7 @@ const viewPatientMedicalHistoryForDoctors = async (req, res) => {
     }
 
     const { buffer, mimetype, filename } = requestedFile;
-    console.log("Buffer size:", buffer.length);
+    // console.log("Buffer size:", buffer.length);
 
     const sanitizedFilename = encodeURIComponent(filename);
 
@@ -215,29 +215,25 @@ const uploadFilesForPotentialDoctor = async (req, res) => {
     if (!PotentialDoctor) {
       return res.status(404).json({ error: "PotentialDoctor not found" });
     }
-
     upload(req, res, async (err) => {
       if (err) {
-        // console.error("File upload error:", err);
+        console.error("Multer error:", err);
         return res.status(400).json({ error: "File upload failed" });
       }
-
       PotentialDoctor.documents = PotentialDoctor.documents || [];
-
       req.files.forEach((file) => {
         PotentialDoctor.documents.push({
           filename: file.originalname,
           mimetype: file.mimetype,
           buffer: file.buffer,
         });
-        console.log(file.originalname); // Log the file name
-        console.log(file.buffer);
       });
       await PotentialDoctor.save();
+      console.log("FILES", PotentialDoctor.documents);
 
-      res.status(200).json({
-        message: "Files uploaded and associated with the PotentialDoctor.",
-      });
+      res
+        .status(200)
+        .json({ message: "Files uploaded and associated with the patient." });
     });
   } catch (error) {
     console.error(error);
@@ -269,8 +265,10 @@ const uploadFilesbyDoctors = async (req, res) => {
 
     upload(req, res, async (err) => {
       if (err) {
+        console.error("Multer error:", err);
         return res.status(400).json({ error: "File upload failed" });
       }
+
       patient.medicalHistory = patient.medicalHistory || [];
       req.files.forEach((file) => {
         patient.medicalHistory.push({

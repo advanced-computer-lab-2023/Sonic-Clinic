@@ -5,10 +5,11 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import FormPassword from "../FormPassword";
 import FormInput from "../FormInput";
-import { Form } from "react-bootstrap";
+import { Form, Spinner } from "react-bootstrap";
 
 const DrSignupForm = () => {
   const [name, setName] = useState("");
+  const [loading, setLoading] = useState(false);
   const [birthdate, setBirthdate] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -142,6 +143,7 @@ const DrSignupForm = () => {
       return;
     } else {
       try {
+        setLoading(true);
         const response = await axios.post("/addPotentialDoctor", {
           username: username,
           name: name,
@@ -157,26 +159,138 @@ const DrSignupForm = () => {
         if (response.status === 201) {
           try {
             const formData = new FormData();
+            if (medicalLicense) {
+              console.log("MEDICAL LICENSE", medicalLicense);
 
-            if (medicalDegree) {
-              const formattedMedicalDegree = formatFileForUpload(medicalDegree);
-              const blob = new Blob([formattedMedicalDegree.buffer.data], { type: formattedMedicalDegree.mimetype });
-              formData.append("files", blob, formattedMedicalDegree);
+              try {
+                // Read the file data as a Uint8Array
+                const fileArrayBuffer = await medicalLicense.arrayBuffer();
+                const fileUint8Array = new Uint8Array(fileArrayBuffer);
+
+                // Format the file
+                const formattedFile = {
+                  filename: medicalLicense.name,
+                  mimetype: medicalLicense.type,
+                  buffer: {
+                    type: "Buffer",
+                    data: Array.from(fileUint8Array),
+                  },
+                };
+
+                console.log(`Processed file: ${medicalLicense.name}`);
+
+                // Check if any errors occurred during processing
+                if (!formattedFile) {
+                  console.error("Error processing file:", medicalLicense.name);
+                  return;
+                }
+
+                const blob = new Blob([formattedFile.buffer.data], {
+                  type: formattedFile.mimetype,
+                });
+
+                formData.append("files", blob, formattedFile.filename);
+
+                console.log(
+                  "formData after processing medicalLicense:",
+                  formData
+                );
+              } catch (error) {
+                console.error(
+                  "Error processing file:",
+                  medicalLicense.name,
+                  error
+                );
+              }
             }
 
             // Format and append medicalLicense file
-            if (medicalLicense) {
-              const formattedMedicalLicense =
-                formatFileForUpload(medicalLicense);
-                const blob = new Blob([formattedMedicalLicense.buffer.data], { type: formattedMedicalLicense.mimetype });
-              formData.append("files", blob, formattedMedicalLicense);
+
+            if (medicalDegree) {
+              try {
+                // Read the file data as a Uint8Array
+                const fileArrayBuffer = await medicalDegree.arrayBuffer();
+                const fileUint8Array = new Uint8Array(fileArrayBuffer);
+
+                // Format the file
+                const formattedFile = {
+                  filename: medicalDegree.name,
+                  mimetype: medicalDegree.type,
+                  buffer: {
+                    type: "Buffer",
+                    data: Array.from(fileUint8Array),
+                  },
+                };
+
+                console.log(`Processed file: ${medicalDegree.name}`);
+
+                // Check if any errors occurred during processing
+                if (!formattedFile) {
+                  console.error("Error processing file:", medicalDegree.name);
+                  return;
+                }
+
+                const blob = new Blob([formattedFile.buffer.data], {
+                  type: formattedFile.mimetype,
+                });
+
+                formData.append("files", blob, formattedFile.filename);
+
+                console.log(
+                  "formData after processing medicalLicense:",
+                  formData
+                );
+              } catch (error) {
+                console.error(
+                  "Error processing file:",
+                  medicalDegree.name,
+                  error
+                );
+              }
             }
 
             // Format and append doctorID file
             if (doctorID) {
-              const formattedDoctorID = formatFileForUpload(doctorID);
-              const blob = new Blob([formattedDoctorID.buffer.data], { type: formattedDoctorID.mimetype });
-              formData.append("files",blob, formattedDoctorID);
+              try {
+                // Read the file data as a Uint8Array
+                const fileArrayBuffer = await doctorID.arrayBuffer();
+                const fileUint8Array = new Uint8Array(fileArrayBuffer);
+
+                // Format the file
+                const formattedFile = {
+                  filename: doctorID.name,
+                  mimetype: doctorID.type,
+                  buffer: {
+                    type: "Buffer",
+                    data: Array.from(fileUint8Array),
+                  },
+                };
+
+                console.log(`Processed file: ${doctorID.name}`);
+
+                // Check if any errors occurred during processing
+                if (!formattedFile) {
+                  console.error("Error processing file:", doctorID.name);
+                  return;
+                }
+
+                const blob = new Blob([formattedFile.buffer.data], {
+                  type: formattedFile.mimetype,
+                });
+
+                formData.append("files", blob, formattedFile.filename);
+
+                console.log(
+                  "formData after processing medicalLicense:",
+                  formData
+                );
+              } catch (error) {
+                console.error(
+                  "Error processing file:",
+                  medicalDegree.name,
+                  error
+                );
+              }
             }
 
             const response2 = await axios.post(
@@ -189,24 +303,26 @@ const DrSignupForm = () => {
               }
             );
             if (response2.status === 200) {
+              setLoading(false);
               setError("Your application will be reviewed");
-
             }
           } catch (error) {}
         } else {
           setError("Signup failed");
+          setLoading(false);
         }
       } catch (error) {
-        console.error("Error:", error);
-
         if (error.response && error.response.status === 409) {
           setError("Username taken!");
+          setLoading(false);
         } else if (error.response && error.response.status !== 200) {
           setError("Signup failed");
+          setLoading(false);
         } else {
           setError(
             "An error occurred while signing up. Please try again later."
           );
+          setLoading(false);
         }
       }
     }
@@ -214,11 +330,11 @@ const DrSignupForm = () => {
 
   const formatFileForUpload = (file) => ({
     filename: file.name,
-      mimetype: file.type,
-      buffer: {
-        type: "Buffer",
-        data: Array.from(new Uint8Array(file)),
-      },
+    mimetype: file.type,
+    buffer: {
+      type: "Buffer",
+      data: Array.from(new Uint8Array(file)),
+    },
   });
 
   return (
@@ -417,8 +533,13 @@ const DrSignupForm = () => {
           id="nextbtn"
           className="w-100 btn-sm custom-button"
           onClick={handleClick}
+          disabled={loading} // Disable the button when loading
         >
-          Next
+          {loading ? (
+            <Spinner animation="border" size="sm" role="status" />
+          ) : (
+            "Next"
+          )}
         </button>
         <div className="form-comment" style={{ cursor: "default" }}>
           Have an account?{" "}
