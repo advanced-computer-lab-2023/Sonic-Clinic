@@ -32,11 +32,13 @@ const uploadFiles = async (req, res) => {
     if (!patient) {
       return res.status(404).json({ error: "Patient not found" });
     }
-
+    console.log(req);
     upload(req, res, async (err) => {
       if (err) {
+        console.error("Multer error:", err);
         return res.status(400).json({ error: "File upload failed" });
       }
+
       patient.medicalHistory = patient.medicalHistory || [];
       req.files.forEach((file) => {
         patient.medicalHistory.push({
@@ -44,8 +46,9 @@ const uploadFiles = async (req, res) => {
           mimetype: file.mimetype,
           buffer: file.buffer,
         });
-        console.log(file.originalname); // Log the file name
-       console.log(file.buffer);  
+        console.log(file.originalname, "NAME"); // Log the file name
+        console.log(file.mimetype, "MIM"); // Log the file name
+        console.log(file.buffer, "BUFFER");
       });
       await patient.save();
 
@@ -122,15 +125,15 @@ const viewPatientMedicalHistory = async (req, res) => {
     }
 
     const { buffer, mimetype, filename } = requestedFile;
+    console.log("Buffer size:", buffer.length);
 
     const sanitizedFilename = encodeURIComponent(filename);
 
-    res.setHeader("Content-Type", mimetype);
+    // Set the Content-Type header to application/pdf
+    res.setHeader("Content-Type", "application/pdf");
     res.setHeader(
-      res.setHeader(
-        "Content-Disposition",
-        `attachment: filename="${sanitizedFilename}"`
-      )
+      "Content-Disposition",
+      `attachment; filename="${sanitizedFilename}"`
     );
     res.end(buffer);
   } catch (error) {
@@ -180,10 +183,12 @@ const viewPatientMedicalHistoryForDoctors = async (req, res) => {
     }
 
     const { buffer, mimetype, filename } = requestedFile;
+    console.log("Buffer size:", buffer.length);
 
     const sanitizedFilename = encodeURIComponent(filename);
 
-    res.setHeader("Content-Type", mimetype);
+    // Set the Content-Type header to application/pdf
+    res.setHeader("Content-Type", "application/pdf");
     res.setHeader(
       "Content-Disposition",
       `attachment; filename="${sanitizedFilename}"`
@@ -213,10 +218,10 @@ const uploadFilesForPotentialDoctor = async (req, res) => {
 
     upload(req, res, async (err) => {
       if (err) {
-       // console.error("File upload error:", err);
+        // console.error("File upload error:", err);
         return res.status(400).json({ error: "File upload failed" });
       }
-  
+
       PotentialDoctor.documents = PotentialDoctor.documents || [];
 
       req.files.forEach((file) => {
