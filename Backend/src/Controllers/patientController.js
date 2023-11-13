@@ -987,7 +987,7 @@ const subscribeHealthPackageStripe = async (req, res) => {
       ],
 
       success_url: `${process.env.SERVER_URL}/patient/health-packages-success`,
-      cancel_url: `${process.env.SERVER_URL}/patient/health-packages`,
+      cancel_url: `${process.env.SERVER_URL}/patient/fail`,
     });
 
     res.status(200).json({ url: session.url });
@@ -1463,7 +1463,7 @@ const payAppointmentStripe = async (req, res) => {
         },
       ],
       success_url: `${process.env.SERVER_URL}/patient/app-success`,
-      cancel_url: `${process.env.SERVER_URL}/patient/app-success`,
+      cancel_url: `${process.env.SERVER_URL}/patient/fail`,
     });
     res.status(200).json({ url: session.url });
   } catch (error) {
