@@ -1084,11 +1084,8 @@ const changePasswordForPatientForget = async (req, res) => {
     }
 
     let patient = await patientModel.findOne({ email });
-    if (!patient) {
-      patient = await doctorModel.findOne({ email });
-    }
-    //console.log(patient.name);
 
+    
     if (!patient) {
       return res.status(404).json({ message: "Email does not exist." });
     }

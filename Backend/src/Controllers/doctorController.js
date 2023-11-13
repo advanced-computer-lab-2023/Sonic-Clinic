@@ -395,6 +395,32 @@ const acceptContract = async (req, res) => {
     return res.status(500).json({ message: "Server Error" });
   }
 };
+const changePasswordForDoctorForget = async (req, res) => {
+  const { email, newPassword } = req.body;
+
+  try {
+    if (!email || !newPassword) {
+      return res
+        .status(400)
+        .json({ message: "Email and newPassword are required." });
+    }
+
+    let doctor = await doctorModel.findOne({ email });
+    
+    if (!doctor) {
+      return res.status(404).json({ message: "Email does not exist." });
+    }
+    
+  
+    doctor.password = newPassword;
+    await doctor.save();
+
+    res.status(200).json({ message: "Password changed successfully." });
+  } catch (error) {
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+
 
 module.exports = {
   selectPatient,
@@ -413,4 +439,5 @@ module.exports = {
   addAppointmentByPatientID,
   viewWalletDoc,
   acceptContract,
+  changePasswordForDoctorForget
 };

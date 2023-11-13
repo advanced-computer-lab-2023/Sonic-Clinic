@@ -80,6 +80,7 @@ const {
   viewAvailableSlots,
   viewWalletDoc,
   acceptContract,
+  changePasswordForDoctorForget
 } = require("./Controllers/doctorController");
 
 ///////////////////////////////adminstratorController//////////////////////////////////////
@@ -213,6 +214,7 @@ server.post(
   requireAuth,
   addAppointmentByPatientID
 );
+server.post("/changePasswordForDoctorForget", changePasswordForDoctorForget);
 
 //patient
 server.post("/addFamilyMember", requirePatientAuth, addFamilyMember);
