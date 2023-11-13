@@ -55,7 +55,17 @@ function DoctorFilter({ patients, responseData, setPatients }) {
   // };
 
   const handleTimeChange = (e) => {
-    setSelectedTime(e.target.value);
+    const inputTime = e.target.value;
+    const timeParts = inputTime.split(":");
+    if (timeParts.length === 2) {
+      const hours = parseInt(timeParts[0], 10);
+      const minutes = parseInt(timeParts[1], 10);
+      const nearestHalfHour = (Math.round(minutes / 30) * 30) % 60;
+      const roundedTime = `${hours}:${nearestHalfHour
+        .toString()
+        .padStart(2, "0")}`;
+      setSelectedTime(roundedTime);
+    }
   };
   function getCurrentDate() {
     const today = new Date();
@@ -74,15 +84,7 @@ function DoctorFilter({ patients, responseData, setPatients }) {
     return `${yyyy}-${mm}-${dd}`;
   }
   const dispatch = useDispatch();
-  // const handleSearch = () => {
-  //   dispatch(
-  //     setFilterData({
-  //       specialty: selectedSpecialty,
-  //       date: selectedDate,
-  //       time: selectedTime,
-  //     })
-  //   );
-  // };
+
   const handleSearch = async () => {
     dispatch(
       setFilterData({

@@ -48,6 +48,9 @@ const loginSlice = createSlice({
     updatePatientPackage: (state, action) => {
       state.packages = action.payload.packages;
     },
+    cancelPatientPackage: (state, action) => {
+      state.packages = "";
+    },
     setNewPackage: (state, action) => {
       state.newPackage = action.payload.newPackage;
     },
@@ -130,5 +133,6 @@ export const {
   setUserId,
   updatePatientFamily,
   addFamilyMemberState,
+  cancelPatientPackage,
 } = loginSlice.actions;
 export default loginSlice.reducer;
