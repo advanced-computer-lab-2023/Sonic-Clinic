@@ -90,117 +90,162 @@ function HealthPackagesList({ refreshFlag }) {
         {NeededData &&
           NeededData.map((member, index) => (
             <Card key={`outer_${index}`} className="mb-4">
-              {member.package &&
-                (member.package.length > 0 ? (
-                  member.package.map((packagee, packageIndex) => (
-                    <Card.Body key={`inner_${index}_${packageIndex}`}>
-                      <div
-                        style={{
-                          color: "#099BA0",
-                          fontSize: "30px",
-                          fontWeight: "600",
-                          marginBottom: "10px",
-                        }}
-                      >
-                        {member.name}
-                      </div>
-                      <Row>
-                        <Col md={8}>
-                          <p>
-                            <strong>Package:</strong>{" "}
-                            {packagee.type.split(" ")[0]}
-                          </p>
-                          <p>
-                            <strong>Package Status:</strong> {packagee.status}
-                          </p>
-                          {packagee.status === "Subscribed" ? (
-                            <>
-                              {" "}
-                              <p>
-                                <strong>Price:</strong> {packagee.price}
-                              </p>
-                              <p>
-                                <strong>Renewal Date:</strong>{" "}
-                                {packagee.renewalDate}
-                              </p>
-                            </>
-                          ) : (
-                            <p>
-                              <strong>End Date:</strong> {packagee.endDate}
-                            </p>
-                          )}
-                        </Col>
-                        <Col
-                          md={4}
-                          className="d-flex align-items-end justify-content-end"
-                        >
-                          {packagee.status === "Subscribed" && (
-                            <Button
-                              variant="secondary"
-                              onClick={() => cancelPackage(member._id)}
-                            >
-                              Cancel Package
-                            </Button>
-                          )}
-                        </Col>
-                      </Row>
-                    </Card.Body>
-                  ))
-                ) : (
-                  <Card.Body>
-                    <div
-                      style={{
-                        color: "#099BA0",
-                        fontSize: "30px",
-                        fontWeight: "600",
-                        marginBottom: "10px",
-                      }}
-                    >
-                      {member.name}
-                    </div>
-                    <Row>
-                      <Col md={8}>
-                        <p>
-                          <strong>Package:</strong>{" "}
-                          {member.package.type.split(" ")[0]}
-                        </p>
-                        <p>
-                          <strong>Package Status:</strong>{" "}
-                          {member.package.status}
-                        </p>
-                        {member.package.status === "Subscribed" ? (
-                          <>
-                            {" "}
-                            <p>
-                              <strong>Price:</strong> {member.package.price}
-                            </p>
-                            <p>
-                              <strong>Renewal Date:</strong>{" "}
-                              {member.package.renewalDate}
-                            </p>
-                          </>
-                        ) : (
-                          <p>
-                            <strong>End Date:</strong> {member.package.endDate}
-                          </p>
-                        )}
-                      </Col>
-                      <Col
-                        md={4}
-                        className="d-flex align-items-end justify-content-end"
-                      >
-                        {member.package.status === "Subscribed" && (
-                          <Button
-                            variant="secondary"
-                            onClick={() => cancelPackage(member._id)}
+              {Array.isArray(member) ? (
+                <Card.Body key={`outer_${index}`}>
+                  <div
+                    style={{
+                      color: "#099BA0",
+                      fontSize: "30px",
+                      fontWeight: "600",
+                      marginBottom: "10px",
+                    }}
+                  >
+                    {member[0].name}
+                  </div>
+                  {member.map((innerMember, innerIndex) => (
+                    <Card.Body key={`inner_${index}_${innerIndex}`}>
+                      {innerMember.package && (
+                        <Row>
+                          <Col md={8}>
+                            {Array.isArray(innerMember.package) ? (
+                              innerMember.package.map(
+                                (packagee, packageIndex) => (
+                                  <div key={`innerPackage_${packageIndex}`}>
+                                    <p>
+                                      <strong>Package:</strong>{" "}
+                                      {packagee.type.split(" ")[0]}
+                                    </p>
+                                    <p>
+                                      <strong>Package Status:</strong>{" "}
+                                      {packagee.status}
+                                    </p>
+                                    {packagee.status === "Subscribed" ? (
+                                      <>
+                                        {" "}
+                                        <p>
+                                          <strong>Price:</strong>{" "}
+                                          {packagee.price} $
+                                        </p>
+                                        <p>
+                                          <strong>Renewal Date:</strong>{" "}
+                                          {packagee.renewalDate}
+                                        </p>
+                                      </>
+                                    ) : (
+                                      <p>
+                                        <strong>End Date:</strong>{" "}
+                                        {packagee.endDate}
+                                      </p>
+                                    )}
+                                  </div>
+                                )
+                              )
+                            ) : (
+                              <>
+                                <p>
+                                  <strong>Package:</strong>{" "}
+                                  {innerMember.package.type.split(" ")[0]}
+                                </p>
+                                <p>
+                                  <strong>Package Status:</strong>{" "}
+                                  {innerMember.package.status}
+                                </p>
+                                {innerMember.package.status === "Subscribed" ? (
+                                  <>
+                                    {" "}
+                                    <p>
+                                      <strong>Price:</strong>{" "}
+                                      {innerMember.package.price} $
+                                    </p>
+                                    <p>
+                                      <strong>Renewal Date:</strong>{" "}
+                                      {innerMember.package.renewalDate}
+                                    </p>
+                                  </>
+                                ) : (
+                                  <p>
+                                    <strong>End Date:</strong>{" "}
+                                    {innerMember.package.endDate}
+                                  </p>
+                                )}
+                              </>
+                            )}
+                          </Col>
+                          <Col
+                            md={4}
+                            className="d-flex align-items-end justify-content-end"
                           >
-                            Cancel Package
-                          </Button>
-                        )}
-                      </Col>
-                    </Row>
-                  </Card.Body>
-                ))}
+                            {innerMember.package &&
+                              innerMember.package.status === "Subscribed" && (
+                                <Button
+                                  variant="secondary"
+                                  style={{ marginBottom: "5.5rem" }}
+                                  onClick={() => cancelPackage(innerMember._id)}
+                                >
+                                  Cancel Package
+                                </Button>
+                              )}
+                          </Col>
+                        </Row>
+                      )}
+                    </Card.Body>
+                  ))}
+                </Card.Body>
+              ) : (
+                <Card.Body>
+                  <div
+                    style={{
+                      color: "#099BA0",
+                      fontSize: "30px",
+                      fontWeight: "600",
+                      marginBottom: "10px",
+                    }}
+                  >
+                    {member.name}
+                  </div>
+                  <Row>
+                    <Col md={8}>
+                      <p>
+                        <strong>Package:</strong>{" "}
+                        {member.package.type.split(" ")[0]}
+                      </p>
+                      <p>
+                        <strong>Package Status:</strong> {member.package.status}
+                      </p>
+                      {member.package.status === "Subscribed" ? (
+                        <>
+                          {" "}
+                          <p>
+                            <strong>Price:</strong> {member.package.price} $
+                          </p>
+                          <p>
+                            <strong>Renewal Date:</strong>{" "}
+                            {member.package.renewalDate}
+                          </p>
+                        </>
+                      ) : (
+                        <p>
+                          <strong>End Date:</strong> {member.package.endDate}
+                        </p>
+                      )}
+                    </Col>
+                    <Col
+                      md={4}
+                      className="d-flex align-items-end justify-content-end"
+                    >
+                      {member.package.status === "Subscribed" && (
+                        <Button
+                          variant="secondary"
+                          style={{ marginBottom: "5.5rem" }}
+                          onClick={() => cancelPackage(member._id)}
+                        >
+                          Cancel Package
+                        </Button>
+                      )}
+                    </Col>
+                  </Row>
+                </Card.Body>
+              )}
             </Card>
           ))}
       </Container>

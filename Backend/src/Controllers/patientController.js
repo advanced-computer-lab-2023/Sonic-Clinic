@@ -841,11 +841,12 @@ const viewHealthPackages = async (req, res) => {
           familyMember.package !== "undefined"
         ) {
           const packageFam = await packagesModel.findById(familyMember.package);
-          famWithPackage = {
+
+          famWithPackage.push({
             name: familyMember.name,
             _id: familyMember._id,
             package: packageFam,
-          };
+          });
         }
         if (
           familyMember.canceledHealthPackage &&
@@ -864,11 +865,11 @@ const viewHealthPackages = async (req, res) => {
           const cancelledPackages = await Promise.all(
             cancelledPackagesPromises
           );
-          famWithPackage = {
+          famWithPackage.push({
             name: familyMember.name,
             _id: familyMember._id,
             package: cancelledPackages,
-          };
+          });
         }
 
         if (
