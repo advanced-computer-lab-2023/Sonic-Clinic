@@ -66,6 +66,10 @@ const DoctorAppointments = ({ onBookAppointment }) => {
 
   const handleBookAppointment = async () => {
     try {
+      if (!description) {
+        setError("Please enter a description");
+        return;
+      }
       dispatch(
         setForFam({
           forFam: selectedFamilyMemberId,
@@ -107,12 +111,12 @@ const DoctorAppointments = ({ onBookAppointment }) => {
         if (paymentMethod === "creditCard") {
           setResponseUrl(response.data.url);
           if (response.data.url) {
+            window.location.href = response.data.url;
             dispatch(
               setNewApp({
                 newApp: newAppointment,
               })
             );
-            window.location.href = response.data.url;
           }
         } else {
           setBookingStatus("success");
@@ -371,13 +375,13 @@ const DoctorAppointments = ({ onBookAppointment }) => {
               </div>
               <div className="d-flex">
                 <Button
-                  variant="success"
+                  variant="primary"
                   style={{ marginRight: "0.5rem" }}
                   onClick={handleBookAppointment}
                 >
                   Book
                 </Button>
-                <Button variant="danger" onClick={handleClose}>
+                <Button variant="secondary" onClick={handleClose}>
                   Cancel
                 </Button>
               </div>

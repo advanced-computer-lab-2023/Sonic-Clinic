@@ -106,10 +106,10 @@ export default function AdminViewTable({ onAdmins, api }) {
       <Modal show={showModal} onHide={handleClose}>
         <Modal.Body>Are you sure you want to delete this user?</Modal.Body>
         <Modal.Footer className="d-flex align-items-center justify-content-center">
-          <Button variant="danger" onClick={actuallyDelete}>
+          <Button variant="secondary" onClick={actuallyDelete}>
             Yes
           </Button>
-          <Button variant="success" onClick={handleClose}>
+          <Button variant="primary" onClick={handleClose}>
             No
           </Button>
         </Modal.Footer>

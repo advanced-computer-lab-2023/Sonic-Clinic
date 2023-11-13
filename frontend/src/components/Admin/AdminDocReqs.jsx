@@ -84,6 +84,7 @@ export default function AdminDocReqs() {
             docUsername={user.username}
             docDocuments={user.documents}
             fetchData={fetchData}
+            loading={loading}
           />
         ))
       )}

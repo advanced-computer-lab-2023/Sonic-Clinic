@@ -255,7 +255,7 @@ const PatientSignupForm = () => {
             <FormInput
               name="Full Name"
               type="text"
-              placeholder="Jogn Doe"
+              placeholder="John Doe"
               onChange={(e) => setName(e.target.value)}
               value={name}
             />

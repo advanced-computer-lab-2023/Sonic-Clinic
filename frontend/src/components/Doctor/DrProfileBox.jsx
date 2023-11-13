@@ -1,7 +1,6 @@
 import React, { useState } from "react";
-import doctorImg from "../../Assets/Patient/Doctor.jpg";
 import ChangePass from "../../forms/ChangePass";
-import { Button } from "react-bootstrap";
+import { Button, Col } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPenToSquare } from "@fortawesome/free-solid-svg-icons";
 import { useSelector } from "react-redux";
@@ -34,6 +33,11 @@ function DrProfileBox() {
     border: "1px solid  #dee2e6 ",
   };
 
+  const change = {
+    textDecoration: "underline",
+    cursor: "pointer",
+  };
+
   const inputLabel = {
     width: "12rem",
     marginRight: "0.5rem",
@@ -60,6 +64,7 @@ function DrProfileBox() {
   });
 
   const [isEditing, setIsEditing] = useState(false);
+  const [showChangePass, setShowChangePass] = useState(false);
   const [error, setError] = useState(null);
   const _id = useSelector((state) => state.doctorLogin.userId);
   const dispatch = useDispatch();
@@ -73,6 +78,10 @@ function DrProfileBox() {
 
   const handleEditClick = () => {
     setIsEditing(!isEditing);
+  };
+
+  const toggleChangePass = () => {
+    setShowChangePass(!showChangePass);
   };
 
   const handleSaveChanges = async () => {
@@ -152,13 +161,19 @@ function DrProfileBox() {
 
         <p class="d-flex flex-row">
           <div style={inputLabel}>Password:</div>
-          {isEditing ? (
-            <div>
+          <Col>
+            <span>
+              <label
+                style={change}
+                onClick={toggleChangePass} // Add your click handler here
+              >
+                {showChangePass ? "close" : "change password"}
+              </label>
+            </span>
+            {showChangePass && (
               <ChangePass patient={false} api="/changePasswordForDoctor" />
-            </div>
-          ) : (
-            <span>********</span>
-          )}
+            )}
+          </Col>
         </p>
         <p class="d-flex flex-row">
           <div style={inputLabel}>Email: </div>

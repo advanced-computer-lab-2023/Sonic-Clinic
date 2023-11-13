@@ -1,18 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { updateMyMedicalHistory } from "../../state/loginPatientReducer";
-import { Card, ListGroup } from "react-bootstrap";
+import { Card, ListGroup, Modal, Button } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faX, faTrashCan } from "@fortawesome/free-solid-svg-icons";
-import { saveAs } from "file-saver";
 import axios from "axios";
 
 function UploadDocuments() {
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const [existingFiles, setExistingFiles] = useState([]);
   const [uploadVisible, setUploadVisible] = useState(false);
+  const [deleteModal, setDeleteModal] = useState(false);
   const dispatch = useDispatch();
-  console.log(existingFiles);
 
   useEffect(() => {
     reloadMedicalHistory();
@@ -260,30 +259,54 @@ function UploadDocuments() {
               <h6>Existing Documents:</h6>
               <ListGroup>
                 {existingFiles.map((file, index) => (
-                  <ListGroup.Item key={index}>
-                    <a
-                      onClick={() => viewFile(file)}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      style={{ color: "#212529", cursor: "pointer" }}
-                      className="d-flex justify-content-between"
-                    >
-                      {file}
-                      <FontAwesomeIcon
-                        icon={faTrashCan}
-                        onClick={(e) => {
-                          e.stopPropagation(); // Stop the event from reaching the parent (a tag)
-                          deleteFile(file);
-                        }}
-                        style={{
-                          opacity: 1,
-                          color: "#ff6b35",
-                          fontSize: "20px",
-                          cursor: "pointer",
-                        }}
-                      />
-                    </a>
-                  </ListGroup.Item>
+                  <>
+                    <ListGroup.Item key={index}>
+                      <a
+                        onClick={() => viewFile(file)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{ color: "#212529", cursor: "pointer" }}
+                        className="d-flex justify-content-between"
+                      >
+                        {file}
+                        <FontAwesomeIcon
+                          icon={faTrashCan}
+                          onClick={(e) => {
+                            e.stopPropagation(); // Stop the event from reaching the parent (a tag)
+                            setDeleteModal(true);
+                          }}
+                          style={{
+                            opacity: 1,
+                            color: "#ff6b35",
+                            fontSize: "20px",
+                            cursor: "pointer",
+                          }}
+                        />
+                      </a>
+                    </ListGroup.Item>
+                    <Modal show={deleteModal}>
+                      <Modal.Body>
+                        Are you sure you want to delete this file?
+                      </Modal.Body>
+                      <Modal.Footer className="d-flex align-items-center justify-content-center">
+                        <Button
+                          variant="secondary"
+                          onClick={(e) => {
+                            e.stopPropagation(); // Stop the event from reaching the parent (a tag)
+                            deleteFile(file);
+                          }}
+                        >
+                          Yes
+                        </Button>
+                        <Button
+                          variant="primary"
+                          onClick={() => setDeleteModal(false)}
+                        >
+                          No
+                        </Button>
+                      </Modal.Footer>
+                    </Modal>
+                  </>
                 ))}
               </ListGroup>
             </div>

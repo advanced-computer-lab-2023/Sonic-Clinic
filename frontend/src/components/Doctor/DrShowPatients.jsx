@@ -7,6 +7,7 @@ import {
   Button,
   ListGroup,
   Spinner,
+  Modal,
 } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -34,6 +35,7 @@ function DrShowPatients({
   const [followUpDateTime, setFollowUpDateTime] = useState(null);
   const [existingFiles, setExistingFiles] = useState();
   const [isLoading, setIsLoading] = useState(false);
+  const [confirmModal, setConfirmModal] = useState(false);
 
   const handleFileUpload = async (e) => {
     const newFiles = Array.from(e.target.files);
@@ -84,6 +86,17 @@ function DrShowPatients({
     updatedFiles.splice(index, 1);
     setUploadedFiles(updatedFiles);
   };
+
+  function getCurrentDateTime() {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = `${(now.getMonth() + 1).toString().padStart(2, "0")}`;
+    const day = `${now.getDate().toString().padStart(2, "0")}`;
+    const hours = `${now.getHours().toString().padStart(2, "0")}`;
+    const minutes = `${now.getMinutes().toString().padStart(2, "0")}`;
+
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
+  }
 
   // Function to format the date of birth
   function formatDateOfBirth(isoDate) {
@@ -212,16 +225,18 @@ function DrShowPatients({
 
   const scheduleFollowUp = async (patientID) => {
     const [datePart, timePart] = followUpDateTime.split("T");
+    // console.log(followUpDateTime);
     try {
       const response = await axios.post("/addAppointmentByPatientID", {
         date: datePart,
-        description: patientID,
+        description: "Follow up",
         status: "upcoming",
         patientID: patientID,
         time: timePart,
       });
       if (response.status === 201) {
         setFollowUpModal(false);
+        setConfirmModal(true);
       }
     } catch (error) {
       console.log();
@@ -309,14 +324,31 @@ function DrShowPatients({
                           <Form.Group style={{ marginBottom: "1rem" }}>
                             <Form.Control
                               type="datetime-local"
-                              value={followUpDateTime}
+                              // value={followUpDateTime}
                               onChange={(e) =>
                                 setFollowUpDateTime(e.target.value)
                               }
+                              min={getCurrentDateTime()}
                             />
                           </Form.Group>
                         </div>
                       )}
+                      <Modal show={confirmModal}>
+                        <Modal.Header>
+                          <Modal.Title>Appointment Confirmed</Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body>
+                          An appointment with {patient.name} has been scheduled
+                        </Modal.Body>
+                        <Modal.Footer>
+                          <Button
+                            variant="secondary"
+                            onClick={() => setConfirmModal(false)}
+                          >
+                            Close
+                          </Button>
+                        </Modal.Footer>
+                      </Modal>
 
                       {upcomingApp && <div>Has an upcoming appointment</div>}
                       <div className="patient-info">

@@ -206,10 +206,10 @@ const LoginForm = () => {
           </object>
         </Modal.Body>
         <Modal.Footer className="d-flex align-items-center justify-content-center">
-          <Button variant="success" onClick={loginNewDoctor}>
+          <Button variant="primary" onClick={loginNewDoctor}>
             Accept
           </Button>
-          <Button variant="danger" onClick={rejectContract}>
+          <Button variant="secondary" onClick={rejectContract}>
             Reject
           </Button>
         </Modal.Footer>

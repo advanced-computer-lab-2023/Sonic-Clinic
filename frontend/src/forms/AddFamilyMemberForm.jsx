@@ -15,7 +15,7 @@ function AddFamilyMemberForm({ onRefresh, toggleForm }) {
     nationalId: "",
     age: "",
     gender: "Male",
-    relation: "",
+    relation: "Husband",
   });
   const dispatch = useDispatch();
 

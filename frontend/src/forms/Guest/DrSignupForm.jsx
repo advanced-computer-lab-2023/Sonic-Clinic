@@ -23,6 +23,7 @@ const DrSignupForm = () => {
   const [medicalLicense, setMedicalLicense] = useState(null);
   const [medicalDegree, setMedicalDegree] = useState(null);
   const [error1, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -304,7 +305,21 @@ const DrSignupForm = () => {
             );
             if (response2.status === 200) {
               setLoading(false);
-              setError("Your application will be reviewed");
+              setName("");
+              setBirthdate("");
+              setEmail("");
+              setPassword("");
+              setConfirmPassword("");
+              setUsername("");
+              setRate("");
+              setAffiliation("");
+              setEducation("");
+              setSpeciality("");
+              setdoctorID(null);
+              setMedicalLicense(null);
+              setMedicalDegree(null);
+              setSuccess("Your application will be reviewed");
+              setError(null);
             }
           } catch (error) {}
         } else {
@@ -358,6 +373,7 @@ const DrSignupForm = () => {
               name="Birth date"
               type="date"
               onChange={(e) => setBirthdate(e.target.value)}
+              value={birthdate}
             />
           </div>
           <div className="col">
@@ -365,6 +381,7 @@ const DrSignupForm = () => {
               name="Username"
               placeholder="ElinaJohn1"
               type="text"
+              value={username}
               onChange={(e) => setUsername(e.target.value)}
             />
           </div>
@@ -375,6 +392,7 @@ const DrSignupForm = () => {
               name="Hourly Rate"
               type="number"
               placeholder="50"
+              value={rate}
               onChange={(e) => setRate(e.target.value)}
             />
           </div>
@@ -383,6 +401,7 @@ const DrSignupForm = () => {
               name="Affiliation"
               placeholder="ZZZ Hospital"
               type="text"
+              value={affiliation}
               onChange={(e) => setAffiliation(e.target.value)}
             />
           </div>
@@ -393,6 +412,7 @@ const DrSignupForm = () => {
               name="Educational Background"
               type="text"
               placeholder="MBA"
+              value={education}
               onChange={(e) => setEducation(e.target.value)}
             />
           </div>
@@ -444,6 +464,7 @@ const DrSignupForm = () => {
             <input
               type="file"
               accept=".pdf"
+              value={medicalLicense}
               onChange={(e) => setMedicalLicense(e.target.files[0])}
               style={{
                 color: "#05afb9",
@@ -472,6 +493,7 @@ const DrSignupForm = () => {
             <input
               type="file"
               accept=".pdf"
+              value={medicalDegree}
               onChange={(e) => setMedicalDegree(e.target.files[0])}
               style={{
                 color: "#05afb9",
@@ -499,6 +521,7 @@ const DrSignupForm = () => {
             <input
               type="file"
               accept=".pdf"
+              value={doctorID}
               onChange={(e) => setdoctorID(e.target.files[0])}
               style={{
                 color: "#05afb9",
@@ -513,6 +536,7 @@ const DrSignupForm = () => {
           name="Email"
           type="email"
           placeholder="john.doe@ibm.com"
+          value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
         <FormPassword
@@ -520,12 +544,14 @@ const DrSignupForm = () => {
           name="Password"
           type="password"
           placeholder="**************"
+          value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
         <FormPassword
           name="Confirm Password"
           type="password"
           placeholder="**************"
+          value={confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)}
         />
 
@@ -552,6 +578,7 @@ const DrSignupForm = () => {
           </div>
         </div>
         {error1 && <div className="error">{error1}</div>}
+        {success && <div className="msg">{success}</div>}
       </form>
     </div>
   );

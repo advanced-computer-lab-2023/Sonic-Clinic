@@ -45,7 +45,6 @@ export default function ChangePass({ patient, api }) {
     }
 
     try {
-      console.log("11");
       const url = api;
       const response = await axios.post(url, {
         currentPassword: oldPass,
@@ -78,7 +77,7 @@ export default function ChangePass({ patient, api }) {
         <Form.Control
           className="m-3"
           style={formStyle}
-          type="text"
+          type="password"
           name="currPass"
           placeholder="Current Password"
           onChange={(e) => setOldPass(e.target.value)}
