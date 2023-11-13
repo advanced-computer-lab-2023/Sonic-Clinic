@@ -1434,11 +1434,14 @@ const payAppointmentWallet = async (req, res) => {
 const payAppointmentStripe = async (req, res) => {
   try {
     const patient = await patientModel.findById(req.user.id);
+
     const doctor = await doctorModel.findById(req.body.doctorID);
     const sessionPrice = await calculateSessionPrice(
       doctor.hourlyRate,
       patient.package
     );
+    const amountInCents = Math.round(sessionPrice * 100);
+
     if (!patient) {
       return res.status(404).json({ message: "Patient not found." });
     }
@@ -1453,7 +1456,7 @@ const payAppointmentStripe = async (req, res) => {
               name: doctor.name, // Use 'name' instead of 'docName'
               description: doctor.specialty, // Use 'description' instead of 'specialty'
             },
-            unit_amount: sessionPrice * 100,
+            unit_amount: amountInCents,
           },
           quantity: 1,
         },
