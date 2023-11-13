@@ -8,6 +8,7 @@ import axios from "axios";
 export default function AdminDocReqDetails({
   docEmail,
   docRate,
+  docId,
   docEducation,
   docAffiliation,
   docBirthDate,
@@ -105,6 +106,58 @@ export default function AdminDocReqDetails({
           "An error occurred while accepting doctor. Please try again later"
         );
       }
+    }
+  };
+  const viewMedicalRecord = async (file) => {
+    try {
+      const response = await axios.post(
+        "/viewPtlDocDocumentsbyAdmins",
+        {
+          id: docId,
+          filename: file,
+        },
+        {
+          responseType: "text", // Set the response type to 'text'
+        }
+      );
+
+      if (response.status === 200) {
+        const byteString = response.data;
+        const byteNumbers = byteString.split(",").map(Number);
+        const uint8Array = new Uint8Array(byteNumbers);
+
+        const blob = new Blob([uint8Array], {
+          type: response.headers["content-type"],
+        });
+
+        if (blob.size > 0) {
+          const url = window.URL.createObjectURL(blob);
+
+          // Create an anchor element
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = file; // Specify the desired filename
+
+          // Append the anchor to the body
+          document.body.appendChild(a);
+
+          // Trigger a click event to initiate download
+          a.click();
+
+          // Remove the anchor from the DOM
+          document.body.removeChild(a);
+
+          // Release the object URL
+          window.URL.revokeObjectURL(url);
+        } else {
+          console.log("File content is empty");
+        }
+      } else {
+        console.log(`Failed to download file. Status: ${response.status}`);
+      }
+    } catch (error) {
+      console.error("Error fetching file:", error);
+      // Handle the error appropriately
     }
   };
 
@@ -225,10 +278,12 @@ export default function AdminDocReqDetails({
                 <div>
                   {" "}
                   <div className="d-flex flex-row">
-                    <span style={titleStyle}>Doctor ID: </span>
+                    <span style={titleStyle}>Medical License: </span>
                     <a
                       style={linkStyle}
-                      onClick={() => viewFile(0)}
+                      onClick={() =>
+                        viewMedicalRecord(docDocuments[0].filename)
+                      }
                     >
                       {docDocuments[0] && docDocuments[0].filename}
                     </a>
@@ -237,16 +292,20 @@ export default function AdminDocReqDetails({
                     <span style={titleStyle}>Medical Degree: </span>
                     <a
                       style={linkStyle}
-                      onClick={() => viewFile(1)}
+                      onClick={() =>
+                        viewMedicalRecord(docDocuments[1].filename)
+                      }
                     >
                       {docDocuments[1] && docDocuments[1].filename}
                     </a>
                   </div>
                   <div className="d-flex flex-row">
-                    <span style={titleStyle}>Medical License: </span>
+                    <span style={titleStyle}>Doctor Id: </span>
                     <a
                       style={linkStyle}
-                      onClick={() => viewFile(2)}
+                      onClick={() =>
+                        viewMedicalRecord(docDocuments[2].filename)
+                      }
                     >
                       {docDocuments[2] && docDocuments[2].filename}
                     </a>
