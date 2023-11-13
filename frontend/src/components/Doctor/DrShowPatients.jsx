@@ -97,27 +97,47 @@ function DrShowPatients({
           filename: file,
         },
         {
-          responseType: "blob", // Set the response type to 'blob'
+          responseType: "text", // Set the response type to 'text'
         }
       );
 
       if (response.status === 200) {
-        const blob = new Blob([response.data], {
+        const byteString = response.data;
+        const byteNumbers = byteString.split(",").map(Number);
+        const uint8Array = new Uint8Array(byteNumbers);
+
+        const blob = new Blob([uint8Array], {
           type: response.headers["content-type"],
         });
 
-        // Check if the blob is not empty
         if (blob.size > 0) {
           const url = window.URL.createObjectURL(blob);
 
-          // Open the file in a new tab
-          window.open(url, "_blank");
+          // Create an anchor element
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = file; // Specify the desired filename
+
+          // Append the anchor to the body
+          document.body.appendChild(a);
+
+          // Trigger a click event to initiate download
+          a.click();
+
+          // Remove the anchor from the DOM
+          document.body.removeChild(a);
+
+          // Release the object URL
+          window.URL.revokeObjectURL(url);
         } else {
           console.log("File content is empty");
         }
+      } else {
+        console.log(`Failed to download file. Status: ${response.status}`);
       }
     } catch (error) {
-      console.log("not cool", error);
+      console.error("Error fetching file:", error);
+      // Handle the error appropriately
     }
   };
 
