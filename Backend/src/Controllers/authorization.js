@@ -83,17 +83,20 @@ const login = async (req, res) => {
         res.cookie("jwt", token, { httpOnly: true, maxAge: maxAge } * 1000);
         return res.status(200).json({ message: "Doctor", user: doctor1 });
       }
-      throw Error("incorrect password");
+      //throw Error("incorrect password");
     }
 
     if (patient1) {
-      const auth = bcrypt.compare(password, patient1.password);
+      console.log(password + "paaasss");
+      console.log(patient1.password);
+      const auth = await bcrypt.compare(password, patient1.password);
+      console.log(auth);
       if (auth) {
         const token = createToken(patient1._id);
         res.cookie("jwt", token, { httpOnly: true, maxAge: maxAge } * 1000);
         return res.status(200).json({ message: "Patient", user: patient1 });
       }
-      throw Error("incorrect password");
+      //throw Error("incorrect password");
     }
 
     if (admin1) {
@@ -103,7 +106,7 @@ const login = async (req, res) => {
         res.cookie("jwt", token, { httpOnly: true, maxAge: maxAge } * 1000);
         return res.status(200).json({ message: "Admin", user: admin1 });
       }
-      throw Error("incorrect password");
+      //throw Error("incorrect password");
     }
 
     return res.status(401).json({ message: "Invalid credentials" });
