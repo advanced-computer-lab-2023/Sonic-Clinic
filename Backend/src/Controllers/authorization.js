@@ -34,7 +34,9 @@ const login = async (req, res) => {
 
   try {
     const doctor1 = await DoctorModel.findOne({ username });
+    console.log(doctor1 + "docccc");
     patient1 = await patientModel.findOne({ username });
+    const admin1 = await administratorModel.findOne({ username });
 
     if (patient1 && patient1.package !== "  ") {
       patient1 = await patientModel
@@ -73,40 +75,40 @@ const login = async (req, res) => {
         }
       }
     }
-    console.log(patient1);
-    const admin1 = await administratorModel.findOne({ username });
 
     if (doctor1) {
-      const auth = bcrypt.compare(password, doctor1.password);
+      console.log("bykhosh ll doc");
+      const auth = await bcrypt.compare(password, doctor1.password);
       if (auth) {
         const token = createToken(doctor1._id);
         res.cookie("jwt", token, { httpOnly: true, maxAge: maxAge } * 1000);
         return res.status(200).json({ message: "Doctor", user: doctor1 });
+      } else {
+        return res.status(401).json({ message: "Invalid credentials" });
       }
-      //throw Error("incorrect password");
     }
 
     if (patient1) {
-      console.log(password + "paaasss");
-      console.log(patient1.password);
       const auth = await bcrypt.compare(password, patient1.password);
-      console.log(auth);
+
       if (auth) {
         const token = createToken(patient1._id);
         res.cookie("jwt", token, { httpOnly: true, maxAge: maxAge } * 1000);
         return res.status(200).json({ message: "Patient", user: patient1 });
+      } else {
+        return res.status(401).json({ message: "Invalid credentials" });
       }
-      //throw Error("incorrect password");
     }
 
     if (admin1) {
-      const auth = bcrypt.compare(password, admin1.password);
+      const auth = await bcrypt.compare(password, admin1.password);
       if (auth) {
         const token = createToken(admin1._id);
         res.cookie("jwt", token, { httpOnly: true, maxAge: maxAge } * 1000);
         return res.status(200).json({ message: "Admin", user: admin1 });
+      } else {
+        return res.status(401).json({ message: "Invalid credentials" });
       }
-      //throw Error("incorrect password");
     }
 
     return res.status(401).json({ message: "Invalid credentials" });
