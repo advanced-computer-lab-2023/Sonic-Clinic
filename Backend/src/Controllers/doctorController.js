@@ -3,6 +3,7 @@ const { default: mongoose } = require("mongoose");
 const patientModel = require("../Models/Patient.js");
 const PrescriptionModel = require("../Models/Prescription.js");
 const appointmentModel = require("../Models/Appointment.js");
+const familyMemberModel = require("../Models/FamilyMember.js");
 
 const searchPatientByName = async (req, res) => {
   const { name } = req.query;
@@ -115,7 +116,7 @@ const updateDoctorProfile = async (req, res) => {
 };
 
 const viewPatients = async (req, res) => {
-  //const id = req.user.id;
+  // const id = req.user.id;
 
   try {
     const doctor = await doctorModel.findById(req.user.id);
