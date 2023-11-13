@@ -65,7 +65,6 @@ const filterDoctors = async (req, res) => {
   const { specialties, date, time } = req.query;
 
   query = { date, time, status: "not filled" };
-  
 
   try {
     if (specialties.length === 0) {
@@ -184,7 +183,7 @@ const filterPrescriptions = async (req, res) => {
     }
 
     if (status) {
-     // console.log(status);
+      // console.log(status);
       query.status = status;
     }
 
@@ -285,7 +284,6 @@ const addFamilyMember = async (req, res) => {
     // Save the updated patient document
     await patient.save();
 
-    
     res.status(200).send(newFamilyMember);
   } catch (error) {
     res.status(400).send({ error: error.message });
@@ -354,7 +352,7 @@ const calculateSessionPrice = async (hourlyRate, patientPackage) => {
     if (patientPackage === "  ") {
       return hourlyRate;
     }
-    const packageInfo = await packagesModel.find(patientPackage);
+    const packageInfo = await packagesModel.findById(patientPackage);
     if (!packageInfo) {
       return hourlyRate;
     } else {
@@ -509,7 +507,7 @@ const getDoctorsWithSessionPrice = async (req, res) => {
       doctors.map(async (doctor) => {
         const sessionPrice = await calculateSessionPrice(
           doctor.hourlyRate,
-          patient.packagesPatient
+          patient.package
         );
 
         // Include all fields from the doctor object along with sessionPrice
@@ -607,7 +605,6 @@ const filterDoctorsAfterSearch = async (req, res) => {
   const doctors = req.body;
   const { date, time } = req.query;
 
-
   try {
     if (!date && !time) {
       return res.status(200).json({ doctors });
@@ -621,11 +618,11 @@ const filterDoctorsAfterSearch = async (req, res) => {
 
     // Filter doctors based on available slots
     const availableDoctors = doctors.filter((doctor) =>
-    doctor.availableSlots.some((slot) => {
-      const [slotDate, slotTime] = slot.split(" ");
-      return slotDate === date && slotTime === time;
-    })
-  );
+      doctor.availableSlots.some((slot) => {
+        const [slotDate, slotTime] = slot.split(" ");
+        return slotDate === date && slotTime === time;
+      })
+    );
 
     if (availableDoctors.length === 0) {
       return res.status(404).json({ message: "No available doctors found." });
@@ -637,7 +634,6 @@ const filterDoctorsAfterSearch = async (req, res) => {
     res.status(500).json({ message: "Server Error" });
   }
 };
-
 
 const viewAllAppointmentsPatient = async (req, res) => {
   try {
@@ -693,35 +689,36 @@ const filterDoctorsAfterSearchDocName = async (req, res) => {
         if (!slot) {
           return false; // If availableSlots is null or undefined, return false
         }
-
         const [slotDate, slotTime] = slot.split(" ");
-      return slotDate === date && slotTime === time && (!specialty || doctor.specialty.toString() === specialty.toString());
+        return (
+          slotDate === date &&
+          slotTime === time &&
+          (!specialty || doctor.specialty.toString() === specialty.toString())
+        );
       })
     );
     // Filter doctors based on available slots
-    
 
     if (filteredDoctors.length === 0 || !filteredDoctors) {
       return res.status(404).json({ message: "No available doctors found." });
     }
 
-    //const patientId = req.user.id;
-    //const patient = await patientModel.findById(patientId);
+    const patientId = req.user.id;
+    const patient = await patientModel.findById(patientId);
 
     if (!patient) {
       return res.status(404).json({ message: "Patient not found." });
     }
-    
 
     const doctorsWithSessionPrice = await Promise.all(
       filteredDoctors
-        .filter((doctor) => typeof doctor === 'object' && doctor !== null) // Check if doctor is an object
+        .filter((doctor) => typeof doctor === "object" && doctor !== null) // Check if doctor is an object
         .map(async (doctor) => {
           const sessionPrice = await calculateSessionPrice(
             doctor.hourlyRate,
             patient.package
           );
-    
+
           // Include all fields from the doctor object along with sessionPrice
           return {
             ...doctor.toObject(),
@@ -729,11 +726,8 @@ const filterDoctorsAfterSearchDocName = async (req, res) => {
           };
         })
     );
-    
-    
 
     res.status(200).json({ doctorsWithSessionPrice });
-
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server Error" });
@@ -1142,6 +1136,8 @@ const cancelHealthPackage = async (req, res) => {
       console.log(patient.package);
       cancel = await packagesModel.findById(patient.package);
       cancel.status = "Cancelled";
+      const date = new Date().toLocaleDateString();
+      cancel.endDate = date;
       await cancel.save();
       patient.canceledHealthPackage.push(patient.package);
       patient.package = "  ";
@@ -1265,7 +1261,7 @@ const subscribeHealthPackageWallet = async (req, res) => {
     const newType = packageName + " " + patient.username;
 
     let newPackage;
-   
+
     if (mainPatient.wallet >= originalPackage.price) {
       newPackage = await packagesModel.create({
         type: newType,
@@ -1310,6 +1306,7 @@ const payAppointmentWallet = async (req, res) => {
 
   try {
     const doctor = await doctorModel.findById(doctorID);
+
     const patient = await patientModel.findById(req.user.id);
     const doctorAvailableSlots = doctor.availableSlots;
 
@@ -1364,7 +1361,6 @@ const payAppointmentWallet = async (req, res) => {
 
     let docWallet;
     let patientWallet;
-    
 
     if (patient.wallet >= sessionPrice) {
       patientWallet = patient.wallet - sessionPrice;
@@ -1429,7 +1425,10 @@ const handlePackageStripe = async (req, res) => {
     if (!id) {
       patient = await patientModel.findById(req.user.id);
     } else {
-      patient = await familyMemberModel.findById(id);
+      patient = await patientModel.findById(id);
+      if (!patient) {
+        patient = await familyMemberModel.findById(id);
+      }
     }
 
     if (!patient) {
@@ -1475,7 +1474,10 @@ const handleAppointmentStripe = async (req, res) => {
     if (!id) {
       patient = await patientModel.findById(req.user.id);
     } else {
-      patient = await familyMemberModel.findById(id);
+      patient = await patientModel.findById(id);
+      if (!patient) {
+        patient = await familyMemberModel.findById(id);
+      }
     }
     if (!patient) {
       return res.status(404).json({ message: "Patient not found." });
