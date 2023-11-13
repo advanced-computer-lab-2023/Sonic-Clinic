@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Container, Form } from "react-bootstrap";
+import { Container, Form, Spinner } from "react-bootstrap";
 import AdminDocReqCard from "./AdminDocReqCard";
 import axios from "axios";
 
@@ -63,21 +63,30 @@ export default function AdminDocReqs() {
           onChange={(e) => setSearchTerm(e.target.value)}
         />
       </div>
-      {filteredUsers.map((user, index) => (
-        <AdminDocReqCard
-          key={index}
-          docName={user.name}
-          docSpecialty={user.specialty}
-          docEmail={user.email}
-          docBirthDate={user.dateOfBirth}
-          docRate={user.hourlyRate}
-          docAffiliation={user.affiliation}
-          docEducation={user.educationalBackground}
-          docUsername={user.username}
-          docDocuments={user.documents}
-          fetchData={fetchData}
-        />
-      ))}
+      {loading ? ( // Show loading spinner while data is being fetched
+        <div className="text-center">
+          <Spinner animation="border" role="status">
+            <span className="sr-only">Loading...</span>
+          </Spinner>
+        </div>
+      ) : (
+        filteredUsers.map((user, index) => (
+          <AdminDocReqCard
+            key={index}
+            docId={user._id}
+            docName={user.name}
+            docSpecialty={user.specialty}
+            docEmail={user.email}
+            docBirthDate={user.dateOfBirth}
+            docRate={user.hourlyRate}
+            docAffiliation={user.affiliation}
+            docEducation={user.educationalBackground}
+            docUsername={user.username}
+            docDocuments={user.documents}
+            fetchData={fetchData}
+          />
+        ))
+      )}
     </Container>
   );
 }

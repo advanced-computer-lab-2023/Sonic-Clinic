@@ -33,18 +33,50 @@ function DrShowPatients({
   const [followUpModal, setFollowUpModal] = useState(false);
   const [followUpDateTime, setFollowUpDateTime] = useState(null);
   const [existingFiles, setExistingFiles] = useState();
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleFileUpload = (e) => {
+  const handleFileUpload = async (e) => {
     const newFiles = Array.from(e.target.files);
-    const formattedFiles = newFiles.map((file) => ({
-      filename: file.name,
-      mimetype: file.type,
-      buffer: {
-        type: "Buffer",
-        data: Array.from(new Uint8Array(file)),
-      },
-    }));
-    setUploadedFiles([...uploadedFiles, ...formattedFiles]);
+
+    // Check for duplicate files
+    const uniqueNewFiles = newFiles.filter((newFile) => {
+      return !uploadedFiles.some(
+        (uploadedFile) => uploadedFile.filename === newFile.name
+      );
+    });
+
+    // Format and validate files
+    const formattedFiles = await Promise.all(
+      uniqueNewFiles.map(async (file) => {
+        try {
+          // Read the file data as a Uint8Array
+          const fileArrayBuffer = await file.arrayBuffer();
+          const fileUint8Array = new Uint8Array(fileArrayBuffer);
+
+          // Format the file
+          const formattedFile = {
+            filename: file.name,
+            mimetype: file.type,
+            buffer: {
+              type: "Buffer",
+              data: Array.from(fileUint8Array),
+            },
+          };
+
+          // Log the buffer data
+          // console.log(`Buffer data for ${file.name}:`, formattedFile.buffer);
+
+          return formattedFile;
+        } catch (error) {
+          console.error(`Error processing file ${file.name}:`, error);
+          return null; // Skip invalid files
+        }
+      })
+    );
+
+    const validFiles = formattedFiles.filter(Boolean);
+
+    setUploadedFiles([...uploadedFiles, ...validFiles]);
   };
 
   const handleRemoveFile = (index) => {
@@ -143,13 +175,17 @@ function DrShowPatients({
 
   const addFiles = async (id) => {
     try {
-      console.log(id);
+      setIsLoading(true);
       const formData = new FormData();
-
       uploadedFiles.forEach((file, index) => {
         const blob = new Blob([file.buffer.data], { type: file.mimetype });
+
+        const blobUrl = URL.createObjectURL(blob);
+        console.log(blobUrl);
+
         formData.append("files", blob, file.filename);
       });
+      console.log("FILE DATA ", formData);
 
       const response = await axios.post(
         `/uploadFilesbyDoctors?id=${id}`,
@@ -169,6 +205,8 @@ function DrShowPatients({
       }
     } catch (error) {
       console.log("Oops, not added", error);
+    } finally {
+      setIsLoading(false); // Set loading to false when the operation is complete (success or failure)
     }
   };
 
@@ -225,7 +263,7 @@ function DrShowPatients({
           />
         </Button>
       </div>
-      {loading && (
+      {(isLoading || loading) && (
         <div
           style={{
             display: "flex",
@@ -238,7 +276,7 @@ function DrShowPatients({
           </Spinner>
         </div>
       )}
-      {!loading &&
+      {(!isLoading || !loading) &&
         patients.map((patient, index) => (
           <Card className="mb-4 mx-3 bg-white" key={patient.username}>
             <Card.Header

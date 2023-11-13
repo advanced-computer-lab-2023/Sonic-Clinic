@@ -49,7 +49,7 @@ function DrMainOptions() {
         </div>
         <div>
           <AdminHomeCard
-            location="/doctor/doctor-appointments"
+            location="/doctor/doctor-profile"
             cardText="Wallet"
             cardDetails="View my wallet"
             icon={faWallet}

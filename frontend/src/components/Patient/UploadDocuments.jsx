@@ -115,7 +115,7 @@ function UploadDocuments() {
           };
 
           // Log the buffer data
-          console.log(`Buffer data for ${file.name}:`, formattedFile.buffer);
+          // console.log(`Buffer data for ${file.name}:`, formattedFile.buffer);
 
           return formattedFile;
         } catch (error) {
