@@ -92,6 +92,10 @@ const patientSchema = new Schema(
       type: [String],
       required: false,
     },
+    unsubscribedHealthPackage: {
+      type: [String],
+      required: false,
+    },
 
     familyMembers: [[String, String]],
     medicalHistory: [fileSchema],

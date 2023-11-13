@@ -36,6 +36,10 @@ const familyMemberSchema = new Schema(
       type: [String],
       required: false,
     },
+    unsubscribedHealthPackage: {
+      type: [String],
+      required: false,
+    },
   },
   { timestamps: true }
 );

@@ -311,7 +311,10 @@ const addFamilyMemberExisting = async (req, res) => {
     const name = familyMember.name;
     const nationalID = familyMember.nationalID;
     const gender = familyMember.gender;
-    const age = familyMember.age;
+    const dateOfBirth = familyMember.dateOfBirth; // Replace this with the actual date of birth
+    const currentDate = new Date();
+    const ageInMilliseconds = currentDate - dateOfBirth;
+    const age = Math.floor(ageInMilliseconds / (365.25 * 24 * 60 * 60 * 1000));
 
     const fam = await familyMemberModel.create({
       name,
@@ -320,7 +323,7 @@ const addFamilyMemberExisting = async (req, res) => {
       gender,
       relationToPatient,
       patientID: req.user.id,
-      package: " ",
+      package: "  ",
     });
     patient.familyMembers = patient.familyMembers || [];
     patient.familyMembers.push([fam._id, name]);
@@ -775,13 +778,13 @@ const viewHealthPackages = async (req, res) => {
 
     const familyMembers = await familyMemberModel.find({ patientID });
 
-    // Create an array to store health packages
     let healthPackages = [];
 
     if (patient.package && patient.package !== "  ") {
       const packagePatient = await packagesModel.findById(patient.package);
       const patientWithPackage = {
         name: patient.name,
+        _id: patient._id,
         package: packagePatient,
       };
       healthPackages.push(patientWithPackage);
@@ -802,23 +805,45 @@ const viewHealthPackages = async (req, res) => {
       const cancelledPackages = await Promise.all(cancelledPackagesPromises);
       healthPackages.push({
         name: patient.name,
+        _id: patient._id,
         package: cancelledPackages, // Add array of cancelled packages
+      });
+    }
+
+    if (
+      patient.unsubscribedHealthPackage &&
+      patient.unsubscribedHealthPackage.length > 0
+    ) {
+      const unsubscribedPackagesPromises =
+        patient.unsubscribedHealthPackage.map(async (unsubscribedPackageId) => {
+          const unsubscribedPackage = await packagesModel.findById(
+            unsubscribedPackageId
+          );
+          return unsubscribedPackage;
+        });
+
+      const unsubscribedPackages = await Promise.all(
+        unsubscribedPackagesPromises
+      );
+      healthPackages.push({
+        name: patient.name,
+        _id: patient._id,
+        package: unsubscribedPackages,
       });
     }
 
     if (familyMembers.length > 0) {
       const familyPromises = familyMembers.map(async (familyMember) => {
-        let famWithPackage = {};
-
+        let famWithPackage = [];
         if (
           familyMember.package &&
           familyMember.package !== "  " &&
           familyMember.package !== "undefined"
         ) {
-          // If family member has a package, retrieve it
           const packageFam = await packagesModel.findById(familyMember.package);
           famWithPackage = {
             name: familyMember.name,
+            _id: familyMember._id,
             package: packageFam,
           };
         }
@@ -841,13 +866,39 @@ const viewHealthPackages = async (req, res) => {
           );
           famWithPackage = {
             name: familyMember.name,
-            package: cancelledPackages, // Add array of cancelled packages
+            _id: familyMember._id,
+            package: cancelledPackages,
           };
+        }
+
+        if (
+          familyMember.unsubscribedHealthPackage &&
+          familyMember.unsubscribedHealthPackage.length > 0
+        ) {
+          const unsubscribedPackagesPromises =
+            familyMember.unsubscribedHealthPackage.map(
+              async (unsubscribedPackageId) => {
+                const unsubscribedPackage = await packagesModel.findById(
+                  unsubscribedPackageId
+                );
+                return unsubscribedPackage;
+              }
+            );
+
+          const unsubscribedPackages = await Promise.all(
+            unsubscribedPackagesPromises
+          );
+          famWithPackage.push({
+            name: familyMember.name,
+            _id: familyMember._id,
+            package: unsubscribedPackages,
+          });
         }
         return famWithPackage;
       });
 
       const familyResults = await Promise.all(familyPromises);
+
       healthPackages = healthPackages.concat(familyResults.filter(Boolean));
     }
 

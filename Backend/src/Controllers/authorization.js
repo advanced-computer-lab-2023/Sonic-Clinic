@@ -7,6 +7,8 @@ const maxAge = 3 * 24 * 6 * 60;
 const bcrypt = require("bcrypt");
 const nodemailer = require("nodemailer");
 const randomstring = require("randomstring");
+const packagesModel = require("../Models/Packages.js");
+const familyMemberModel = require("../Models/FamilyMember.js");
 
 const emailService = "youstina2307@outlook.com"; // e.g., 'gmail'
 const emailUser = "youstina2307@outlook.com";
@@ -38,6 +40,38 @@ const login = async (req, res) => {
       patient1 = await patientModel
         .findOne({ username })
         .populate("packagesPatient");
+      const package = await packagesModel.findById(patient1.package);
+      const today = new Date();
+      const renewalDate = new Date(package.renewalDate);
+      if (renewalDate < today) {
+        package.status = "Unsubsrcibed";
+        patient1.unsubscribedHealthPackage.push(patient1.package);
+        patient1.package = "  ";
+        await patient1.save();
+      }
+    }
+
+    if (
+      patient1 &&
+      patient1.familyMembers &&
+      patient1.familyMembers.length > 0
+    ) {
+      const family = patient1.familyMembers;
+      for (famIdArr of family) {
+        const famId = famIdArr[0];
+        const member = await familyMemberModel.findById(famId);
+        if (member.package !== "  ") {
+          const package = await packagesModel.findById(member.package);
+          const today = new Date();
+          const renewalDate = new Date(package.renewalDate);
+          if (renewalDate < today) {
+            package.status = "Unsubsrcibed";
+            member.unsubscribedHealthPackage.push(member.package);
+            member.package = "  ";
+            await member.save();
+          }
+        }
+      }
     }
     console.log(patient1);
     const admin1 = await administratorModel.findOne({ username });
