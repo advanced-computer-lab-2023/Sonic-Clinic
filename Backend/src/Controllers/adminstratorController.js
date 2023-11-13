@@ -407,11 +407,9 @@ const changePasswordForAdmin = async (req, res) => {
         .json({ message: "Current password is incorrect." });
     }
 
-    // Hash the new password and update it in the database
-    const salt = await bcrypt.genSalt();
-    const hashedPassword = await bcrypt.hash(newPassword, salt);
 
-    Admin.password = hashedPassword;
+
+    Admin.password = newPassword;
     await Admin.save();
 
     res.status(200).json({ message: "Password changed successfully." });
