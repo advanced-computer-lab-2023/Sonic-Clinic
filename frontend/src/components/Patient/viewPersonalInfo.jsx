@@ -24,7 +24,6 @@ function ViewPersonalInfo() {
   const toggleChangePass = () => {
     setShowChangePass(!showChangePass);
   };
-  console.log("FFFF", user.packages.split(" ")[0]);
 
   return (
     <div>

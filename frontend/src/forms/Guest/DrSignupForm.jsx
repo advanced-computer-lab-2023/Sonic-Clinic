@@ -464,7 +464,7 @@ const DrSignupForm = () => {
             <input
               type="file"
               accept=".pdf"
-              value={medicalLicense}
+              // value={medicalLicense}
               onChange={(e) => setMedicalLicense(e.target.files[0])}
               style={{
                 color: "#05afb9",
@@ -493,7 +493,7 @@ const DrSignupForm = () => {
             <input
               type="file"
               accept=".pdf"
-              value={medicalDegree}
+              // value={medicalDegree}
               onChange={(e) => setMedicalDegree(e.target.files[0])}
               style={{
                 color: "#05afb9",
@@ -521,7 +521,7 @@ const DrSignupForm = () => {
             <input
               type="file"
               accept=".pdf"
-              value={doctorID}
+              // value={doctorID}
               onChange={(e) => setdoctorID(e.target.files[0])}
               style={{
                 color: "#05afb9",

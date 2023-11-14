@@ -60,7 +60,7 @@ code {
 }
 :root {
   --error: #e7195a;
-  --msg: #4bffba;
+  --msg: #05afb9;
 }
 div.error {
   padding: 10px;
