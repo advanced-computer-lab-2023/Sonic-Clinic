@@ -117,11 +117,11 @@ patientSchema.virtual("packagesPatient", {
   foreignField: "_id",
 });
 
-patientSchema.pre("save", async function (next) {
-  const salt = await bcrypt.genSalt();
-  this.password = await bcrypt.hash(this.password, salt);
-  next();
-});
+// patientSchema.pre("save", async function (next) {
+//   const salt = await bcrypt.genSalt();
+//   this.password = await bcrypt.hash(this.password, salt);
+//   next();
+// });
 
 const Patient = mongoose.model("Patient", patientSchema);
 module.exports = Patient;

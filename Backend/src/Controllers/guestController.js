@@ -3,6 +3,7 @@ const { default: mongoose } = require("mongoose");
 const potentialDoctorModel = require("../Models/PotentialDoctor.js");
 const patientModel = require("../Models/Patient.js");
 const doctorModel = require("../Models/Doctor.js");
+const bcrypt = require("bcrypt");
 
 const addPotentialDoctor = async (req, res) => {
   const { username } = req.body;
@@ -28,11 +29,12 @@ const addPotentialDoctor = async (req, res) => {
   }
 };
 const addPatient = async (req, res) => {
+  let password = req.body.password;
   const {
     username,
     name,
     email,
-    password,
+
     dateOfBirth,
     gender,
     mobileNumber,
@@ -41,6 +43,9 @@ const addPatient = async (req, res) => {
     age,
     nationalID,
   } = req.body;
+  const salt = await bcrypt.genSalt();
+  const newPassword = await bcrypt.hash(password, salt);
+  password = newPassword;
 
   // Set default values for non-required fields
 
@@ -87,6 +92,11 @@ const acceptPotientialDoc = async (req, res) => {
     }
 
     const potentialDoctor = await potentialDoctorModel.findOne({ username });
+    let password = potentialDoctor.password;
+    const salt = await bcrypt.genSalt();
+    const newPassword = await bcrypt.hash(password, salt);
+    password = newPassword;
+
     console.log(potentialDoctor.password + "Potenial Passs");
 
     if (!potentialDoctor) {
@@ -98,7 +108,7 @@ const acceptPotientialDoc = async (req, res) => {
       username: potentialDoctor.username,
       name: potentialDoctor.name,
       email: potentialDoctor.email,
-      password: potentialDoctor.password,
+      password,
       dateOfBirth: potentialDoctor.dateOfBirth,
       hourlyRate: potentialDoctor.hourlyRate,
       affiliation: potentialDoctor.affiliation,

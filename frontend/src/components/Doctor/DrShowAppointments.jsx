@@ -172,7 +172,7 @@ function DrShowAppointments({ fetchData, appointments, loading }) {
                           marginBottom: "1rem",
                         }}
                       >
-                        {appointment.patient.name}
+                        {appointment.patient?.name}
                       </Card.Title>
                       <Card.Text>
                         <div

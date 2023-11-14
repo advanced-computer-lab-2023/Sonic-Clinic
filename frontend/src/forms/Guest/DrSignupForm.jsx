@@ -174,166 +174,166 @@ const DrSignupForm = () => {
           setMedicalDegree(null);
           setSuccess("Your application will be reviewed");
           setError(null);
-          // try {
-          //   const formData = new FormData();
-          //   if (medicalLicense) {
-          //     console.log("MEDICAL LICENSE", medicalLicense);
+          try {
+            const formData = new FormData();
+            if (medicalLicense) {
+              console.log("MEDICAL LICENSE", medicalLicense);
 
-          //     try {
-          //       // Read the file data as a Uint8Array
-          //       const fileArrayBuffer = await medicalLicense.arrayBuffer();
-          //       const fileUint8Array = new Uint8Array(fileArrayBuffer);
+              try {
+                // Read the file data as a Uint8Array
+                const fileArrayBuffer = await medicalLicense.arrayBuffer();
+                const fileUint8Array = new Uint8Array(fileArrayBuffer);
 
-          //       // Format the file
-          //       const formattedFile = {
-          //         filename: medicalLicense.name,
-          //         mimetype: medicalLicense.type,
-          //         buffer: {
-          //           type: "Buffer",
-          //           data: Array.from(fileUint8Array),
-          //         },
-          //       };
+                // Format the file
+                const formattedFile = {
+                  filename: medicalLicense.name,
+                  mimetype: medicalLicense.type,
+                  buffer: {
+                    type: "Buffer",
+                    data: Array.from(fileUint8Array),
+                  },
+                };
 
-          //       console.log(`Processed file: ${medicalLicense.name}`);
+                console.log(`Processed file: ${medicalLicense.name}`);
 
-          //       // Check if any errors occurred during processing
-          //       if (!formattedFile) {
-          //         console.error("Error processing file:", medicalLicense.name);
-          //         return;
-          //       }
+                // Check if any errors occurred during processing
+                if (!formattedFile) {
+                  console.error("Error processing file:", medicalLicense.name);
+                  return;
+                }
 
-          //       const blob = new Blob([formattedFile.buffer.data], {
-          //         type: formattedFile.mimetype,
-          //       });
+                const blob = new Blob([formattedFile.buffer.data], {
+                  type: formattedFile.mimetype,
+                });
 
-          //       formData.append("files", blob, formattedFile.filename);
+                formData.append("files", blob, formattedFile.filename);
 
-          //       console.log(
-          //         "formData after processing medicalLicense:",
-          //         formData
-          //       );
-          //     } catch (error) {
-          //       console.error(
-          //         "Error processing file:",
-          //         medicalLicense.name,
-          //         error
-          //       );
-          //     }
-          //   }
-          //   // Format and append medicalLicense file
-          //   if (medicalDegree) {
-          //     try {
-          //       // Read the file data as a Uint8Array
-          //       const fileArrayBuffer = await medicalDegree.arrayBuffer();
-          //       const fileUint8Array = new Uint8Array(fileArrayBuffer);
+                console.log(
+                  "formData after processing medicalLicense:",
+                  formData
+                );
+              } catch (error) {
+                console.error(
+                  "Error processing file:",
+                  medicalLicense.name,
+                  error
+                );
+              }
+            }
+            // Format and append medicalLicense file
+            if (medicalDegree) {
+              try {
+                // Read the file data as a Uint8Array
+                const fileArrayBuffer = await medicalDegree.arrayBuffer();
+                const fileUint8Array = new Uint8Array(fileArrayBuffer);
 
-          //       // Format the file
-          //       const formattedFile = {
-          //         filename: medicalDegree.name,
-          //         mimetype: medicalDegree.type,
-          //         buffer: {
-          //           type: "Buffer",
-          //           data: Array.from(fileUint8Array),
-          //         },
-          //       };
+                // Format the file
+                const formattedFile = {
+                  filename: medicalDegree.name,
+                  mimetype: medicalDegree.type,
+                  buffer: {
+                    type: "Buffer",
+                    data: Array.from(fileUint8Array),
+                  },
+                };
 
-          //       console.log(`Processed file: ${medicalDegree.name}`);
+                console.log(`Processed file: ${medicalDegree.name}`);
 
-          //       // Check if any errors occurred during processing
-          //       if (!formattedFile) {
-          //         console.error("Error processing file:", medicalDegree.name);
-          //         return;
-          //       }
+                // Check if any errors occurred during processing
+                if (!formattedFile) {
+                  console.error("Error processing file:", medicalDegree.name);
+                  return;
+                }
 
-          //       const blob = new Blob([formattedFile.buffer.data], {
-          //         type: formattedFile.mimetype,
-          //       });
+                const blob = new Blob([formattedFile.buffer.data], {
+                  type: formattedFile.mimetype,
+                });
 
-          //       formData.append("files", blob, formattedFile.filename);
+                formData.append("files", blob, formattedFile.filename);
 
-          //       console.log(
-          //         "formData after processing medicalLicense:",
-          //         formData
-          //       );
-          //     } catch (error) {
-          //       console.error(
-          //         "Error processing file:",
-          //         medicalDegree.name,
-          //         error
-          //       );
-          //     }
-          //   }
-          //   // Format and append doctorID file
-          //   if (doctorID) {
-          //     try {
-          //       // Read the file data as a Uint8Array
-          //       const fileArrayBuffer = await doctorID.arrayBuffer();
-          //       const fileUint8Array = new Uint8Array(fileArrayBuffer);
+                console.log(
+                  "formData after processing medicalLicense:",
+                  formData
+                );
+              } catch (error) {
+                console.error(
+                  "Error processing file:",
+                  medicalDegree.name,
+                  error
+                );
+              }
+            }
+            // Format and append doctorID file
+            if (doctorID) {
+              try {
+                // Read the file data as a Uint8Array
+                const fileArrayBuffer = await doctorID.arrayBuffer();
+                const fileUint8Array = new Uint8Array(fileArrayBuffer);
 
-          //       // Format the file
-          //       const formattedFile = {
-          //         filename: doctorID.name,
-          //         mimetype: doctorID.type,
-          //         buffer: {
-          //           type: "Buffer",
-          //           data: Array.from(fileUint8Array),
-          //         },
-          //       };
+                // Format the file
+                const formattedFile = {
+                  filename: doctorID.name,
+                  mimetype: doctorID.type,
+                  buffer: {
+                    type: "Buffer",
+                    data: Array.from(fileUint8Array),
+                  },
+                };
 
-          //       console.log(`Processed file: ${doctorID.name}`);
+                console.log(`Processed file: ${doctorID.name}`);
 
-          //       // Check if any errors occurred during processing
-          //       if (!formattedFile) {
-          //         console.error("Error processing file:", doctorID.name);
-          //         return;
-          //       }
+                // Check if any errors occurred during processing
+                if (!formattedFile) {
+                  console.error("Error processing file:", doctorID.name);
+                  return;
+                }
 
-          //       const blob = new Blob([formattedFile.buffer.data], {
-          //         type: formattedFile.mimetype,
-          //       });
+                const blob = new Blob([formattedFile.buffer.data], {
+                  type: formattedFile.mimetype,
+                });
 
-          //       formData.append("files", blob, formattedFile.filename);
+                formData.append("files", blob, formattedFile.filename);
 
-          //       console.log(
-          //         "formData after processing medicalLicense:",
-          //         formData
-          //       );
-          //     } catch (error) {
-          //       console.error(
-          //         "Error processing file:",
-          //         medicalDegree.name,
-          //         error
-          //       );
-          //     }
-          //   }
-          //   const response2 = await axios.post(
-          //     `/uploadFilesForPotentialDoctor?username=${username}`,
-          //     formData,
-          //     {
-          //       headers: {
-          //         "Content-Type": "multipart/form-data",
-          //       },
-          //     }
-          //   );
-          //   if (response2.status === 200) {
-          //     setLoading(false);
-          //     setName("");
-          //     setBirthdate("");
-          //     setEmail("");
-          //     setPassword("");
-          //     setConfirmPassword("");
-          //     setUsername("");
-          //     setRate("");
-          //     setAffiliation("");
-          //     setEducation("");
-          //     setSpeciality("");
-          //     setdoctorID(null);
-          //     setMedicalLicense(null);
-          //     setMedicalDegree(null);
-          //     setSuccess("Your application will be reviewed");
-          //     setError(null);
-          //   }
-          // } catch (error) {}
+                console.log(
+                  "formData after processing medicalLicense:",
+                  formData
+                );
+              } catch (error) {
+                console.error(
+                  "Error processing file:",
+                  medicalDegree.name,
+                  error
+                );
+              }
+            }
+            const response2 = await axios.post(
+              `/uploadFilesForPotentialDoctor?username=${username}`,
+              formData,
+              {
+                headers: {
+                  "Content-Type": "multipart/form-data",
+                },
+              }
+            );
+            if (response2.status === 200) {
+              setLoading(false);
+              setName("");
+              setBirthdate("");
+              setEmail("");
+              setPassword("");
+              setConfirmPassword("");
+              setUsername("");
+              setRate("");
+              setAffiliation("");
+              setEducation("");
+              setSpeciality("");
+              setdoctorID(null);
+              setMedicalLicense(null);
+              setMedicalDegree(null);
+              setSuccess("Your application will be reviewed");
+              setError(null);
+            }
+          } catch (error) {}
         } else {
           setError("Signup failed");
           setLoading(false);

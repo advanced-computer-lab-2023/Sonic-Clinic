@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const { StringDecoder } = require("string_decoder");
 const Schema = mongoose.Schema;
 
 const familyMemberSchema = new Schema(
@@ -39,6 +40,9 @@ const familyMemberSchema = new Schema(
     unsubscribedHealthPackage: {
       type: [String],
       required: false,
+    },
+    patientRef: {
+      type: String,
     },
   },
   { timestamps: true }

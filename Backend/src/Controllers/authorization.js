@@ -77,7 +77,6 @@ const login = async (req, res) => {
 
     if (doctor1) {
       const auth = await bcrypt.compare(password, doctor1.password);
-      console.log(auth);
       if (auth) {
         const token = createToken(doctor1._id);
         res.cookie("jwt", token, { httpOnly: true, maxAge: maxAge } * 1000);
@@ -99,7 +98,9 @@ const login = async (req, res) => {
     }
 
     if (admin1) {
+      console.log(admin1);
       const auth = await bcrypt.compare(password, admin1.password);
+      console.log(auth);
       if (auth) {
         const token = createToken(admin1._id);
         res.cookie("jwt", token, { httpOnly: true, maxAge: maxAge } * 1000);
@@ -133,7 +134,8 @@ const requireAuth = async (req, res, next) => {
 };
 
 const logout = async (req, res) => {
-  res.cookie("jwt", "", { maxAge: 1 });
+  res.cookie("jwt", "", { maxAge: 0, httpOnly: true });
+  res.status(200).json({ message: "Logout successful" });
 };
 
 const updateUserInfoInCookie = (req, res, user) => {

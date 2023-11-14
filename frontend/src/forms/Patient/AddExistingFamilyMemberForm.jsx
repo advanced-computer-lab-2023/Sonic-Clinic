@@ -35,67 +35,66 @@ function AddExistingFamilyMemberForm({ onRefresh, toggleForm }) {
       isLoading(false);
       return;
     }
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const englishOnlyRegex = /^[\x00-\x7F]*$/;
-    if (!emailRegex.test(formData.email)) {
-      setError("Invalid email format.");
-      isLoading(false);
-      return;
-    }
-    if (!englishOnlyRegex.test(formData.email)) {
-      setError("Email must be in English only.");
-      isLoading(false);
-      return;
-    }
-    if (formData.email.length > 320) {
-      setError("Email exceeds maximum character limit (320).");
-      isLoading(false);
-      return;
-    }
-    if (/[^\x00-\x7F]/.test(formData.email)) {
-      setError("Email cannot contain emojis or special characters.");
-      isLoading(false);
-      return;
-    }
-    if (/\s/.test(formData.email)) {
-      setError("Email cannot contain spaces.");
-      isLoading(false);
-      return;
-    } else {
-      try {
-        const response = await axios.post("/addFamilyMemberExisting", {
-          email: formData.email,
-          phoneNumber: formData.number,
-          relationToPatient: formData.relation,
+    // const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    // const englishOnlyRegex = /^[\x00-\x7F]*$/;
+    // if (!emailRegex.test(formData.email)) {
+    //   setError("Invalid email format.");
+    //   isLoading(false);
+    //   return;
+    // }
+    // if (!englishOnlyRegex.test(formData.email)) {
+    //   setError("Email must be in English only.");
+    //   isLoading(false);
+    //   return;
+    // }
+    // if (formData.email.length > 320) {
+    //   setError("Email exceeds maximum character limit (320).");
+    //   isLoading(false);
+    //   return;
+    // }
+    // if (/[^\x00-\x7F]/.test(formData.email)) {
+    //   setError("Email cannot contain emojis or special characters.");
+    //   isLoading(false);
+    //   return;
+    // }
+    // if (/\s/.test(formData.email)) {
+    //   setError("Email cannot contain spaces.");
+    //   isLoading(false);
+    //   return;
+    // } else {
+    try {
+      const response = await axios.post("/addFamilyMemberExisting", {
+        email: formData.email,
+        phoneNumber: formData.number,
+        relationToPatient: formData.relation,
+      });
+      if (response.status === 200) {
+        isLoading(false);
+        onRefresh();
+        setFormData({
+          email: "",
+          number: "",
+          relation: "Husband",
         });
-        if (response.status === 200) {
-          isLoading(false);
-          onRefresh();
-          setFormData({
-            email: "",
-            number: "",
-            relation: "Husband",
-          });
-          dispatch(
-            addFamilyMemberState({
-              family: [response.data._id, response.data.name],
-            })
-          );
-        } else {
-          setError("Server Error");
-          isLoading(false);
-        }
-      } catch (error) {
-        if (error.response && error.response.status === 404) {
-          console.log(error.response);
-          setError(error.response.data.error);
-        } else {
-          setError(
-            "An error occurred while adding the family member. Please try again later."
-          );
-        }
+        dispatch(
+          addFamilyMemberState({
+            family: [response.data._id, response.data.name],
+          })
+        );
+      } else {
+        setError("Server Error");
         isLoading(false);
       }
+    } catch (error) {
+      if (error.response && error.response.status === 404) {
+        console.log(error.response);
+        setError(error.response.data.error);
+      } else {
+        setError(
+          "An error occurred while adding the family member. Please try again later."
+        );
+      }
+      isLoading(false);
     }
   };
 

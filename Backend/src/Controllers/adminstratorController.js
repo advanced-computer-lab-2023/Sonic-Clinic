@@ -12,6 +12,14 @@ const addAdmin = async (req, res) => {
   const { username } = req.body;
 
   try {
+    let password = req.body.password;
+    const { username, email } = req.body;
+    const salt = await bcrypt.genSalt();
+    const newPassword = await bcrypt.hash(password, salt);
+    password = newPassword;
+
+    console.log("creating admin " + newPassword);
+
     const existingAdmin = await administratorModel.findOne({ username });
     if (existingAdmin) {
       return res
@@ -19,7 +27,11 @@ const addAdmin = async (req, res) => {
         .send({ message: "Admin with this username already exists." });
     }
 
-    const newAdmin = await administratorModel.create(req.body);
+    const newAdmin = await administratorModel.create({
+      username,
+      password,
+      email,
+    });
     console.log("Admin Created!");
     res.status(200).send(newAdmin);
   } catch (error) {
@@ -407,7 +419,9 @@ const changePasswordForAdmin = async (req, res) => {
         .status(401)
         .json({ message: "Current password is incorrect." });
     }
-    Admin.password = newPassword;
+    const salt = await bcrypt.genSalt();
+    newPasswordHashed = await bcrypt.hash(newPassword, salt);
+    Admin.password = newPasswordHashed;
     await Admin.save();
 
     res.status(200).json({ message: "Password changed successfully." });

@@ -79,11 +79,13 @@ const uploadFiles = async (req, res) => {
 
 const deleteFileFromMedicalHistory = async (req, res) => {
   try {
-    const patient = await patientModel.findById(req.user.id);
+    const patient = await patientModel.findById(req.user.id).lean();
 
     if (!patient) {
       return res.status(404).json({ error: "Patient not found" });
     }
+
+    const passwordBeforeDelete = patient.password; // Save the password
 
     const filenameToDelete = req.query.filename;
 
@@ -102,7 +104,16 @@ const deleteFileFromMedicalHistory = async (req, res) => {
     patient.medicalHistory.splice(fileToDeleteIndex, 1);
 
     // Save the patient document with the updated medicalHistory field
-    await patient.save();
+    await patientModel.findByIdAndUpdate(
+      req.user.id,
+      { $set: { medicalHistory: patient.medicalHistory } },
+      { new: true, lean: true } // Return the updated document as plain JavaScript object
+    );
+
+    // Restore the original password
+    const updatedPatient = await patientModel.findById(req.user.id);
+    updatedPatient.password = passwordBeforeDelete;
+    await patientModel.findByIdAndUpdate(req.user.id, updatedPatient);
 
     res.status(200).json({ message: "File removed from medicalHistory." });
   } catch (error) {
@@ -266,9 +277,9 @@ const uploadFilesForPotentialDoctor = async (req, res) => {
 
       console.log(
         passwordBeforeUpload +
-          " before upload, " +
+          " before upload bta3 el potential doctor, " +
           passwordAfterUpload +
-          " after upload"
+          " after upload bta3 el potential doctor"
       );
 
       res
@@ -285,7 +296,7 @@ const uploadFilesbyDoctors = async (req, res) => {
   try {
     const doctor = await doctorModel.findById(req.user.id);
     const patientId = req.query.id;
-    const patient = await patientModel.findById(patientId);
+    const patient = await patientModel.findById(patientId).lean();
 
     if (!doctor) {
       return res.status(404).json({ error: "Doctor not found" });
@@ -293,6 +304,8 @@ const uploadFilesbyDoctors = async (req, res) => {
     if (!patient) {
       return res.status(404).json({ error: "Patient not found" });
     }
+
+    const passwordBeforeUpload = patient.password;
 
     const isAssociated = doctor.patients.some(
       (patient) => patient.toString() === patientId
@@ -309,15 +322,25 @@ const uploadFilesbyDoctors = async (req, res) => {
         return res.status(400).json({ error: "File upload failed" });
       }
 
-      patient.medicalHistory = patient.medicalHistory || [];
-      req.files.forEach((file) => {
-        patient.medicalHistory.push({
-          filename: file.originalname,
-          mimetype: file.mimetype,
-          buffer: file.buffer,
-        });
-      });
-      await patient.save();
+      const updatedPatient = await patientModel.findByIdAndUpdate(
+        patientId,
+        {
+          $push: {
+            medicalHistory: {
+              $each: req.files.map((file) => ({
+                filename: file.originalname,
+                mimetype: file.mimetype,
+                buffer: file.buffer,
+              })),
+            },
+          },
+        },
+        { new: true, lean: true } // Return the updated document as a plain JavaScript object
+      );
+
+      // Restore the original password
+      updatedPatient.password = passwordBeforeUpload;
+      await patientModel.findByIdAndUpdate(patientId, updatedPatient);
 
       res
         .status(200)

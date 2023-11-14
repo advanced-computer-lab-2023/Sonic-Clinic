@@ -301,7 +301,7 @@ const addFamilyMemberExisting = async (req, res) => {
   try {
     familyMember = await patientModel.findOne({ email: email });
 
-    if (!familyMember || email === null || email === undefined) {
+    if (!familyMember || !email || email === undefined) {
       familyMember = await patientModel.findOne({ mobileNumber: phoneNumber });
     }
 
@@ -325,6 +325,7 @@ const addFamilyMemberExisting = async (req, res) => {
       relationToPatient,
       patientID: req.user.id,
       package: "  ",
+      patientRef: familyMember._id,
     });
     patient.familyMembers = patient.familyMembers || [];
     patient.familyMembers.push([fam._id, name]);
@@ -641,6 +642,7 @@ const filterDoctorsAfterSearch = async (req, res) => {
 
 const viewAllAppointmentsPatient = async (req, res) => {
   try {
+    console.log(req.user.id + " ID");
     const patientId = req.user.id;
 
     // Fetch the patient's family members
@@ -1063,8 +1065,10 @@ const changePasswordForPatient = async (req, res) => {
         .status(401)
         .json({ message: "Current password is incorrect." });
     }
+    const salt = await bcrypt.genSalt();
+    const hashedPass = await bcrypt.hash(newPassword, salt);
 
-    patient.password = newPassword;
+    patient.password = hashedPass;
     await patient.save();
 
     res.status(200).json({ message: "Password changed successfully." });
@@ -1086,15 +1090,16 @@ const changePasswordForPatientForget = async (req, res) => {
     let patient = await patientModel.findOne({ email });
     let doctor = await doctorModel.findOne({ email });
     let admin = await administratorModel.findOne({ email });
-
+    const salt = await bcrypt.genSalt();
+    const hashedPass = await bcrypt.hash(newPassword, salt);
     if (patient) {
-      patient.password = newPassword;
+      patient.password = hashedPass;
       await patient.save();
       res.status(200).json({ message: "Password changed successfully." });
     }
     if (admin) {
-      admin.password = newPassword;
-      await patient.save();
+      admin.password = hashedPass;
+      await admin.save();
       res.status(200).json({ message: "Password changed successfully." });
     }
     if (doctor) {
@@ -1240,7 +1245,12 @@ const addAppointmentForMyselfOrFam = async (req, res) => {
 
     // Create the appointment and update the doctor's appointments
     if (famID) {
-      patientID = famID;
+      const family1 = await familyMemberModel.findById(famID);
+      if (family1.patientRef) {
+        patientID = family1.patientRef;
+      } else {
+        patientID = famID;
+      }
     }
     const status = "upcoming";
 
@@ -1257,7 +1267,11 @@ const addAppointmentForMyselfOrFam = async (req, res) => {
     if (!patient) {
       patient = await familyMemberModel.findById(famID);
     }
-    doctor.patients.push(patient._id);
+    if (!famID) {
+      doctor.patients.push(patient._id);
+    } else {
+      doctor.patients.push(famID);
+    }
 
     await doctor.save();
 
@@ -1313,6 +1327,15 @@ const subscribeHealthPackageWallet = async (req, res) => {
     const newType = packageName + " " + patient.username;
 
     let newPackage;
+    let patientID = patient._id;
+    if (id) {
+      const family1 = await familyMemberModel.findById(id);
+      if (family1.patientRef) {
+        patientID = family1.patientRef;
+      } else {
+        patientID = id;
+      }
+    }
 
     if (mainPatient.wallet >= originalPackage.price) {
       newPackage = await packagesModel.create({
@@ -1326,7 +1349,7 @@ const subscribeHealthPackageWallet = async (req, res) => {
           new Date().setFullYear(new Date().getFullYear() + 1)
         ).toLocaleDateString(),
         endDate: originalPackage.endDate,
-        patientID: patient._id,
+        patientID,
       });
     }
 
@@ -1387,10 +1410,16 @@ const payAppointmentWallet = async (req, res) => {
 
     // Create the appointment and update the doctor's appointments
     if (famID) {
-      patientID = famID;
+      const family1 = await familyMemberModel.findById(famID);
+      if (family1.patientRef) {
+        patientID = family1.patientRef;
+      } else {
+        patientID = famID;
+      }
     }
     const status = "upcoming";
 
+    console.log("patientttt " + patientID);
     const appointment = await appointmentModel.create({
       date,
       description,
@@ -1401,8 +1430,11 @@ const payAppointmentWallet = async (req, res) => {
     });
 
     await appointment.save();
-
-    doctor.patients.push(patient._id);
+    if (!famID) {
+      doctor.patients.push(patient._id);
+    } else {
+      doctor.patients.push(famID);
+    }
 
     await doctor.save();
 
@@ -1495,6 +1527,16 @@ const handlePackageStripe = async (req, res) => {
     const originalPackage = await packagesModel.findOne({ type: packageName });
     const newType = packageName + " " + patient.name;
 
+    let patientID = patient._id;
+    if (id) {
+      const family1 = await familyMemberModel.findById(id);
+      if (family1.patientRef) {
+        patientID = family1.patientRef;
+      } else {
+        patientID = id;
+      }
+    }
+
     const newPackage = await packagesModel.create({
       type: newType,
       price: originalPackage.price,
@@ -1506,7 +1548,7 @@ const handlePackageStripe = async (req, res) => {
         new Date().setFullYear(new Date().getFullYear() + 1)
       ).toLocaleDateString(),
       endDate: originalPackage.endDate,
-      patientID: patient._id,
+      patientID,
     });
 
     if (!newPackage) {
@@ -1515,7 +1557,12 @@ const handlePackageStripe = async (req, res) => {
     }
     patient.package = newPackage._id;
     await patient.save();
-    await patient.populate("packagesPatient");
+    if (patient.package !== "  ") {
+      await patient.populate({
+        path: "packagesPatient",
+        options: { strictPopulate: false },
+      });
+    }
     return res.status(200).json({ patient });
   } catch (error) {
     console.error("Error:", error);

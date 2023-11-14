@@ -52,6 +52,7 @@ const DoctorAppointments = ({ onBookAppointment }) => {
   };
   const handleFamilyMemberChange = (e) => {
     const selectedId = e.target.value;
+    console.log("aho" + selectedId);
     setSelectedFamilyMemberId(selectedId === "myself" ? "" : selectedId);
   };
 
@@ -361,7 +362,7 @@ const DoctorAppointments = ({ onBookAppointment }) => {
         </Modal.Body>
         <Modal.Footer>
           {bookingStatus === "success" ? (
-            <Button variant="success" onClick={handleClose}>
+            <Button variant="primary" onClick={handleClose}>
               Close
             </Button>
           ) : (
