@@ -10,6 +10,7 @@ const bcrypt = require("bcrypt");
 const stripe = require("stripe")(
   "sk_test_51O9lZ0IQTS4vUIMWJeAJ5Ds71jNbeQFj6v8mO7leS2cDIJuLy1fwNzoiXPKZV5KdoMpfzocfJ6hBusxPIjbGeveF00RTnmVYCX"
 );
+const administratorModel = require("../Models/Adminstrator.js");
 
 const doctorDetails = async (req, res) => {
   const { name } = req.body;
@@ -1072,7 +1073,6 @@ const changePasswordForPatient = async (req, res) => {
   }
 };
 
-
 const changePasswordForPatientForget = async (req, res) => {
   const { email, newPassword } = req.body;
 
@@ -1084,17 +1084,26 @@ const changePasswordForPatientForget = async (req, res) => {
     }
 
     let patient = await patientModel.findOne({ email });
+    let doctor = await doctorModel.findOne({ email });
+    let admin = await administratorModel.findOne({ email });
 
-    
-    if (!patient) {
-      return res.status(404).json({ message: "Email does not exist." });
+    if (patient) {
+      patient.password = newPassword;
+      await patient.save();
+      res.status(200).json({ message: "Password changed successfully." });
     }
-    
-  
-    patient.password = newPassword;
-    await patient.save();
-
-    res.status(200).json({ message: "Password changed successfully." });
+    if (admin) {
+      admin.password = newPassword;
+      await patient.save();
+      res.status(200).json({ message: "Password changed successfully." });
+    }
+    if (doctor) {
+      const salt = await bcrypt.genSalt();
+      newPasswordHashed = await bcrypt.hash(newPassword, salt);
+      doctor.password = newPasswordHashed;
+      await doctor.save();
+      res.status(200).json({ message: "Password changed successfully." });
+    }
   } catch (error) {
     res.status(500).json({ message: "Server Error" });
   }

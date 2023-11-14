@@ -34,7 +34,6 @@ const login = async (req, res) => {
 
   try {
     const doctor1 = await DoctorModel.findOne({ username });
-    console.log(doctor1 + "docccc");
     patient1 = await patientModel.findOne({ username });
     const admin1 = await administratorModel.findOne({ username });
 
@@ -77,8 +76,10 @@ const login = async (req, res) => {
     }
 
     if (doctor1) {
-      console.log("bykhosh ll doc");
+      console.log();
       const auth = await bcrypt.compare(password, doctor1.password);
+      console.log(doctor1.password);
+      console.log(doctor1);
       if (auth) {
         const token = createToken(doctor1._id);
         res.cookie("jwt", token, { httpOnly: true, maxAge: maxAge } * 1000);
@@ -90,7 +91,6 @@ const login = async (req, res) => {
 
     if (patient1) {
       const auth = await bcrypt.compare(password, patient1.password);
-
       if (auth) {
         const token = createToken(patient1._id);
         res.cookie("jwt", token, { httpOnly: true, maxAge: maxAge } * 1000);
@@ -110,8 +110,6 @@ const login = async (req, res) => {
         return res.status(401).json({ message: "Invalid credentials" });
       }
     }
-
-    return res.status(401).json({ message: "Invalid credentials" });
   } catch (error) {
     console.error("Error:", error);
     return res.status(500).json({ message: "Server Error" });

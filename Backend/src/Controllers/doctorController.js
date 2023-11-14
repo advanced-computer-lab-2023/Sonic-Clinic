@@ -4,6 +4,7 @@ const patientModel = require("../Models/Patient.js");
 const PrescriptionModel = require("../Models/Prescription.js");
 const appointmentModel = require("../Models/Appointment.js");
 const familyMemberModel = require("../Models/FamilyMember.js");
+const bcrypt = require("bcrypt");
 
 const searchPatientByName = async (req, res) => {
   const { name } = req.query;
@@ -307,7 +308,9 @@ const changePasswordForDoctor = async (req, res) => {
         .status(401)
         .json({ message: "Current password is incorrect." });
     }
-    doctor.password = newPassword;
+    const salt = await bcrypt.genSalt();
+    newPasswordHashed = await bcrypt.hash(newPassword, salt);
+    doctor.password = newPasswordHashed;
     await doctor.save();
 
     res.status(200).json({ message: "Password changed successfully." });
@@ -406,12 +409,11 @@ const changePasswordForDoctorForget = async (req, res) => {
     }
 
     let doctor = await doctorModel.findOne({ email });
-    
+
     if (!doctor) {
       return res.status(404).json({ message: "Email does not exist." });
     }
-    
-  
+
     doctor.password = newPassword;
     await doctor.save();
 
@@ -420,7 +422,6 @@ const changePasswordForDoctorForget = async (req, res) => {
     res.status(500).json({ message: "Server Error" });
   }
 };
-
 
 module.exports = {
   selectPatient,
@@ -439,5 +440,5 @@ module.exports = {
   addAppointmentByPatientID,
   viewWalletDoc,
   acceptContract,
-  changePasswordForDoctorForget
+  changePasswordForDoctorForget,
 };

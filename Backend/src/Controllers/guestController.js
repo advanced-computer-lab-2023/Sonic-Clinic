@@ -81,15 +81,15 @@ const acceptPotientialDoc = async (req, res) => {
       return res.status(409).json("Doctor already got accepted");
     }
 
-    // Find the potential doctor by username
     const potentialDoctor = await potentialDoctorModel.findOne({ username });
+    console.log(" potential pass " + potentialDoctor.password);
 
     if (!potentialDoctor) {
       return res.status(409).json({ message: "Invalid username" });
     }
 
     // Create a new doctor using the fields of the potential doctor
-    const doctor = new doctorModel({
+    const doctor = await doctorModel.create({
       username: potentialDoctor.username,
       name: potentialDoctor.name,
       email: potentialDoctor.email,
@@ -103,9 +103,10 @@ const acceptPotientialDoc = async (req, res) => {
       contract: false,
       wallet: 0,
     });
+    console.log(doctor.password + "encrypted password");
 
     // Save the new doctor to the doctorModel
-    await doctor.save();
+    //await doctor.save();
 
     // Remove the potential doctor from the potentialDoctorModel
     await potentialDoctorModel.deleteOne({ username });

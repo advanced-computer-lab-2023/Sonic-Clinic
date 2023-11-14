@@ -6,6 +6,7 @@ const doctorModel = require("../Models/Doctor.js");
 const patientModel = require("../Models/Patient.js");
 const potentialDoctorModel = require("../Models/PotentialDoctor.js");
 const appointmentModel = require("../Models/Appointment.js");
+const bcrypt = require("bcrypt");
 
 const addAdmin = async (req, res) => {
   const { username } = req.body;
@@ -391,6 +392,7 @@ const changePasswordForAdmin = async (req, res) => {
 
   try {
     const Admin = await administratorModel.findById(adminID);
+    console.log(Admin);
 
     if (!Admin) {
       return res.status(404).json({ message: "Admin not found." });
@@ -400,15 +402,11 @@ const changePasswordForAdmin = async (req, res) => {
       currentPassword,
       Admin.password
     );
-
     if (!isPasswordCorrect) {
       return res
         .status(401)
         .json({ message: "Current password is incorrect." });
     }
-
-
-
     Admin.password = newPassword;
     await Admin.save();
 

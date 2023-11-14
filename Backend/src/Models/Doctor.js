@@ -55,7 +55,7 @@ const doctorSchema = new Schema(
       required: true,
     },
     patients: {
-      type:[String],
+      type: [String],
       required: false,
     },
     specialty: {
@@ -102,21 +102,6 @@ doctorSchema.methods.getAppointments = async function () {
     throw error;
   }
 };
-
-doctorSchema.pre("save", async function (next) {
-  const salt = await bcrypt.genSalt();
-  this.password = await bcrypt.hash(this.password, salt);
-  next();
-});
-
-// doctorSchema.virtual("patient", {
-//   ref: "Patient",
-//   localField: "patients",
-//   foreignField: "_id",
-// });
-
-// doctorSchema.set("toObject", { virtuals: true });
-// doctorSchema.set("toJSON", { virtuals: true });
 
 const Doctor = mongoose.model("Doctor", doctorSchema);
 module.exports = Doctor;

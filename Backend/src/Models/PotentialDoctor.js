@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
+const bcrypt = require("bcrypt");
 
 const fileSchema = new Schema({
   filename: {
@@ -58,6 +59,11 @@ const potentialDoctorSchema = new Schema(
   },
   { timestamps: true }
 );
+potentialDoctorSchema.pre("save", async function (next) {
+  const salt = await bcrypt.genSalt();
+  this.password = await bcrypt.hash(this.password, salt);
+  next();
+});
 
 const PotentialDoctor = mongoose.model(
   "PotentialDoctor",
