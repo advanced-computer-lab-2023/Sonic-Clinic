@@ -14,8 +14,13 @@ const addPotentialDoctor = async (req, res) => {
         .status(409)
         .send({ message: "Doctor with this username already exists." });
     }
+    console.log("password el katbaha wana potiential doc " + req.body.password);
 
     const newPotentialDoctor = await potentialDoctorModel.create(req.body);
+    console.log(
+      "password after creation el potential doc " + newPotentialDoctor.password
+    );
+
     console.log("Doctor Request Sent!");
     res.status(201).json(newPotentialDoctor);
   } catch (error) {
@@ -82,7 +87,7 @@ const acceptPotientialDoc = async (req, res) => {
     }
 
     const potentialDoctor = await potentialDoctorModel.findOne({ username });
-    console.log(" potential pass " + potentialDoctor.password);
+    console.log(potentialDoctor.password + "Potenial Passs");
 
     if (!potentialDoctor) {
       return res.status(409).json({ message: "Invalid username" });
@@ -99,16 +104,10 @@ const acceptPotientialDoc = async (req, res) => {
       affiliation: potentialDoctor.affiliation,
       educationalBackground: potentialDoctor.educationalBackground,
       specialty: potentialDoctor.specialty,
-      documents: potentialDoctor.documents,
       contract: false,
       wallet: 0,
     });
-    console.log(doctor.password + "encrypted password");
-
-    // Save the new doctor to the doctorModel
-    //await doctor.save();
-
-    // Remove the potential doctor from the potentialDoctorModel
+    console.log(doctor.password + " potential doctor -> doctor");
     await potentialDoctorModel.deleteOne({ username });
 
     res.status(201).json({ message: "Doctor created successfully", doctor });

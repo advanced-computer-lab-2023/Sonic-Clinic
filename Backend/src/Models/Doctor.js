@@ -78,7 +78,7 @@ const doctorSchema = new Schema(
       type: Boolean,
       required: false,
     },
-    documents: [fileSchema],
+    // documents: [fileSchema],
   },
   { timestamps: true }
 );

@@ -76,10 +76,8 @@ const login = async (req, res) => {
     }
 
     if (doctor1) {
-      console.log();
       const auth = await bcrypt.compare(password, doctor1.password);
-      console.log(doctor1.password);
-      console.log(doctor1);
+      console.log(auth);
       if (auth) {
         const token = createToken(doctor1._id);
         res.cookie("jwt", token, { httpOnly: true, maxAge: maxAge } * 1000);

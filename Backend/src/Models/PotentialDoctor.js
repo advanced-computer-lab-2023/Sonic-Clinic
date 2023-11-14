@@ -55,7 +55,10 @@ const potentialDoctorSchema = new Schema(
       type: String,
       required: true,
     },
-    documents: [fileSchema],
+    documents: {
+      type: [fileSchema],
+      required: false,
+    },
   },
   { timestamps: true }
 );

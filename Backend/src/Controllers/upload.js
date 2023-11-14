@@ -27,12 +27,14 @@ const upload = multer({
 
 const uploadFiles = async (req, res) => {
   try {
-    const patient = await patientModel.findById(req.user.id);
+    const patient = await patientModel.findById(req.user.id).lean();
 
     if (!patient) {
       return res.status(404).json({ error: "Patient not found" });
     }
-    // console.log(req);
+
+    const medicalHistoryBeforeUpload = patient.medicalHistory || []; // Save the medical history
+
     upload(req, res, async (err) => {
       if (err) {
         console.error("Multer error:", err);
@@ -46,11 +48,24 @@ const uploadFiles = async (req, res) => {
           mimetype: file.mimetype,
           buffer: file.buffer,
         });
-        // console.log(file.originalname, "NAME"); // Log the file name
-        // console.log(file.mimetype, "MIM"); // Log the file name
-        // console.log(file.buffer, "BUFFER");
       });
-      await patient.save();
+
+      await patientModel.findByIdAndUpdate(
+        req.user.id,
+        { $set: { medicalHistory: patient.medicalHistory } },
+        { new: true } // Return the updated document
+      );
+
+      const updatedPatient = await patientModel.findById(req.user.id).lean();
+
+      const medicalHistoryAfterUpload = updatedPatient.medicalHistory || []; // Get the updated medical history
+
+      console.log(
+        medicalHistoryBeforeUpload.length +
+          " files before upload, " +
+          medicalHistoryAfterUpload.length +
+          " files after upload"
+      );
 
       res
         .status(200)
@@ -208,28 +223,53 @@ const uploadFilesForPotentialDoctor = async (req, res) => {
       return res.status(400).json({ error: "Username not provided" });
     }
 
-    const PotentialDoctor = await potentialDoctorModel.findOne({
-      username: username,
-    });
+    const potentialDoctor = await potentialDoctorModel
+      .findOne({
+        username: username,
+      })
+      .lean(); // Use lean() to get a plain JavaScript object
 
-    if (!PotentialDoctor) {
+    if (!potentialDoctor) {
       return res.status(404).json({ error: "PotentialDoctor not found" });
     }
+
+    const passwordBeforeUpload = potentialDoctor.password; // Save the password
+
     upload(req, res, async (err) => {
       if (err) {
         console.error("Multer error:", err);
         return res.status(400).json({ error: "File upload failed" });
       }
-      PotentialDoctor.documents = PotentialDoctor.documents || [];
+
+      potentialDoctor.documents = potentialDoctor.documents || [];
       req.files.forEach((file) => {
-        PotentialDoctor.documents.push({
+        potentialDoctor.documents.push({
           filename: file.originalname,
           mimetype: file.mimetype,
           buffer: file.buffer,
         });
       });
-      await PotentialDoctor.save();
-      console.log("FILES", PotentialDoctor.documents);
+
+      await potentialDoctorModel.findOneAndUpdate(
+        { username: username },
+        { $set: { documents: potentialDoctor.documents } },
+        { new: true } // Return the updated document
+      );
+
+      const updatedPotentialDoctor = await potentialDoctorModel
+        .findOne({
+          username: username,
+        })
+        .lean(); // Use lean() again
+
+      const passwordAfterUpload = updatedPotentialDoctor.password;
+
+      console.log(
+        passwordBeforeUpload +
+          " before upload, " +
+          passwordAfterUpload +
+          " after upload"
+      );
 
       res
         .status(200)
