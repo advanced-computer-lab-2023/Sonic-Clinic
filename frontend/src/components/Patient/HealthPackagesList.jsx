@@ -87,7 +87,7 @@ function HealthPackagesList({ refreshFlag }) {
         >
           Your Health Packages
         </div>
-        {NeededData &&
+        {NeededData.length === 0 &&
           NeededData.map((member, index) => (
             <Card key={`outer_${index}`} className="mb-4">
               {Array.isArray(member) ? (
@@ -100,91 +100,20 @@ function HealthPackagesList({ refreshFlag }) {
                       marginBottom: "10px",
                     }}
                   >
-                    {member[0].name}
+                    {member[0] && member[0]?.name}
                   </div>
                   {member.map((innerMember, innerIndex) => (
                     <Card.Body key={`inner_${index}_${innerIndex}`}>
-                      {innerMember.package && (
+                      {innerMember?.package && (
                         <Row>
                           <Col md={8}>
-                            {Array.isArray(innerMember.package) ? (
-                              innerMember.package.map(
-                                (packagee, packageIndex) => (
-                                  <div key={`innerPackage_${packageIndex}`}>
-                                    <p>
-                                      <strong>Package:</strong>{" "}
-                                      {packagee.type.split(" ")[0]}
-                                    </p>
-                                    <p>
-                                      <strong>Package Status:</strong>{" "}
-                                      {packagee.status}
-                                    </p>
-                                    {packagee.status === "Subscribed" ? (
-                                      <>
-                                        {" "}
-                                        <p>
-                                          <strong>Price:</strong>{" "}
-                                          {packagee.price} $
-                                        </p>
-                                        <p>
-                                          <strong>Renewal Date:</strong>{" "}
-                                          {packagee.renewalDate}
-                                        </p>
-                                      </>
-                                    ) : (
-                                      <p>
-                                        <strong>End Date:</strong>{" "}
-                                        {packagee.endDate}
-                                      </p>
-                                    )}
-                                  </div>
-                                )
-                              )
-                            ) : (
-                              <>
-                                <p>
-                                  <strong>Package:</strong>{" "}
-                                  {innerMember.package.type.split(" ")[0]}
-                                </p>
-                                <p>
-                                  <strong>Package Status:</strong>{" "}
-                                  {innerMember.package.status}
-                                </p>
-                                {innerMember.package.status === "Subscribed" ? (
-                                  <>
-                                    {" "}
-                                    <p>
-                                      <strong>Price:</strong>{" "}
-                                      {innerMember.package.price} $
-                                    </p>
-                                    <p>
-                                      <strong>Renewal Date:</strong>{" "}
-                                      {innerMember.package.renewalDate}
-                                    </p>
-                                  </>
-                                ) : (
-                                  <p>
-                                    <strong>End Date:</strong>{" "}
-                                    {innerMember.package.endDate}
-                                  </p>
-                                )}
-                              </>
-                            )}
+                            {/* Your existing code for package details */}
                           </Col>
                           <Col
                             md={4}
                             className="d-flex align-items-end justify-content-end"
                           >
-                            {innerMember.package &&
-                              innerMember.package.status === "Subscribed" && (
-                                <Button
-                                  variant="secondary"
-                                  style={{ marginBottom: "5.5rem" }}
-                                  onClick={() => cancelPackage(innerMember._id)}
-                                >
-                                  Cancel Package
-                                </Button>
-                              )}
+                            {/* Your existing code for cancel button */}
                           </Col>
                         </Row>
                       )}
@@ -201,47 +130,17 @@ function HealthPackagesList({ refreshFlag }) {
                       marginBottom: "10px",
                     }}
                   >
-                    {member.name}
+                    {member?.name || "Name not available"}
                   </div>
                   <Row>
                     <Col md={8}>
-                      <p>
-                        <strong>Package:</strong>{" "}
-                        {member.package.type.split(" ")[0]}
-                      </p>
-                      <p>
-                        <strong>Package Status:</strong> {member.package.status}
-                      </p>
-                      {member.package.status === "Subscribed" ? (
-                        <>
-                          {" "}
-                          <p>
-                            <strong>Price:</strong> {member.package.price} $
-                          </p>
-                          <p>
-                            <strong>Renewal Date:</strong>{" "}
-                            {member.package.renewalDate}
-                          </p>
-                        </>
-                      ) : (
-                        <p>
-                          <strong>End Date:</strong> {member.package.endDate}
-                        </p>
-                      )}
+                      {/* Your existing code for package details */}
                     </Col>
                     <Col
                       md={4}
                       className="d-flex align-items-end justify-content-end"
                     >
-                      {member.package.status === "Subscribed" && (
-                        <Button
-                          variant="secondary"
-                          style={{ marginBottom: "5.5rem" }}
-                          onClick={() => cancelPackage(member._id)}
-                        >
-                          Cancel Package
-                        </Button>
-                      )}
+                      {/* Your existing code for cancel button */}
                     </Col>
                   </Row>
                 </Card.Body>

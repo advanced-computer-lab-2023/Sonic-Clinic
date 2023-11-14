@@ -7,7 +7,6 @@ import ChangePass from "../../forms/ChangePass";
 
 function AdminProfilePage() {
   const [activeKey, setActiveKey] = useState("first");
-  const [refreshFlag, setRefreshFlag] = useState(false);
   const [showChangePass, setShowChangePass] = useState(false);
   const user = useSelector((state) => state.adminLogin);
 
@@ -21,7 +20,12 @@ function AdminProfilePage() {
   const labelStyle = {
     cursor: "pointer",
     fontWeight: "lighter",
-    textDecoration: showChangePass ? "underline" : "none",
+    color: "inherit",
+  };
+  const passStyle = {
+    cursor: "pointer",
+    fontWeight: "lighter",
+    textDecoration: "underline",
     color: "inherit",
   };
 
@@ -94,15 +98,21 @@ function AdminProfilePage() {
                                 {user.userName}
                               </div>
                               <div style={listItemStyle}>
+                                <span style={{ color: "#099BA0" }}>Email:</span>{" "}
+                                {user.email}
+                              </div>
+                              <div style={listItemStyle}>
                                 <span style={{ color: "#099BA0" }}>
                                   Password:
                                 </span>{" "}
                                 <span>
                                   <label
-                                    style={labelStyle}
+                                    style={passStyle}
                                     onClick={toggleChangePass} // Add your click handler here
                                   >
-                                    {showChangePass ? "close" : "********"}
+                                    {showChangePass
+                                      ? "close"
+                                      : "change password"}
                                   </label>
                                 </span>
                                 {showChangePass && (

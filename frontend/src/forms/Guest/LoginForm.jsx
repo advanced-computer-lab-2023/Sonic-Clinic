@@ -39,16 +39,18 @@ const LoginForm = () => {
     }
 
     try {
+      console.log("name: " + username);
+      console.log("pass: " + password);
       const response = await axios.post("/login", {
         username: username,
         password: password,
       });
-      console.log(response.status);
+      console.log("weeeee" + response.status);
 
       if (response.status === 200) {
         const user = response.data.user;
         const type = response.data.message;
-
+        console.log(type);
         if (type === "Patient") {
           if (
             user.packagesPatient &&
@@ -129,6 +131,7 @@ const LoginForm = () => {
             setCredentialsAdmin({
               password: password,
               userName: username,
+              email: user.email,
               userId: user._id,
             })
           );
@@ -142,10 +145,10 @@ const LoginForm = () => {
         isLoading(false);
       }
     } catch (error) {
-      console.error("Error:", error);
-
+      setError(error);
+      console.error("Login error:", error);
+      console.log("Full error object:", error);
       if (error.response && error.response.status === 401) {
-        console.log("Authentication error");
         setError("Invalid Credentials");
       } else if (error.response && error.response.status === 500) {
         setError("Server Error");

@@ -42,7 +42,11 @@ export default function AdminDoctorsPage() {
               marginLeft: "100px",
             }}
           >
-            <AdminViewTable onAdmins={false} api={"/viewAllDoctors"} />
+            <AdminViewTable
+              onAdmins={false}
+              onDocs={true}
+              api={"/viewAllDoctors"}
+            />
           </Container>
         </Tab>
         <Tab eventKey="requests" title="Requests">

@@ -73,7 +73,7 @@ div.error {
 
 div.msg {
   padding: 10px;
-  background: #d9ffec;
+  background: #effdff;
   border: 1px solid var(--msg);
   color: var(--msg);
   border-radius: 4px;

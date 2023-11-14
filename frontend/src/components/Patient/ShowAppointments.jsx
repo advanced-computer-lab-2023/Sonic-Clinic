@@ -18,6 +18,7 @@ function ShowAppointments() {
   const [loading, setLoading] = useState(true);
   const [responseData, setResponseData] = useState([]);
   const [error1, setError] = useState(null);
+  const [msg, setMsg] = useState(null);
   const id = useSelector((state) => state.patientLogin.userId);
   const filterDate = useSelector((state) => state.filterAppointments.date);
   const filterStatus = useSelector((state) => state.filterAppointments.status);
@@ -31,13 +32,15 @@ function ShowAppointments() {
       const response = await axios.post("/viewAllAppointmentsPatient");
       if (response.status === 200) {
         setResponseData(response.data);
+        setMsg(null);
       } else {
         console.log("Server error");
       }
       setLoading(false);
     } catch (error) {
       if (error.response && error.response.status === 404) {
-        setError(" You don't have any appointments.");
+        setMsg(" You don't have any appointments.");
+        setError(null);
       } else if (error.response && error.response.status === 500) {
         setError("Server Error");
       } else {
@@ -118,8 +121,11 @@ function ShowAppointments() {
         </div>
       )}
       {filteredAppointments.length === 0 && !loading && (
-        <div style={{ textAlign: "center", marginTop: "20px" }}>{error1}</div>
+        <div style={{ textAlign: "center", marginTop: "20px" }} className="msg">
+          {msg}
+        </div>
       )}
+      {error1 && <div className="error">{error1}</div>}
       {!loading &&
         // formatting el date w el time ghalat
         filteredAppointments.map((appointment, index) => {

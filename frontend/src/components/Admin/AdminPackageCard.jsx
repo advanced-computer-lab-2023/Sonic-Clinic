@@ -221,7 +221,7 @@ export default function AdminPackageCard({
                     onChange={(e) => setPrice(e.target.value)}
                   />
                 ) : (
-                  <>{price} LE</>
+                  <>$ {price}</>
                 )}
               </span>
             </ListGroup.Item>

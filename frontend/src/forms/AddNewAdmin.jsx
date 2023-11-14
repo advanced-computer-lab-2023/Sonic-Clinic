@@ -7,28 +7,67 @@ export default function AddNewAdmin({ fetchData, closeForm }) {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
-    if (username == "" || password == "" || confirmPassword == "") {
+    if (
+      username == "" ||
+      password == "" ||
+      confirmPassword == "" ||
+      email == ""
+    ) {
       setError("Please fill in all the required fields");
       console.log(error);
       return;
     }
-    if (password !== confirmPassword) {
-      setError("Passwords don't match");
-      console.log(error);
+
+    var uppercaseRegex = /[A-Z]/;
+    var lowercaseRegex = /[a-z]/;
+    var digitRegex = /[0-9]/;
+    var specialCharRegex = /[~!@#$%^&*_+=`|(){}[\]:;"'<>,.?/-]/;
+
+    if (password.length < 8) {
+      setError("Password must be at least 8 characters long");
       return;
     }
-    const passwordRegex = /^(?=.*\d).{8,}$/;
-    if (!passwordRegex.test(password)) {
-      setError(
-        "Password should contain at least 8 characters including minimum 1 number. Try again"
-      );
-      console.log(error);
+    if (!uppercaseRegex.test(password)) {
+      setError("Password must contain at least one uppercase letter");
+      return;
+    }
+
+    if (!lowercaseRegex.test(password)) {
+      setError("Password must contain at least one lowercase letter");
+      return;
+    }
+
+    if (!digitRegex.test(password)) {
+      setError("Password must contain at least one digit");
+      return;
+    }
+
+    if (!specialCharRegex.test(password)) {
+      setError("Password must contain at least one special character");
+      return;
+    }
+    if (password !== confirmPassword) {
+      setError("Passwords do not match");
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const englishOnlyRegex = /^[\x00-\x7F]*$/;
+
+    if (!emailRegex.test(email)) {
+      setError("Invalid email format.");
+      return;
+    }
+
+    if (!englishOnlyRegex.test(email)) {
+      setError("Email must be in English only.");
       return;
     }
 
@@ -36,6 +75,7 @@ export default function AddNewAdmin({ fetchData, closeForm }) {
       const response = await axios.post("/addAdmin", {
         username: username,
         password: password,
+        email: email,
       });
 
       if (response.status === 200) {
@@ -46,6 +86,7 @@ export default function AddNewAdmin({ fetchData, closeForm }) {
         setUsername("");
         setPassword("");
         setConfirmPassword("");
+        setEmail("");
         closeForm();
         fetchData();
       } else if (response.status === 409) {
@@ -75,7 +116,7 @@ export default function AddNewAdmin({ fetchData, closeForm }) {
         className="d-flex justify-content-center align-items-center"
       >
         <Form.Control
-          className="m-3"
+          style={{ width: "13rem", marginRight: "0.5rem" }}
           type="text"
           name="username"
           placeholder="Enter username"
@@ -84,7 +125,16 @@ export default function AddNewAdmin({ fetchData, closeForm }) {
           required
         />
         <Form.Control
-          className="m-3"
+          style={{ width: "13rem", marginRight: "0.5rem" }}
+          type="email"
+          name="email"
+          placeholder="Enter Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
+        <Form.Control
+          style={{ width: "13rem", marginRight: "0.5rem" }}
           type="password"
           name="pass"
           placeholder="Enter password"
@@ -93,7 +143,7 @@ export default function AddNewAdmin({ fetchData, closeForm }) {
           required
         />
         <Form.Control
-          className="m-3"
+          style={{ width: "13rem", marginRight: "0.5rem" }}
           type="password"
           name="confirmPass"
           placeholder="Confirm Password"
@@ -101,7 +151,7 @@ export default function AddNewAdmin({ fetchData, closeForm }) {
           onChange={(e) => setConfirmPassword(e.target.value)}
           required
         />
-        <Button type="submit" style={{ width: "200px", margin: "20px" }}>
+        <Button type="submit" style={{ width: "8rem", margin: "20px" }}>
           Create
         </Button>
       </Form>

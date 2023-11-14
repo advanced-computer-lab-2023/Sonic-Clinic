@@ -7,6 +7,7 @@ export default function AdminDocReqs() {
   const [loading, setLoading] = useState(true);
   const [responseData, setResponseData] = useState([]);
   const [error1, setError] = useState(null);
+  const [empty, setEmpty] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
@@ -18,13 +19,13 @@ export default function AdminDocReqs() {
       const response = await axios.get("/viewPotentialDoctors");
       if (response.status === 200) {
         setResponseData(response.data.potentialDoctors);
-      } else {
-        console.log("Server error");
+        setEmpty(false);
       }
       setLoading(false);
     } catch (error) {
       if (error.response && error.response.status === 404) {
         setError("No potential doctors found.");
+        setEmpty(true);
       } else if (error.response && error.response.status === 500) {
         setError("Server Error");
       }
@@ -69,7 +70,7 @@ export default function AdminDocReqs() {
             <span className="sr-only">Loading...</span>
           </Spinner>
         </div>
-      ) : (
+      ) : !empty ? (
         filteredUsers.map((user, index) => (
           <AdminDocReqCard
             key={index}
@@ -87,6 +88,8 @@ export default function AdminDocReqs() {
             loading={loading}
           />
         ))
+      ) : (
+        <div className="msg">No doctor requests</div>
       )}
     </Container>
   );

@@ -12,7 +12,7 @@ function AddExistingFamilyMemberForm({ onRefresh, toggleForm }) {
   const [formData, setFormData] = useState({
     email: "",
     number: "",
-    relation: "",
+    relation: "Husband",
   });
 
   const handleChange = (e) => {
@@ -71,6 +71,11 @@ function AddExistingFamilyMemberForm({ onRefresh, toggleForm }) {
         if (response.status === 200) {
           isLoading(false);
           onRefresh();
+          setFormData({
+            email: "",
+            number: "",
+            relation: "Husband",
+          });
           dispatch(
             addFamilyMemberState({
               family: [response.data._id, response.data.name],

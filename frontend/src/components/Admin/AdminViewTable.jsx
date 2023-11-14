@@ -6,7 +6,7 @@ import { Button, Modal, Form } from "react-bootstrap";
 import AddNewAdmin from "../../forms/AddNewAdmin";
 import axios from "axios";
 
-export default function AdminViewTable({ onAdmins, api }) {
+export default function AdminViewTable({ onAdmins, onDocs, api }) {
   const [loading, setLoading] = useState(true);
   const [responseData, setResponseData] = useState([]);
   const [username, setUsername] = useState("");
@@ -149,6 +149,8 @@ export default function AdminViewTable({ onAdmins, api }) {
           <tr>
             {!onAdmins && <th style={{ color: "#099BA0" }}>Full Name</th>}
             <th style={{ color: "#099BA0" }}>Username</th>
+            <th style={{ color: "#099BA0" }}>Email</th>
+            {onDocs && <th style={{ color: "#099BA0" }}>Affiliation</th>}
             <th></th>
           </tr>
         </thead>
@@ -158,6 +160,8 @@ export default function AdminViewTable({ onAdmins, api }) {
               <tr key={user._id}>
                 {!onAdmins && <td>{user.name}</td>}
                 <td>{user.username} </td>
+                <td>{user.email}</td>
+                {onDocs && <td>{user.affiliation}</td>}
                 <td>
                   <FontAwesomeIcon
                     icon={faTrashCan}

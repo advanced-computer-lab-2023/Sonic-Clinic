@@ -119,6 +119,7 @@ const DoctorAppointments = ({ onBookAppointment }) => {
             );
           }
         } else {
+          fetchData();
           setBookingStatus("success");
           setError(null);
           dispatch(
@@ -277,7 +278,7 @@ const DoctorAppointments = ({ onBookAppointment }) => {
                         </div>
                         <div className="d-flex align-items-center justify-content-center">
                           <Button
-                            className="btn-primary mt-4 w-50"
+                            className="btn-secondary mt-4 w-50"
                             onClick={() => handleBookClick(appointment)}
                           >
                             Book

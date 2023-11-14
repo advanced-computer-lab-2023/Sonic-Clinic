@@ -18,6 +18,7 @@ export default function AdminDocReqCard({
   docUsername,
   docDocuments,
   loading,
+  clearExpanded,
 }) {
   const formattedDateOfBirth = new Date(docBirthDate).toLocaleDateString(
     "en-GB"
@@ -55,6 +56,7 @@ export default function AdminDocReqCard({
               docUsername={docUsername}
               docDocuments={docDocuments}
               loading={loading}
+              clearExpanded={clearExpanded}
             />
           </AccordionBody>
         </Accordion.Item>

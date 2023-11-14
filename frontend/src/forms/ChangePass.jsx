@@ -60,6 +60,10 @@ export default function ChangePass({ patient, api }) {
       });
       if (response.status === 200) {
         setShowSuccessModal(true);
+        setError(null);
+        setOldPass("");
+        setNewPass("");
+        setConfirmNewPass("");
       }
     } catch (error) {
       console.error("Error:", error);
@@ -88,6 +92,7 @@ export default function ChangePass({ patient, api }) {
           type="password"
           name="currPass"
           placeholder="Current Password"
+          value={oldPass}
           onChange={(e) => setOldPass(e.target.value)}
           required
         />
@@ -97,6 +102,7 @@ export default function ChangePass({ patient, api }) {
           type="password"
           name="pass"
           placeholder="New Password"
+          value={newPass}
           onChange={(e) => setNewPass(e.target.value)}
           required
         />
@@ -106,6 +112,7 @@ export default function ChangePass({ patient, api }) {
           type="password"
           name="confirmPass"
           placeholder="Confirm Password"
+          value={confirmNewPass}
           onChange={(e) => setConfirmNewPass(e.target.value)}
           required
         />

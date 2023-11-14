@@ -16,6 +16,7 @@ export default function AdminDocReqDetails({
   docUsername,
   docDocuments,
   loading,
+  clearExpanded,
 }) {
   const [showRejectModal, setShowRejectModal] = useState(false);
   const [showAcceptModal, setShowAcceptModal] = useState(false);
@@ -55,6 +56,7 @@ export default function AdminDocReqDetails({
       if (response.status === 201) {
         handleClose();
         fetchData();
+        clearExpanded();
       }
     } catch (error) {
       if (error.response && error.response.status === 404) {
@@ -76,6 +78,7 @@ export default function AdminDocReqDetails({
       if (response.status === 200) {
         handleClose();
         fetchData();
+        clearExpanded();
       }
     } catch (error) {
       if (error.response && error.response.status === 404) {
@@ -186,10 +189,10 @@ export default function AdminDocReqDetails({
               </object>
             </Modal.Body>
             <Modal.Footer className="d-flex align-items-center justify-content-center">
-              <Button variant="success" onClick={acceptDoctor}>
+              <Button variant="primary" onClick={acceptDoctor}>
                 Send Contract
               </Button>
-              <Button variant="danger" onClick={handleClose}>
+              <Button variant="secondary" onClick={handleClose}>
                 Cancel
               </Button>
             </Modal.Footer>

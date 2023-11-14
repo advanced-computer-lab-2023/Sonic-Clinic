@@ -94,6 +94,13 @@ function AddFamilyMemberForm({ onRefresh, toggleForm }) {
         if (response.status === 200) {
           isLoading(false);
           onRefresh();
+          setFormData({
+            name: "",
+            nationalId: "",
+            age: "",
+            gender: "Male",
+            relation: "Husband",
+          });
           dispatch(
             addFamilyMemberState({
               family: [response.data._id, response.data.name],
