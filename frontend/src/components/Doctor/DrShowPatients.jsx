@@ -224,22 +224,24 @@ function DrShowPatients({
   };
 
   const scheduleFollowUp = async (patientID) => {
-    const [datePart, timePart] = followUpDateTime.split("T");
-    // console.log(followUpDateTime);
-    try {
-      const response = await axios.post("/addAppointmentByPatientID", {
-        date: datePart,
-        description: "Follow up",
-        status: "upcoming",
-        patientID: patientID,
-        time: timePart,
-      });
-      if (response.status === 201) {
-        setFollowUpModal(false);
-        setConfirmModal(true);
+    if (followUpDateTime != null) {
+      const [datePart, timePart] = followUpDateTime.split("T");
+      try {
+        const response = await axios.post("/addAppointmentByPatientID", {
+          date: datePart,
+          description: "Follow up",
+          status: "upcoming",
+          patientID: patientID,
+          time: timePart,
+        });
+        if (response.status === 201) {
+          setFollowUpDateTime(null);
+          setFollowUpModal(false);
+          setConfirmModal(true);
+        }
+      } catch (error) {
+        console.log();
       }
-    } catch (error) {
-      console.log();
     }
   };
 
@@ -389,6 +391,7 @@ function DrShowPatients({
                             cursor: "pointer",
                             color: "#099BA0",
                             textDecoration: "underline",
+                            marginBottom: "1rem",
                           }}
                           onClick={() => setUploadVisible(!uploadVisible)}
                           htmlFor="weee"
@@ -407,7 +410,11 @@ function DrShowPatients({
 
                           {uploadedFiles.length > 0 && (
                             <div>
-                              <ul style={{ marginTop: "1rem" }}>
+                              <ul
+                                style={{
+                                  marginBottom: "1rem",
+                                }}
+                              >
                                 {uploadedFiles.map((file, index) => (
                                   <li key={index}>
                                     {file.filename}
@@ -438,6 +445,7 @@ function DrShowPatients({
                               </div>
                             </div>
                           )}
+                          <p style={{ fontWeight: "bold" }}>Prescriptions:</p>
                         </div>
                       </div>
                     </Card.Text>

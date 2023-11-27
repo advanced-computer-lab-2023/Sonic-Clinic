@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Card, Col, Row, Spinner } from "react-bootstrap";
+import { Card, Col, Row, Spinner, Button, Modal, Form } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -15,6 +15,10 @@ import { deleteFilterDrAppointments } from "../../state/Doctor/filterDrAppointme
 
 function DrShowAppointments({ fetchData, appointments, loading }) {
   const [error1, setError] = useState(null);
+  const [rescheduleModal, setRescheduleModal] = useState(false);
+  const [rescheduleDate, setRescheduleDate] = useState(null);
+  const [rescheduleTime, setRescheduleTime] = useState(null);
+  const [confirmModal, setConfirmModal] = useState(false);
   const filterDate = useSelector((state) => state.filterDrAppointments.date);
   const filterStatus = useSelector(
     (state) => state.filterDrAppointments.status
@@ -30,6 +34,17 @@ function DrShowAppointments({ fetchData, appointments, loading }) {
       })
     );
   }, []);
+
+  function getCurrentDateTime() {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = `${(now.getMonth() + 1).toString().padStart(2, "0")}`;
+    const day = `${now.getDate().toString().padStart(2, "0")}`;
+    const hours = `${now.getHours().toString().padStart(2, "0")}`;
+    const minutes = `${now.getMinutes().toString().padStart(2, "0")}`;
+
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
+  }
 
   const getStatusColor = (status) => {
     const lowerCaseStatus = status.toLowerCase();
@@ -61,6 +76,17 @@ function DrShowAppointments({ fetchData, appointments, loading }) {
       default:
         return faPause; // Default color
     }
+  };
+
+  const cancelApp = async (id) => {
+    console.log(id);
+  };
+
+  const rescheduleApp = async (id) => {
+    //Date and time saved
+    console.log(id);
+    setConfirmModal(true);
+    setRescheduleModal(false);
   };
 
   const filteredAppointments = appointments.filter((appointment) => {
@@ -161,7 +187,7 @@ function DrShowAppointments({ fetchData, appointments, loading }) {
                       />
                     </div>
                   </Col>
-                  <Col lg={5}>
+                  <Col lg={4}>
                     <Card.Body className="p-4">
                       <Card.Title
                         style={{
@@ -186,7 +212,7 @@ function DrShowAppointments({ fetchData, appointments, loading }) {
                       </Card.Text>
                     </Card.Body>
                   </Col>
-                  <Col lg={5}>
+                  <Col lg={4}>
                     <Card.Body className="p-4">
                       <Card.Text>
                         <div
@@ -221,6 +247,126 @@ function DrShowAppointments({ fetchData, appointments, loading }) {
                         </div>
                       </Card.Text>
                     </Card.Body>
+                  </Col>
+                  <Col lg={2}>
+                    <div
+                      style={{
+                        marginTop: "3rem",
+                        marginLeft: "1rem",
+                      }}
+                    >
+                      {(appointment.status === "upcoming" ||
+                        appointment.status === "rescheduled") && (
+                        <>
+                          {" "}
+                          <Button
+                            style={{
+                              marginBottom: "1rem",
+                              width: "7rem",
+                            }}
+                            onClick={() => setRescheduleModal(true)}
+                          >
+                            Reschedule
+                          </Button>
+                          <Modal show={rescheduleModal}>
+                            <Modal.Header>
+                              <Modal.Title>
+                                Reschedule {appointment.patient.name}'s
+                                Appointment
+                              </Modal.Title>
+                            </Modal.Header>
+                            <Modal.Body style={{ margin: "1rem" }}>
+                              <div
+                                style={{
+                                  color: "#099BA0 ",
+                                  fontSize: "1.1rem",
+                                  fontStyle: "normal",
+                                  fontWeight: 500,
+                                  lineHeight: "100%",
+                                  marginBottom: "1rem",
+                                }}
+                              >
+                                Date
+                              </div>
+                              <Form.Control
+                                type="date"
+                                onChange={(e) =>
+                                  setRescheduleDate(e.target.value)
+                                }
+                                style={{ marginBottom: "1rem" }}
+                              />
+                              <div
+                                style={{
+                                  color: "#099BA0 ",
+                                  fontSize: "1.1rem",
+                                  fontStyle: "normal",
+                                  fontWeight: 500,
+                                  lineHeight: "100%",
+                                  marginBottom: "1rem",
+                                }}
+                              >
+                                Time
+                              </div>
+                              <Form.Control
+                                type="time"
+                                onChange={(e) =>
+                                  setRescheduleTime(e.target.value)
+                                }
+                              />
+                            </Modal.Body>
+                            <Modal.Footer>
+                              <Button
+                                variant="primary"
+                                onClick={() => {
+                                  if (
+                                    rescheduleTime !== null &&
+                                    rescheduleDate !== null
+                                  ) {
+                                    rescheduleApp(appointment._id);
+                                  }
+                                }}
+                                disabled={
+                                  rescheduleTime === null ||
+                                  rescheduleDate === null
+                                }
+                              >
+                                Save
+                              </Button>
+                              <Button
+                                variant="secondary"
+                                onClick={() => {
+                                  setRescheduleModal(false);
+                                  setRescheduleTime(null);
+                                  setRescheduleDate(null);
+                                }}
+                              >
+                                Cancel
+                              </Button>
+                            </Modal.Footer>
+                          </Modal>
+                          <Modal show={confirmModal}>
+                            <Modal.Body>
+                              The appointment has been rescheduled
+                            </Modal.Body>
+                            <Modal.Footer>
+                              <Button
+                                variant="secondary"
+                                onClick={() => setConfirmModal(false)}
+                              >
+                                Close
+                              </Button>
+                            </Modal.Footer>
+                          </Modal>
+                          <Button
+                            variant="secondary"
+                            style={{ width: "7rem" }}
+                            onClick={() => cancelApp(appointment._id)}
+                          >
+                            Cancel
+                          </Button>
+                        </>
+                      )}
+                    </div>
                   </Col>
                 </Row>
               </Card>

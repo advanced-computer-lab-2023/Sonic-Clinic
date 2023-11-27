@@ -4,6 +4,7 @@ import AppNavbar from "../../components/AppNavigation/AppNavbar";
 import DrHamburgerMenu from "../../components/Doctor/DrHamburgerMenu";
 import DrViewApps from "../../components/Doctor/DrViewApps";
 import DrAddAppSlot from "../../components/Doctor/DrAddAppSlot";
+import DrFollowUps from "../../components/Doctor/DrFollowUps";
 
 function DrAppointments() {
   const [tab, setTab] = useState("booked");
@@ -30,17 +31,24 @@ function DrAppointments() {
         className="mb-3 d-flex align-items-center justify-content-center"
         style={{ marginTop: "20px" }}
       >
-        <Tab eventKey="booked" title="Booked">
+        <Tab eventKey="booked" title="Booked Slots">
           <Container fluid className="bg-light pt-3 mt-2">
             <Container className="bg-white px-2 py-4 d-flex justify-content-center">
               <DrViewApps />
             </Container>
           </Container>
         </Tab>
-        <Tab eventKey="free" title="Free">
+        <Tab eventKey="free" title="Free Slots">
           <Container fluid className="bg-light pt-3 mt-2">
             <Container className="bg-white px-2 py-4 d-flex justify-content-center">
               <DrAddAppSlot />
+            </Container>
+          </Container>
+        </Tab>
+        <Tab eventKey="followUp" title="Follow up requests">
+          <Container fluid className="bg-light pt-3 mt-2">
+            <Container className="bg-white px-2 py-4 d-flex justify-content-center">
+              <DrFollowUps />
             </Container>
           </Container>
         </Tab>

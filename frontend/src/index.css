@@ -91,3 +91,7 @@ div.msg {
 .contact-us-section h2 {
   margin-bottom: 20px;
 }
+
+.modal-title.h4 {
+  font-weight: 600;
+}
