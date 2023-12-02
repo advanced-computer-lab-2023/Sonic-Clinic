@@ -8,7 +8,7 @@ import {
   faPause,
   faCheckDouble,
 } from "@fortawesome/free-solid-svg-icons";
-import { Card, Col, Row, Spinner } from "react-bootstrap";
+import { Card, Col, Row, Spinner, Button, Modal, Form } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
 import { useSelector } from "react-redux";
@@ -19,7 +19,15 @@ function ShowAppointments() {
   const [responseData, setResponseData] = useState([]);
   const [error1, setError] = useState(null);
   const [msg, setMsg] = useState(null);
-  const id = useSelector((state) => state.patientLogin.userId);
+  const [rescheduleModal, setRescheduleModal] = useState(false);
+  const [rescheduleDate, setRescheduleDate] = useState(null);
+  const [rescheduleTime, setRescheduleTime] = useState(null);
+  const [followUpModal, setFollowUpModal] = useState(false);
+  const [followUpDate, setFollowUpDate] = useState(null);
+  const [followUpTime, setFollowUpTime] = useState(null);
+  const [confirmModal, setConfirmModal] = useState(false);
+  const [confirmFollowModal, setConfirmFollowModal] = useState(false);
+  const [cancelModal, setCancelModal] = useState(false);
   const filterDate = useSelector((state) => state.filterAppointments.date);
   const filterStatus = useSelector((state) => state.filterAppointments.status);
 
@@ -104,6 +112,24 @@ function ShowAppointments() {
     }
   };
 
+  const cancelApp = async (id) => {
+    console.log(id);
+  };
+
+  const rescheduleApp = async (id) => {
+    //Date and time saved
+    console.log(id);
+    setConfirmModal(true);
+    setRescheduleModal(false);
+  };
+
+  const followUpApp = async (id) => {
+    //Date and time saved
+    console.log(id);
+    setConfirmFollowModal(true);
+    setFollowUpModal(false);
+  };
+
   return (
     <div>
       {loading && (
@@ -184,7 +210,7 @@ function ShowAppointments() {
                       />
                     </div>
                   </Col>
-                  <Col lg={5}>
+                  <Col lg={4}>
                     <Card.Body className="p-4">
                       <Card.Title
                         style={{
@@ -216,7 +242,7 @@ function ShowAppointments() {
                       </Card.Text>
                     </Card.Body>
                   </Col>
-                  <Col lg={5}>
+                  <Col lg={4}>
                     <Card.Body className="p-4">
                       <Card.Text>
                         <div
@@ -249,6 +275,247 @@ function ShowAppointments() {
                         </div>
                       </Card.Text>
                     </Card.Body>
+                  </Col>
+                  <Col lg={2}>
+                    <div
+                      style={{
+                        marginTop: "3rem",
+                        marginLeft: "1rem",
+                      }}
+                    >
+                      {(appointment.status === "upcoming" ||
+                        appointment.status === "rescheduled") && (
+                        <>
+                          {" "}
+                          <Button
+                            style={{
+                              marginBottom: "1rem",
+                              width: "7rem",
+                            }}
+                            onClick={() => setRescheduleModal(true)}
+                          >
+                            Reschedule
+                          </Button>
+                          <Modal show={rescheduleModal}>
+                            <Modal.Header>
+                              <Modal.Title>
+                                Reschedule Appointment with Dr.{" "}
+                                {appointment.doctor[0]?.name}
+                              </Modal.Title>
+                            </Modal.Header>
+                            <Modal.Body style={{ margin: "1rem" }}>
+                              <div
+                                style={{
+                                  color: "#099BA0 ",
+                                  fontSize: "1.1rem",
+                                  fontStyle: "normal",
+                                  fontWeight: 500,
+                                  lineHeight: "100%",
+                                  marginBottom: "1rem",
+                                }}
+                              >
+                                Date
+                              </div>
+                              <Form.Control
+                                type="date"
+                                onChange={(e) =>
+                                  setRescheduleDate(e.target.value)
+                                }
+                                style={{ marginBottom: "1rem" }}
+                              />
+                              <div
+                                style={{
+                                  color: "#099BA0 ",
+                                  fontSize: "1.1rem",
+                                  fontStyle: "normal",
+                                  fontWeight: 500,
+                                  lineHeight: "100%",
+                                  marginBottom: "1rem",
+                                }}
+                              >
+                                Time
+                              </div>
+                              <Form.Control
+                                type="time"
+                                onChange={(e) =>
+                                  setRescheduleTime(e.target.value)
+                                }
+                              />
+                            </Modal.Body>
+                            <Modal.Footer>
+                              <Button
+                                variant="primary"
+                                onClick={() => {
+                                  if (
+                                    rescheduleTime !== null &&
+                                    rescheduleDate !== null
+                                  ) {
+                                    rescheduleApp(appointment._id);
+                                  }
+                                }}
+                                disabled={
+                                  rescheduleTime === null ||
+                                  rescheduleDate === null
+                                }
+                              >
+                                Save
+                              </Button>
+                              <Button
+                                variant="secondary"
+                                onClick={() => {
+                                  setRescheduleModal(false);
+                                  setRescheduleTime(null);
+                                  setRescheduleDate(null);
+                                }}
+                              >
+                                Cancel
+                              </Button>
+                            </Modal.Footer>
+                          </Modal>
+                          <Modal show={confirmModal}>
+                            <Modal.Body>
+                              The appointment has been rescheduled
+                            </Modal.Body>
+                            <Modal.Footer>
+                              <Button
+                                variant="secondary"
+                                onClick={() => setConfirmModal(false)}
+                              >
+                                Close
+                              </Button>
+                            </Modal.Footer>
+                          </Modal>
+                          <Button
+                            variant="secondary"
+                            style={{ width: "7rem" }}
+                            onClick={() => setCancelModal(true)}
+                          >
+                            Cancel
+                          </Button>
+                          <Modal show={cancelModal}>
+                            <Modal.Body>
+                              Are you sure you want to cancel this appointment?
+                            </Modal.Body>
+                            <Modal.Footer className="d-flex align-items-center justify-content-center">
+                              <Button
+                                variant="secondary"
+                                onClick={() => cancelApp(appointment._id)}
+                              >
+                                Yes
+                              </Button>
+                              <Button
+                                variant="primary"
+                                onClick={() => setCancelModal(false)}
+                              >
+                                No
+                              </Button>
+                            </Modal.Footer>
+                          </Modal>
+                        </>
+                      )}
+                      {appointment.status == "completed" && (
+                        <>
+                          <Button
+                            style={{
+                              marginBottom: "1rem",
+                              width: "7rem",
+                            }}
+                            onClick={() => setFollowUpModal(true)}
+                          >
+                            Follow Up
+                          </Button>
+                          <Modal show={followUpModal}>
+                            <Modal.Header>
+                              <Modal.Title>
+                                Schedule a follow up with Dr.{" "}
+                                {appointment.doctor[0]?.name}
+                              </Modal.Title>
+                            </Modal.Header>
+                            <Modal.Body style={{ margin: "1rem" }}>
+                              <div
+                                style={{
+                                  color: "#099BA0 ",
+                                  fontSize: "1.1rem",
+                                  fontStyle: "normal",
+                                  fontWeight: 500,
+                                  lineHeight: "100%",
+                                  marginBottom: "1rem",
+                                }}
+                              >
+                                Date
+                              </div>
+                              <Form.Control
+                                type="date"
+                                onChange={(e) =>
+                                  setFollowUpDate(e.target.value)
+                                }
+                                style={{ marginBottom: "1rem" }}
+                              />
+                              <div
+                                style={{
+                                  color: "#099BA0 ",
+                                  fontSize: "1.1rem",
+                                  fontStyle: "normal",
+                                  fontWeight: 500,
+                                  lineHeight: "100%",
+                                  marginBottom: "1rem",
+                                }}
+                              >
+                                Time
+                              </div>
+                              <Form.Control
+                                type="time"
+                                onChange={(e) =>
+                                  setFollowUpTime(e.target.value)
+                                }
+                              />
+                            </Modal.Body>
+                            <Modal.Footer>
+                              <Button
+                                variant="primary"
+                                onClick={() => {
+                                  if (
+                                    followUpTime !== null &&
+                                    followUpDate !== null
+                                  ) {
+                                    followUpApp(appointment._id);
+                                  }
+                                }}
+                                disabled={
+                                  followUpTime === null || followUpDate === null
+                                }
+                              >
+                                Save
+                              </Button>
+                              <Button
+                                variant="secondary"
+                                onClick={() => {
+                                  setFollowUpModal(false);
+                                  setFollowUpTime(null);
+                                  setFollowUpDate(null);
+                                }}
+                              >
+                                Cancel
+                              </Button>
+                            </Modal.Footer>
+                          </Modal>
+                          <Modal show={confirmFollowModal}>
+                            <Modal.Body>
+                              A follow up request has been sent, wait for
+                              confirmation via email.
+                            </Modal.Body>
+                            <Modal.Footer>
+                              <Button
+                                variant="secondary"
+                                onClick={() => setConfirmFollowModal(false)}
+                              >
+                                Close
+                              </Button>
+                            </Modal.Footer>
+                          </Modal>
+                        </>
+                      )}
+                    </div>
                   </Col>
                 </Row>
               </Card>

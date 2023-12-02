@@ -19,6 +19,7 @@ function DrShowAppointments({ fetchData, appointments, loading }) {
   const [rescheduleDate, setRescheduleDate] = useState(null);
   const [rescheduleTime, setRescheduleTime] = useState(null);
   const [confirmModal, setConfirmModal] = useState(false);
+  const [cancelModal, setCancelModal] = useState(false);
   const filterDate = useSelector((state) => state.filterDrAppointments.date);
   const filterStatus = useSelector(
     (state) => state.filterDrAppointments.status
@@ -293,6 +294,7 @@ function DrShowAppointments({ fetchData, appointments, loading }) {
                                 onChange={(e) =>
                                   setRescheduleDate(e.target.value)
                                 }
+                                min={getCurrentDateTime}
                                 style={{ marginBottom: "1rem" }}
                               />
                               <div
@@ -360,10 +362,29 @@ function DrShowAppointments({ fetchData, appointments, loading }) {
                           <Button
                             variant="secondary"
                             style={{ width: "7rem" }}
-                            onClick={() => cancelApp(appointment._id)}
+                            onClick={() => setCancelModal(true)}
                           >
                             Cancel
                           </Button>
+                          <Modal show={cancelModal}>
+                            <Modal.Body>
+                              Are you sure you want to cancel this appointment?
+                            </Modal.Body>
+                            <Modal.Footer className="d-flex align-items-center justify-content-center">
+                              <Button
+                                variant="secondary"
+                                onClick={() => cancelApp(appointment._id)}
+                              >
+                                Yes
+                              </Button>
+                              <Button
+                                variant="primary"
+                                onClick={() => setCancelModal(false)}
+                              >
+                                No
+                              </Button>
+                            </Modal.Footer>
+                          </Modal>
                         </>
                       )}
                     </div>

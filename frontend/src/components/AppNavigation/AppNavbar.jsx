@@ -1,22 +1,36 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
 import Container from "react-bootstrap/Container";
 import Navbar from "react-bootstrap/Navbar";
 import logo from "../../Assets/ClinicLogo.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBell } from "@fortawesome/free-solid-svg-icons";
+import NotificationsPanel from "../NotificationsPanel";
 
 const AppNavbar = (props) => {
   const { hamburgerMenu } = props;
-  const [menuOpen, setMenuOpen] = useState(false);
   const [newNotifications, setNewNotifications] = useState(true);
-  //check if someone is loggedin to show notifications
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [notifications, setNotifications] = useState(false);
+  const doctorLoggedIn = useSelector((state) => state.doctorLogin.isLoggedIn);
+  const patientLoggedIn = useSelector((state) => state.patientLogin.isLoggedIn);
+  const [who, setWho] = useState("");
 
-  const handleMenuClick = () => {
-    setMenuOpen(!menuOpen);
-  };
+  useEffect(() => {
+    if (doctorLoggedIn || patientLoggedIn) {
+      setNotifications(true);
+      if (doctorLoggedIn) {
+        setWho("doctor");
+      } else {
+        setWho("patient");
+      }
+    } else {
+      setNotifications(false);
+    }
+  }, []);
 
-  const closeMenu = () => {
-    setMenuOpen(false);
+  const toggleNotifications = () => {
+    setShowNotifications(!showNotifications);
   };
 
   return (
@@ -50,19 +64,31 @@ const AppNavbar = (props) => {
               color: "#212529",
             }}
           >
-            <FontAwesomeIcon icon={faBell} />
-            {newNotifications && (
-              <span
-                style={{
-                  position: "absolute",
-                  top: "0.4rem",
-                  right: "-0.15rem",
-                  height: "0.6rem",
-                  width: "0.6rem",
-                  borderRadius: "50%",
-                  backgroundColor: "#ff6b35",
-                }}
-              />
+            {notifications && (
+              <>
+                {" "}
+                <FontAwesomeIcon icon={faBell} onClick={toggleNotifications} />
+                {newNotifications && (
+                  <span
+                    style={{
+                      position: "absolute",
+                      top: "0.4rem",
+                      right: "-0.15rem",
+                      height: "0.6rem",
+                      width: "0.6rem",
+                      borderRadius: "50%",
+                      backgroundColor: "#ff6b35",
+                    }}
+                  />
+                )}
+                {showNotifications && (
+                  <NotificationsPanel
+                    who={who}
+                    isOpen={showNotifications}
+                    closePanel={toggleNotifications} // Pass a function to close the panel
+                  />
+                )}
+              </>
             )}
           </div>
         </Container>
