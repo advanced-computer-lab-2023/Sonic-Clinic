@@ -10,6 +10,7 @@ const multer = require("multer");
 const stripe = require("stripe")(
   "sk_test_51O9lZ0IQTS4vUIMWJeAJ5Ds71jNbeQFj6v8mO7leS2cDIJuLy1fwNzoiXPKZV5KdoMpfzocfJ6hBusxPIjbGeveF00RTnmVYCX"
 );
+const http = require("http");
 
 //const Grid = require('gridfs-stream');
 //const GridFS = Grid(mongoose.connection.db, mongoose.mongo);
@@ -138,7 +139,8 @@ const MongoURI = process.env.MONGO_URI;
 ///////////////////////////////////////////////////////////////////////////////////////
 //App variables
 //3lashan a3rf akteb b express
-const server = express();
+const app = express();
+const server = http.createServer(app)
 //3lashan lw i am running haga fi el port el awlani yb2a fi option tany
 const port = process.env.PORT || "8000";
 //require el models (schema) basamih kol ma aktb user refer to el schema user model
@@ -151,14 +153,38 @@ const appointment = require("./Models/Appointment");
 //////////////////////////////////////////////////////////////////////////////////////
 
 //login
-server.use(cookieParser());
-server.use(bodyParser.json());
-server.use(
+app.use(cookieParser());
+app.use(bodyParser.json());
+app.use(
   session({ secret: "your-secret-key", resave: true, saveUninitialized: true })
 );
 //login
-server.post("/login", login);
-server.get("/logout", logout);
+app.post("/login", login);
+app.get("/logout", logout);
+
+//video chat
+const io = require("socket.io")(server, {
+	cors: {
+		origin: "http://localhost:3000",
+		methods: [ "GET", "POST" ]
+	}
+})
+
+io.on("connection", (socket) => {
+	socket.emit("me", socket.id)
+
+	socket.on("disconnect", () => {
+		socket.broadcast.emit("callEnded")
+	})
+
+	socket.on("callUser", (data) => {
+		io.to(data.userToCall).emit("callUser", { signal: data.signalData, from: data.from, name: data.name })
+	})
+
+	socket.on("answerCall", (data) => {
+		io.to(data.to).emit("callAccepted", data.signal)
+	})
+})
 
 // configurations
 // Mongo DB
@@ -173,7 +199,7 @@ mongoose
   .then(() => {
     console.log("MongoDB is now connected!");
     // Starting server
-    server.listen(port, () => {
+    app.listen(port, () => {
       console.log(`Listening to requests on http://localhost:${port}`);
     });
   })
@@ -182,190 +208,190 @@ mongoose
 /*
                                                     Start of your code
 */
-server.get("/home", (req, res) => {
+app.get("/home", (req, res) => {
   res.status(200).send("You have everything installed!");
 });
 
 // #Routing to userController here
-server.use(express.json());
+app.use(express.json());
 
 ////////////////////////////////////////////////POST//////////////////////////////////
-server.post("/otp", otp);
-server.post("/verifyOtp", verifyOtp);
+app.post("/otp", otp);
+app.post("/verifyOtp", verifyOtp);
 //admin
-server.post("/addAdmin", addAdmin);
-server.post("/addDoctor", addDoctor);
-server.post("/addPackage", addPackage);
-server.post("/changePasswordForAdmin", requireAuth, changePasswordForAdmin);
+app.post("/addAdmin", addAdmin);
+app.post("/addDoctor", addDoctor);
+app.post("/addPackage", addPackage);
+app.post("/changePasswordForAdmin", requireAuth, changePasswordForAdmin);
 
 //guest
-server.post("/acceptPotientialDoc", acceptPotientialDoc);
-server.post("/addPatient", addPatient);
-server.post("/addPotentialDoctor", addPotentialDoctor);
+app.post("/acceptPotientialDoc", acceptPotientialDoc);
+app.post("/addPatient", addPatient);
+app.post("/addPotentialDoctor", addPotentialDoctor);
 //doctor
-server.get("/acceptContract", requireAuth, acceptContract);
-server.post("/addPrescription", requireAuth, addPrescription);
-server.post("/addAvailableSlots", requireAuth, addAvailableSlots);
-server.post("/changePasswordForPatient", requireAuth, changePasswordForPatient);
-server.post(
+app.get("/acceptContract", requireAuth, acceptContract);
+app.post("/addPrescription", requireAuth, addPrescription);
+app.post("/addAvailableSlots", requireAuth, addAvailableSlots);
+app.post("/changePasswordForPatient", requireAuth, changePasswordForPatient);
+app.post(
   "/addAppointmentByPatientID",
   requireAuth,
   addAppointmentByPatientID
 );
 
 //patient
-server.post("/addFamilyMember", requirePatientAuth, addFamilyMember);
-server.post("/addAppointment", requireAuth, addAppointment);
-server.post(
+app.post("/addFamilyMember", requirePatientAuth, addFamilyMember);
+app.post("/addAppointment", requireAuth, addAppointment);
+app.post(
   "/subscribeHealthPackage",
   requireAuth,
   subscribeHealthPackageStripe
 );
-server.post(
+app.post(
   "/subscribeHealthPackageFam",
   requireAuth,
   subscribeHealthPackageFam
 );
-server.post("/changePasswordForPatient", requireAuth, changePasswordForPatient);
-server.post(
+app.post("/changePasswordForPatient", requireAuth, changePasswordForPatient);
+app.post(
   "/addAppointmentForMyselfOrFam",
   requireAuth,
   addAppointmentForMyselfOrFam
 );
-server.post("/changePasswordForPatientForget", changePasswordForPatientForget);
-server.post("/payAppointmentWallet", requireAuth, payAppointmentWallet);
-server.post("/payAppointmentStripe", requireAuth, payAppointmentStripe);
-server.get("/viewMedicalRecords", requireAuth, viewMedicalRecords);
+app.post("/changePasswordForPatientForget", changePasswordForPatientForget);
+app.post("/payAppointmentWallet", requireAuth, payAppointmentWallet);
+app.post("/payAppointmentStripe", requireAuth, payAppointmentStripe);
+app.get("/viewMedicalRecords", requireAuth, viewMedicalRecords);
 
-server.post("/handlePackageStripe", requireAuth, handlePackageStripe);
-server.post("/handleAppointmentStripe", requireAuth, handleAppointmentStripe);
+app.post("/handlePackageStripe", requireAuth, handlePackageStripe);
+app.post("/handleAppointmentStripe", requireAuth, handleAppointmentStripe);
 
 //////////////////////////////////////////// GET/////////////////////////////////////
 //admin
-server.get("/viewAllPatients", requireAuth, viewAllPatients);
-server.get("/viewAllDoctors", requireAuth, viewAllDoctors);
-server.get("/viewPotentialDoctors", requireAuth, viewPotentialDoctors);
-server.get("/viewPackagesAdmin", requireAuth, viewPackagesAdmin);
-server.get("/viewAllAdmins", requireAuth, viewAllAdmins);
-server.get("/viewAllDocApp", requireAuth, viewAllDocApp);
+app.get("/viewAllPatients", requireAuth, viewAllPatients);
+app.get("/viewAllDoctors", requireAuth, viewAllDoctors);
+app.get("/viewPotentialDoctors", requireAuth, viewPotentialDoctors);
+app.get("/viewPackagesAdmin", requireAuth, viewPackagesAdmin);
+app.get("/viewAllAdmins", requireAuth, viewAllAdmins);
+app.get("/viewAllDocApp", requireAuth, viewAllDocApp);
 //patient
-server.post("/doctorDetails", requireAuth, doctorDetails);
-server.post("/viewPrescriptions", requireAuth, viewPrescriptions);
-server.post("/viewFamilyMembers", requireAuth, viewFamilyMembers);
-server.post("/selectPrescription", requireAuth, selectPrescription);
-server.post("/filterPrescriptions", requireAuth, filterPrescriptions);
-server.post(
+app.post("/doctorDetails", requireAuth, doctorDetails);
+app.post("/viewPrescriptions", requireAuth, viewPrescriptions);
+app.post("/viewFamilyMembers", requireAuth, viewFamilyMembers);
+app.post("/selectPrescription", requireAuth, selectPrescription);
+app.post("/filterPrescriptions", requireAuth, filterPrescriptions);
+app.post(
   "/filterAppointmentsByDateOrStatus",
   requireAuth,
   filterAppointmentsByDateOrStatus
 );
-server.post("/searchDoctors", requireAuth, searchDoctors);
-server.post(
+app.post("/searchDoctors", requireAuth, searchDoctors);
+app.post(
   "/viewAllAppointmentsOfDoctor",
   requireAuth,
   viewAllAppointmentsOfDoctor
 );
-server.get("/filterDoctors", requireAuth, filterDoctors);
-server.get("/viewAvailablePackages", requireAuth, viewAvailablePackages);
-server.get("/viewAllDoctorsByPatients", requireAuth, viewAllDoctorsForPatients);
-server.get("/viewHealthPackages", requireAuth, viewHealthPackages);
-server.get("/viewWalletAmount", requireAuth, viewWalletAmount);
-server.post(
+app.get("/filterDoctors", requireAuth, filterDoctors);
+app.get("/viewAvailablePackages", requireAuth, viewAvailablePackages);
+app.get("/viewAllDoctorsByPatients", requireAuth, viewAllDoctorsForPatients);
+app.get("/viewHealthPackages", requireAuth, viewHealthPackages);
+app.get("/viewWalletAmount", requireAuth, viewWalletAmount);
+app.post(
   "/getDoctorsWithSessionPrice",
   requireAuth,
   getDoctorsWithSessionPrice
 );
-server.post("/filterDoctorsAfterSearch", requireAuth, filterDoctorsAfterSearch);
-server.post(
+app.post("/filterDoctorsAfterSearch", requireAuth, filterDoctorsAfterSearch);
+app.post(
   "/viewAllAppointmentsPatient",
   requireAuth,
   viewAllAppointmentsPatient
 );
-server.post(
+app.post(
   "/filterDoctorsAfterSearchDocName",
   requireAuth,
   filterDoctorsAfterSearchDocName
 );
-server.post(
+app.post(
   "/viewAvailableAppointmentsOfDoctor",
   requireAuth,
   viewAvailableAppointmentsOfDoctor
 );
-server.post("/cancelHealthPackage", requireAuth, cancelHealthPackage);
-server.post("/cancelHealthPackageFam", requireAuth, cancelHealthPackageFam);
-server.post("/changePasswordForDoctor", requireAuth, changePasswordForDoctor);
-server.post("/addFamilyMemberExisting", requireAuth, addFamilyMemberExisting);
+app.post("/cancelHealthPackage", requireAuth, cancelHealthPackage);
+app.post("/cancelHealthPackageFam", requireAuth, cancelHealthPackageFam);
+app.post("/changePasswordForDoctor", requireAuth, changePasswordForDoctor);
+app.post("/addFamilyMemberExisting", requireAuth, addFamilyMemberExisting);
 //server.post("/uploadPdf",requireAuth, uploadPDF);
 //server.post("/addFamilyMemberExisting", requireAuth, addFamilyMemberExisting);
 //server.post("/uploadFiles",requireAuth, uploadFiles);
-server.get("/viewWalletPatient", requireAuth, viewWalletPatient);
-server.post(
+app.get("/viewWalletPatient", requireAuth, viewWalletPatient);
+app.post(
   "/subscribeHealthPackageWallet",
   requireAuth,
   subscribeHealthPackageWallet
 );
 
 //doctor
-server.get("/viewAvailableSlots", requireAuth, viewAvailableSlots);
-server.post("/selectPatient", requireAuth, selectPatient);
-server.post("/viewInfoAndHealthRecord", requireAuth, viewInfoAndHealthRecord);
-server.post("/viewPatients", requireAuth, viewPatients);
-server.post(
+app.get("/viewAvailableSlots", requireAuth, viewAvailableSlots);
+app.post("/selectPatient", requireAuth, selectPatient);
+app.post("/viewInfoAndHealthRecord", requireAuth, viewInfoAndHealthRecord);
+app.post("/viewPatients", requireAuth, viewPatients);
+app.post(
   "/filterApointmentsByDateOrStatusDoc",
   requireAuth,
   filterApointmentsByDateOrStatusDoc
 );
-server.post(
+app.post(
   "/filterPatientsByAppointments",
   requireAuth,
   filterPatientsByAppointments
 );
-server.get("/searchPatientByName", requireAuth, searchPatientByName);
-server.post("/viewDocApp", requireAuth, viewDocApp);
-server.post("/viewSubscribedPackage", requireAuth, viewSubscribedPackages);
+app.get("/searchPatientByName", requireAuth, searchPatientByName);
+app.post("/viewDocApp", requireAuth, viewDocApp);
+app.post("/viewSubscribedPackage", requireAuth, viewSubscribedPackages);
 //server.post("/viewSubscribedPackageFam", requireAuth, viewSubscribedPackageFam);
-server.get(
+app.get(
   "/viewAllAppointmentsDoctor",
   requireAuth,
   viewAllAppointmentsDoctor
 );
-server.get("/viewWalletDoc", requireAuth, viewWalletDoc);
+app.get("/viewWalletDoc", requireAuth, viewWalletDoc);
 //upload
-server.post("/uploadFilesForPotentialDoctor", uploadFilesForPotentialDoctor);
-server.post("/uploadFiles", requireAuth, uploadFiles);
-server.post("/uploadFilesbyDoctors", requireAuth, uploadFilesbyDoctors);
-server.post(
+app.post("/uploadFilesForPotentialDoctor", uploadFilesForPotentialDoctor);
+app.post("/uploadFiles", requireAuth, uploadFiles);
+app.post("/uploadFilesbyDoctors", requireAuth, uploadFilesbyDoctors);
+app.post(
   "/viewPatientMedicalHistoryForDoctors",
   requireAuth,
   viewPatientMedicalHistoryForDoctors
 );
-server.get(
+app.get(
   "/viewPatientMedicalHistory",
   requireAuth,
   viewPatientMedicalHistory
 );
-server.delete(
+app.delete(
   "/deleteFileFromMedicalHistory",
   requireAuth,
   deleteFileFromMedicalHistory
 );
 ////////////////////////////////////////////////////PUT////////////////////////////////////////
 //admin
-server.put("/updatePackage", requireAuth, updatePackage);
+app.put("/updatePackage", requireAuth, updatePackage);
 //doctor
-server.put("/updateDoctorProfile", requireAuth, updateDoctorProfile);
+app.put("/updateDoctorProfile", requireAuth, updateDoctorProfile);
 
 ////////////////////////////////////////////////DELETE/////////////////////////////////////////
 //admin
-server.delete("/deletePackage", requireAuth, deletePackage);
-server.delete("/removeDoctor", requireAuth, removeDoctor);
-server.delete("/removePatient", requireAuth, removePatient);
-server.delete("/removeAdmin", requireAuth, removeAdmin);
-server.delete("/rejectDoctor", requireAuth, rejectPotentialDoctor);
-server.delete("/removeFamilyMember", requireAuth, removeFamilyMember);
+app.delete("/deletePackage", requireAuth, deletePackage);
+app.delete("/removeDoctor", requireAuth, removeDoctor);
+app.delete("/removePatient", requireAuth, removePatient);
+app.delete("/removeAdmin", requireAuth, removeAdmin);
+app.delete("/rejectDoctor", requireAuth, rejectPotentialDoctor);
+app.delete("/removeFamilyMember", requireAuth, removeFamilyMember);
 
 /////handling el payment///////
-server.post("/create-payment-intent", async (req, res) => {
+app.post("/create-payment-intent", async (req, res) => {
   const { amount, currency } = req.body;
 
   try {
