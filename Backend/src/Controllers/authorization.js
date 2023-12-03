@@ -9,6 +9,7 @@ const nodemailer = require("nodemailer");
 const randomstring = require("randomstring");
 const packagesModel = require("../Models/Packages.js");
 const familyMemberModel = require("../Models/FamilyMember.js");
+const appointmentModel = require("../Models/Appointment.js");
 
 const emailService = "youstina2307@outlook.com"; // e.g., 'gmail'
 const emailUser = "youstina2307@outlook.com";

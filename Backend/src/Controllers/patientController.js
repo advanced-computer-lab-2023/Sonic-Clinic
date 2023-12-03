@@ -1327,6 +1327,9 @@ const addAppointmentForMyselfOrFam = async (req, res) => {
     notificationByMail(doctor.email,"An appointment with "+patient.name+" on "+appointment.date+" at "
     +appointment.time+" has been reserved","New Appointment");
 
+    notificationByMail(patient.email,"An appointment with Dr. "+doctor.name+" on "+appointment.date+" at "
+    +appointment.time+" has been reserved","Appointment Reserved");
+
     res
       .status(201)
       .json({ message: "Appointment added successfully.", appointment });
@@ -1697,6 +1700,9 @@ const cancelAppointmentPatient = async (req, res) => {
     notificationByMail(doctor.email,"The appointment with "+patient.name+" on "+appointment.date+" at "
     +appointment.time+" has been cancelled","Appointment Cancelled");
 
+    notificationByMail(patient.email,"An appointment with Dr."+doctor.name+" on "+appointment.date+" at "
+    +appointment.time+" has been cancelled","Appointment Cancelled");
+
     res.status(200).json(appointment);
   } catch (error) {
     res.status(500).json({ message: "Server Error" });
@@ -1735,6 +1741,12 @@ const rescheduleAppForMyselfOrFam = async (req, res) => {
     appointment.date = date;
     appointment.time = time;
     await appointment.save();
+    notificationByMail(doctor.email,"The appointment with "+patient.name+" has been rescheduled to "+appointment.date+" at "
+    +appointment.time,"Appointment Rescheduled");
+
+    notificationByMail(patient.email,"The appointment with Dr. "+doctor.name+" has been rescheduled to "+appointment.date+" at "
+    +appointment.time,"Appointment Rescheduled");
+
     res.status(200).json(appointment);
   } catch (error) {
     res.status(500).json({ message: "Server Error" });
