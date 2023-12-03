@@ -1187,15 +1187,17 @@ const cancelHealthPackage = async (req, res) => {
 };
 
 const addAppointmentForMyselfOrFam = async (req, res) => {
-  let patientID = req.user.id; // Use let to make it reassignable
-
+  let patientID = req.user.id;
   const { famID, doctorID, date, description, time } = req.body;
+
+  let notificationDoc;
+  let notificationPatient;
 
   try {
     const doctor = await doctorModel.findById(doctorID);
+    const docName = doctor.name;
     const doctorAvailableSlots = doctor.availableSlots;
 
-    // Check if the appointment date matches any of the doctor's available slots
     let isAvailableSlot = false;
     let slot2;
     for (const slot of doctorAvailableSlots) {
@@ -1221,13 +1223,84 @@ const addAppointmentForMyselfOrFam = async (req, res) => {
     // Create the appointment and update the doctor's appointments
     if (famID) {
       const family1 = await familyMemberModel.findById(famID);
+      const familyName = family1.name;
       if (family1.patientRef) {
         patientID = family1.patientRef;
+        const linkedP = await patientModel.findById(patientID);
+        const linkedPName = linkedP.name;
+        notificationPatient =
+          "An appointment with Dr. " +
+          docName +
+          " has been scheduled on " +
+          date +
+          " at : " +
+          time;
+        linkedP.notifications.push(notificationPatient);
+        linkedP.newNotifications = true;
+        await linkedP.save();
+        notificationDoc =
+          "An appointment with " +
+          linkedPName +
+          " has been scheduled on " +
+          date +
+          " at : " +
+          time;
+        doctor.notifications.push(notificationDoc);
+        doctor.newNotifications = true;
+        await doctor.save();
       } else {
         patientID = famID;
+        const parent = await patientModel.findById(req.user.id);
+        notificationPatient =
+          "An appointment with Dr. " +
+          docName +
+          " for " +
+          familyName +
+          " has been scheduled on " +
+          date +
+          " at : " +
+          time;
+        parent.notifications.push(notificationPatient);
+        parent.newNotifications = true;
+        await parent.save();
+
+        notificationDoc =
+          "An appointment with " +
+          familyName +
+          " has been scheduled on " +
+          date +
+          " at : " +
+          time;
+        doctor.notifications.push(notificationDoc);
+        doctor.newNotifications = true;
+        await doctor.save();
       }
+    } else {
+      const patient = await patientModel.findById(req.user.id);
+      const pName = patient.name;
+      notificationPatient =
+        "An appointment with Dr. " +
+        docName +
+        " has been scheduled on " +
+        date +
+        " at : " +
+        time;
+      patient.notifications.push(notificationPatient);
+      patient.newNotifications = true;
+      await patient.save();
+
+      notificationDoc =
+        "An appointment with " +
+        pName +
+        " has been scheduled on " +
+        date +
+        " at : " +
+        time;
+      doctor.notifications.push(notificationDoc);
+      doctor.newNotifications = true;
+      await doctor.save();
     }
-    const status = "upcoming";
+    const status = "Upcoming";
 
     const appointment = await appointmentModel.create({
       date,
@@ -1236,6 +1309,7 @@ const addAppointmentForMyselfOrFam = async (req, res) => {
       doctorID,
       status,
       time,
+      parentID: req.user.id,
     });
     let patient;
     patient = await patientModel.findById(patientID);

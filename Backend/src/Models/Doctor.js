@@ -84,6 +84,14 @@ const doctorSchema = new Schema(
       required: false,
     },
     // documents: [fileSchema],
+    notifications: {
+      type: [String],
+      required: false,
+    },
+    newNotifications: {
+      type: Boolean,
+      required: false,
+    },
   },
   { timestamps: true }
 );

@@ -567,11 +567,78 @@ const rescheduleAppDoc = async (req, res) => {
     const appId = req.body.appId;
     const date = req.body.date;
     const time = req.body.time;
+    let notification;
     const appointment = await appointmentModel.findById(appId);
     appointment.date = date;
     appointment.time = time;
     await appointment.save();
+    const doctor = await doctorModel.findById(req.user.id);
+    const docName = doctor.name;
+    notification =
+      "Your appointment with Dr. " +
+      docName +
+      " has been rescheduled to be on " +
+      date +
+      " at: " +
+      time;
+    const patientId = appointment.patientID;
+    const patient = await patientModel.findById(patientId);
+    if (patient) {
+      patient.notifications.push(notification);
+      patient.newNotifications = true;
+      await patient.save();
+    } else {
+      const familyMember = await familyMemberModel.findById(patientId);
+      const famName = familyMember.name;
+      const parent = await patientModel.findById(familyMember.patientID);
+      notification =
+        "The appointment with Dr. " +
+        docName +
+        "for " +
+        famName +
+        " has been rescheduled to be on " +
+        date +
+        " at: " +
+        time;
+      parent.notifications.push(notification);
+      parent.newNotifications = true;
+      await parent.save();
+    }
+
     res.status(200).json(appointment);
+  } catch (error) {
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+const viewNotifications = async (req, res) => {
+  try {
+    let notifications;
+    const id = req.user.id;
+    const doctor = await doctorModel.findById(id);
+    if (doctor) {
+      notifications = doctor.notifications;
+    } else {
+      const patient = await patientModel.findById(id);
+      notifications = patient.notifications;
+    }
+    res.status(200).json(notifications);
+  } catch (error) {
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+const notificationFlag = async (req, res) => {
+  try {
+    const id = req.user.id;
+    const doctor = await doctorModel.findById(id);
+    if (doctor) {
+      doctor.newNotifications = false;
+      await doctor.save();
+    } else {
+      const patient = await patientModel.findById(id);
+      patient.newNotifications = false;
+      await patient.save();
+    }
+    res.status(200).json("Notification flag = false");
   } catch (error) {
     res.status(500).json({ message: "Server Error" });
   }
@@ -601,4 +668,6 @@ module.exports = {
   acceptFollowUp,
   rejectFollowUp,
   rescheduleAppDoc,
+  viewNotifications,
+  notificationFlag,
 };

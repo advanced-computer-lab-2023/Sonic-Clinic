@@ -89,6 +89,8 @@ const {
   viewFollowUpsReq,
   acceptFollowUp,
   rejectFollowUp,
+  viewNotifications,
+  notificationFlag,
 } = require("./Controllers/doctorController");
 
 ///////////////////////////////adminstratorController//////////////////////////////////////
@@ -225,6 +227,7 @@ server.post(
 server.post("/changePasswordForDoctorForget", changePasswordForDoctorForget);
 server.post("/viewPrescriptionsDoc", requireAuth, viewPrescriptionsDoc);
 server.post("/cancelAppointmentDoc", requireAuth, cancelAppointmentDoc);
+server.post("/viewNotifications", requireAuth, viewNotifications);
 //patient
 server.post("/addFamilyMember", requirePatientAuth, addFamilyMember);
 server.post("/addAppointment", requireAuth, addAppointment);
@@ -261,6 +264,7 @@ server.post(
 server.post("/viewFollowUpsReq", requireAuth, viewFollowUpsReq);
 server.post("/acceptFollowUp", requireAuth, acceptFollowUp);
 server.post("/rejectFollowUp", requireAuth, rejectFollowUp);
+server.post("/notificationFlag", requireAuth, notificationFlag);
 //////////////////////////////////////////// GET/////////////////////////////////////
 //admin
 server.get("/viewAllPatients", requireAuth, viewAllPatients);

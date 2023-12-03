@@ -28,6 +28,10 @@ const appointmentSchema = new Schema(
       type: String,
       required: true,
     },
+    parentID: {
+      type: String,
+      required: false,
+    },
   },
   { timestamps: true }
 );
