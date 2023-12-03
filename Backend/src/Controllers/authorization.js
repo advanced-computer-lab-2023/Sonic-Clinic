@@ -175,6 +175,7 @@ const otp = async (req, res) => {
   });
 };
 
+
 // POST API endpoint to verify the OTP
 const verifyOtp = async (req, res) => {
   console.log(otpNum);
@@ -260,6 +261,30 @@ const requirePatientAuth = (req, res, next) => {
   }
 };
 
+const notificationByMail = async (req, res) => {
+  const { email , message, title } = req.body;
+
+  if (!email) {
+    return res.status(400).json({ error: "Email is required" });
+  }
+
+  const mailOptions = {
+    from: emailUser,
+    to: email,
+    subject: title,
+    text: message,
+  };
+
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      console.error(error);
+      res.status(500).json({ error: "Failed to send notification" });
+    } else {
+      res.status(200).json({ message: "Notification sent successfully" });
+    }
+  });
+};
+
 module.exports = {
   login,
   requireAuth,
@@ -270,4 +295,5 @@ module.exports = {
   requireAdminAuth,
   requirePatientAuth,
   requireDoctorAuth,
+  notificationByMail,
 };

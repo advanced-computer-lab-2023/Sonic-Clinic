@@ -131,6 +131,7 @@ const {
   requireAdminAuth,
   requirePatientAuth,
   requireDoctorAuth,
+  notificationByMail,
 } = require("./Controllers/authorization");
 ////////////////////////////////uploadController///////////////////////////////////////////
 const {
@@ -380,6 +381,9 @@ server.delete(
   requireAuth,
   deleteFileFromMedicalHistory
 );
+
+//auth
+server.post("/notificationByMail",notificationByMail);
 ////////////////////////////////////////////////////PUT////////////////////////////////////////
 //admin
 server.put("/updatePackage", requireAuth, updatePackage);
