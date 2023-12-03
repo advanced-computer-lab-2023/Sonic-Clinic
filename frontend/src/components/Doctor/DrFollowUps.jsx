@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Card, Col, Row, Spinner, Button, Form } from "react-bootstrap";
+import { Card, Col, Row, Spinner, Button, Form, Modal } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faCalendar,
@@ -14,6 +14,8 @@ function DrFollowUps() {
   const [appointments, setAppointments] = useState(null);
   const [loading, setLoading] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const [revokeModal, setRevokeModal] = useState(false);
+  const [acceptModal, setAcceptModal] = useState(false);
 
   useEffect(() => {
     fetchData();
@@ -21,7 +23,7 @@ function DrFollowUps() {
 
   const fetchData = async () => {
     try {
-      const response = await axios.post("/viewDocApp");
+      const response = await axios.post("/viewFollowUpsReq");
       if (response.status === 200) {
         setResponseData(response.data);
         setAppointments(responseData);
@@ -40,11 +42,35 @@ function DrFollowUps() {
   };
 
   const acceptApp = async (id) => {
-    console.log(id);
+    setError(null);
+    try {
+      const response = await axios.post("/acceptFollowUp", {
+        _id: id,
+      });
+      if (response.status === 200) {
+        setAcceptModal(true);
+        setError(null);
+        fetchData();
+      }
+    } catch (error) {
+      setError(error.response.data.message);
+    }
   };
 
   const revokeApp = async (id) => {
-    console.log(id);
+    setError(null);
+    try {
+      const response = await axios.post("/rejectFollowUp", {
+        _id: id,
+      });
+      if (response.status === 200) {
+        setRevokeModal(false);
+        setError(null);
+        fetchData();
+      }
+    } catch (error) {
+      setError(error.response.data.message);
+    }
   };
 
   const handleSearch = () => {
@@ -104,7 +130,9 @@ function DrFollowUps() {
         </Button>
       </div>
       {appointments?.length === 0 && !loading && (
-        <div style={{ textAlign: "center", marginTop: "20px" }}>{error1}</div>
+        <div style={{ textAlign: "center", marginTop: "20px" }} className="msg">
+          No follow up requests
+        </div>
       )}
       {!loading &&
         appointments?.map((appointment) => {
@@ -220,6 +248,41 @@ function DrFollowUps() {
                       className="d-flex flex-row justify-content-space-between"
                       style={{ marginTop: "6rem", marginLeft: "1rem" }}
                     >
+                      <Modal show={acceptModal}>
+                        <Modal.Body>
+                          {appointment.patient?.name}'s follow up request has
+                          been accepted
+                        </Modal.Body>
+                        <Modal.Footer>
+                          <Button
+                            variant="secondary"
+                            onClick={() => setAcceptModal(false)}
+                          >
+                            Close
+                          </Button>
+                        </Modal.Footer>
+                      </Modal>
+                      <Modal show={revokeModal}>
+                        <Modal.Body>
+                          Are you sure you want to revoke this follow up
+                          request?
+                          {error1 && <div className="error">{error1}</div>}
+                        </Modal.Body>
+                        <Modal.Footer className="d-flex align-items-center justify-content-center">
+                          <Button
+                            variant="secondary"
+                            onClick={() => revokeApp(appointment._id)}
+                          >
+                            Yes
+                          </Button>
+                          <Button
+                            variant="primary"
+                            onClick={() => setRevokeModal(false)}
+                          >
+                            No
+                          </Button>
+                        </Modal.Footer>
+                      </Modal>
                       <Button
                         style={{ marginRight: "1rem" }}
                         onClick={() => acceptApp(appointment._id)}
@@ -228,7 +291,7 @@ function DrFollowUps() {
                       </Button>
                       <Button
                         variant="secondary"
-                        onClick={() => revokeApp(appointment._id)}
+                        onClick={() => setRevokeModal(true)}
                       >
                         Revoke
                       </Button>

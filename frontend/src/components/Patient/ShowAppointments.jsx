@@ -113,7 +113,19 @@ function ShowAppointments() {
   };
 
   const cancelApp = async (id) => {
-    console.log(id);
+    setError(null);
+    try {
+      const response = await axios.post("/cancelAppointmentPatient", {
+        _id: id,
+      });
+      if (response.status === 200) {
+        fetchData();
+        setError(null);
+        setCancelModal(false);
+      }
+    } catch (error) {
+      setError(error.response.data.message);
+    }
   };
 
   const rescheduleApp = async (id) => {
@@ -124,10 +136,21 @@ function ShowAppointments() {
   };
 
   const followUpApp = async (id) => {
-    //Date and time saved
-    console.log(id);
-    setConfirmFollowModal(true);
-    setFollowUpModal(false);
+    try {
+      const response = await axios.post("/reqFollowUpForMyselfOrFam", {
+        appId: id,
+        date: rescheduleDate,
+        time: rescheduleTime,
+      });
+      if (response.status === 200) {
+        fetchData();
+        setError(null);
+        setConfirmFollowModal(true);
+        setFollowUpModal(false);
+      }
+    } catch (error) {
+      setError(error.response.data.message);
+    }
   };
 
   return (

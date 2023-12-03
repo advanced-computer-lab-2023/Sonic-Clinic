@@ -12,6 +12,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { useSelector, useDispatch } from "react-redux";
 import { deleteFilterDrAppointments } from "../../state/Doctor/filterDrAppointments";
+import axios from "axios";
 
 function DrShowAppointments({ fetchData, appointments, loading }) {
   const [error1, setError] = useState(null);
@@ -80,14 +81,39 @@ function DrShowAppointments({ fetchData, appointments, loading }) {
   };
 
   const cancelApp = async (id) => {
-    console.log(id);
+    setError(null);
+    try {
+      const response = await axios.post("/cancelAppointmentDoc", {
+        _id: id,
+      });
+      if (response.status === 200) {
+        fetchData();
+        //set appointments?
+        setError(null);
+        setCancelModal(false);
+      }
+    } catch (error) {
+      setError(error.response.data.message);
+    }
   };
 
   const rescheduleApp = async (id) => {
-    //Date and time saved
-    console.log(id);
-    setConfirmModal(true);
-    setRescheduleModal(false);
+    try {
+      const response = await axios.post("/rescheduleAppDoc", {
+        appId: id,
+        date: rescheduleDate,
+        time: rescheduleTime,
+      });
+      if (response.status === 200) {
+        fetchData();
+        //set appointments?
+        setError(null);
+        setConfirmModal(true);
+        setRescheduleModal(false);
+      }
+    } catch (error) {
+      setError(error.response.data.message);
+    }
   };
 
   const filteredAppointments = appointments.filter((appointment) => {
@@ -272,7 +298,7 @@ function DrShowAppointments({ fetchData, appointments, loading }) {
                           <Modal show={rescheduleModal}>
                             <Modal.Header>
                               <Modal.Title>
-                                Reschedule {appointment.patient.name}'s
+                                Reschedule {appointment.patient?.name}'s
                                 Appointment
                               </Modal.Title>
                             </Modal.Header>
@@ -315,6 +341,7 @@ function DrShowAppointments({ fetchData, appointments, loading }) {
                                   setRescheduleTime(e.target.value)
                                 }
                               />
+                              {error1 && <div className="error">{error1}</div>}
                             </Modal.Body>
                             <Modal.Footer>
                               <Button
@@ -340,6 +367,7 @@ function DrShowAppointments({ fetchData, appointments, loading }) {
                                   setRescheduleModal(false);
                                   setRescheduleTime(null);
                                   setRescheduleDate(null);
+                                  setError(null);
                                 }}
                               >
                                 Cancel
@@ -362,13 +390,17 @@ function DrShowAppointments({ fetchData, appointments, loading }) {
                           <Button
                             variant="secondary"
                             style={{ width: "7rem" }}
-                            onClick={() => setCancelModal(true)}
+                            onClick={() => {
+                              setCancelModal(true);
+                              setError(null);
+                            }}
                           >
                             Cancel
                           </Button>
                           <Modal show={cancelModal}>
                             <Modal.Body>
                               Are you sure you want to cancel this appointment?
+                              {error1 && <div className="error">{error1}</div>}
                             </Modal.Body>
                             <Modal.Footer className="d-flex align-items-center justify-content-center">
                               <Button
