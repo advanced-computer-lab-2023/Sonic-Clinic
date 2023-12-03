@@ -81,7 +81,7 @@ const AppNavbar = (props) => {
                     }}
                   />
                 )}
-                {showNotifications && (
+                {notifications && (
                   <NotificationsPanel
                     who={who}
                     isOpen={showNotifications}
