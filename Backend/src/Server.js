@@ -63,6 +63,7 @@ const {
   viewPrescriptionDetails,
   cancelAppointmentPatient,
   reqFollowUpForMyselfOrFam,
+  rescheduleAppForMyselfOrFam,
 } = require("./Controllers/patientController");
 
 /////////////////////////////////doctorController//////////////////////////////////////////
@@ -265,6 +266,11 @@ server.post("/viewFollowUpsReq", requireAuth, viewFollowUpsReq);
 server.post("/acceptFollowUp", requireAuth, acceptFollowUp);
 server.post("/rejectFollowUp", requireAuth, rejectFollowUp);
 server.post("/notificationFlag", requireAuth, notificationFlag);
+server.post(
+  "/rescheduleAppForMyselfOrFam",
+  requireAuth,
+  rescheduleAppForMyselfOrFam
+);
 //////////////////////////////////////////// GET/////////////////////////////////////
 //admin
 server.get("/viewAllPatients", requireAuth, viewAllPatients);
