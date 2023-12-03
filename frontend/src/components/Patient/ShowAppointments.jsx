@@ -116,7 +116,7 @@ function ShowAppointments() {
     setError(null);
     try {
       const response = await axios.post("/cancelAppointmentPatient", {
-        _id: id,
+        id: id,
       });
       if (response.status === 200) {
         fetchData();

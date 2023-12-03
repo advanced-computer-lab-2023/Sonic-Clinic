@@ -9,7 +9,9 @@ import NotificationsPanel from "../NotificationsPanel";
 
 const AppNavbar = (props) => {
   const { hamburgerMenu } = props;
-  const [newNotifications, setNewNotifications] = useState(true);
+  const [newNotifications, setNewNotifications] = useState(
+    useSelector((state) => state.newNotifications.newNotifications)
+  );
   const [showNotifications, setShowNotifications] = useState(false);
   const [notifications, setNotifications] = useState(false);
   const doctorLoggedIn = useSelector((state) => state.doctorLogin.isLoggedIn);
@@ -85,7 +87,8 @@ const AppNavbar = (props) => {
                   <NotificationsPanel
                     who={who}
                     isOpen={showNotifications}
-                    closePanel={toggleNotifications} // Pass a function to close the panel
+                    closePanel={toggleNotifications}
+                    resetNew={setNewNotifications}
                   />
                 )}
               </>

@@ -8,7 +8,7 @@ import { useEffect } from "react";
 import { deleteSearchData } from "../../state/Patient/SearchDoctor";
 import { deleteFilterAppointments } from "../../state/Patient/filterAppointments";
 import HomeMainOptions from "../../components/Patient/HomeMainOptions";
-import ChatPat from "../../components/Patient/ChatPat";
+import ChatPat from "../../components/ChatPat";
 
 function PatientHomePage() {
   const dispatch = useDispatch();
@@ -32,7 +32,7 @@ function PatientHomePage() {
           </Row>
         </Container>
       </Container>
-      <ChatPat />
+      <ChatPat who="patient" />
     </div>
   );
 }

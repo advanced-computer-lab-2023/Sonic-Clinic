@@ -1,9 +1,19 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { ListGroup } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faX } from "@fortawesome/free-solid-svg-icons";
+import { setNewNotifications } from "../state/notifications";
+import { useDispatch, useSelector } from "react-redux";
+import axios from "axios";
 
-const NotificationsPanel = ({ who, isOpen, closePanel }) => {
+const NotificationsPanel = ({ who, isOpen, closePanel, resetNew }) => {
+  const [notifications, setNotifications] = useState([]);
+  const [error, setError] = useState(null);
+  const dispatch = useDispatch();
+  const newNotif = useSelector(
+    (state) => state.newNotifications.newNotifications
+  );
+
   const panelStyles = {
     position: "fixed",
     top: 0,
@@ -21,14 +31,37 @@ const NotificationsPanel = ({ who, isOpen, closePanel }) => {
     padding: "1rem",
   };
 
-  const notifications = [
-    "New message from Dr. Smith",
-    "Appointment reminder for tomorrow",
-    "Payment received",
-  ];
+  useEffect(() => {
+    fetchData();
+  }, []);
 
-  const resetNewNotifications = () => {
-    //call the api that changes the flag
+  const fetchData = async () => {
+    try {
+      const response = await axios.post("/viewNotifications");
+      if (response.status === 200) {
+        setError(null);
+        setNotifications(response.data);
+        if (notifications.length == 0) {
+          setError("No notifications");
+        }
+      }
+    } catch (error) {
+      setError(error.response.data.message);
+    }
+  };
+
+  const resetNewNotifications = async () => {
+    if (newNotif) {
+      try {
+        const response = await axios.post("/notificationFlag");
+        if (response.status === 200) {
+          setError(null);
+          dispatch(setNewNotifications(false));
+        }
+      } catch (error) {
+        setError(error.response.data.message);
+      }
+    }
   };
 
   const reverseNotifications = [...notifications].reverse();
@@ -59,9 +92,9 @@ const NotificationsPanel = ({ who, isOpen, closePanel }) => {
             }}
           />
         </div>
-
+        {error && <div className="msg">{error}</div>}
         <ListGroup as="ol">
-          {reverseNotifications.map((notification, index) => (
+          {reverseNotifications?.map((notification, index) => (
             <ListGroup.Item
               key={index}
               as="li"

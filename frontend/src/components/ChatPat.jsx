@@ -9,15 +9,15 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Button, Container, ListGroup, Navbar } from "react-bootstrap";
 import Peer from "simple-peer";
-import io from "socket.io-client";
+// import io from "socket.io-client";
 
-const socket = io.connect("http://localhost:8000");
+// const socket = io.connect("http://localhost:8000");
 
-export default function ChatPat() {
+export default function ChatPat({ who }) {
   const [isHovered, setIsHovered] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  const [chosenDoc, setChosenDoc] = useState(false);
-  const [chosenDocName, setChosenDocName] = useState("");
+  const [chosen, setChosen] = useState(false);
+  const [chosenName, setChosenName] = useState("");
   const [myMessage, setMyMessage] = useState("");
 
   ////////////////////////////video
@@ -110,13 +110,11 @@ export default function ChatPat() {
     { name: "Doctor3", specialty: "Cardio" },
     { name: "Doctor4", specialty: "Cardio" },
     { name: "Doctor4", specialty: "Cardio" },
-
-    // Add more messages as needed
   ];
 
   const buttonStyle = {
     position: "fixed",
-    top: "43rem",
+    bottom: "5rem",
     right: "1rem",
     fontSize: "1.1rem",
     backgroundColor: "transparent",
@@ -124,15 +122,16 @@ export default function ChatPat() {
     color: "white",
     overflow: "hidden",
     transition: "width 0.3s ease-in-out", // Smooth transition for width change
-    width: isHovered ? "13rem" : "3rem", // Change width on hover
+    width: isHovered ? "13.3rem" : "3rem", // Change width on hover
   };
+
   const containerStyle = {
     position: "fixed",
     bottom: "5rem",
     right: "1rem",
     fontSize: "1.1rem",
     backgroundColor: "transparent",
-    border: "none",
+    borderRadius: "0.25rem",
     color: "white",
     overflow: "hidden",
     transition: "0.3s ease-in-out", // Smooth transition for width change
@@ -148,6 +147,7 @@ export default function ChatPat() {
     fontSize: "1.1rem",
     backgroundColor: "transparent",
     border: "1px solid #f0f0f0",
+    borderRadius: "0.25rem",
     color: "white",
     overflow: "hidden",
     transition: "0.3s ease-in-out", // Smooth transition for width change
@@ -171,7 +171,7 @@ export default function ChatPat() {
     color: "black",
     display: "inline-block",
     padding: "5px 10px",
-    marginBottom: "1rem",
+    marginBottom: "0.7rem",
     width: "fit-content",
     alignSelf: "flex-end",
   };
@@ -182,7 +182,7 @@ export default function ChatPat() {
     color: "black",
     display: "inline-block",
     padding: "5px 10px",
-    marginBottom: "1rem",
+    marginBottom: "0.7rem",
     width: "fit-content",
   };
 
@@ -199,19 +199,18 @@ export default function ChatPat() {
   const buttonTextOpacity = isHovered ? 1 : 0;
 
   const chatData = [
-    { type: "patient", message: "Hello, Doctor!" },
-    { type: "doctor", message: "Hi there! How can I help you today?" },
-    { type: "patient", message: "Hi there! How " },
-    { type: "doctor", message: "Hi there! How can I help " },
-    { type: "patient", message: "Hello, Doctor!" },
-    { type: "doctor", message: "Hi there! How can I help you today?" },
-    { type: "patient", message: "Hi there! How " },
-    { type: "doctor", message: "Hi there! How can I help " },
-    // Add more messages as needed
+    { type: "patient", message: "Hi there!" },
+    { type: "doctor", message: "Hello, how can I assist you?" },
+    { type: "patient", message: "I'm not feeling well." },
+    { type: "doctor", message: "Can you describe your symptoms?" },
+    { type: "doctor", message: "Have you taken any medication?" },
+    { type: "patient", message: "Not yet." },
   ];
 
-  const handleCloseList = () => {
-    setIsOpen(false);
+  const sendMessage = () => {
+    if (myMessage) {
+      console.log(myMessage);
+    }
   };
 
   return (
@@ -236,7 +235,9 @@ export default function ChatPat() {
                 whiteSpace: "nowrap",
               }}
             >
-              Chat with your doctor
+              {who === "patient"
+                ? "Chat with your doctor"
+                : "Chat with your patient"}
             </span>
           </div>
         </Button>
@@ -252,11 +253,13 @@ export default function ChatPat() {
             style={{ backgroundColor: "#05afb9", width: "100%" }}
           >
             <div style={{ color: "white", marginLeft: "1rem" }}>
-              Your Doctors
+              {who === "patient" ? "Your Doctors" : "Your Patients"}
             </div>
             <Button
               variant="link"
-              onClick={handleCloseList}
+              onClick={() => {
+                setIsOpen(false);
+              }}
               style={{ alignSelf: "flex-end" }}
             >
               <FontAwesomeIcon icon={faTimes} style={{ color: "white" }} />
@@ -275,29 +278,31 @@ export default function ChatPat() {
                 className="d-flex justify-content-between align-items-start"
                 style={{ cursor: "pointer" }}
                 onClick={() => {
-                  setChosenDoc(true);
+                  setChosen(true);
                   setIsOpen(false);
-                  setChosenDocName(name.name);
+                  setChosenName(name.name);
                 }}
               >
                 <div className="d-flex flex-column">
                   <div>{name.name}</div>
-                  <div
-                    style={{
-                      fontSize: "1rem",
-                      color: "#05afb9",
-                      marginLeft: "1rem",
-                    }}
-                  >
-                    {name.specialty}
-                  </div>
+                  {who === "patient" && (
+                    <div
+                      style={{
+                        fontSize: "1rem",
+                        color: "#05afb9",
+                        marginLeft: "1rem",
+                      }}
+                    >
+                      {name.specialty}
+                    </div>
+                  )}
                 </div>
               </ListGroup.Item>
             ))}
           </ListGroup>
         </Container>
       )}
-      {chosenDoc && (
+      {chosen && (
         <Container
           fluid
           className="d-flex flex-column bg-white"
@@ -317,18 +322,18 @@ export default function ChatPat() {
                   cursor: "pointer",
                 }}
                 onClick={() => {
-                  setChosenDoc(false);
-                  setChosenDocName("");
+                  setChosen(false);
+                  setChosenName("");
                   setIsOpen(true);
                 }}
               />
-              {chosenDocName}
+              {chosenName}
             </div>
             <div>
               <FontAwesomeIcon icon={faVideo} style={{ cursor: "pointer" }} />
               <Button
                 variant="link"
-                onClick={() => setChosenDoc(false)}
+                onClick={() => setChosen(false)}
                 style={{ color: "white", alignSelf: "flex-end" }}
               >
                 <FontAwesomeIcon icon={faTimes} style={{ cursor: "pointer" }} />
@@ -369,6 +374,7 @@ export default function ChatPat() {
                 marginRight: "1rem",
                 cursor: "pointer",
               }}
+              onClick={() => sendMessage()}
             />
           </div>
         </Container>

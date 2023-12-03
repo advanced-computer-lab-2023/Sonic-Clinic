@@ -84,7 +84,7 @@ function DrShowAppointments({ fetchData, appointments, loading }) {
     setError(null);
     try {
       const response = await axios.post("/cancelAppointmentDoc", {
-        _id: id,
+        id: id,
       });
       if (response.status === 200) {
         fetchData();
