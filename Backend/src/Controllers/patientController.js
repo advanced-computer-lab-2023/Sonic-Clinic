@@ -1324,6 +1324,9 @@ const addAppointmentForMyselfOrFam = async (req, res) => {
 
     await doctor.save();
 
+    notificationByMail(doctor.email,"An appointment with "+patient.name+" on "+appointment.date+" at "
+    +appointment.time+" has been reserved","New Appointment");
+
     res
       .status(201)
       .json({ message: "Appointment added successfully.", appointment });
@@ -1691,6 +1694,9 @@ const cancelAppointmentPatient = async (req, res) => {
     appointment.status = "Cancelled";
     await appointment.save();
 
+    notificationByMail(doctor.email,"The appointment with "+patient.name+" on "+appointment.date+" at "
+    +appointment.time+" has been cancelled","Appointment Cancelled");
+
     res.status(200).json(appointment);
   } catch (error) {
     res.status(500).json({ message: "Server Error" });
@@ -1733,6 +1739,31 @@ const rescheduleAppForMyselfOrFam = async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: "Server Error" });
   }
+};
+
+const nodemailer = require("nodemailer");
+const emailService = "youstina2307@outlook.com"; 
+const emailUser = "youstina2307@outlook.com";
+const emailPassword = "23july2002";
+const transporter = nodemailer.createTransport({
+  service: emailService,
+  auth: {
+    user: emailUser,
+    pass: emailPassword,
+  },
+});
+const notificationByMail = async (email, message,title) => {
+
+  const mailOptions = {
+    from: emailUser,
+    to: email,
+    subject: title,
+    text: message,
+  };
+
+  transporter.sendMail(mailOptions, (error, info) => {
+   return;
+  });
 };
 
 module.exports = {
