@@ -11,6 +11,7 @@ const stripe = require("stripe")(
   "sk_test_51O9lZ0IQTS4vUIMWJeAJ5Ds71jNbeQFj6v8mO7leS2cDIJuLy1fwNzoiXPKZV5KdoMpfzocfJ6hBusxPIjbGeveF00RTnmVYCX"
 );
 const administratorModel = require("../Models/Adminstrator.js");
+const followUpModel = require("../Models/FollowUp.js");
 
 const doctorDetails = async (req, res) => {
   const { name } = req.body;
@@ -161,9 +162,6 @@ const viewPrescriptions = async (req, res) => {
     if (!prescriptions) {
       return res.status(404).json({ message: "Patient not found." });
     }
-
-    // const prescriptions = patient.prescriptions;
-
     res.status(200).json(prescriptions);
   } catch (error) {
     res.status(500).json({ message: "Server Error" });
@@ -642,7 +640,6 @@ const filterDoctorsAfterSearch = async (req, res) => {
 
 const viewAllAppointmentsPatient = async (req, res) => {
   try {
-    console.log(req.user.id + " ID");
     const patientId = req.user.id;
 
     // Fetch the patient's family members
@@ -1600,6 +1597,91 @@ const handleAppointmentStripe = async (req, res) => {
     return res.status(500).json({ message: "Server Error" });
   }
 };
+const viewPrescriptionDetails = async (req, res) => {
+  try {
+    const prescriptionId = req.body;
+    const prescription = await prescriptionModel.findById(prescriptionId);
+
+    if (!prescription) {
+      return res.status(404).json({ message: "No prescription found." });
+    }
+    res.status(200).json(prescription);
+  } catch (error) {
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+const cancelAppointmentPatient = async (req, res) => {
+  try {
+    const patient = await patientModel.findById(req.user.id);
+    const appId = req.body;
+    const appointment = await appointmentModel.findById(appId);
+    if (!appointment) {
+      return res.status(404).json({ message: "No appointment found." });
+    }
+    const doctor = await doctorModel.findById(appointment.doctorID);
+    const date = appointment.date;
+    const time = appointment.time;
+    const dateTimeString = `${date} ${time}`;
+    const inputDate = newDate(dateTimeString);
+    const currentDate = new Date();
+    const timeDifference = currentDate - inputDate;
+    const hoursDifference = timeDifference / (1000 * 60 * 60);
+    const sessionPrice = await calculateSessionPrice(
+      doctor.hourlyRate,
+      patient.package
+    );
+    if (hoursDifference > 24) {
+      doctor.wallet -= sessionPrice;
+      await doctor.save();
+      patient.wallet += sessionPrice;
+      await patient.save();
+    }
+    appointment.status = "Cancelled";
+    await appointment.save();
+
+    res.status(200).json(appointment);
+  } catch (error) {
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+
+const reqFollowUpForMyselfOrFam = async (req, res) => {
+  try {
+    const { date, time, appId } = req.body;
+    const appointment = await appointmentModel.findById(appId);
+    if (!appointment) {
+      res.status(401).json("Appointment not found");
+    }
+    const doctor = await doctorModel.findById(appointment.doctorID);
+    const followUp = await followUpModel.create({
+      date,
+      description: appointment.description,
+      patientID: appointment.patientID,
+      doctorID: appointment.doctorID,
+      status: "Upcoming",
+      time,
+    });
+    doctor.followUps.push(followUp._id);
+    await doctor.save();
+    res.status(200).json(followUp);
+  } catch (error) {
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+const rescheduleAppForMyselfOrFam = async (req, res) => {
+  try {
+    const appId = req.body.appId;
+    const date = req.body.date;
+    const time = req.body.time;
+    const appointment = await appointmentModel.findById(appId);
+    appointment.date = date;
+    appointment.time = time;
+    await appointment.save();
+    res.status(200).json(appointment);
+  } catch (error) {
+    res.status(500).json({ message: "Server Error" });
+  }
+};
 
 module.exports = {
   selectPrescription,
@@ -1629,7 +1711,6 @@ module.exports = {
   cancelHealthPackage,
   cancelHealthPackageFam,
   viewSubscribedPackages,
-
   addFamilyMemberExisting,
   addAppointmentForMyselfOrFam,
   changePasswordForPatientForget,
@@ -1639,4 +1720,8 @@ module.exports = {
   payAppointmentStripe,
   handlePackageStripe,
   handleAppointmentStripe,
+  viewPrescriptionDetails,
+  cancelAppointmentPatient,
+  reqFollowUpForMyselfOrFam,
+  rescheduleAppForMyselfOrFam,
 };
