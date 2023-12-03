@@ -99,6 +99,14 @@ const patientSchema = new Schema(
 
     familyMembers: [[String, String]],
     medicalHistory: [fileSchema],
+    notifications: {
+      type: [String],
+      required: false,
+    },
+    newNotifications: {
+      type: Boolean,
+      required: false,
+    },
   },
   { timestamps: true }
 );

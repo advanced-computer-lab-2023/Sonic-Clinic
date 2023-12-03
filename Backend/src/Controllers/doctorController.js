@@ -327,6 +327,9 @@ const addAppointmentByPatientID = async (req, res) => {
 
     const { date, description, patientID, status, time } = req.body;
 
+    const patient = await patientModel.findById(patientID);
+    const doctor = await doctorModel.findById(doctorID);
+
     // Create a new appointment with doctorID, patientID, and other details
     const appointment = await appointmentModel.create({
       date,
@@ -336,6 +339,28 @@ const addAppointmentByPatientID = async (req, res) => {
       status,
       time,
     });
+
+    notificationByMail(
+      patient.email,
+      "An appointment has been reserved with Dr. " +
+        doctor.name +
+        " on " +
+        appointment.date +
+        " at " +
+        appointment.time,
+      "New Appointment Reservation"
+    );
+
+    notificationByMail(
+      doctor.email,
+      "An appointment has been reserved with " +
+        patient.name +
+        " on " +
+        appointment.date +
+        " at " +
+        appointment.time,
+      "Appointment Reserved"
+    );
 
     //   const doctor= await doctorModel.findById(req.user.id);
     //   doctor.patients.push(patientID);
@@ -461,6 +486,8 @@ const calculateSessionPrice = async (hourlyRate, patientPackage) => {
 
 const cancelAppointmentDoc = async (req, res) => {
   try {
+    let notificationDoc;
+    let notification;
     const doctor = await doctorModel.findById(req.user.id);
     const appId = req.body;
     const appointment = await appointmentModel.findById(appId);
@@ -480,17 +507,92 @@ const cancelAppointmentDoc = async (req, res) => {
         message: "Appointment is in less than 24 hours",
       });
     }
+
+    let package;
+    if (patient) {
+      package = patient.package;
+    } else {
+      const famMem = await familyMemberModel.findById(appointment.patientID);
+      package = famMem.package;
+    }
     appointment.status = "Cancelled";
     await appointment.save();
     const sessionPrice = await calculateSessionPrice(
       doctor.hourlyRate,
-      patient.package
+      package
     );
     doctor.wallet -= sessionPrice;
     await doctor.save();
 
     patient.wallet += sessionPrice;
     await patient.save();
+
+    notificationByMail(
+      patient.email,
+      "The appointment with Dr. " +
+        doctor.name +
+        " on " +
+        appointment.date +
+        " at " +
+        appointment.time +
+        " has been cancelled",
+      "Appointment Cancelled"
+    );
+
+    notificationByMail(
+      doctor.email,
+      "An appointment has been cancelled with " +
+        patient.name +
+        " on " +
+        appointment.date +
+        " at " +
+        appointment.time,
+      "Appointment Cancelled"
+    );
+
+    const id = appointment.patientID;
+    patient = await patientModel.findById(id);
+    if (patient) {
+      notification =
+        "The appointment with Dr. " +
+        doctor.name +
+        " has been cancelled" +
+        patient.notifications.push(notification);
+      patient.newNotifications = true;
+      await patient.save();
+      notificationDoc =
+        "An appointment with " + patient.name + " has been cancelled";
+      doctor.notifications.push(notificationDoc);
+      doctor.newNotifications = true;
+      await doctor.save();
+    } else {
+      const familyMem = await familyMemberModel.findById(appointment.patientID);
+      if (familyMem) {
+        const parent = await patientModel.findById(req.user.id);
+        notification =
+          "The appointment with Dr. " +
+          doctor.name +
+          " for " +
+          familyMem.name +
+          " has been cancelled ";
+        parent.notifications.push(notification);
+        parent.newNotifications = true;
+        await parent.save();
+        notificationDoc =
+          "An appointment with " + familyMem.name + " has been cancelled";
+        doctor.notifications.push(notificationDoc);
+        doctor.newNotifications = true;
+        await doctor.save();
+      }
+      if (familyMem && familyMem.patientRef) {
+        const linkedP = await patientModel.findById(familyMem.patientRef);
+        notification =
+          "Your appointment with Dr. " + doctor.name + " has been cancelled ";
+        linkedP.notifications.push(notification);
+        linkedP.newNotifications = true;
+        await linkedP.save();
+      }
+    }
 
     res.status(200).json(appointment);
   } catch (error) {
@@ -567,14 +669,160 @@ const rescheduleAppDoc = async (req, res) => {
     const appId = req.body.appId;
     const date = req.body.date;
     const time = req.body.time;
+    let notification;
+    let notificationDoc;
     const appointment = await appointmentModel.findById(appId);
     appointment.date = date;
     appointment.time = time;
     await appointment.save();
+    const doctor = await doctorModel.findById(req.user.id);
+    const docName = doctor.name;
+    notification =
+      "Your appointment with Dr. " +
+      docName +
+      " has been rescheduled to be on " +
+      date +
+      " at: " +
+      time;
+
+    const patientId = appointment.patientID;
+    const patient = await patientModel.findById(patientId);
+    notificationDoc =
+      "Your appointment with " +
+      patient.name +
+      " has been rescheduled to be on " +
+      date +
+      " at: " +
+      time;
+    if (patient) {
+      patient.notifications.push(notification);
+      patient.newNotifications = true;
+      await patient.save();
+      doctor.notifications.push(notificationDoc);
+      doctor.newNotifications = true;
+      await doctor.save();
+    } else {
+      const familyMem = await familyMemberModel.findById(appointment.patientID);
+      if (familyMem) {
+        const parent = await patientModel.findById(req.user.id);
+        notification =
+          "The appointment with Dr. " +
+          doctor.name +
+          " for " +
+          familyMem.name +
+          " has been rescheduled to be on " +
+          date +
+          " at: " +
+          time;
+        parent.notifications.push(notification);
+        parent.newNotifications = true;
+        await parent.save();
+        notificationDoc =
+          "An appointment with " +
+          familyMem.name +
+          " has been rescheduled to be on " +
+          date +
+          " at: " +
+          time;
+        doctor.notifications.push(notificationDoc);
+        doctor.newNotifications = true;
+        await doctor.save();
+      }
+      if (familyMem && familyMem.patientRef) {
+        const linkedP = await patientModel.findById(familyMem.patientRef);
+        notification =
+          "Your appointment with Dr. " +
+          doctor.name +
+          " has been rescheduled to be on " +
+          date +
+          " at: " +
+          time;
+        linkedP.notifications.push(notification);
+        linkedP.newNotifications = true;
+        await linkedP.save();
+      }
+    }
+    notificationByMail(
+      patient.email,
+      "The appointment with Dr. " +
+        doctor.name +
+        " has been rescheduled to " +
+        appointment.date +
+        " at " +
+        appointment.time,
+      "Appointment Rescheduled"
+    );
+
+    notificationByMail(
+      doctor.email,
+      "An appointment has been rescheduled with " +
+        patient.name +
+        " on " +
+        appointment.date +
+        " at " +
+        appointment.time,
+      "Appointment Rescheduled"
+    );
     res.status(200).json(appointment);
   } catch (error) {
     res.status(500).json({ message: "Server Error" });
   }
+};
+const viewNotifications = async (req, res) => {
+  try {
+    let notifications;
+    const id = req.user.id;
+    const doctor = await doctorModel.findById(id);
+    if (doctor) {
+      notifications = doctor.notifications;
+    } else {
+      const patient = await patientModel.findById(id);
+      notifications = patient.notifications;
+    }
+    res.status(200).json(notifications);
+  } catch (error) {
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+const notificationFlag = async (req, res) => {
+  try {
+    const id = req.user.id;
+    const doctor = await doctorModel.findById(id);
+    if (doctor) {
+      doctor.newNotifications = false;
+      await doctor.save();
+    } else {
+      const patient = await patientModel.findById(id);
+      patient.newNotifications = false;
+      await patient.save();
+    }
+    res.status(200).json("Notification flag = false");
+  } catch (error) {
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+const nodemailer = require("nodemailer");
+const emailService = "youstina2307@outlook.com";
+const emailUser = "youstina2307@outlook.com";
+const emailPassword = "23july2002";
+const transporter = nodemailer.createTransport({
+  service: emailService,
+  auth: {
+    user: emailUser,
+    pass: emailPassword,
+  },
+});
+const notificationByMail = async (email, message, title) => {
+  const mailOptions = {
+    from: emailUser,
+    to: email,
+    subject: title,
+    text: message,
+  };
+
+  transporter.sendMail(mailOptions, (error, info) => {
+    return;
+  });
 };
 
 module.exports = {
@@ -601,4 +849,6 @@ module.exports = {
   acceptFollowUp,
   rejectFollowUp,
   rescheduleAppDoc,
+  viewNotifications,
+  notificationFlag,
 };
