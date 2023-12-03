@@ -67,7 +67,7 @@ function PatientViewDoctors() {
       <AppNavbar hamburgerMenu={<HamburgerMenu />} />
       <Container fluid className="bg-light pt-3 mt-2">
         <Container className="bg-white px-5 py-4 d-flex align-items-center justify-content-center">
-          <Row>
+          <Row style={{ width: "100%" }}>
             <div>
               <ViewDoctorsSearch />
             </div>
