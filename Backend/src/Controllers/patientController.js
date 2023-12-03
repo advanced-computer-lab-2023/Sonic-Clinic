@@ -1336,6 +1336,18 @@ const addAppointmentForMyselfOrFam = async (req, res) => {
       "New Appointment"
     );
 
+    notificationByMail(
+      patient.email,
+      "An appointment with Dr. " +
+        doctor.name +
+        " on " +
+        appointment.date +
+        " at " +
+        appointment.time +
+        " has been reserved",
+      "Appointment Reserved"
+    );
+
     res
       .status(201)
       .json({ message: "Appointment added successfully.", appointment });
@@ -1716,69 +1728,6 @@ const cancelAppointmentPatient = async (req, res) => {
     }
     appointment.status = "Cancelled";
     await appointment.save();
-    if (patient && !famMem && !linkedP) {
-      notification =
-        "Your appointment with Dr. " +
-        doctor.name +
-        " has been cancelled" +
-        patient.notifications.push(notificationPatient);
-      patient.newNotifications = true;
-      await patient.save();
-
-      notification =
-        "Your appointment with " +
-        patient.name +
-        " has been cancelled" +
-        doctor.notifications.push(notificationPatient);
-      doctor.newNotifications = true;
-      await doctor.save();
-    }
-    if (famMem) {
-      const parent = await patientModel.findById(appointment.parentID);
-      notification =
-        "The appointment with Dr. " +
-        doctor.name +
-        " for " +
-        famMem.name +
-        " has been cancelled " +
-        parent.notifications.push(notificationPatient);
-      parent.newNotifications = true;
-      await parent.save();
-
-      notification =
-        "Your appointment with " +
-        famMem.name +
-        " has been cancelled" +
-        doctor.notifications.push(notificationPatient);
-      doctor.newNotifications = true;
-      await doctor.save();
-    }
-    if (linkedP) {
-      notification =
-        "The appointment with Dr. " +
-        doctor.name +
-        " for " +
-        linkedP.name +
-        " has been cancelled " +
-        patient.notifications.push(notificationPatient);
-      patient.newNotifications = true;
-      await patient.save();
-      notification =
-        "Your appointment with Dr. " +
-        doctor.name +
-        " has been cancelled" +
-        linkedP.notifications.push(notificationPatient);
-      linkedP.newNotifications = true;
-      await linkedP.save();
-
-      notification =
-        "Your appointment with " +
-        linkedP.name +
-        " has been cancelled" +
-        doctor.notifications.push(notificationPatient);
-      doctor.newNotifications = true;
-      await doctor.save();
-    }
 
     notificationByMail(
       doctor.email,
@@ -1833,6 +1782,28 @@ const rescheduleAppForMyselfOrFam = async (req, res) => {
     appointment.date = date;
     appointment.time = time;
     await appointment.save();
+    notificationByMail(
+      doctor.email,
+      "The appointment with " +
+        patient.name +
+        " has been rescheduled to " +
+        appointment.date +
+        " at " +
+        appointment.time,
+      "Appointment Rescheduled"
+    );
+
+    notificationByMail(
+      patient.email,
+      "The appointment with Dr. " +
+        doctor.name +
+        " has been rescheduled to " +
+        appointment.date +
+        " at " +
+        appointment.time,
+      "Appointment Rescheduled"
+    );
+
     const id = appointment.patientID;
     const patient = await patientModel.findById(id);
     if (patient) {

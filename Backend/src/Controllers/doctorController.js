@@ -340,8 +340,11 @@ const addAppointmentByPatientID = async (req, res) => {
       time,
     });
 
-    notificationByMail(patient.email,"An appointment has been reserved with doctor "+doctor.name+" on "+appointment.date+" at "
+    notificationByMail(patient.email,"An appointment has been reserved with Dr. "+doctor.name+" on "+appointment.date+" at "
     +appointment.time,"New Appointment Reservation");
+
+    notificationByMail(doctor.email,"An appointment has been reserved with "+patient.name+" on "+appointment.date+" at "
+    +appointment.time,"Appointment Reserved");
 
     //   const doctor= await doctorModel.findById(req.user.id);
     //   doctor.patients.push(patientID);
@@ -498,8 +501,11 @@ const cancelAppointmentDoc = async (req, res) => {
     patient.wallet += sessionPrice;
     await patient.save();
 
-    notificationByMail(patient.email,"The appointment with "+doctor.name+" on "+appointment.date+" at "
+    notificationByMail(patient.email,"The appointment with Dr. "+doctor.name+" on "+appointment.date+" at "
     +appointment.time+" has been cancelled","Appointment Cancelled");
+
+    notificationByMail(doctor.email,"An appointment has been cancelled with "+patient.name+" on "+appointment.date+" at "
+    +appointment.time,"Appointment Cancelled");
 
     res.status(200).json(appointment);
   } catch (error) {
@@ -613,7 +619,11 @@ const rescheduleAppDoc = async (req, res) => {
       parent.newNotifications = true;
       await parent.save();
     }
+    notificationByMail(patient.email,"The appointment with Dr. "+doctor.name+" has been rescheduled to "+appointment.date+" at "
+    +appointment.time,"Appointment Rescheduled");
 
+    notificationByMail(doctor.email,"An appointment has been rescheduled with "+patient.name+" on "+appointment.date+" at "
+    +appointment.time,"Appointment Rescheduled");
     res.status(200).json(appointment);
   } catch (error) {
     res.status(500).json({ message: "Server Error" });
