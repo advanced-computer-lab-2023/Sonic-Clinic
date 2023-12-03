@@ -274,22 +274,6 @@ const dummyDoctors = [
       "https://www.woodlandshospital.in/images/doctor-img/ravi-kant-saraogi.jpg",
   },
   {
-    username: "drlisamiller",
-    name: "Lisa Miller",
-    email: "lisa.miller@example.com",
-    password: "password303",
-    dateOfBirth: "1973-12-18",
-    hourlyRate: 180,
-    sessionPrice: 180,
-    appointments: [],
-    affiliation: "Community Hospital",
-    educationalBackground: "M.D. from Medical Excellence College",
-    patients: [],
-    specialty: "Pediatrics",
-    photoLink:
-      "https://media.licdn.com/dms/image/D4D03AQGtRNtcH_1kFg/profile-displayphoto-shrink_400_400/0/1688449652391?e=1700697600&v=beta&t=XeEjFVmqBXMPwoCUZtqDLzw1_eA3FAICAT2APwaBHHM",
-  },
-  {
     username: "drkarendavis",
     name: "Karen Davis",
     email: "karen.davis@example.com",

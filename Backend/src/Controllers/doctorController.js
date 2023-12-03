@@ -5,6 +5,8 @@ const PrescriptionModel = require("../Models/Prescription.js");
 const appointmentModel = require("../Models/Appointment.js");
 const familyMemberModel = require("../Models/FamilyMember.js");
 const bcrypt = require("bcrypt");
+const prescriptionModel = require("../Models/Prescription.js");
+const followUpModel = require("../Models/FollowUp.js");
 
 const searchPatientByName = async (req, res) => {
   const { name } = req.query;
@@ -423,6 +425,158 @@ const changePasswordForDoctorForget = async (req, res) => {
   }
 };
 
+const viewPrescriptionsDoc = async (req, res) => {
+  try {
+    const id = req.user.id;
+
+    const prescriptions = await prescriptionModel.find({ doctorID: id });
+
+    if (!prescriptions) {
+      return res.status(404).json({ message: "No prescriptions found." });
+    }
+    res.status(200).json(prescriptions);
+  } catch (error) {
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+
+const calculateSessionPrice = async (hourlyRate, patientPackage) => {
+  try {
+    if (patientPackage === "  ") {
+      return hourlyRate;
+    }
+    const packageInfo = await packagesModel.findById(patientPackage);
+    if (!packageInfo) {
+      return hourlyRate;
+    } else {
+      const sessionPrice =
+        hourlyRate * 1.1 * (1 - packageInfo.sessionDiscount * 0.01);
+
+      return sessionPrice;
+    }
+  } catch (error) {
+    throw error;
+  }
+};
+
+const cancelAppointmentDoc = async (req, res) => {
+  try {
+    const doctor = await doctorModel.findById(req.user.id);
+    const appId = req.body;
+    const appointment = await appointmentModel.findById(appId);
+    if (!appointment) {
+      return res.status(404).json({ message: "No appointment found." });
+    }
+    const patient = await patientModel.findById(appointment.patientID);
+    const date = appointment.date;
+    const time = appointment.time;
+    const dateTimeString = `${date} ${time}`;
+    const inputDate = newDate(dateTimeString);
+    const currentDate = new Date();
+    const timeDifference = currentDate - inputDate;
+    const hoursDifference = timeDifference / (1000 * 60 * 60);
+    if (hoursDifference < 24) {
+      return res
+        .status(401)
+        .json({ message: "Appointment in less than 24 hours" });
+    }
+    appointment.status = "Cancelled";
+    await appointment.save();
+    const sessionPrice = await calculateSessionPrice(
+      doctor.hourlyRate,
+      patient.package
+    );
+    doctor.wallet -= sessionPrice;
+    await doctor.save();
+
+    patient.wallet += sessionPrice;
+    await patient.save();
+
+    res.status(200).json(appointment);
+  } catch (error) {
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+const viewFollowUpsReq = async (req, res) => {
+  try {
+    const id = req.user.id;
+    const followUps = await followUpModel.find({ doctorID: id });
+    res.status(200).json(followUps);
+  } catch (error) {
+    res.status(400).send({ error: error.message });
+  }
+};
+
+const acceptFollowUp = async (req, res) => {
+  try {
+    const followUpId = req.body;
+    const followUp = await followUpModel.findById(followUpId);
+    const appointment = await appointmentModel.create({
+      date: followUp.date,
+      description: followUp.description,
+      patientID: followUp.patientID,
+      doctorID: followUp.doctorID,
+      status: followUp.status,
+      time: followUp.time,
+    });
+
+    const followUpIndex = doctor.followUps.findIndex((followUp) =>
+      followUp._id.equals(followUpId)
+    );
+    if (followUpIndex !== -1) {
+      doctor.followUps.splice(followUpIndex, 1);
+      await doctor.save();
+    } else {
+      res.status(401).json("follow Up not found for this doctor");
+    }
+    const deleted = await followUpModel.findByIdAndDelete(followUpId);
+    if (!deleted) {
+      res.status(401).json("no followUp found");
+    }
+    res.status(200).json(appointment);
+  } catch (error) {
+    res.status(400).send({ error: error.message });
+  }
+};
+
+const rejectFollowUp = async (req, res) => {
+  try {
+    const followUpId = req.body;
+    const followUpIndex = doctor.followUps.findIndex((followUp) =>
+      followUp._id.equals(followUpId)
+    );
+    if (followUpIndex !== -1) {
+      doctor.followUps.splice(followUpIndex, 1);
+      await doctor.save();
+    } else {
+      res.status(401).json("follow Up not found for this doctor");
+    }
+    const deleted = await followUpModel.findByIdAndDelete(followUpId);
+    if (!deleted) {
+      res.status(401).json("no followUp found");
+    }
+
+    res.status(200).json(deleted);
+  } catch (error) {
+    res.status(400).send({ error: error.message });
+  }
+};
+
+const rescheduleAppDoc = async (req, res) => {
+  try {
+    const appId = req.body.appId;
+    const date = req.body.date;
+    const time = req.body.time;
+    const appointment = await appointmentModel.findById(appId);
+    appointment.date = date;
+    appointment.time = time;
+    await appointment.save();
+    res.status(200).json(appointment);
+  } catch (error) {
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+
 module.exports = {
   selectPatient,
   viewInfoAndHealthRecord,
@@ -441,4 +595,10 @@ module.exports = {
   viewWalletDoc,
   acceptContract,
   changePasswordForDoctorForget,
+  viewPrescriptionsDoc,
+  cancelAppointmentDoc,
+  viewFollowUpsReq,
+  acceptFollowUp,
+  rejectFollowUp,
+  rescheduleAppDoc,
 };

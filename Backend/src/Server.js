@@ -60,6 +60,9 @@ const {
   payAppointmentStripe,
   handlePackageStripe,
   handleAppointmentStripe,
+  viewPrescriptionDetails,
+  cancelAppointmentPatient,
+  reqFollowUpForMyselfOrFam,
 } = require("./Controllers/patientController");
 
 /////////////////////////////////doctorController//////////////////////////////////////////
@@ -80,7 +83,12 @@ const {
   viewAvailableSlots,
   viewWalletDoc,
   acceptContract,
-  changePasswordForDoctorForget
+  changePasswordForDoctorForget,
+  viewPrescriptionsDoc,
+  cancelAppointmentDoc,
+  viewFollowUpsReq,
+  acceptFollowUp,
+  rejectFollowUp,
 } = require("./Controllers/doctorController");
 
 ///////////////////////////////adminstratorController//////////////////////////////////////
@@ -131,7 +139,7 @@ const {
   uploadFilesForPotentialDoctor,
   viewMedicalRecords,
   uploadFilesbyDoctors,
-  viewPtlDocDocumentsbyAdmins
+  viewPtlDocDocumentsbyAdmins,
 } = require("./Controllers/upload");
 
 //el link bta3 el DB
@@ -215,7 +223,8 @@ server.post(
   addAppointmentByPatientID
 );
 server.post("/changePasswordForDoctorForget", changePasswordForDoctorForget);
-
+server.post("/viewPrescriptionsDoc", requireAuth, viewPrescriptionsDoc);
+server.post("/cancelAppointmentDoc", requireAuth, cancelAppointmentDoc);
 //patient
 server.post("/addFamilyMember", requirePatientAuth, addFamilyMember);
 server.post("/addAppointment", requireAuth, addAppointment);
@@ -242,7 +251,16 @@ server.get("/viewMedicalRecords", requireAuth, viewMedicalRecords);
 
 server.post("/handlePackageStripe", requireAuth, handlePackageStripe);
 server.post("/handleAppointmentStripe", requireAuth, handleAppointmentStripe);
-
+server.post("/viewPrescriptionDetails", requireAuth, viewPrescriptionDetails);
+server.post("/cancelAppointmentPatient", requireAuth, cancelAppointmentPatient);
+server.post(
+  "/reqFollowUpForMyselfOrFam",
+  requireAuth,
+  reqFollowUpForMyselfOrFam
+);
+server.post("/viewFollowUpsReq", requireAuth, viewFollowUpsReq);
+server.post("/acceptFollowUp", requireAuth, acceptFollowUp);
+server.post("/rejectFollowUp", requireAuth, rejectFollowUp);
 //////////////////////////////////////////// GET/////////////////////////////////////
 //admin
 server.get("/viewAllPatients", requireAuth, viewAllPatients);
