@@ -110,6 +110,9 @@ const login = async (req, res) => {
         return res.status(401).json({ message: "Invalid credentials" });
       }
     }
+    if (!admin1 && !patient1 && !admin1) {
+      return res.status(401).json({ message: "Invalid credentials" });
+    }
   } catch (error) {
     console.error("Error:", error);
     return res.status(500).json({ message: "Server Error" });
@@ -175,7 +178,6 @@ const otp = async (req, res) => {
     }
   });
 };
-
 
 // POST API endpoint to verify the OTP
 const verifyOtp = async (req, res) => {

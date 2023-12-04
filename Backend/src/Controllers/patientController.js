@@ -5,6 +5,7 @@ const familyMemberModel = require("../Models/FamilyMember.js");
 const packagesModel = require("../Models/Packages.js");
 const prescriptionModel = require("../Models/Prescription.js");
 const appointmentModel = require("../Models/Appointment.js");
+const chatModel = require("../Models/Chat.js");
 const { updateUserInfoInCookie } = require("./authorization.js");
 const bcrypt = require("bcrypt");
 const stripe = require("stripe")(
@@ -1484,15 +1485,88 @@ const payAppointmentWallet = async (req, res) => {
     // Create the appointment and update the doctor's appointments
     if (famID) {
       const family1 = await familyMemberModel.findById(famID);
+      const familyName = family1.name;
+      console.log("1");
       if (family1.patientRef) {
+        console.log("2");
         patientID = family1.patientRef;
+        const linkedP = await patientModel.findById(patientID);
+        const linkedPName = linkedP.name;
+        notificationPatient =
+          "An appointment with Dr. " +
+          docName +
+          " has been scheduled on " +
+          date +
+          " at : " +
+          time;
+        linkedP.notifications.push(notificationPatient);
+        linkedP.newNotifications = true;
+        await linkedP.save();
+        notificationDoc =
+          "An appointment with " +
+          linkedPName +
+          " has been scheduled on " +
+          date +
+          " at : " +
+          time;
+        doctor.notifications.push(notificationDoc);
+        doctor.newNotifications = true;
+        await doctor.save();
       } else {
+        console.log("3");
         patientID = famID;
-      }
-    }
-    const status = "upcoming";
+        const parent = await patientModel.findById(req.user.id);
+        notificationPatient =
+          "An appointment with Dr. " +
+          docName +
+          " for " +
+          familyName +
+          " has been scheduled on " +
+          date +
+          " at : " +
+          time;
+        parent.notifications.push(notificationPatient);
+        parent.newNotifications = true;
+        await parent.save();
 
-    console.log("patientttt " + patientID);
+        notificationDoc =
+          "An appointment with " +
+          familyName +
+          " has been scheduled on " +
+          date +
+          " at : " +
+          time;
+        doctor.notifications.push(notificationDoc);
+        doctor.newNotifications = true;
+        await doctor.save();
+      }
+    } else {
+      console.log("4");
+      const patient = await patientModel.findById(req.user.id);
+      const pName = patient.name;
+      notificationPatient =
+        "An appointment with Dr. " +
+        doctor.name +
+        " has been scheduled on " +
+        date +
+        " at : " +
+        time;
+      patient.notifications.push(notificationPatient);
+      patient.newNotifications = true;
+      await patient.save();
+
+      notificationDoc =
+        "An appointment with " +
+        pName +
+        " has been scheduled on " +
+        date +
+        " at : " +
+        time;
+      doctor.notifications.push(notificationDoc);
+      doctor.newNotifications = true;
+      await doctor.save();
+    }
+    const status = "Upcoming";
     const appointment = await appointmentModel.create({
       date,
       description,
@@ -1692,29 +1766,31 @@ const cancelAppointmentPatient = async (req, res) => {
     let notificationDoc;
     let notification;
     patient = await patientModel.findById(req.user.id);
-    const appId = req.body;
+    const appId = req.body.id;
     const appointment = await appointmentModel.findById(appId);
     if (!appointment) {
       return res.status(404).json({ message: "No appointment found." });
     }
     const doctor = await doctorModel.findById(appointment.doctorID);
+    const docName = doctor.name;
     const date = appointment.date;
     const time = appointment.time;
-    const dateTimeString = `${date} ${time}`;
-    const inputDate = newDate(dateTimeString);
+    const dateTimeString = `${date}T${time}:00.000Z`;
+    const inputDate = new Date(dateTimeString);
     const currentDate = new Date();
-    const timeDifference = currentDate - inputDate;
+    const timeDifference = inputDate - currentDate;
     const hoursDifference = timeDifference / (1000 * 60 * 60);
     let package;
-    if (patient._id === appointment.patientID) {
+    if (req.user.id === appointment.patientID) {
       package = patient.package;
-    }
-    const famMem = await familyMemberModel.findById(appointment.patientID);
-    if (famMem && !famMem.patientRef) {
-      package = famMem.package;
     } else {
-      const linkedP = await patientModel.findById(famMem.patientRef);
-      package = linkedP.package;
+      const famMem = await familyMemberModel.findById(appointment.patientID);
+      if (famMem && !famMem.patientRef) {
+        package = famMem.package;
+      } else {
+        const linkedP = await patientModel.findById(famMem.patientRef);
+        package = linkedP.package;
+      }
     }
     const sessionPrice = await calculateSessionPrice(
       doctor.hourlyRate,
@@ -1756,14 +1832,12 @@ const cancelAppointmentPatient = async (req, res) => {
     patient = await patientModel.findById(id);
     if (patient) {
       notification =
-        "The appointment with Dr. " +
-        doctor.name +
-        " has been cancelled" +
-        patient.notifications.push(notification);
+        "The appointment with Dr. " + docName + " has been cancelled";
+      patient.notifications.push(notification);
       patient.newNotifications = true;
       await patient.save();
       notificationDoc =
-        "An appointment with " + patient.name + " has been cancelled";
+        "The appointment with " + patient.name + " has been cancelled";
       doctor.notifications.push(notificationDoc);
       doctor.newNotifications = true;
       await doctor.save();
@@ -1828,6 +1902,7 @@ const rescheduleAppForMyselfOrFam = async (req, res) => {
   try {
     let notification;
     let notificationDoc;
+    let patient;
     const appId = req.body.appId;
     const date = req.body.date;
     const time = req.body.time;
@@ -1836,32 +1911,36 @@ const rescheduleAppForMyselfOrFam = async (req, res) => {
     appointment.date = date;
     appointment.time = time;
     await appointment.save();
+    patient = await patientModel.findById(req.body.id);
 
-    notificationByMail(
-      doctor.email,
-      "The appointment with " +
-        patient.name +
-        " has been rescheduled to " +
-        appointment.date +
-        " at " +
-        appointment.time,
-      "Appointment Rescheduled"
-    );
+    // notificationByMail(
+    //   doctor.email,
+    //   "The appointment with " +
+    //     patient.name +
+    //     " has been rescheduled to " +
+    //     appointment.date +
+    //     " at " +
+    //     appointment.time,
+    //   "Appointment Rescheduled"
+    // );
+    console.log("hena5");
 
-    notificationByMail(
-      patient.email,
-      "The appointment with Dr. " +
-        doctor.name +
-        " has been rescheduled to " +
-        appointment.date +
-        " at " +
-        appointment.time,
-      "Appointment Rescheduled"
-    );
+    // notificationByMail(
+    //   patient.email,
+    //   "The appointment with Dr. " +
+    //     doctor.name +
+    //     " has been rescheduled to " +
+    //     appointment.date +
+    //     " at " +
+    //     appointment.time,
+    //   "Appointment Rescheduled"
+    // );
 
     const id = appointment.patientID;
-    const patient = await patientModel.findById(id);
+    patient = await patientModel.findById(id);
+    console.log("hena3");
     if (patient) {
+      console.log("hena4");
       notification =
         "The appointment with Dr. " +
         doctor.name +
@@ -1872,6 +1951,16 @@ const rescheduleAppForMyselfOrFam = async (req, res) => {
       patient.notifications.push(notification);
       patient.newNotifications = true;
       await patient.save();
+      notificationDoc =
+        "An appointment with " +
+        patient.name +
+        " has been rescheduled to be on " +
+        date +
+        " at: " +
+        time;
+      doctor.notifications.push(notificationDoc);
+      doctor.newNotifications = true;
+      await doctor.save();
     } else {
       const familyMem = await familyMemberModel.findById(appointment.patientID);
       if (familyMem) {
@@ -1942,6 +2031,8 @@ const notificationByMail = async (email, message, title) => {
     return;
   });
 };
+
+
 
 module.exports = {
   selectPrescription,
