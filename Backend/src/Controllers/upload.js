@@ -3,6 +3,7 @@ const doctorModel = require("../Models/Doctor.js");
 const potentialDoctorModel = require("../Models/PotentialDoctor.js");
 const adminModel = require("../Models/Adminstrator");
 const multer = require("multer");
+const PDFDocument = require('pdfkit');
 
 const storage = multer.memoryStorage();
 const upload = multer({
@@ -420,6 +421,52 @@ const viewPtlDocDocumentsbyAdmins = async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 };
+const downloadPrescriptions = async (req, res) => {
+  try {
+    const PrescriptionId = req.query.id;
+    const prescription = await prescriptionsModel.findById(PrescriptionId);
+
+    if (!prescription) {
+      return res.status(404).json({ error: "Prescription not found" });
+    }
+
+    const sanitizedFilename = encodeURIComponent(`${PrescriptionId}_Prescription`);
+    const buffer = await generatePdfBuffer(prescription);
+
+    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader(
+      "Content-Disposition",
+      `attachment; filename="${sanitizedFilename}.pdf"`
+    );
+    res.end(buffer);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+const generatePdfBuffer = async (prescription) => {
+  const doc = new PDFDocument();
+  const buffer = [];
+
+  doc.on('data', (chunk) => {
+    buffer.push(chunk);
+  });
+  const pdfPromise = new Promise((resolve) => {
+    doc.on('end', () => {
+      resolve(Buffer.concat(buffer));
+    });
+  });
+  doc.text(`Medicine: ${prescription.medicine.join(', ')}`);
+  doc.text(`Doctor ID: ${prescription.doctorID}`);
+  doc.text(`Patient ID: ${prescription.patientID}`);
+  doc.text(`Status: ${prescription.status}`);
+  doc.text(`Date: ${prescription.date}`);
+  doc.text(`Doctor Name: ${prescription.doctorName}`);
+  doc.end();
+  return pdfPromise;
+};
+
 
 module.exports = {
   uploadFiles,
@@ -430,4 +477,5 @@ module.exports = {
   uploadFilesbyDoctors,
   viewMedicalRecords,
   viewPtlDocDocumentsbyAdmins,
+  downloadPrescriptions
 };
