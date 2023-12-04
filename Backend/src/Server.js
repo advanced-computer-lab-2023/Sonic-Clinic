@@ -144,6 +144,7 @@ const {
   viewMedicalRecords,
   uploadFilesbyDoctors,
   viewPtlDocDocumentsbyAdmins,
+  downloadPrescriptions,
 } = require("./Controllers/upload");
 
 //el link bta3 el DB
@@ -372,6 +373,12 @@ server.post(
   requireAuth,
   viewPatientMedicalHistoryForDoctors
 );
+server.post(
+  "/downloadPrescriptions",
+  requireAuth,
+  downloadPrescriptions
+);
+
 server.post(
   "/viewPtlDocDocumentsbyAdmins",
   requireAuth,
