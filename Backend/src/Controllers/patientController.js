@@ -1774,10 +1774,10 @@ const cancelAppointmentPatient = async (req, res) => {
     const docName = doctor.name;
     const date = appointment.date;
     const time = appointment.time;
-    const dateTimeString = `${date} ${time}`;
+    const dateTimeString = `${date}T${time}:00.000Z`;
     const inputDate = new Date(dateTimeString);
     const currentDate = new Date();
-    const timeDifference = currentDate - inputDate;
+    const timeDifference = inputDate - currentDate;
     const hoursDifference = timeDifference / (1000 * 60 * 60);
     let package;
     if (req.user.id === appointment.patientID) {

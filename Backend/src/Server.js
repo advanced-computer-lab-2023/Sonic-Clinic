@@ -92,6 +92,7 @@ const {
   rejectFollowUp,
   viewNotifications,
   notificationFlag,
+  rescheduleAppDoc,
 } = require("./Controllers/doctorController");
 
 ///////////////////////////////adminstratorController//////////////////////////////////////
@@ -271,6 +272,7 @@ server.post(
   requireAuth,
   rescheduleAppForMyselfOrFam
 );
+server.post("/rescheduleAppDoc", requireAuth, rescheduleAppDoc);
 //////////////////////////////////////////// GET/////////////////////////////////////
 //admin
 server.get("/viewAllPatients", requireAuth, viewAllPatients);

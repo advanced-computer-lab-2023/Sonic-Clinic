@@ -488,19 +488,21 @@ const cancelAppointmentDoc = async (req, res) => {
   try {
     let notificationDoc;
     let notification;
+    let patient;
     const doctor = await doctorModel.findById(req.user.id);
-    const appId = req.body;
+    const appId = req.body.id;
     const appointment = await appointmentModel.findById(appId);
     if (!appointment) {
       return res.status(404).json({ message: "No appointment found." });
     }
-    const patient = await patientModel.findById(appointment.patientID);
+    patient = await patientModel.findById(appointment.patientID);
     const date = appointment.date;
     const time = appointment.time;
-    const dateTimeString = `${date} ${time}`;
-    const inputDate = newDate(dateTimeString);
+    const dateTimeString = `${date}T${time}:00.000Z`;
+    console.log(dateTimeString);
+    const inputDate = new Date(dateTimeString);
     const currentDate = new Date();
-    const timeDifference = currentDate - inputDate;
+    const timeDifference = inputDate - currentDate;
     const hoursDifference = timeDifference / (1000 * 60 * 60);
     if (hoursDifference < 24) {
       return res
@@ -521,6 +523,7 @@ const cancelAppointmentDoc = async (req, res) => {
       doctor.hourlyRate,
       package
     );
+
     doctor.wallet -= sessionPrice;
     await doctor.save();
 
@@ -539,6 +542,7 @@ const cancelAppointmentDoc = async (req, res) => {
       "Appointment Cancelled"
     );
 
+    console.log("mail");
     notificationByMail(
       doctor.email,
       "An appointment has been cancelled with " +
@@ -549,15 +553,16 @@ const cancelAppointmentDoc = async (req, res) => {
         appointment.time,
       "Appointment Cancelled"
     );
-
     const id = appointment.patientID;
+    console.log(appointment.patientID);
     patient = await patientModel.findById(id);
     if (patient) {
+      console.log("patient");
       notification =
         "The appointment with Dr. " +
         doctor.name +
-        " has been cancelled" +
-        patient.notifications.push(notification);
+        " has been cancelled upon the Dr request";
+      patient.notifications.push(notification);
       patient.newNotifications = true;
       await patient.save();
       notificationDoc =
@@ -574,7 +579,7 @@ const cancelAppointmentDoc = async (req, res) => {
           doctor.name +
           " for " +
           familyMem.name +
-          " has been cancelled ";
+          " has been cancelled upon the Dr request ";
         parent.notifications.push(notification);
         parent.newNotifications = true;
         await parent.save();
@@ -587,7 +592,9 @@ const cancelAppointmentDoc = async (req, res) => {
       if (familyMem && familyMem.patientRef) {
         const linkedP = await patientModel.findById(familyMem.patientRef);
         notification =
-          "Your appointment with Dr. " + doctor.name + " has been cancelled ";
+          "Your appointment with Dr. " +
+          doctor.name +
+          " has been cancelled upon the Dr request";
         linkedP.notifications.push(notification);
         linkedP.newNotifications = true;
         await linkedP.save();
@@ -666,7 +673,7 @@ const rejectFollowUp = async (req, res) => {
 
 const rescheduleAppDoc = async (req, res) => {
   try {
-    const appId = req.body.appId;
+    const appId = req.body.id;
     const date = req.body.date;
     const time = req.body.time;
     let notification;
@@ -680,7 +687,7 @@ const rescheduleAppDoc = async (req, res) => {
     notification =
       "Your appointment with Dr. " +
       docName +
-      " has been rescheduled to be on " +
+      " has been rescheduled upon the Dr request to be on " +
       date +
       " at: " +
       time;
@@ -710,7 +717,7 @@ const rescheduleAppDoc = async (req, res) => {
           doctor.name +
           " for " +
           familyMem.name +
-          " has been rescheduled to be on " +
+          " has been rescheduled upon the Dr request to be on " +
           date +
           " at: " +
           time;
@@ -733,7 +740,7 @@ const rescheduleAppDoc = async (req, res) => {
         notification =
           "Your appointment with Dr. " +
           doctor.name +
-          " has been rescheduled to be on " +
+          " has been rescheduled upon the Dr request to be on " +
           date +
           " at: " +
           time;
