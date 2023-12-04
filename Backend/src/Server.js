@@ -63,6 +63,7 @@ const {
   viewPrescriptionDetails,
   cancelAppointmentPatient,
   reqFollowUpForMyselfOrFam,
+  rescheduleAppForMyselfOrFam,
 } = require("./Controllers/patientController");
 
 /////////////////////////////////doctorController//////////////////////////////////////////
@@ -91,6 +92,7 @@ const {
   rejectFollowUp,
   viewNotifications,
   notificationFlag,
+  rescheduleAppDoc,
 } = require("./Controllers/doctorController");
 
 ///////////////////////////////adminstratorController//////////////////////////////////////
@@ -142,6 +144,7 @@ const {
   viewMedicalRecords,
   uploadFilesbyDoctors,
   viewPtlDocDocumentsbyAdmins,
+  downloadPrescriptions,
 } = require("./Controllers/upload");
 
 //el link bta3 el DB
@@ -265,6 +268,12 @@ server.post("/viewFollowUpsReq", requireAuth, viewFollowUpsReq);
 server.post("/acceptFollowUp", requireAuth, acceptFollowUp);
 server.post("/rejectFollowUp", requireAuth, rejectFollowUp);
 server.post("/notificationFlag", requireAuth, notificationFlag);
+server.post(
+  "/rescheduleAppForMyselfOrFam",
+  requireAuth,
+  rescheduleAppForMyselfOrFam
+);
+server.post("/rescheduleAppDoc", requireAuth, rescheduleAppDoc);
 //////////////////////////////////////////// GET/////////////////////////////////////
 //admin
 server.get("/viewAllPatients", requireAuth, viewAllPatients);
@@ -364,6 +373,12 @@ server.post(
   requireAuth,
   viewPatientMedicalHistoryForDoctors
 );
+server.post(
+  "/downloadPrescriptions",
+  requireAuth,
+  downloadPrescriptions
+);
+
 server.post(
   "/viewPtlDocDocumentsbyAdmins",
   requireAuth,
