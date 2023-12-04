@@ -123,6 +123,7 @@ const {
   viewChat,
   viewChats,
   sendMessage,
+  addChat,
 } = require("./Controllers/guestController");
 
 ////////////////////////////////authorizationController///////////////////////////////////////////
@@ -237,6 +238,7 @@ server.post("/viewNotifications", requireAuth, viewNotifications);
 server.post("/viewChat", requireAuth, viewChat);
 server.post("/viewChats", requireAuth, viewChats);
 server.post("/sendMessage", requireAuth, sendMessage);
+server.get("/addChat",addChat);
 //patient
 server.post("/addFamilyMember", requirePatientAuth, addFamilyMember);
 server.post("/addAppointment", requireAuth, addAppointment);

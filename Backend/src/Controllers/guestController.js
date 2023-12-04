@@ -3,6 +3,7 @@ const { default: mongoose } = require("mongoose");
 const potentialDoctorModel = require("../Models/PotentialDoctor.js");
 const patientModel = require("../Models/Patient.js");
 const doctorModel = require("../Models/Doctor.js");
+const chatModel = require("../Models/Chat.js");
 const bcrypt = require("bcrypt");
 
 const addPotentialDoctor = async (req, res) => {
@@ -138,11 +139,10 @@ const viewChat = async (req, res) => {
     }
     
     // Determine the user field (doctorID or patientID) based on the user type
-    const userField = isDoctor ? 'doctorID' : 'patientID';
-    const recipientField = isDoctor ? 'patientID' : 'doctorID';
-
-    // Find all chats where the current user is involved
-    const chat = await chatModel.findOne({ [userField]: userID , [recipientField]:recipientID});
+    const userID2 = isDoctor ? recipientID : userID;
+    const recipientID2 = isDoctor ? userID :recipientID;
+   const chat= await chatModel.findOne({ patientID: userID2 , doctorID: recipientID2});
+   console.log("patient "+userID2+" doc "+recipientID2);
 
     if(!chat){
       return res.status(404).json("No messages");
@@ -187,41 +187,42 @@ const viewChats = async (req, res) => {
 const sendMessage = async (req, res) => {
   const recipientID = req.body.recipientID;
   const message = req.body.message;
+  const userID=req.user.id;
   const currentDate = new Date();
   const currDate = currentDate.toISOString().split('T')[0];
   const currTime = currentDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
-
+  
   let isDoctor=true;
   try {
     // Check if the user is a doctor or a patient
-    const patient = await patientModel.findById(recipientID) ;
+    const patient = await patientModel.findById(userID) ;
     if(patient){
       isDoctor=false;
     }
     
     // Determine the user field (doctorID or patientID) based on the user type
-    const userField = isDoctor ? 'doctorID' : 'patientID';
-    const sender = isDoctor ? 'doctor' : 'patient';
-    const existingChat= await chatModel.find({ [userField]: userID })
-
+     const userID2 = isDoctor ? recipientID : userID;
+     const recipientID2 = isDoctor ? userID :recipientID;
+    const sender = isDoctor ? "doctor" : "patient";
+    const existingChat= await chatModel.findOne({ patientID: userID2 , doctorID: recipientID2});
     if (!existingChat) {
-      if(isDoctor){
-      const newChat = new chatModel({
+      if(isDoctor){ 
+        const newChat = await chatModel.create({
         patientID: recipientID,
-        doctorID: user.req.id,
+        doctorID: userID,
         messages: [['patient', currDate,currTime,message ]]
       });
       await newChat.save();
      }
       else{
-        const newChat = new chatModel({
-          patientID: user.req.id,
+        const newChat = await chatModel.create({
+          patientID: userID,
           doctorID: recipientID,
           messages: [[sender, currDate,currTime,message ]]
         });
         await newChat.save();
      }
-      return res.status(201).json(newChat);
+      return res.status(200).json(newChat);
     } else {
 
       existingChat.messages.push([sender, currDate,currTime,message ]);
@@ -234,4 +235,13 @@ const sendMessage = async (req, res) => {
   }
 };
 
-module.exports = { addPotentialDoctor, addPatient, acceptPotientialDoc, viewChat,viewChats,sendMessage };
+const addChat= async(req,res)=>{
+  const newChat = await chatModel.create({
+    patientID: "21345678",
+    doctorID: "31245678",
+    messages: [["patient", "24-22-2002","23:00","lol" ]],
+  });
+  return res.status(200).json(newChat);
+}
+
+module.exports = { addPotentialDoctor, addPatient, acceptPotientialDoc, viewChat,viewChats,sendMessage, addChat};

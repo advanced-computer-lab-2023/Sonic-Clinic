@@ -32,3 +32,8 @@ chatSchema.virtual("doctor", {
     foreignField: "_id",
     justOne: true,
 });
+const Chat = mongoose.model(
+    "Chat",
+  chatSchema
+  );
+module.exports = Chat;
