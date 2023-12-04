@@ -4,6 +4,7 @@ const potentialDoctorModel = require("../Models/PotentialDoctor.js");
 const adminModel = require("../Models/Adminstrator");
 const multer = require("multer");
 const PDFDocument = require('pdfkit');
+const prescriptionsModel = require("../Models/Prescription.js");
 
 const storage = multer.memoryStorage();
 const upload = multer({
