@@ -120,6 +120,9 @@ const {
   addPatient,
   addPotentialDoctor,
   acceptPotientialDoc,
+  viewChat,
+  viewChats,
+  sendMessage,
 } = require("./Controllers/guestController");
 
 ////////////////////////////////authorizationController///////////////////////////////////////////
@@ -231,6 +234,9 @@ server.post("/changePasswordForDoctorForget", changePasswordForDoctorForget);
 server.post("/viewPrescriptionsDoc", requireAuth, viewPrescriptionsDoc);
 server.post("/cancelAppointmentDoc", requireAuth, cancelAppointmentDoc);
 server.post("/viewNotifications", requireAuth, viewNotifications);
+server.post("/viewChat", requireAuth, viewChat);
+server.post("/viewChats", requireAuth, viewChats);
+server.post("/sendMessage", requireAuth, sendMessage);
 //patient
 server.post("/addFamilyMember", requirePatientAuth, addFamilyMember);
 server.post("/addAppointment", requireAuth, addAppointment);
