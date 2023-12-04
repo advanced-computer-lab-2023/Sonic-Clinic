@@ -5,6 +5,7 @@ const familyMemberModel = require("../Models/FamilyMember.js");
 const packagesModel = require("../Models/Packages.js");
 const prescriptionModel = require("../Models/Prescription.js");
 const appointmentModel = require("../Models/Appointment.js");
+const chatModel = require("../Models/Chat.js");
 const { updateUserInfoInCookie } = require("./authorization.js");
 const bcrypt = require("bcrypt");
 const stripe = require("stripe")(
@@ -1777,6 +1778,115 @@ const notificationByMail = async (email, message,title) => {
    return;
   });
 };
+
+const viewChat = async (req, res) => {
+  const userID = req.user.id;
+  const recipientID=req.body._id;
+  let isDoctor=true;
+  try {
+    // Check if the user is a doctor or a patient
+    const patient = await patientModel.findById(userID) ;
+    if(patient){
+      isDoctor=false;
+    }
+    
+    // Determine the user field (doctorID or patientID) based on the user type
+    const userField = isDoctor ? 'doctorID' : 'patientID';
+    const recipientField = isDoctor ? 'patientID' : 'doctorID';
+
+    // Find all chats where the current user is involved
+    const chat = await chatModel.findOne({ [userField]: userID , [recipientField]:recipientID});
+
+    if(!chat){
+      return res.status(404).json("No messages");
+    }
+
+    return res.status(200).json({ chat });
+  } catch (error) {
+    return res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+const viewChats = async (req, res) => {
+  const userID = req.user.id;
+  let isDoctor=true;
+  try {
+    // Check if the user is a doctor or a patient
+    const patient = await patientModel.findById(userID) ;
+    if(patient){
+      isDoctor=false;
+    }
+    
+    // Determine the user field (doctorID or patientID) based on the user type
+    const userField = isDoctor ? 'doctorID' : 'patientID';
+
+    // Find all chats where the current user is involved
+    const chats = await chatModel.find({ [userField]: userID })
+      .populate('patient', 'name') // Populate patient information
+      .populate('doctor', 'name'); // Populate doctor information
+
+    // Extract names from the populated data
+    const chatNames = chats.map(chat => {
+      const name = isDoctor ? chat.patient.name : chat.doctor.name;
+      return name;
+    });
+
+    return res.status(200).json({ chatNames });
+  } catch (error) {
+    return res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+const sendMessage = async (req, res) => {
+  const recipientID = req.body.recipientID;
+  const message = req.body.message;
+  const currentDate = new Date();
+  const currDate = currentDate.toISOString().split('T')[0];
+  const currTime = currentDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
+
+  let isDoctor=true;
+  try {
+    // Check if the user is a doctor or a patient
+    const patient = await patientModel.findById(recipientID) ;
+    if(patient){
+      isDoctor=false;
+    }
+    
+    // Determine the user field (doctorID or patientID) based on the user type
+    const userField = isDoctor ? 'doctorID' : 'patientID';
+    const sender = isDoctor ? 'doctor' : 'patient';
+    const existingChat= await chatModel.find({ [userField]: userID })
+
+    if (!existingChat) {
+      if(isDoctor){
+      const newChat = new chatModel({
+        patientID: recipientID,
+        doctorID: user.req.id,
+        messages: [['patient', currDate,currTime,message ]]
+      });
+      await newChat.save();
+     }
+      else{
+        const newChat = new chatModel({
+          patientID: user.req.id,
+          doctorID: recipientID,
+          messages: [[sender, currDate,currTime,message ]]
+        });
+        await newChat.save();
+     }
+      return res.status(201).json(newChat);
+    } else {
+
+      existingChat.messages.push([sender, currDate,currTime,message ]);
+      await existingChat.save();
+
+      return res.status(200).json( existingChat );
+    }
+  } catch (error) {
+    return res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
 
 module.exports = {
   selectPrescription,
