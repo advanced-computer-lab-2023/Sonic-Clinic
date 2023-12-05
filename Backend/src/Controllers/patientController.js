@@ -1891,7 +1891,7 @@ const reqFollowUpForMyselfOrFam = async (req, res) => {
       status: "Upcoming",
       time,
     });
-    doctor.followUps.push(followUp._id);
+    doctor.followUps.push(followUp);
     await doctor.save();
     res.status(200).json(followUp);
   } catch (error) {
@@ -1910,6 +1910,7 @@ const rescheduleAppForMyselfOrFam = async (req, res) => {
     const doctor = await doctorModel.findById(appointment.doctorID);
     appointment.date = date;
     appointment.time = time;
+    appointment.status = "Rescheduled";
     await appointment.save();
     patient = await patientModel.findById(req.body.id);
 
@@ -2058,8 +2059,6 @@ const notificationByMail = async (email, message, title) => {
     return;
   });
 };
-
-
 
 module.exports = {
   selectPrescription,

@@ -381,11 +381,7 @@ server.post(
   requireAuth,
   viewPatientMedicalHistoryForDoctors
 );
-server.post(
-  "/downloadPrescriptions",
-  requireAuth,
-  downloadPrescriptions
-);
+server.post("/downloadPrescriptions", requireAuth, downloadPrescriptions);
 
 server.post(
   "/viewPtlDocDocumentsbyAdmins",
