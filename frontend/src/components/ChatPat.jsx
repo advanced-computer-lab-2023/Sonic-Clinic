@@ -44,23 +44,23 @@ export default function ChatPat({ who }) {
     fetchData();
 
     //video
-    navigator.mediaDevices
-      .getUserMedia({ video: true, audio: true })
-      .then((stream) => {
-        setStream(stream);
-        myVideo.current.srcObject = stream;
-      });
+    // navigator.mediaDevices
+    //   .getUserMedia({ video: true, audio: true })
+    //   .then((stream) => {
+    //     setStream(stream);
+    //     myVideo.current.srcObject = stream;
+    //   });
 
-    socket.on("me", (id) => {
-      setMe(id);
-    });
+    // socket.on("me", (id) => {
+    //   setMe(id);
+    // });
 
-    socket.on("callUser", (data) => {
-      setReceivingCall(true);
-      setCaller(data.from);
-      setName(data.name);
-      setCallerSignal(data.signal);
-    });
+    // socket.on("callUser", (data) => {
+    //   setReceivingCall(true);
+    //   setCaller(data.from);
+    //   setName(data.name);
+    //   setCallerSignal(data.signal);
+    // });
   }, []);
 
   const callUser = (id) => {
