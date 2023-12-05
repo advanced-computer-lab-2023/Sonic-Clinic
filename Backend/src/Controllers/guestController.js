@@ -189,6 +189,7 @@ const viewChats = async (req, res) => {
         }
       }
     }
+
     chatNames = Array.from(new Set(chatNames));
     return res.status(200).json({ chatNames });
   } catch (error) {
