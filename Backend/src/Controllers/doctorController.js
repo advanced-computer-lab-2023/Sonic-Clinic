@@ -681,6 +681,7 @@ const rescheduleAppDoc = async (req, res) => {
     const appointment = await appointmentModel.findById(appId);
     appointment.date = date;
     appointment.time = time;
+    appointment.status = "Rescheduled";
     await appointment.save();
     const doctor = await doctorModel.findById(req.user.id);
     const docName = doctor.name;
