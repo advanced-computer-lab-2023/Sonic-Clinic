@@ -94,6 +94,8 @@ const {
   notificationFlag,
   rescheduleAppDoc,
   viewMedicines,
+  addMedicineToPrescription,
+  removeMedicineFromPrescription,
 } = require("./Controllers/doctorController");
 
 ///////////////////////////////adminstratorController//////////////////////////////////////
@@ -283,6 +285,8 @@ server.post(
   rescheduleAppForMyselfOrFam
 );
 server.post("/rescheduleAppDoc", requireAuth, rescheduleAppDoc);
+server.post("/addMedicineToPrescription",requireAuth,addMedicineToPrescription);
+server.post("/removeMedicineFromPrescription",requireAuth,removeMedicineFromPrescription);
 //////////////////////////////////////////// GET/////////////////////////////////////
 //admin
 server.get("/viewAllPatients", requireAuth, viewAllPatients);

@@ -900,6 +900,94 @@ const viewMedicines = async (req, res) => {
   }
 };
 
+const addMedicineToPrescription = async (req,res)=>{
+  try {
+    const doctorID = req.user.id;
+    const { patientID, medicines } = req.body;
+
+    // Fetch doctorName from req.user.name
+    const doctor= await doctorModel.findById(doctorID);
+    const doctorName = doctor.name;
+  console.log(doctorName);
+
+    // Create an array to store the medicines
+    const medicinesArray = [];
+
+    // Loop through each medicine in the request body
+    for (const medicineID of medicines) {
+
+      // Check if the medicine already exists
+      const existingMedicine = await medicineModel.findById( medicineID );
+
+      if (!existingMedicine) {
+        return res.status(400).json({ error: `Medicine not found` });
+      }
+
+      // Add the medicine to the medicines array with the required quantity
+      medicinesArray.push(existingMedicine);
+    }
+
+    // Create a new prescription
+    const prescription = await prescriptionModel.create({
+      medicine: medicinesArray,
+      doctorID,
+      patientID,
+      status: 'Not submitted', // Assuming you want to set an initial status
+      date: new Date(),
+      doctorName: doctorName,
+      submitted: false, // Assuming you want to set an initial submitted status
+    });
+
+    // Save the prescription
+    await prescription.save();
+
+    // Send a success response
+    res.status(200).json(prescription);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+}
+
+const removeMedicineFromPrescription = async (req, res) => {
+  try {
+    const { prescriptionID, medicineID } = req.body;
+
+    // Check if the prescription exists
+    const prescription = await prescriptionModel.findById(prescriptionID);
+    let flag=false;
+
+    if (!prescription) {
+      return res.status(400).json({ error: `Prescription not found` });
+    }
+
+    // Check if the medicine exists in the prescription
+    for(const medicine of prescription.medicine){
+      if(medicineID==medicine._id){
+        flag=true;
+      }
+    }
+
+    if (!flag) {
+      return res.status(400).json({ error: `Medicine not found in the prescription` });
+    }
+
+    // Remove the medicine from the prescription
+    prescription.medicine = prescription.medicine.filter(med => med._id.toString() !== medicineID);
+
+
+    // Save the updated prescription
+    await prescription.save();
+
+    // Send a success response
+    res.status(200).json(prescription);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+
 module.exports = {
   selectPatient,
   viewInfoAndHealthRecord,
@@ -927,4 +1015,6 @@ module.exports = {
   viewNotifications,
   notificationFlag,
   viewMedicines,
+  addMedicineToPrescription,
+  removeMedicineFromPrescription,
 };
