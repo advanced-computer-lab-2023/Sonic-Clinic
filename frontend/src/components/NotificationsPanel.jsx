@@ -6,7 +6,7 @@ import { setNewNotifications } from "../state/notifications";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 
-const NotificationsPanel = ({ who, isOpen, closePanel, resetNew }) => {
+const NotificationsPanel = ({ isOpen, closePanel, resetNew }) => {
   const [notifications, setNotifications] = useState([]);
   const [error, setError] = useState(null);
   const dispatch = useDispatch();
@@ -25,6 +25,7 @@ const NotificationsPanel = ({ who, isOpen, closePanel, resetNew }) => {
     right: isOpen ? 0 : "-35rem", // Slide the panel in or out
     zIndex: 999,
     fontSize: "1rem",
+    cursor: "auto",
   };
 
   const contentStyles = {
@@ -41,7 +42,8 @@ const NotificationsPanel = ({ who, isOpen, closePanel, resetNew }) => {
       if (response.status === 200) {
         setError(null);
         setNotifications(response.data);
-        if (notifications.length == 0) {
+        if (response.data.length === 0) {
+          console.log("a");
           setError("No notifications");
         }
       }
@@ -56,6 +58,7 @@ const NotificationsPanel = ({ who, isOpen, closePanel, resetNew }) => {
         const response = await axios.post("/notificationFlag");
         if (response.status === 200) {
           setError(null);
+          resetNew();
           dispatch(setNewNotifications(false));
         }
       } catch (error) {
@@ -89,6 +92,7 @@ const NotificationsPanel = ({ who, isOpen, closePanel, resetNew }) => {
               fontWeight: "bold",
               fontSize: "1.2rem",
               color: "#05afb9",
+              cursor: "pointer",
             }}
           />
         </div>

@@ -10,8 +10,8 @@ import axios from "axios";
 
 function DrFollowUps() {
   const [error1, setError] = useState(null);
-  const [responseData, setResponseData] = useState(null);
-  const [appointments, setAppointments] = useState(null);
+  const [responseData, setResponseData] = useState([]);
+  const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [revokeModal, setRevokeModal] = useState(false);
@@ -129,7 +129,7 @@ function DrFollowUps() {
           />
         </Button>
       </div>
-      {appointments?.length === 0 && !loading && (
+      {appointments.length === 0 && !loading && (
         <div style={{ textAlign: "center", marginTop: "20px" }} className="msg">
           No follow up requests
         </div>

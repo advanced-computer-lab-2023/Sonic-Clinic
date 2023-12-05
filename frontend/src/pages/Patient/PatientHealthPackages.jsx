@@ -1,17 +1,14 @@
 import React, { useState } from "react";
-import { Card, Container, Row } from "react-bootstrap";
+import { Container, Row } from "react-bootstrap";
 import AppNavbar from "../../components/AppNavigation/AppNavbar";
 import HamburgerMenu from "../../components/Patient/HamburgerMenu";
-import Flicking, { ViewportSlot } from "@egjs/react-flicking";
 import "@egjs/react-flicking/dist/flicking-inline.css";
 import { Arrow } from "@egjs/flicking-plugins";
 import "@egjs/flicking-plugins/dist/arrow.css";
 import HealthPackageCard from "../../components/Patient/HealthPackageCard";
+import ChatPat from "../../components/ChatPat";
 
 function PatientHealthPackages() {
-  const plugins = [new Arrow()];
-  const [panels, setPanels] = useState([0, 1, 2, 3]);
-
   return (
     <div>
       <AppNavbar hamburgerMenu={<HamburgerMenu />} />
@@ -24,6 +21,7 @@ function PatientHealthPackages() {
           </Row>
         </Container>
       </Container>
+      <ChatPat who="patient" />
     </div>
   );
 }

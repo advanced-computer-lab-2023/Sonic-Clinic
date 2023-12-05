@@ -7,6 +7,7 @@ import ShowPrescriptions from "../../components/Patient/ShowPrescriptions";
 import { useDispatch } from "react-redux";
 import { deleteSearchData } from "../../state/Patient/SearchDoctor";
 import { deleteFilterPrescription } from "../../state/Patient/filterPrescriptions";
+import ChatPat from "../../components/ChatPat";
 
 function PatientViewPrescriptions() {
   const dispatch = useDispatch();
@@ -29,6 +30,7 @@ function PatientViewPrescriptions() {
           </Row>
         </Container>
       </Container>
+      <ChatPat who="patient" />
     </div>
   );
 }

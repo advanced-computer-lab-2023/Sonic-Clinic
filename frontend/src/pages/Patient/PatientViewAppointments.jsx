@@ -7,6 +7,7 @@ import AppointmentFilter from "../../components/Patient/AppointmentFilter";
 import { useDispatch } from "react-redux";
 import { deleteSearchData } from "../../state/Patient/SearchDoctor";
 import { deleteFilterAppointments } from "../../state/Patient/filterAppointments";
+import ChatPat from "../../components/ChatPat";
 
 function PatientViewAppointments() {
   const dispatch = useDispatch();
@@ -30,6 +31,7 @@ function PatientViewAppointments() {
           </Row>
         </Container>
       </Container>
+      <ChatPat who="patient" />
     </div>
   );
 }

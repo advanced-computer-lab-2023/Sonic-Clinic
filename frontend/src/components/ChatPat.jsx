@@ -5,9 +5,11 @@ import {
   faVideo,
   faArrowLeft,
   faPaperPlane,
+  faCheckDouble,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Button, Container, ListGroup, Navbar } from "react-bootstrap";
+import axios from "axios";
 import Peer from "simple-peer";
 // import io from "socket.io-client";
 
@@ -16,9 +18,12 @@ import Peer from "simple-peer";
 export default function ChatPat({ who }) {
   const [isHovered, setIsHovered] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const [error, setError] = useState(null);
   const [chosen, setChosen] = useState(false);
   const [chosenName, setChosenName] = useState("");
   const [myMessage, setMyMessage] = useState("");
+  const [myContacts, setMyContacts] = useState([]);
+  const [chatData, setChatData] = useState([]);
 
   ////////////////////////////video
   // const [me, setMe] = useState("");
@@ -34,17 +39,9 @@ export default function ChatPat({ who }) {
   // const userVideo = useRef();
   // const connectionRef = useRef();
 
-  // useEffect(() => {
-  //   navigator.mediaDevices
-  //     .getUserMedia({ video: true, audio: true })
-  //     .then((stream) => {
-  //       setStream(stream);
-  //       myVideo.current.srcObject = stream;
-  //     });
-
-  //   socket.on("me", (id) => {
-  //     setMe(id);
-  //   });
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   //   socket.on("callUser", (data) => {
   //     setReceivingCall(true);
@@ -198,18 +195,62 @@ export default function ChatPat({ who }) {
   const buttonTextPosition = isHovered ? "0" : "-100%";
   const buttonTextOpacity = isHovered ? 1 : 0;
 
-  const chatData = [
-    { type: "patient", message: "Hi there!" },
-    { type: "doctor", message: "Hello, how can I assist you?" },
-    { type: "patient", message: "I'm not feeling well." },
-    { type: "doctor", message: "Can you describe your symptoms?" },
-    { type: "doctor", message: "Have you taken any medication?" },
-    { type: "patient", message: "Not yet." },
-  ];
+  // const chatData = [
+  //   { type: "patient", message: "Hi there!" },
+  //   { type: "doctor", message: "Hello, how can I assist you?" },
+  //   { type: "patient", message: "I'm not feeling well." },
+  //   { type: "doctor", message: "Can you describe your symptoms?" },
+  //   { type: "doctor", message: "Have you taken any medication?" },
+  //   { type: "patient", message: "Not yet." },
+  // ];
 
-  const sendMessage = () => {
+  const setChat = (name) => {
+    setChosen(true);
+    setIsOpen(false);
+    setChosenName(name);
+    fetchChatData(name);
+  };
+
+  const fetchData = async () => {
+    try {
+      const response = await axios.post("/viewChats");
+      if (response.status === 200) {
+        setMyContacts(response.data.chatNames);
+      }
+    } catch (error) {
+      setError(error.response.data.message);
+    }
+  };
+
+  const fetchChatData = async (name) => {
+    const id = name.split("-")[1];
+    console.log(id);
+    try {
+      const response = await axios.post("/viewChat", { _id: id });
+      if (response.status === 200) {
+        setChatData(response.data.chat.messages);
+      }
+    } catch (error) {
+      setChatData([]);
+      setError(error.response.data.message);
+    }
+  };
+
+  const sendMessage = async () => {
+    const id = chosenName.split("-")[1];
     if (myMessage) {
-      console.log(myMessage);
+      try {
+        const response = await axios.post("/sendMessage", {
+          recipientID: id,
+          message: myMessage,
+        });
+        if (response.status === 200) {
+          fetchChatData(chosenName);
+          setMyMessage("");
+        }
+      } catch (error) {
+        setError(error.response.data.message);
+      }
     }
   };
 
@@ -271,31 +312,18 @@ export default function ChatPat({ who }) {
             className="flex-grow-1"
             style={{ overflowY: "auto" }}
           >
-            {names.map((name, index) => (
+            {myContacts.map((name, index) => (
               <ListGroup.Item
                 key={index}
                 as="li"
                 className="d-flex justify-content-between align-items-start"
                 style={{ cursor: "pointer" }}
                 onClick={() => {
-                  setChosen(true);
-                  setIsOpen(false);
-                  setChosenName(name.name);
+                  setChat(name);
                 }}
               >
                 <div className="d-flex flex-column">
-                  <div>{name.name}</div>
-                  {who === "patient" && (
-                    <div
-                      style={{
-                        fontSize: "1rem",
-                        color: "#05afb9",
-                        marginLeft: "1rem",
-                      }}
-                    >
-                      {name.specialty}
-                    </div>
-                  )}
+                  <div>{name.split("-")[0]}</div>
                 </div>
               </ListGroup.Item>
             ))}
@@ -324,10 +352,11 @@ export default function ChatPat({ who }) {
                 onClick={() => {
                   setChosen(false);
                   setChosenName("");
+                  setChatData([]);
                   setIsOpen(true);
                 }}
               />
-              {chosenName}
+              {chosenName.split("-")[0]}
             </div>
             <div>
               <FontAwesomeIcon icon={faVideo} style={{ cursor: "pointer" }} />
@@ -348,10 +377,19 @@ export default function ChatPat({ who }) {
             {chatData.map((item, index) => (
               <div
                 key={index}
-                className={item.type === "patient" ? "text-end" : "text-start"}
-                style={item.type === "patient" ? { ...myMsg } : { ...otherMsg }}
+                className={item[0] === who ? "text-end" : "text-start"}
+                style={item[0] === who ? { ...myMsg } : { ...otherMsg }}
               >
-                {item.message}
+                <div>{item[3]}</div>
+                <div style={{ fontSize: "0.6rem", textAlign: "end" }}>
+                  {item[2]}
+                  {item[0] === who && (
+                    <FontAwesomeIcon
+                      icon={faCheckDouble}
+                      style={{ marginLeft: "0.3rem", color: "#adb5bd " }}
+                    />
+                  )}
+                </div>
               </div>
             ))}
           </div>
@@ -365,6 +403,7 @@ export default function ChatPat({ who }) {
                 padding: "5px",
                 border: "1px solid transparent",
               }}
+              value={myMessage}
               onChange={(e) => setMyMessage(e.target.value)}
             />
             <FontAwesomeIcon

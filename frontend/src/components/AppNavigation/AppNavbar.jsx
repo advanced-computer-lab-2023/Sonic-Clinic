@@ -34,6 +34,9 @@ const AppNavbar = (props) => {
   const toggleNotifications = () => {
     setShowNotifications(!showNotifications);
   };
+  const resetNew = () => {
+    setNewNotifications(false);
+  };
 
   return (
     <div>
@@ -85,10 +88,9 @@ const AppNavbar = (props) => {
                 )}
                 {notifications && (
                   <NotificationsPanel
-                    who={who}
                     isOpen={showNotifications}
                     closePanel={toggleNotifications}
-                    resetNew={setNewNotifications}
+                    resetNew={resetNew}
                   />
                 )}
               </>

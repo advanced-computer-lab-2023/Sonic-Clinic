@@ -7,6 +7,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronLeft } from "@fortawesome/free-solid-svg-icons";
 import ViewDoctorDetails from "../../components/Patient/ViewDoctorDetails";
 import DoctorAppointments from "../../components/Patient/DoctorAppointments";
+import ChatPat from "../../components/ChatPat";
 
 function PatientOneDoctor() {
   return (
@@ -31,6 +32,7 @@ function PatientOneDoctor() {
           </Row>
         </Container>
       </Container>
+      <ChatPat who="patient" />
     </div>
   );
 }

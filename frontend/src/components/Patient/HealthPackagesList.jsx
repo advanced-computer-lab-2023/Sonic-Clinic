@@ -123,8 +123,8 @@ function HealthPackagesList({ refreshFlag }) {
                                       <>
                                         {" "}
                                         <p>
-                                          <strong>Price:</strong>{" "}
-                                          {packagee.price} $
+                                          <strong>Price:</strong> ${" "}
+                                          {packagee.price}
                                         </p>
                                         <p>
                                           <strong>Renewal Date:</strong>{" "}
@@ -154,8 +154,8 @@ function HealthPackagesList({ refreshFlag }) {
                                   <>
                                     {" "}
                                     <p>
-                                      <strong>Price:</strong>{" "}
-                                      {innerMember.package.price} $
+                                      <strong>Price:</strong> ${" "}
+                                      {innerMember.package.price}
                                     </p>
                                     <p>
                                       <strong>Renewal Date:</strong>{" "}
@@ -219,7 +219,7 @@ function HealthPackagesList({ refreshFlag }) {
                               <>
                                 {" "}
                                 <p>
-                                  <strong>Price:</strong> {packagee.price} $
+                                  <strong>Price:</strong>$ {packagee.price}
                                 </p>
                                 <p>
                                   <strong>Renewal Date:</strong>{" "}
@@ -248,7 +248,7 @@ function HealthPackagesList({ refreshFlag }) {
                             <>
                               {" "}
                               <p>
-                                <strong>Price:</strong> {member.package.price} $
+                                <strong>Price:</strong>$ {member.package.price}
                               </p>
                               <p>
                                 <strong>Renewal Date:</strong>{" "}

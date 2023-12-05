@@ -13,6 +13,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { updatePatientWallet } from "../../state/loginPatientReducer";
 import { setForFam } from "../../state/loginPatientReducer";
 import { setNewApp } from "../../state/loginPatientReducer";
+import { setNewNotifications } from "../../state/notifications";
 
 const DoctorAppointments = ({ onBookAppointment }) => {
   const [loading, setLoading] = useState(true);
@@ -44,7 +45,7 @@ const DoctorAppointments = ({ onBookAppointment }) => {
     setError(null);
     setTimeout(() => {
       setBookingStatus("booking"); // Reset the status after a short delay
-    }, 200); // Adjust the delay as needed
+    }, 200);
     setBookingName("");
     setPaymentMethod("wallet");
     setDescription("");
@@ -123,6 +124,7 @@ const DoctorAppointments = ({ onBookAppointment }) => {
           fetchData();
           setBookingStatus("success");
           setError(null);
+          dispatch(setNewNotifications(true));
           dispatch(
             updatePatientWallet({
               wallet: wallet - doctorRate,

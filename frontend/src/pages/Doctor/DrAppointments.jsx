@@ -5,6 +5,7 @@ import DrHamburgerMenu from "../../components/Doctor/DrHamburgerMenu";
 import DrViewApps from "../../components/Doctor/DrViewApps";
 import DrAddAppSlot from "../../components/Doctor/DrAddAppSlot";
 import DrFollowUps from "../../components/Doctor/DrFollowUps";
+import ChatPat from "../../components/ChatPat";
 
 function DrAppointments() {
   const [tab, setTab] = useState("booked");
@@ -53,6 +54,7 @@ function DrAppointments() {
           </Container>
         </Tab>
       </Tabs>
+      <ChatPat who="doctor" />
     </div>
   );
 }

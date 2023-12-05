@@ -11,8 +11,9 @@ import {
 import { Card, Col, Row, Spinner, Button, Modal, Form } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useState } from "react";
+import { setNewNotifications } from "../../state/notifications";
 
 function ShowAppointments() {
   const [loading, setLoading] = useState(true);
@@ -20,16 +21,16 @@ function ShowAppointments() {
   const [error1, setError] = useState(null);
   const [msg, setMsg] = useState(null);
   const [rescheduleModal, setRescheduleModal] = useState(false);
-  const [rescheduleDate, setRescheduleDate] = useState(null);
-  const [rescheduleTime, setRescheduleTime] = useState(null);
+  const [rescheduleSlots, setRescheduleSlots] = useState([]);
+  const [rescheduleSlot, setRescheduleSlot] = useState([]);
   const [followUpModal, setFollowUpModal] = useState(false);
-  const [followUpDate, setFollowUpDate] = useState(null);
-  const [followUpTime, setFollowUpTime] = useState(null);
+  const [followUpSlot, setFollowUpSlot] = useState(null);
   const [confirmModal, setConfirmModal] = useState(false);
   const [confirmFollowModal, setConfirmFollowModal] = useState(false);
   const [cancelModal, setCancelModal] = useState(false);
   const filterDate = useSelector((state) => state.filterAppointments.date);
   const filterStatus = useSelector((state) => state.filterAppointments.status);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     fetchData();
@@ -65,12 +66,8 @@ function ShowAppointments() {
     const yyyy = dateObj.getFullYear();
     const mm = String(dateObj.getMonth() + 1).padStart(2, "0"); // Adding 1 to the month because it's zero-based
     const dd = String(dateObj.getDate()).padStart(2, "0");
-
     const formattedDate = `${yyyy}-${mm}-${dd}`;
     const status = appointment.status ? appointment.status.toLowerCase() : "";
-    console.log("formattedDate", formattedDate);
-    console.log("filterDate", filterDate.toLowerCase());
-
     // Check if the formattedDate includes the filterDate and the status includes filterStatus, both in lowercase
     return (
       formattedDate.includes(filterDate.toLowerCase()) &&
@@ -120,6 +117,7 @@ function ShowAppointments() {
       });
       if (response.status === 200) {
         fetchData();
+        dispatch(setNewNotifications(true));
         setError(null);
         setCancelModal(false);
       }
@@ -128,23 +126,56 @@ function ShowAppointments() {
     }
   };
 
-  const rescheduleApp = async (id) => {
-    //Date and time saved
-    console.log(id);
-    setConfirmModal(true);
-    setRescheduleModal(false);
+  const fetchAvailableSlots = async (id) => {
+    try {
+      const response = await axios.post(
+        `/viewAvailableAppointmentsOfDoctor?_id=${id}`
+      );
+      if (response.status === 200) {
+        setError(null);
+        setRescheduleSlots(response.data.availableSlots);
+      }
+    } catch (error) {
+      setError(error.response.data.message);
+    }
   };
 
-  const followUpApp = async (id) => {
+  const rescheduleApp = async (id) => {
+    const date = rescheduleSlot.split(" ")[0];
+    const time = rescheduleSlot.split(" ")[1];
     try {
-      const response = await axios.post("/reqFollowUpForMyselfOrFam", {
+      const response = await axios.post("/rescheduleAppForMyselfOrFam", {
         appId: id,
-        date: rescheduleDate,
-        time: rescheduleTime,
+        date: date,
+        time: time,
       });
       if (response.status === 200) {
         fetchData();
         setError(null);
+        setConfirmModal(true);
+        dispatch(setNewNotifications(true));
+        setRescheduleModal(false);
+        setRescheduleSlot(null);
+      }
+    } catch (error) {
+      setError(error.response.data.message);
+    }
+  };
+
+  const followUpApp = async (id) => {
+    const date = followUpSlot.split(" ")[0];
+    const time = followUpSlot.split(" ")[1];
+    try {
+      const response = await axios.post("/reqFollowUpForMyselfOrFam", {
+        appId: id,
+        date: date,
+        time: time,
+      });
+      if (response.status === 200) {
+        fetchData();
+        setError(null);
+        dispatch(setNewNotifications(true));
+        setFollowUpSlot(null);
         setConfirmFollowModal(true);
         setFollowUpModal(false);
       }
@@ -176,7 +207,6 @@ function ShowAppointments() {
       )}
       {error1 && <div className="error">{error1}</div>}
       {!loading &&
-        // formatting el date w el time ghalat
         filteredAppointments.map((appointment, index) => {
           // Parse the date string into a Date object
           const appointmentDate = new Date(appointment.date);
@@ -234,7 +264,7 @@ function ShowAppointments() {
                     </div>
                   </Col>
                   <Col lg={4}>
-                    <Card.Body className="p-4">
+                    <Card.Body>
                       <Card.Title
                         style={{
                           marginTop: "1.5rem",
@@ -244,9 +274,7 @@ function ShowAppointments() {
                           marginBottom: "1rem",
                         }}
                       >
-                        Dr{" "}
-                        {appointment.doctor.length === 1 &&
-                          appointment.doctor[0].name}
+                        Dr {appointment.doctor[0]?.name}
                       </Card.Title>
                       <div
                         style={{
@@ -255,8 +283,7 @@ function ShowAppointments() {
                           color: "#099BA0 ",
                         }}
                       >
-                        {appointment.doctor.length === 1 &&
-                          appointment.doctor[0].specialty}
+                        {appointment.doctor[0]?.specialty}
                       </div>
                       <Card.Text>
                         <div style={{ marginBottom: "1rem", fontSize: "1rem" }}>
@@ -306,16 +333,19 @@ function ShowAppointments() {
                         marginLeft: "1rem",
                       }}
                     >
-                      {(appointment.status === "upcoming" ||
-                        appointment.status === "rescheduled") && (
-                        <>
+                      {(appointment.status === "Upcoming" ||
+                        appointment.status === "Rescheduled") && (
+                        <div>
                           {" "}
                           <Button
                             style={{
                               marginBottom: "1rem",
                               width: "7rem",
                             }}
-                            onClick={() => setRescheduleModal(true)}
+                            onClick={() => {
+                              setRescheduleModal(true);
+                              fetchAvailableSlots(appointment.doctor[0]?._id);
+                            }}
                           >
                             Reschedule
                           </Button>
@@ -337,49 +367,28 @@ function ShowAppointments() {
                                   marginBottom: "1rem",
                                 }}
                               >
-                                Date
+                                Available Slots
                               </div>
                               <Form.Control
-                                type="date"
+                                as="select"
+                                value={rescheduleSlot}
                                 onChange={(e) =>
-                                  setRescheduleDate(e.target.value)
+                                  setRescheduleSlot(e.target.value)
                                 }
-                                style={{ marginBottom: "1rem" }}
-                              />
-                              <div
-                                style={{
-                                  color: "#099BA0 ",
-                                  fontSize: "1.1rem",
-                                  fontStyle: "normal",
-                                  fontWeight: 500,
-                                  lineHeight: "100%",
-                                  marginBottom: "1rem",
-                                }}
                               >
-                                Time
-                              </div>
-                              <Form.Control
-                                type="time"
-                                onChange={(e) =>
-                                  setRescheduleTime(e.target.value)
-                                }
-                              />
+                                <option value="">Select available slot</option>
+                                {rescheduleSlots.map((slot) => (
+                                  <option value={slot}>{slot}</option>
+                                ))}
+                              </Form.Control>
                             </Modal.Body>
                             <Modal.Footer>
                               <Button
                                 variant="primary"
                                 onClick={() => {
-                                  if (
-                                    rescheduleTime !== null &&
-                                    rescheduleDate !== null
-                                  ) {
-                                    rescheduleApp(appointment._id);
-                                  }
+                                  rescheduleApp(appointment._id);
                                 }}
-                                disabled={
-                                  rescheduleTime === null ||
-                                  rescheduleDate === null
-                                }
+                                disabled={rescheduleSlot == null}
                               >
                                 Save
                               </Button>
@@ -387,8 +396,7 @@ function ShowAppointments() {
                                 variant="secondary"
                                 onClick={() => {
                                   setRescheduleModal(false);
-                                  setRescheduleTime(null);
-                                  setRescheduleDate(null);
+                                  setRescheduleSlot(null);
                                 }}
                               >
                                 Cancel
@@ -434,16 +442,19 @@ function ShowAppointments() {
                               </Button>
                             </Modal.Footer>
                           </Modal>
-                        </>
+                        </div>
                       )}
-                      {appointment.status == "completed" && (
+                      {appointment.status == "Completed" && (
                         <>
                           <Button
                             style={{
-                              marginBottom: "1rem",
+                              marginTop: "1.5rem",
                               width: "7rem",
                             }}
-                            onClick={() => setFollowUpModal(true)}
+                            onClick={() => {
+                              setFollowUpModal(true);
+                              fetchAvailableSlots(appointment.doctor[0]?._id);
+                            }}
                           >
                             Follow Up
                           </Button>
@@ -465,48 +476,30 @@ function ShowAppointments() {
                                   marginBottom: "1rem",
                                 }}
                               >
-                                Date
+                                Available Slots
                               </div>
                               <Form.Control
-                                type="date"
+                                as="select"
+                                value={followUpSlot}
                                 onChange={(e) =>
-                                  setFollowUpDate(e.target.value)
+                                  setFollowUpSlot(e.target.value)
                                 }
-                                style={{ marginBottom: "1rem" }}
-                              />
-                              <div
-                                style={{
-                                  color: "#099BA0 ",
-                                  fontSize: "1.1rem",
-                                  fontStyle: "normal",
-                                  fontWeight: 500,
-                                  lineHeight: "100%",
-                                  marginBottom: "1rem",
-                                }}
                               >
-                                Time
-                              </div>
-                              <Form.Control
-                                type="time"
-                                onChange={(e) =>
-                                  setFollowUpTime(e.target.value)
-                                }
-                              />
+                                <option value="">Select available slot</option>
+                                {rescheduleSlots.map((slot) => (
+                                  <option value={slot}>{slot}</option>
+                                ))}
+                              </Form.Control>
                             </Modal.Body>
                             <Modal.Footer>
                               <Button
                                 variant="primary"
                                 onClick={() => {
-                                  if (
-                                    followUpTime !== null &&
-                                    followUpDate !== null
-                                  ) {
+                                  if (followUpSlot !== null) {
                                     followUpApp(appointment._id);
                                   }
                                 }}
-                                disabled={
-                                  followUpTime === null || followUpDate === null
-                                }
+                                disabled={followUpSlot === null}
                               >
                                 Save
                               </Button>
@@ -514,8 +507,7 @@ function ShowAppointments() {
                                 variant="secondary"
                                 onClick={() => {
                                   setFollowUpModal(false);
-                                  setFollowUpTime(null);
-                                  setFollowUpDate(null);
+                                  setFollowUpSlot(null);
                                 }}
                               >
                                 Cancel

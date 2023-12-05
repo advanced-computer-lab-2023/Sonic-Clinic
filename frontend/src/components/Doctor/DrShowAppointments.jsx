@@ -12,6 +12,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { useSelector, useDispatch } from "react-redux";
 import { deleteFilterDrAppointments } from "../../state/Doctor/filterDrAppointments";
+import { setNewNotifications } from "../../state/notifications";
 import axios from "axios";
 
 function DrShowAppointments({ fetchData, appointments, loading }) {
@@ -88,7 +89,7 @@ function DrShowAppointments({ fetchData, appointments, loading }) {
       });
       if (response.status === 200) {
         fetchData();
-        //set appointments?
+        dispatch(setNewNotifications(true));
         setError(null);
         setCancelModal(false);
       }
@@ -106,7 +107,7 @@ function DrShowAppointments({ fetchData, appointments, loading }) {
       });
       if (response.status === 200) {
         fetchData();
-        //set appointments?
+        dispatch(setNewNotifications(true));
         setError(null);
         setConfirmModal(true);
         setRescheduleModal(false);
