@@ -28,6 +28,14 @@ const followUpSchema = new Schema(
       type: String,
       required: true,
     },
+    patientName: {
+      type: String,
+      required: false,
+    },
+    doctorName: {
+      type: String,
+      required: false,
+    },
   },
   { timestamps: true }
 );

@@ -1891,7 +1891,7 @@ const reqFollowUpForMyselfOrFam = async (req, res) => {
       status: "Upcoming",
       time,
     });
-    doctor.followUps.push(followUp._id);
+    doctor.followUps.push(followUp);
     await doctor.save();
     res.status(200).json(followUp);
   } catch (error) {
@@ -2032,8 +2032,6 @@ const notificationByMail = async (email, message, title) => {
     return;
   });
 };
-
-
 
 module.exports = {
   selectPrescription,
