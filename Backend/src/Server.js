@@ -64,6 +64,9 @@ const {
   cancelAppointmentPatient,
   reqFollowUpForMyselfOrFam,
   rescheduleAppForMyselfOrFam,
+  payPrescriptionStripe,
+  payPrescriptionWallet,
+  handlePrescreptionStripe,
 } = require("./Controllers/patientController");
 
 /////////////////////////////////doctorController//////////////////////////////////////////
@@ -285,8 +288,16 @@ server.post(
   rescheduleAppForMyselfOrFam
 );
 server.post("/rescheduleAppDoc", requireAuth, rescheduleAppDoc);
-server.post("/addMedicineToPrescription",requireAuth,addMedicineToPrescription);
-server.post("/removeMedicineFromPrescription",requireAuth,removeMedicineFromPrescription);
+server.post(
+  "/addMedicineToPrescription",
+  requireAuth,
+  addMedicineToPrescription
+);
+server.post(
+  "/removeMedicineFromPrescription",
+  requireAuth,
+  removeMedicineFromPrescription
+);
 //////////////////////////////////////////// GET/////////////////////////////////////
 //admin
 server.get("/viewAllPatients", requireAuth, viewAllPatients);
@@ -352,6 +363,9 @@ server.post(
   subscribeHealthPackageWallet
 );
 
+server.post("/payPrescriptionStripe", requireAuth, payPrescriptionStripe);
+server.post("/payPrescriptionWallet", requireAuth, payPrescriptionWallet);
+server.post("/handlePrescreptionStripe", requireAuth, handlePrescreptionStripe);
 //doctor
 server.get("/viewAvailableSlots", requireAuth, viewAvailableSlots);
 server.post("/selectPatient", requireAuth, selectPatient);

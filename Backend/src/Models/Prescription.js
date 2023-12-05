@@ -6,7 +6,7 @@ const prescriptionSchema = new Schema(
     medicine: {
       type: [Object],
       required: true,
-    //  unique: [true, "This medicine is already created"],
+      //  unique: [true, "This medicine is already created"],
     },
     doctorID: {
       type: String,
