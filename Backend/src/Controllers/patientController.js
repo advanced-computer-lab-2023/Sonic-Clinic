@@ -1909,6 +1909,7 @@ const rescheduleAppForMyselfOrFam = async (req, res) => {
     const doctor = await doctorModel.findById(appointment.doctorID);
     appointment.date = date;
     appointment.time = time;
+    appointment.status = "Rescheduled";
     await appointment.save();
     patient = await patientModel.findById(req.body.id);
 
