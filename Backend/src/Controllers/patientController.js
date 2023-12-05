@@ -2002,6 +2002,33 @@ const rescheduleAppForMyselfOrFam = async (req, res) => {
         await linkedP.save();
       }
     }
+
+    const doctorAvailableSlots = doctor.availableSlots;
+
+    let isAvailableSlot = false;
+    let slot2;
+    for (const slot of doctorAvailableSlots) {
+      const [dateS, timeS] = slot.split(" ");
+      if (dateS === date && timeS === time) {
+        slot2 = slot;
+        isAvailableSlot = true;
+        break;
+      }
+    }
+
+    if (!isAvailableSlot) {
+      return res
+        .status(400)
+        .json({ message: "Appointment date is not available." });
+    }
+
+    // If the date is available, remove it from the doctor's available slots
+    doctor.availableSlots = doctorAvailableSlots.filter((slot) => {
+      return slot !== slot2;
+    });
+
+    await doctor.save();
+
     res.status(200).json(appointment);
   } catch (error) {
     res.status(500).json({ message: "Server Error" });
