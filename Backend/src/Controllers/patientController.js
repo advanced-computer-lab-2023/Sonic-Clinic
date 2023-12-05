@@ -13,6 +13,7 @@ const stripe = require("stripe")(
 );
 const administratorModel = require("../Models/Adminstrator.js");
 const followUpModel = require("../Models/FollowUp.js");
+const medicineModel = require("../Models/Medicine.js");
 
 const doctorDetails = async (req, res) => {
   const { name } = req.body;

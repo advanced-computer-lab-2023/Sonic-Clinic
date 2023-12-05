@@ -7,6 +7,7 @@ const familyMemberModel = require("../Models/FamilyMember.js");
 const bcrypt = require("bcrypt");
 const prescriptionModel = require("../Models/Prescription.js");
 const followUpModel = require("../Models/FollowUp.js");
+const medicineModel = require("../Models/Medicine.js");
 
 const searchPatientByName = async (req, res) => {
   const { name } = req.query;
@@ -886,6 +887,18 @@ const notificationByMail = async (email, message, title) => {
     return;
   });
 };
+const viewMedicines = async (req, res) => {
+  try {
+    const medicines = await medicineModel.find();
+
+    if (!medicines) {
+      return res.status(404).json({ message: "No medicines found" });
+    }
+    res.status(200).json(medicines);
+  } catch (error) {
+    res.status(500).json({ message: "Server Error" });
+  }
+};
 
 module.exports = {
   selectPatient,
@@ -913,4 +926,5 @@ module.exports = {
   rescheduleAppDoc,
   viewNotifications,
   notificationFlag,
+  viewMedicines,
 };
