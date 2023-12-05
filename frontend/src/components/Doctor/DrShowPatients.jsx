@@ -17,6 +17,8 @@ import {
   faX,
 } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
+import { setNewNotifications } from "../../state/notifications";
+import { useDispatch } from "react-redux";
 
 function DrShowPatients({
   patients,
@@ -37,16 +39,15 @@ function DrShowPatients({
   const [isLoading, setIsLoading] = useState(false);
   const [confirmModal, setConfirmModal] = useState(false);
 
+  const dispatch = useDispatch();
+
   const handleFileUpload = async (e) => {
     const newFiles = Array.from(e.target.files);
-
-    // Check for duplicate files
     const uniqueNewFiles = newFiles.filter((newFile) => {
       return !uploadedFiles.some(
         (uploadedFile) => uploadedFile.filename === newFile.name
       );
     });
-
     // Format and validate files
     const formattedFiles = await Promise.all(
       uniqueNewFiles.map(async (file) => {
@@ -54,7 +55,6 @@ function DrShowPatients({
           // Read the file data as a Uint8Array
           const fileArrayBuffer = await file.arrayBuffer();
           const fileUint8Array = new Uint8Array(fileArrayBuffer);
-
           // Format the file
           const formattedFile = {
             filename: file.name,
@@ -64,10 +64,6 @@ function DrShowPatients({
               data: Array.from(fileUint8Array),
             },
           };
-
-          // Log the buffer data
-          // console.log(`Buffer data for ${file.name}:`, formattedFile.buffer);
-
           return formattedFile;
         } catch (error) {
           console.error(`Error processing file ${file.name}:`, error);
@@ -75,9 +71,7 @@ function DrShowPatients({
         }
       })
     );
-
     const validFiles = formattedFiles.filter(Boolean);
-
     setUploadedFiles([...uploadedFiles, ...validFiles]);
   };
 
@@ -224,22 +218,25 @@ function DrShowPatients({
   };
 
   const scheduleFollowUp = async (patientID) => {
-    const [datePart, timePart] = followUpDateTime.split("T");
-    // console.log(followUpDateTime);
-    try {
-      const response = await axios.post("/addAppointmentByPatientID", {
-        date: datePart,
-        description: "Follow up",
-        status: "upcoming",
-        patientID: patientID,
-        time: timePart,
-      });
-      if (response.status === 201) {
-        setFollowUpModal(false);
-        setConfirmModal(true);
+    if (followUpDateTime != null) {
+      const [datePart, timePart] = followUpDateTime.split("T");
+      try {
+        const response = await axios.post("/addAppointmentByPatientID", {
+          date: datePart,
+          description: "Follow up",
+          status: "upcoming",
+          patientID: patientID,
+          time: timePart,
+        });
+        if (response.status === 201) {
+          dispatch(setNewNotifications(true));
+          setFollowUpDateTime(null);
+          setFollowUpModal(false);
+          setConfirmModal(true);
+        }
+      } catch (error) {
+        console.log();
       }
-    } catch (error) {
-      console.log();
     }
   };
 
@@ -389,6 +386,7 @@ function DrShowPatients({
                             cursor: "pointer",
                             color: "#099BA0",
                             textDecoration: "underline",
+                            marginBottom: "1rem",
                           }}
                           onClick={() => setUploadVisible(!uploadVisible)}
                           htmlFor="weee"
@@ -407,7 +405,11 @@ function DrShowPatients({
 
                           {uploadedFiles.length > 0 && (
                             <div>
-                              <ul style={{ marginTop: "1rem" }}>
+                              <ul
+                                style={{
+                                  marginBottom: "1rem",
+                                }}
+                              >
                                 {uploadedFiles.map((file, index) => (
                                   <li key={index}>
                                     {file.filename}
@@ -438,6 +440,7 @@ function DrShowPatients({
                               </div>
                             </div>
                           )}
+                          <p style={{ fontWeight: "bold" }}>Prescriptions:</p>
                         </div>
                       </div>
                     </Card.Text>

@@ -34,7 +34,10 @@ export default function AdminDocReqs() {
   };
 
   const users = responseData;
-  const filteredUsers = users.filter((user) =>
+
+  const reverseUsers = [...users].reverse();
+
+  const filteredUsers = reverseUsers.filter((user) =>
     user.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -42,10 +45,10 @@ export default function AdminDocReqs() {
     <Container
       className="bg-white px-5 py-4 d-flex align-items-center justify-content-center"
       style={{
-        margin: "20px",
+        marginTop: "1.5rem",
         display: "flex",
         flexDirection: "column",
-        marginLeft: "100px",
+        marginLeft: "11rem",
       }}
     >
       <div
@@ -53,7 +56,7 @@ export default function AdminDocReqs() {
         style={{
           display: "flex",
           flexDirection: "row",
-          width: "1000px",
+          width: "65rem",
           marginBottom: "1rem",
         }}
       >

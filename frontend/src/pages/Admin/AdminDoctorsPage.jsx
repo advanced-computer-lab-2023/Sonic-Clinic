@@ -30,16 +30,16 @@ export default function AdminDoctorsPage() {
         activeKey={tab}
         onSelect={(k) => setTab(k)}
         className="mb-3 d-flex align-items-center justify-content-center"
-        style={{ marginTop: "20px" }}
+        style={{ marginTop: "1.5rem" }}
       >
         <Tab eventKey="registered" title="Registered">
           <Container
             className="bg-white px-5 py-4 d-flex align-items-center justify-content-center"
             style={{
-              margin: "20px",
+              marginTop: "1.5rem",
               display: "flex",
               flexDirection: "column",
-              marginLeft: "100px",
+              marginLeft: "11rem",
             }}
           >
             <AdminViewTable

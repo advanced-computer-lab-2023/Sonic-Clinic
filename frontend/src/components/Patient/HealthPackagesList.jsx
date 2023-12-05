@@ -123,8 +123,8 @@ function HealthPackagesList({ refreshFlag }) {
                                       <>
                                         {" "}
                                         <p>
-                                          <strong>Price:</strong>{" "}
-                                          {packagee.price} $
+                                          <strong>Price:</strong> ${" "}
+                                          {packagee.price}
                                         </p>
                                         <p>
                                           <strong>Renewal Date:</strong>{" "}
@@ -154,8 +154,8 @@ function HealthPackagesList({ refreshFlag }) {
                                   <>
                                     {" "}
                                     <p>
-                                      <strong>Price:</strong>{" "}
-                                      {innerMember.package.price} $
+                                      <strong>Price:</strong> ${" "}
+                                      {innerMember.package.price}
                                     </p>
                                     <p>
                                       <strong>Renewal Date:</strong>{" "}
@@ -205,28 +205,63 @@ function HealthPackagesList({ refreshFlag }) {
                   </div>
                   <Row>
                     <Col md={8}>
-                      <p>
-                        <strong>Package:</strong>{" "}
-                        {member.package.type.split(" ")[0]}
-                      </p>
-                      <p>
-                        <strong>Package Status:</strong> {member.package.status}
-                      </p>
-                      {member.package.status === "Subscribed" ? (
+                      {Array.isArray(member.package) ? (
+                        member.package.map((packagee, packageIndex) => (
+                          <div key={`innerPackage_${packageIndex}`}>
+                            <p>
+                              <strong>Package:</strong>{" "}
+                              {packagee.type.split(" ")[0]}
+                            </p>
+                            <p>
+                              <strong>Package Status:</strong> {packagee.status}
+                            </p>
+                            {packagee.status === "Subscribed" ? (
+                              <>
+                                {" "}
+                                <p>
+                                  <strong>Price:</strong>$ {packagee.price}
+                                </p>
+                                <p>
+                                  <strong>Renewal Date:</strong>{" "}
+                                  {packagee.renewalDate}
+                                </p>
+                              </>
+                            ) : (
+                              <p>
+                                <strong>End Date:</strong> {packagee.endDate}
+                              </p>
+                            )}
+                          </div>
+                        ))
+                      ) : (
                         <>
                           {" "}
                           <p>
-                            <strong>Price:</strong> {member.package.price} $
+                            <strong>Package:</strong>{" "}
+                            {member.package.type.split(" ")[0]}
                           </p>
                           <p>
-                            <strong>Renewal Date:</strong>{" "}
-                            {member.package.renewalDate}
+                            <strong>Package Status:</strong>{" "}
+                            {member.package.status}
                           </p>
+                          {member.package.status === "Subscribed" ? (
+                            <>
+                              {" "}
+                              <p>
+                                <strong>Price:</strong>$ {member.package.price}
+                              </p>
+                              <p>
+                                <strong>Renewal Date:</strong>{" "}
+                                {member.package.renewalDate}
+                              </p>
+                            </>
+                          ) : (
+                            <p>
+                              <strong>End Date:</strong>{" "}
+                              {member.package.endDate}
+                            </p>
+                          )}
                         </>
-                      ) : (
-                        <p>
-                          <strong>End Date:</strong> {member.package.endDate}
-                        </p>
                       )}
                     </Col>
                     <Col

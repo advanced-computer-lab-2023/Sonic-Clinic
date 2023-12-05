@@ -4,6 +4,7 @@ import AppNavbar from "../../components/AppNavigation/AppNavbar";
 import DrHamburgerMenu from "../../components/Doctor/DrHamburgerMenu";
 import DrProfileBox from "../../components/Doctor/DrProfileBox";
 import DrContract from "../../components/Doctor/DrContract";
+import ChatPat from "../../components/ChatPat";
 import { useSelector } from "react-redux";
 
 function DrProfile() {
@@ -138,6 +139,7 @@ function DrProfile() {
           </Row>
         </Container>
       </Container>
+      <ChatPat who="doctor" />
     </div>
   );
 }

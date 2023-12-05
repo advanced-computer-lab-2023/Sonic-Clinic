@@ -211,7 +211,7 @@ function DrProfileBox() {
               style={inputStyle}
             />
           ) : (
-            <span>{profileData.hourlyRate} LE/hr</span>
+            <span>$ {profileData.hourlyRate}</span>
           )}
         </p>
       </div>

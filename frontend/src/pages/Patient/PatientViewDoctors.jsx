@@ -8,6 +8,7 @@ import DoctorFilter from "../../components/Patient/DoctorFilter";
 import ShowDoctors from "../../components/Patient/ShowDoctors";
 import ViewDoctorsSearch from "../../components/Patient/ViewDoctorsSearch";
 import { deleteSearchData } from "../../state/Patient/SearchDoctor";
+import ChatPat from "../../components/ChatPat";
 
 function PatientViewDoctors() {
   const dispatch = useDispatch();
@@ -90,6 +91,7 @@ function PatientViewDoctors() {
           </Row>
         </Container>
       </Container>
+      <ChatPat who="patient" />
     </div>
   );
 }

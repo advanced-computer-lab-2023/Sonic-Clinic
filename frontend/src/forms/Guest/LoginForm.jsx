@@ -10,6 +10,7 @@ import contract from "../../Assets/EmploymentContract.pdf";
 import { setCredentialsPatient } from "../../state/loginPatientReducer";
 import { setCredentialsAdmin } from "../../state/loginAdminReducer";
 import { setCredentialsDoctor } from "../../state/loginDoctorReducer";
+import { setNewNotifications } from "../../state/notifications";
 
 const LoginForm = () => {
   const navigate = useNavigate();
@@ -52,6 +53,11 @@ const LoginForm = () => {
         const type = response.data.message;
         console.log(type);
         if (type === "Patient") {
+          if (user.newNotifications) {
+            dispatch(
+              setNewNotifications({ newNotifications: user.newNotifications })
+            );
+          }
           if (
             user.packagesPatient &&
             user.packagesPatient.length > 0 &&
@@ -102,6 +108,11 @@ const LoginForm = () => {
           navigate("/patient");
         }
         if (type === "Doctor") {
+          if (user.newNotifications) {
+            dispatch(
+              setNewNotifications({ newNotifications: user.newNotifications })
+            );
+          }
           dispatch(
             setCredentialsDoctor({
               password: password,

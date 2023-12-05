@@ -119,7 +119,7 @@ export default function AdminViewTable({ onAdmins, onDocs, api }) {
         style={{
           display: "flex",
           flexDirection: "row",
-          width: "1000px",
+          width: "65rem",
           marginBottom: "1rem",
         }}
       >
@@ -144,7 +144,7 @@ export default function AdminViewTable({ onAdmins, onDocs, api }) {
       {showAddNewAdmin && (
         <AddNewAdmin fetchData={fetchData} closeForm={toggleAddNewAdmin} />
       )}
-      <Table striped bordered hover variant="light" style={{ width: "1000px" }}>
+      <Table striped bordered hover variant="light" style={{ width: "65rem" }}>
         <thead>
           <tr>
             {!onAdmins && <th style={{ color: "#099BA0" }}>Full Name</th>}

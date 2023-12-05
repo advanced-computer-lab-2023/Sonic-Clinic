@@ -3,6 +3,7 @@ import AppNavbar from "../../components/AppNavigation/AppNavbar";
 import HamburgerMenu from "../../components/Doctor/DrHamburgerMenu";
 import DrMainImg from "../../components/Doctor/DrMainImg";
 import DrMainOptions from "../../components/Doctor/DrMainOptions";
+import ChatPat from "../../components/ChatPat";
 
 function DrHomePage() {
   return (
@@ -18,6 +19,7 @@ function DrHomePage() {
           </Row>
         </Container>
       </Container>
+      <ChatPat who="doctor" />
     </div>
   );
 }

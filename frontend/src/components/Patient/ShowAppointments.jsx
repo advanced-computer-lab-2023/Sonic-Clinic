@@ -8,20 +8,29 @@ import {
   faPause,
   faCheckDouble,
 } from "@fortawesome/free-solid-svg-icons";
-import { Card, Col, Row, Spinner } from "react-bootstrap";
+import { Card, Col, Row, Spinner, Button, Modal, Form } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useState } from "react";
+import { setNewNotifications } from "../../state/notifications";
 
 function ShowAppointments() {
   const [loading, setLoading] = useState(true);
   const [responseData, setResponseData] = useState([]);
   const [error1, setError] = useState(null);
   const [msg, setMsg] = useState(null);
-  const id = useSelector((state) => state.patientLogin.userId);
+  const [rescheduleModal, setRescheduleModal] = useState(false);
+  const [rescheduleSlots, setRescheduleSlots] = useState([]);
+  const [rescheduleSlot, setRescheduleSlot] = useState([]);
+  const [followUpModal, setFollowUpModal] = useState(false);
+  const [followUpSlot, setFollowUpSlot] = useState(null);
+  const [confirmModal, setConfirmModal] = useState(false);
+  const [confirmFollowModal, setConfirmFollowModal] = useState(false);
+  const [cancelModal, setCancelModal] = useState(false);
   const filterDate = useSelector((state) => state.filterAppointments.date);
   const filterStatus = useSelector((state) => state.filterAppointments.status);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     fetchData();
@@ -57,12 +66,8 @@ function ShowAppointments() {
     const yyyy = dateObj.getFullYear();
     const mm = String(dateObj.getMonth() + 1).padStart(2, "0"); // Adding 1 to the month because it's zero-based
     const dd = String(dateObj.getDate()).padStart(2, "0");
-
     const formattedDate = `${yyyy}-${mm}-${dd}`;
     const status = appointment.status ? appointment.status.toLowerCase() : "";
-    console.log("formattedDate", formattedDate);
-    console.log("filterDate", filterDate.toLowerCase());
-
     // Check if the formattedDate includes the filterDate and the status includes filterStatus, both in lowercase
     return (
       formattedDate.includes(filterDate.toLowerCase()) &&
@@ -104,6 +109,81 @@ function ShowAppointments() {
     }
   };
 
+  const cancelApp = async (id) => {
+    setError(null);
+    try {
+      const response = await axios.post("/cancelAppointmentPatient", {
+        id: id,
+      });
+      if (response.status === 200) {
+        fetchData();
+        dispatch(setNewNotifications(true));
+        setError(null);
+        setCancelModal(false);
+      }
+    } catch (error) {
+      setError(error.response.data.message);
+    }
+  };
+
+  const fetchAvailableSlots = async (id) => {
+    try {
+      const response = await axios.post(
+        `/viewAvailableAppointmentsOfDoctor?_id=${id}`
+      );
+      if (response.status === 200) {
+        setError(null);
+        setRescheduleSlots(response.data.availableSlots);
+      }
+    } catch (error) {
+      setError(error.response.data.message);
+    }
+  };
+
+  const rescheduleApp = async (id) => {
+    const date = rescheduleSlot.split(" ")[0];
+    const time = rescheduleSlot.split(" ")[1];
+    try {
+      const response = await axios.post("/rescheduleAppForMyselfOrFam", {
+        appId: id,
+        date: date,
+        time: time,
+      });
+      if (response.status === 200) {
+        fetchData();
+        setError(null);
+        setConfirmModal(true);
+        dispatch(setNewNotifications(true));
+        setRescheduleModal(false);
+        setRescheduleSlot(null);
+      }
+    } catch (error) {
+      setError(error.response.data.message);
+    }
+  };
+
+  const followUpApp = async (id) => {
+    const date = followUpSlot.split(" ")[0];
+    const time = followUpSlot.split(" ")[1];
+    try {
+      const response = await axios.post("/reqFollowUpForMyselfOrFam", {
+        appId: id,
+        date: date,
+        time: time,
+      });
+      if (response.status === 200) {
+        fetchData();
+        setError(null);
+        dispatch(setNewNotifications(true));
+        setFollowUpSlot(null);
+        setConfirmFollowModal(true);
+        setFollowUpModal(false);
+      }
+    } catch (error) {
+      setError(error.response.data.message);
+    }
+  };
+
   return (
     <div>
       {loading && (
@@ -127,7 +207,6 @@ function ShowAppointments() {
       )}
       {error1 && <div className="error">{error1}</div>}
       {!loading &&
-        // formatting el date w el time ghalat
         filteredAppointments.map((appointment, index) => {
           // Parse the date string into a Date object
           const appointmentDate = new Date(appointment.date);
@@ -184,8 +263,8 @@ function ShowAppointments() {
                       />
                     </div>
                   </Col>
-                  <Col lg={5}>
-                    <Card.Body className="p-4">
+                  <Col lg={4}>
+                    <Card.Body>
                       <Card.Title
                         style={{
                           marginTop: "1.5rem",
@@ -195,9 +274,7 @@ function ShowAppointments() {
                           marginBottom: "1rem",
                         }}
                       >
-                        Dr{" "}
-                        {appointment.doctor.length === 1 &&
-                          appointment.doctor[0].name}
+                        Dr {appointment.doctor[0]?.name}
                       </Card.Title>
                       <div
                         style={{
@@ -206,8 +283,7 @@ function ShowAppointments() {
                           color: "#099BA0 ",
                         }}
                       >
-                        {appointment.doctor.length === 1 &&
-                          appointment.doctor[0].specialty}
+                        {appointment.doctor[0]?.specialty}
                       </div>
                       <Card.Text>
                         <div style={{ marginBottom: "1rem", fontSize: "1rem" }}>
@@ -216,7 +292,7 @@ function ShowAppointments() {
                       </Card.Text>
                     </Card.Body>
                   </Col>
-                  <Col lg={5}>
+                  <Col lg={4}>
                     <Card.Body className="p-4">
                       <Card.Text>
                         <div
@@ -249,6 +325,212 @@ function ShowAppointments() {
                         </div>
                       </Card.Text>
                     </Card.Body>
+                  </Col>
+                  <Col lg={2}>
+                    <div
+                      style={{
+                        marginTop: "3rem",
+                        marginLeft: "1rem",
+                      }}
+                    >
+                      {(appointment.status === "Upcoming" ||
+                        appointment.status === "Rescheduled") && (
+                        <div>
+                          {" "}
+                          <Button
+                            style={{
+                              marginBottom: "1rem",
+                              width: "7rem",
+                            }}
+                            onClick={() => {
+                              setRescheduleModal(true);
+                              fetchAvailableSlots(appointment.doctor[0]?._id);
+                            }}
+                          >
+                            Reschedule
+                          </Button>
+                          <Modal show={rescheduleModal}>
+                            <Modal.Header>
+                              <Modal.Title>
+                                Reschedule Appointment with Dr.{" "}
+                                {appointment.doctor[0]?.name}
+                              </Modal.Title>
+                            </Modal.Header>
+                            <Modal.Body style={{ margin: "1rem" }}>
+                              <div
+                                style={{
+                                  color: "#099BA0 ",
+                                  fontSize: "1.1rem",
+                                  fontStyle: "normal",
+                                  fontWeight: 500,
+                                  lineHeight: "100%",
+                                  marginBottom: "1rem",
+                                }}
+                              >
+                                Available Slots
+                              </div>
+                              <Form.Control
+                                as="select"
+                                value={rescheduleSlot}
+                                onChange={(e) =>
+                                  setRescheduleSlot(e.target.value)
+                                }
+                              >
+                                <option value="">Select available slot</option>
+                                {rescheduleSlots.map((slot) => (
+                                  <option value={slot}>{slot}</option>
+                                ))}
+                              </Form.Control>
+                            </Modal.Body>
+                            <Modal.Footer>
+                              <Button
+                                variant="primary"
+                                onClick={() => {
+                                  rescheduleApp(appointment._id);
+                                }}
+                                disabled={rescheduleSlot == null}
+                              >
+                                Save
+                              </Button>
+                              <Button
+                                variant="secondary"
+                                onClick={() => {
+                                  setRescheduleModal(false);
+                                  setRescheduleSlot(null);
+                                }}
+                              >
+                                Cancel
+                              </Button>
+                            </Modal.Footer>
+                          </Modal>
+                          <Modal show={confirmModal}>
+                            <Modal.Body>
+                              The appointment has been rescheduled
+                            </Modal.Body>
+                            <Modal.Footer>
+                              <Button
+                                variant="secondary"
+                                onClick={() => setConfirmModal(false)}
+                              >
+                                Close
+                              </Button>
+                            </Modal.Footer>
+                          </Modal>
+                          <Button
+                            variant="secondary"
+                            style={{ width: "7rem" }}
+                            onClick={() => setCancelModal(true)}
+                          >
+                            Cancel
+                          </Button>
+                          <Modal show={cancelModal}>
+                            <Modal.Body>
+                              Are you sure you want to cancel this appointment?
+                            </Modal.Body>
+                            <Modal.Footer className="d-flex align-items-center justify-content-center">
+                              <Button
+                                variant="secondary"
+                                onClick={() => cancelApp(appointment._id)}
+                              >
+                                Yes
+                              </Button>
+                              <Button
+                                variant="primary"
+                                onClick={() => setCancelModal(false)}
+                              >
+                                No
+                              </Button>
+                            </Modal.Footer>
+                          </Modal>
+                        </div>
+                      )}
+                      {appointment.status == "Completed" && (
+                        <>
+                          <Button
+                            style={{
+                              marginTop: "1.5rem",
+                              width: "7rem",
+                            }}
+                            onClick={() => {
+                              setFollowUpModal(true);
+                              fetchAvailableSlots(appointment.doctor[0]?._id);
+                            }}
+                          >
+                            Follow Up
+                          </Button>
+                          <Modal show={followUpModal}>
+                            <Modal.Header>
+                              <Modal.Title>
+                                Schedule a follow up with Dr.{" "}
+                                {appointment.doctor[0]?.name}
+                              </Modal.Title>
+                            </Modal.Header>
+                            <Modal.Body style={{ margin: "1rem" }}>
+                              <div
+                                style={{
+                                  color: "#099BA0 ",
+                                  fontSize: "1.1rem",
+                                  fontStyle: "normal",
+                                  fontWeight: 500,
+                                  lineHeight: "100%",
+                                  marginBottom: "1rem",
+                                }}
+                              >
+                                Available Slots
+                              </div>
+                              <Form.Control
+                                as="select"
+                                value={followUpSlot}
+                                onChange={(e) =>
+                                  setFollowUpSlot(e.target.value)
+                                }
+                              >
+                                <option value="">Select available slot</option>
+                                {rescheduleSlots.map((slot) => (
+                                  <option value={slot}>{slot}</option>
+                                ))}
+                              </Form.Control>
+                            </Modal.Body>
+                            <Modal.Footer>
+                              <Button
+                                variant="primary"
+                                onClick={() => {
+                                  if (followUpSlot !== null) {
+                                    followUpApp(appointment._id);
+                                  }
+                                }}
+                                disabled={followUpSlot === null}
+                              >
+                                Save
+                              </Button>
+                              <Button
+                                variant="secondary"
+                                onClick={() => {
+                                  setFollowUpModal(false);
+                                  setFollowUpSlot(null);
+                                }}
+                              >
+                                Cancel
+                              </Button>
+                            </Modal.Footer>
+                          </Modal>
+                          <Modal show={confirmFollowModal}>
+                            <Modal.Body>
+                              A follow up request has been sent, wait for
+                              confirmation via email.
+                            </Modal.Body>
+                            <Modal.Footer>
+                              <Button
+                                variant="secondary"
+                                onClick={() => setConfirmFollowModal(false)}
+                              >
+                                Close
+                              </Button>
+                            </Modal.Footer>
+                          </Modal>
+                        </>
+                      )}
+                    </div>
                   </Col>
                 </Row>
               </Card>

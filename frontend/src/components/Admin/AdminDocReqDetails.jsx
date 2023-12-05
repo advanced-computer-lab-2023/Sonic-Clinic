@@ -257,8 +257,7 @@ export default function AdminDocReqDetails({
                     {docBirthDate}
                   </div>
                   <div style={rowStyle}>
-                    <span style={titleStyle}>Hourly Rate:</span>
-                    {docRate} LE/hr
+                    <span style={titleStyle}>Hourly Rate:</span>$ {docRate}
                   </div>
                   <div style={rowStyle}>
                     <span style={titleStyle}>Affiliation:</span>

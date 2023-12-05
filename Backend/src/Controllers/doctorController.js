@@ -505,9 +505,9 @@ const cancelAppointmentDoc = async (req, res) => {
     const timeDifference = inputDate - currentDate;
     const hoursDifference = timeDifference / (1000 * 60 * 60);
     if (hoursDifference < 24) {
-      return res
-        .status(401)
-        .json({ message: "Appointment in less than 24 hours" });
+      return res.status(401).json({
+        message: "Appointment is in less than 24 hours",
+      });
     }
 
     let package;
