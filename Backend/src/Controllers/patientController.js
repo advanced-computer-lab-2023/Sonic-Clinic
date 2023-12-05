@@ -5,6 +5,7 @@ const familyMemberModel = require("../Models/FamilyMember.js");
 const packagesModel = require("../Models/Packages.js");
 const prescriptionModel = require("../Models/Prescription.js");
 const appointmentModel = require("../Models/Appointment.js");
+const chatModel = require("../Models/Chat.js");
 const { updateUserInfoInCookie } = require("./authorization.js");
 const bcrypt = require("bcrypt");
 const stripe = require("stripe")(
@@ -2031,6 +2032,8 @@ const notificationByMail = async (email, message, title) => {
     return;
   });
 };
+
+
 
 module.exports = {
   selectPrescription,
