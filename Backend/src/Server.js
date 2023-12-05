@@ -93,6 +93,7 @@ const {
   viewNotifications,
   notificationFlag,
   rescheduleAppDoc,
+  viewMedicines,
 } = require("./Controllers/doctorController");
 
 ///////////////////////////////adminstratorController//////////////////////////////////////
@@ -238,7 +239,7 @@ server.post("/viewNotifications", requireAuth, viewNotifications);
 server.post("/viewChat", requireAuth, viewChat);
 server.post("/viewChats", requireAuth, viewChats);
 server.post("/sendMessage", requireAuth, sendMessage);
-server.get("/addChat",addChat);
+server.get("/addChat", addChat);
 //patient
 server.post("/addFamilyMember", requirePatientAuth, addFamilyMember);
 server.post("/addAppointment", requireAuth, addAppointment);
@@ -399,6 +400,7 @@ server.delete(
   requireAuth,
   deleteFileFromMedicalHistory
 );
+server.get("/viewMedicines", requireAuth, viewMedicines);
 
 //auth
 ////////////////////////////////////////////////////PUT////////////////////////////////////////

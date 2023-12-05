@@ -25,6 +25,7 @@ function DrFollowUps() {
     try {
       const response = await axios.post("/viewFollowUpsReq");
       if (response.status === 200) {
+        setLoading(null);
         setResponseData(response.data);
         setAppointments(responseData);
       } else {
@@ -193,7 +194,7 @@ function DrFollowUps() {
                           marginBottom: "1rem",
                         }}
                       >
-                        {appointment.patient?.name}
+                        {appointment.patientName}
                       </Card.Title>
                       <Card.Text>
                         <div

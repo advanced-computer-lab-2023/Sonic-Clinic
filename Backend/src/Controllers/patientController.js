@@ -13,6 +13,7 @@ const stripe = require("stripe")(
 );
 const administratorModel = require("../Models/Adminstrator.js");
 const followUpModel = require("../Models/FollowUp.js");
+const medicineModel = require("../Models/Medicine.js");
 
 const doctorDetails = async (req, res) => {
   const { name } = req.body;
@@ -1879,10 +1880,19 @@ const reqFollowUpForMyselfOrFam = async (req, res) => {
   try {
     const { date, time, appId } = req.body;
     const appointment = await appointmentModel.findById(appId);
+    let name;
+
     if (!appointment) {
       res.status(401).json("Appointment not found");
     }
     const doctor = await doctorModel.findById(appointment.doctorID);
+    const patient = await patientModel.findById(appointment.patientID);
+    if (patient) {
+      name = patient.name;
+    } else {
+      famMem = await familyMemberModel.findById(appointment.patientID);
+      name = famMem.name;
+    }
     const followUp = await followUpModel.create({
       date,
       description: appointment.description,
@@ -1890,6 +1900,8 @@ const reqFollowUpForMyselfOrFam = async (req, res) => {
       doctorID: appointment.doctorID,
       status: "Upcoming",
       time,
+      doctorName: doctor.name,
+      patientName: name,
     });
     doctor.followUps.push(followUp);
     await doctor.save();
