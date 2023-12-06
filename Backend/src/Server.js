@@ -99,6 +99,8 @@ const {
   viewMedicines,
   addMedicineToPrescription,
   removeMedicineFromPrescription,
+  updatePrescription,
+  addDosage,
 } = require("./Controllers/doctorController");
 
 ///////////////////////////////adminstratorController//////////////////////////////////////
@@ -298,6 +300,19 @@ server.post(
   requireAuth,
   removeMedicineFromPrescription
 );
+server.post(
+  "/updatePrescription",
+  requireAuth,
+  updatePrescription
+);
+server.post(
+  "/addDosage",
+  requireAuth,
+  addDosage
+);
+
+
+
 //////////////////////////////////////////// GET/////////////////////////////////////
 //admin
 server.get("/viewAllPatients", requireAuth, viewAllPatients);
