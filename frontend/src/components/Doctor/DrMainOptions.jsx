@@ -25,7 +25,10 @@ function DrMainOptions() {
   });
 
   return (
-    <div className="d-flex flex-row justify-content-center">
+    <div
+      className="d-flex flex-row justify-content-center"
+      style={{ marginTop: "-3.5rem" }}
+    >
       <Waypoint
         onEnter={() => setOurDoctorsVisible(true)}
         onLeave={() => setOurDoctorsVisible(false)}

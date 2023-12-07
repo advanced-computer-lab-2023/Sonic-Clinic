@@ -91,7 +91,6 @@ function AppointmentFilter() {
           <option value="upcoming">Upcoming</option>
           <option value="completed">Completed</option>
           <option value="cancelled">Cancelled</option>
-          <option value="rescheduled">Rescheduled</option>
         </Form.Control>
       </div>
 

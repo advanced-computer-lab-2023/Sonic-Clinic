@@ -248,7 +248,7 @@ function UploadDocuments() {
                   }}
                   onClick={addFiles}
                 >
-                  Add
+                  Confirm Add
                 </div>
               </div>
             )}

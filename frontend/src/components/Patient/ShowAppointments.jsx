@@ -285,11 +285,6 @@ function ShowAppointments() {
                       >
                         {appointment.doctor[0]?.specialty}
                       </div>
-                      <Card.Text>
-                        <div style={{ marginBottom: "1rem", fontSize: "1rem" }}>
-                          {appointment.description}
-                        </div>
-                      </Card.Text>
                     </Card.Body>
                   </Col>
                   <Col lg={4}>

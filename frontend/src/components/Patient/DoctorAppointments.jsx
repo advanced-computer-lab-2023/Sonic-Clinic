@@ -1,5 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { Card, Button, Container, Modal, Form, Spinner } from "react-bootstrap";
+import {
+  Card,
+  Button,
+  Container,
+  Modal,
+  Form,
+  Spinner,
+  Dropdown,
+} from "react-bootstrap";
 import { Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
@@ -25,12 +33,21 @@ const DoctorAppointments = ({ onBookAppointment }) => {
   const [bookingName, setBookingName] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("wallet");
   const [selectedAppointment, setSelectedAppointment] = useState(null);
-  const [description, setDescription] = useState("");
+  const [description, setDescription] = useState("hi");
   const [selectedFamilyMember, setSelectedFamilyMember] = useState("");
   const [selectedFamilyMemberId, setSelectedFamilyMemberId] = useState("");
   const doctorRate = useSelector(
     (state) => state.selectedDoctorData.hourlyRate
   );
+  const getDisplayText = () => {
+    if (selectedFamilyMemberId === "myself") {
+      return "Myself";
+    }
+    const selectedMember = familyMembers.find(
+      (member) => member[0] === selectedFamilyMemberId
+    );
+    return selectedMember ? selectedMember[1] : "Select Member";
+  };
   const doctorID = useSelector((state) => state.selectedDoctorData.id);
   const doctorLoc = useSelector(
     (state) => state.selectedDoctorData.affiliation
@@ -229,6 +246,9 @@ const DoctorAppointments = ({ onBookAppointment }) => {
             modules={[Pagination]}
             className="mySwiper custom-swipper"
           >
+            {neededData.length === 0 && (
+              <div className="msg">No Available Slots</div>
+            )}
             {neededData &&
               neededData.map((appointment) => (
                 <SwiperSlide>
@@ -315,30 +335,25 @@ const DoctorAppointments = ({ onBookAppointment }) => {
               <Form>
                 <Form.Group controlId="bookingName">
                   <Form.Label>Booking Name</Form.Label>
-                  <Form.Control
-                    as="select"
-                    value={selectedFamilyMemberId}
-                    onChange={handleFamilyMemberChange}
-                    defaultValue="myself" // Set "Myself" as the default value
-                  >
-                    <option value="myself" key="myself">
-                      Myself
-                    </option>{" "}
-                    {familyMembers.map((member) => (
-                      <option key={member[0]} value={member[0]}>
-                        {member[1]}
-                      </option>
-                    ))}
-                  </Form.Control>
+                  <Dropdown onSelect={handleFamilyMemberChange}>
+                    <Dropdown.Toggle
+                      className="custom-dropdown-toggle"
+                      id="dropdown-booking-name"
+                    >
+                      {getDisplayText()}
+                    </Dropdown.Toggle>
+
+                    <Dropdown.Menu className="w-100">
+                      <Dropdown.Item eventKey="myself">Myself</Dropdown.Item>
+                      {familyMembers.map((member) => (
+                        <Dropdown.Item key={member[0]} eventKey={member[0]}>
+                          {member[1]}
+                        </Dropdown.Item>
+                      ))}
+                    </Dropdown.Menu>
+                  </Dropdown>
                 </Form.Group>
-                <Form.Group controlId="bookingDes">
-                  <Form.Label>Description</Form.Label>
-                  <Form.Control
-                    as="input"
-                    onChange={(e) => setDescription(e.target.value)}
-                    placeholder="Brief appointment description"
-                  ></Form.Control>
-                </Form.Group>
+
                 <Form.Group>
                   <Form.Label>Payment Method</Form.Label>
                   <Form.Check

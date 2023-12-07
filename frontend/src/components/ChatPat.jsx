@@ -111,7 +111,7 @@ export default function ChatPat({ who }) {
 
   const buttonStyle = {
     position: "fixed",
-    bottom: "5rem",
+    bottom: "1rem",
     right: "1rem",
     fontSize: "1.1rem",
     backgroundColor: "transparent",
@@ -124,7 +124,7 @@ export default function ChatPat({ who }) {
 
   const containerStyle = {
     position: "fixed",
-    bottom: "5rem",
+    bottom: "1rem",
     right: "1rem",
     fontSize: "1.1rem",
     backgroundColor: "transparent",
@@ -139,7 +139,7 @@ export default function ChatPat({ who }) {
 
   const chatContainerStyle = {
     position: "fixed",
-    bottom: "5rem",
+    bottom: "1rem",
     right: "1rem",
     fontSize: "1.1rem",
     backgroundColor: "transparent",
@@ -262,6 +262,7 @@ export default function ChatPat({ who }) {
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
           onClick={() => setIsOpen(true)}
+          variant="secondary"
         >
           <div style={buttonContentStyle}>
             <FontAwesomeIcon
@@ -291,7 +292,7 @@ export default function ChatPat({ who }) {
         >
           <Navbar
             className="d-flex justify-content-between p-1"
-            style={{ backgroundColor: "#05afb9", width: "100%" }}
+            style={{ backgroundColor: "#ff6b35", width: "100%" }}
           >
             <div style={{ color: "white", marginLeft: "1rem" }}>
               {who === "patient" ? "Your Doctors" : "Your Patients"}
@@ -338,7 +339,7 @@ export default function ChatPat({ who }) {
         >
           <Navbar
             className="d-flex justify-content-between p-1"
-            style={{ backgroundColor: "#05afb9", width: "100%" }}
+            style={{ backgroundColor: "#ff6b35", width: "100%" }}
           >
             <div>
               {" "}
@@ -409,7 +410,7 @@ export default function ChatPat({ who }) {
             <FontAwesomeIcon
               icon={faPaperPlane}
               style={{
-                color: "#05afb9",
+                color: "#ff6b35",
                 marginRight: "1rem",
                 cursor: "pointer",
               }}

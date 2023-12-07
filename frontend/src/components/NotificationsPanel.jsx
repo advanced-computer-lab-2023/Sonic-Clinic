@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { ListGroup } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faX } from "@fortawesome/free-solid-svg-icons";
+import { faEnvelope, faX } from "@fortawesome/free-solid-svg-icons";
 import { setNewNotifications } from "../state/notifications";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
@@ -97,17 +97,35 @@ const NotificationsPanel = ({ isOpen, closePanel, resetNew }) => {
           />
         </div>
         {error && <div className="msg">{error}</div>}
-        <ListGroup as="ol">
-          {reverseNotifications?.map((notification, index) => (
-            <ListGroup.Item
-              key={index}
-              as="li"
-              className="d-flex justify-content-between align-items-start"
-            >
-              <div className="ms-2 me-auto">{notification}</div>
-            </ListGroup.Item>
-          ))}
-        </ListGroup>
+        <div
+          style={{
+            maxHeight: "800px", // Set the maximum height you prefer
+            overflowY: "auto", // Use "auto" to show the scrollbar only when necessary
+          }}
+        >
+          <ListGroup as="ol">
+            {reverseNotifications?.map((notification, index) => (
+              <ListGroup.Item
+                key={index}
+                as="li"
+                className="d-flex justify-content-between align-items-start"
+              >
+                <div>
+                  {" "}
+                  <FontAwesomeIcon
+                    icon={faEnvelope}
+                    style={{
+                      color: "#ff6b35",
+                      marginRight: "5px",
+                      marginTop: "16px",
+                    }}
+                  />
+                </div>
+                <div className="ms-2 me-auto">{notification}</div>
+              </ListGroup.Item>
+            ))}
+          </ListGroup>
+        </div>
       </div>
     </div>
   );

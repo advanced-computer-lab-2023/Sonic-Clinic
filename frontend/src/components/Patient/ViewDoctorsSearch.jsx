@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Card, Form, Button } from "react-bootstrap";
+import { Card, Form, Button, Dropdown } from "react-bootstrap";
 import { useDispatch } from "react-redux";
 import { setSearchData } from "../../state/Patient/SearchDoctor";
 import { useNavigate } from "react-router";
@@ -21,6 +21,9 @@ function ViewDoctorsSearch() {
     // Uncomment these lines if you want to set the query locally
     // setNameQuery(doctorName);
     // setSpecQuery(doctorSpecialty);
+  };
+  const handleSelect = (eventKey) => {
+    setDoctorSpecialty(eventKey === "Select specialty" ? "" : eventKey);
   };
 
   const handleSubmit = (e) => {
@@ -60,28 +63,34 @@ function ViewDoctorsSearch() {
                 </Form.Group>
               </div>
               <div className="col-5">
-                <Form.Group className="m-2">
+                <Form.Group className="m-2" style={{ flex: 2 }}>
                   <Form.Label>Specialty</Form.Label>
-                  <Form.Control
-                    as="select"
-                    style={{ cursor: "pointer" }}
-                    onChange={(e) => {
-                      const selectedSpecialty = e.target.value;
-                      setDoctorSpecialty(
-                        selectedSpecialty === "Select specialty"
-                          ? ""
-                          : selectedSpecialty
-                      );
-                    }}
-                    value={doctorSpecialty}
-                  >
-                    <option>Select specialty</option>
-                    <option>Cardiology</option>
-                    <option>Orthopedics</option>
-                    <option>Oncology</option>
-                    <option>Neurology</option>
-                    <option>Pediatrics</option>
-                  </Form.Control>
+                  <Dropdown onSelect={handleSelect}>
+                    <Dropdown.Toggle
+                      id="dropdown-basic"
+                      className="custom-dropdown-toggle"
+                    >
+                      {doctorSpecialty || "Select Specialty"}
+                    </Dropdown.Toggle>
+
+                    <Dropdown.Menu style={{ width: "100%" }}>
+                      <Dropdown.Item eventKey="Cardiology">
+                        Cardiology
+                      </Dropdown.Item>
+                      <Dropdown.Item eventKey="Pediatrics">
+                        Pediatrics
+                      </Dropdown.Item>
+                      <Dropdown.Item eventKey="Dermatology">
+                        Dermatology
+                      </Dropdown.Item>
+                      <Dropdown.Item eventKey="Oncology">
+                        Oncology
+                      </Dropdown.Item>
+                      <Dropdown.Item eventKey="Neurology">
+                        Neurology
+                      </Dropdown.Item>
+                    </Dropdown.Menu>
+                  </Dropdown>
                 </Form.Group>
               </div>
               <div className="col-2">

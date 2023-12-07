@@ -258,16 +258,16 @@ const LoginForm = () => {
         >
           Login
         </button>
-        {/* <div className="form-comment" style={{ cursor: "default" }}>
+        <div className="form-comment" style={{ cursor: "default" }}>
           Don't have an account?{" "}
           <div
             className="text-decoration-none  link-decoration "
             style={{ cursor: "pointer" }}
-            onClick={() => navigate("signup")}
+            onClick={() => navigate("patient-signup")}
           >
             Sign Up
           </div>
-        </div> */}
+        </div>
         {error1 && <div className="error">{error1}</div>}
       </Form>
     </div>
