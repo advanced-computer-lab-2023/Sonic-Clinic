@@ -6,14 +6,22 @@ import {
   faArrowLeft,
   faPaperPlane,
   faCheckDouble,
+  faPhone,
+  faPhoneSlash,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Button, Container, ListGroup, Navbar } from "react-bootstrap";
+import {
+  Button,
+  Container,
+  ListGroup,
+  Navbar,
+  Modal,
+  FormControl,
+} from "react-bootstrap";
+import { CopyToClipboard } from "react-copy-to-clipboard";
 import axios from "axios";
 import Peer from "simple-peer";
 import io from "socket.io-client";
-
-const socket = io.connect("http://localhost:8000");
 
 export default function ChatPat({ who }) {
   const [isHovered, setIsHovered] = useState(false);
@@ -36,80 +44,11 @@ export default function ChatPat({ who }) {
   const [idToCall, setIdToCall] = useState("");
   const [callEnded, setCallEnded] = useState(false);
   const [name, setName] = useState("");
-  const myVideo = useRef();
-  const userVideo = useRef();
+  const myVideoRef = useRef();
+  const userVideoRef = useRef();
+
   const connectionRef = useRef();
-
-  useEffect(() => {
-    fetchData();
-
-    //video
-    // navigator.mediaDevices
-    //   .getUserMedia({ video: true, audio: true })
-    //   .then((stream) => {
-    //     setStream(stream);
-    //     myVideo.current.srcObject = stream;
-    //   });
-
-    // socket.on("me", (id) => {
-    //   setMe(id);
-    // });
-
-    // socket.on("callUser", (data) => {
-    //   setReceivingCall(true);
-    //   setCaller(data.from);
-    //   setName(data.name);
-    //   setCallerSignal(data.signal);
-    // });
-  }, []);
-
-  const callUser = (id) => {
-    const peer = new Peer({
-      initiator: true,
-      trickle: false,
-      stream: stream,
-    });
-    peer.on("signal", (data) => {
-      socket.emit("callUser", {
-        userToCall: id,
-        signalData: data,
-        from: me,
-        name: name,
-      });
-    });
-    peer.on("stream", (stream) => {
-      userVideo.current.srcObject = stream;
-    });
-    socket.on("callAccepted", (signal) => {
-      setCallAccepted(true);
-      peer.signal(signal);
-    });
-
-    connectionRef.current = peer;
-  };
-
-  const answerCall = () => {
-    setCallAccepted(true);
-    const peer = new Peer({
-      initiator: false,
-      trickle: false,
-      stream: stream,
-    });
-    peer.on("signal", (data) => {
-      socket.emit("answerCall", { signal: data, to: caller });
-    });
-    peer.on("stream", (stream) => {
-      userVideo.current.srcObject = stream;
-    });
-
-    peer.signal(callerSignal);
-    connectionRef.current = peer;
-  };
-
-  const leaveCall = () => {
-    setCallEnded(true);
-    connectionRef.current.destroy();
-  };
+  const socketRef = useRef();
 
   const buttonStyle = {
     position: "fixed",
@@ -166,7 +105,7 @@ export default function ChatPat({ who }) {
 
   const myMsg = {
     backgroundColor: "#E0F8F8",
-    borderRadius: "0.25rem",
+    borderRadius: "1rem",
     color: "black",
     display: "inline-block",
     padding: "5px 10px",
@@ -177,7 +116,7 @@ export default function ChatPat({ who }) {
 
   const otherMsg = {
     backgroundColor: "#f0f0f0",
-    borderRadius: "0.25rem",
+    borderRadius: "1rem",
     color: "black",
     display: "inline-block",
     padding: "5px 10px",
@@ -197,11 +136,67 @@ export default function ChatPat({ who }) {
   const buttonTextPosition = isHovered ? "0" : "-100%";
   const buttonTextOpacity = isHovered ? 1 : 0;
 
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const callUser = (id) => {
+    const peer = new Peer({
+      initiator: true,
+      trickle: false,
+      stream: stream,
+    });
+    peer.on("signal", (data) => {
+      socketRef.current.emit("callUser", {
+        userToCall: id,
+        signalData: data,
+        from: me,
+        name: name,
+      });
+    });
+    peer.on("stream", (stream) => {
+      userVideoRef.current.srcObject = stream;
+    });
+    socketRef.current.on("callAccepted", (signal) => {
+      setCallAccepted(true);
+      peer.signal(signal);
+    });
+
+    connectionRef.current = peer;
+  };
+
+  const answerCall = () => {
+    setCallAccepted(true);
+    const peer = new Peer({
+      initiator: false,
+      trickle: false,
+      stream: stream,
+    });
+    peer.on("signal", (data) => {
+      socketRef.current.emit("answerCall", { signal: data, to: caller });
+    });
+    peer.on("stream", (stream) => {
+      userVideoRef.current.srcObject = stream;
+    });
+
+    peer.signal(callerSignal);
+    connectionRef.current = peer;
+  };
+
+  const leaveCall = () => {
+    setCallEnded(true);
+    connectionRef.current.destroy();
+  };
+
   const setChat = (name) => {
     setChosen(true);
     setIsOpen(false);
     setChosenName(name);
     fetchChatData(name);
+  };
+
+  const setVideoChat = () => {
+    setCalling(true);
   };
 
   const fetchData = async () => {
@@ -246,6 +241,36 @@ export default function ChatPat({ who }) {
       }
     }
   };
+
+  useEffect(() => {
+    socketRef.current = io.connect("http://localhost:8000");
+    if (idToCall !== "" && calling) {
+      navigator.mediaDevices
+        .getUserMedia({ video: true, audio: true })
+        .then((stream) => {
+          setStream(stream);
+          if (myVideoRef.current) {
+            myVideoRef.current.srcObject = stream;
+          }
+        })
+        .catch((error) => {
+          console.error("Error accessing media devices:", error);
+        });
+
+      socketRef.current.on("me", (id) => {
+        setMe(id);
+        console.log("socket it:", id);
+      });
+
+      socketRef.current.on("callUser", (data) => {
+        setReceivingCall(true);
+        setCaller(data.from);
+        setName(data.name);
+        setCallerSignal(data.signal);
+      });
+      callUser(idToCall); // Initiating the call
+    }
+  }, [idToCall, calling, myVideoRef]);
 
   return (
     <div>
@@ -357,15 +382,15 @@ export default function ChatPat({ who }) {
               <div>
                 <FontAwesomeIcon
                   icon={faVideo}
-                  onClick={() => {
-                    callUser(idToCall);
-                    setCalling(true);
-                  }}
+                  onClick={() => setVideoChat()}
                   style={{ cursor: "pointer" }}
                 />
                 <Button
                   variant="link"
-                  onClick={() => setChosen(false)}
+                  onClick={() => {
+                    setChosen(false);
+                    setCalling(false);
+                  }}
                   style={{ color: "white", alignSelf: "flex-end" }}
                 >
                   <FontAwesomeIcon
@@ -388,7 +413,9 @@ export default function ChatPat({ who }) {
                 >
                   <div>{item[3]}</div>
                   <div style={{ fontSize: "0.6rem", textAlign: "end" }}>
-                    {item[2]}
+                    {item[1].split("-")[2]}
+                    {"/"}
+                    {item[1].split("-")[1]} {item[2]}
                     {item[0] === who && (
                       <FontAwesomeIcon
                         icon={faCheckDouble}
@@ -423,52 +450,108 @@ export default function ChatPat({ who }) {
               />
             </div>
           </Container>
-          {calling && (
-            <div>
-              <div className="video-container">
-                <div className="video">
+          <Modal show={calling}>
+            <Modal.Header style={{ fontSize: "1.5rem" }}>
+              {chosenName.split("-")[0]}'s Room
+            </Modal.Header>
+            <Modal.Body className="d-flex flex-column justify-content-center align-items-center">
+              <div style={{ fontSize: "1.1rem" }}>
+                <strong>Personal key: </strong>
+                {me}{" "}
+                <div className="video" style={{ marginTop: "0.3rem" }}>
                   {stream && (
                     <video
                       playsInline
                       muted
-                      ref={myVideo}
+                      ref={myVideoRef}
                       autoPlay
-                      style={{ width: "300px" }}
+                      style={{ width: "25rem" }}
                     />
                   )}
                 </div>
-                <div className="video">
-                  {callAccepted && !callEnded && (
-                    <>
-                      <video
-                        playsInline
-                        ref={userVideo}
-                        autoPlay
-                        style={{ width: "300px" }}
-                      />
-                      <Button
-                        variant="secondary"
-                        onClick={() => {
-                          leaveCall();
-                          setCalling(false);
-                        }}
-                      >
-                        End Call
-                      </Button>
-                    </>
-                  )}
-                </div>
               </div>
-            </div>
-          )}
-          {receivingCall && !callAccepted && (
-            <div className="caller">
-              <h1>{name} is calling...</h1>
-              <Button variant="contained" color="primary" onClick={answerCall}>
-                Answer
+              {/* <CopyToClipboard text={me} style={{ marginBottom: "2rem" }}>
+                <Button color="primary">Copy ID</Button>
+              </CopyToClipboard> */}
+              <div
+                className="d-flex justify-content-between"
+                style={{
+                  height: "2.5rem",
+                  width: "25rem",
+                  marginTop: "1rem",
+                }}
+              >
+                <FormControl
+                  id="filled-basic"
+                  label="ID to call"
+                  placeholder="Enter key to call"
+                  onChange={(e) => setIdToCall(e.target.value)}
+                  style={{ width: "18rem" }}
+                />
+                <Button
+                  color="primary"
+                  onClick={() => callUser(idToCall)}
+                  style={{ width: "5rem" }}
+                  disabled={idToCall === ""}
+                >
+                  Call{" "}
+                  <FontAwesomeIcon
+                    icon={faPhone}
+                    style={{ fontSize: "0.9rem", marginLeft: "0.3rem" }}
+                  />
+                </Button>
+              </div>
+              {/* Render user video when call is accepted */}
+              {callAccepted && !callEnded && (
+                <div className="d-flex flex-column justify-content-center align-items-center">
+                  <video
+                    playsInline
+                    muted
+                    ref={userVideoRef}
+                    autoPlay
+                    style={{ width: "25rem", marginTop: "1rem" }}
+                  />
+                  <Button
+                    variant="secondary"
+                    onClick={() => {
+                      leaveCall();
+                    }}
+                    style={{ fontSize: "0.9rem", marginTop: "0.5rem" }}
+                  >
+                    End Call{" "}
+                    <FontAwesomeIcon
+                      icon={faPhoneSlash}
+                      style={{ fontSize: "0.9rem", marginLeft: "0.3rem" }}
+                    />
+                  </Button>
+                </div>
+              )}
+
+              {receivingCall && !callAccepted && (
+                <Button
+                  color="primary"
+                  onClick={answerCall}
+                  style={{
+                    animation: "vibrate 0.5s infinite",
+                    // Other button styles
+                  }}
+                >
+                  Answer
+                </Button>
+              )}
+            </Modal.Body>
+            <Modal.Footer>
+              {" "}
+              <Button
+                variant="secondary"
+                onClick={() => {
+                  setCalling(false);
+                }}
+              >
+                Exit room
               </Button>
-            </div>
-          )}
+            </Modal.Footer>
+          </Modal>
         </div>
       )}
     </div>
