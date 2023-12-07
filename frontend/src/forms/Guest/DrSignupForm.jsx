@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import FormPassword from "../FormPassword";
 import FormInput from "../FormInput";
-import { Form, Spinner } from "react-bootstrap";
+import { Dropdown, Form, Spinner } from "react-bootstrap";
 
 const DrSignupForm = () => {
   const [name, setName] = useState("");
@@ -435,17 +435,31 @@ const DrSignupForm = () => {
               >
                 Specialty
               </Form.Label>
-              <Form.Control
-                as="select"
-                value={speciality}
-                onChange={(e) => setSpeciality(e.target.value)}
+
+              <Dropdown
+                onSelect={(selectedValue) => setSpeciality(selectedValue)}
               >
-                <option value="Cardiology">Cardiology</option>
-                <option value="Orthopedics">Orthopedics</option>
-                <option value="Oncology">Oncology</option>
-                <option value="Neurology">Neurology</option>
-                <option value="Pediatrics">Pediatrics</option>
-              </Form.Control>
+                <Dropdown.Toggle
+                  id="dropdown-basic"
+                  className="custom-dropdown-toggle"
+                >
+                  {speciality === "" ? "Select Speciality" : speciality}
+                </Dropdown.Toggle>
+
+                <Dropdown.Menu style={{ width: "100%" }}>
+                  <Dropdown.Item eventKey="Cardiology">
+                    Cardiology
+                  </Dropdown.Item>
+                  <Dropdown.Item eventKey="Orthopedics">
+                    Orthopedics
+                  </Dropdown.Item>
+                  <Dropdown.Item eventKey="Oncology">Oncology</Dropdown.Item>
+                  <Dropdown.Item eventKey="Neurology">Neurology</Dropdown.Item>
+                  <Dropdown.Item eventKey="Pediatrics">
+                    Pediatrics
+                  </Dropdown.Item>
+                </Dropdown.Menu>
+              </Dropdown>
             </Form.Group>
           </div>
           <div className="col">

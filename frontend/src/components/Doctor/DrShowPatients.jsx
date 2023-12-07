@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Card,
   Col,
@@ -8,6 +8,7 @@ import {
   ListGroup,
   Spinner,
   Modal,
+  Dropdown,
 } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -33,6 +34,12 @@ function DrShowPatients({
   const [selectedPatient, setSelectedPatient] = useState(null);
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const [uploadVisible, setUploadVisible] = useState(false);
+
+  const [prescriptionVisible, setPrescriptionVisible] = useState(false);
+  const [addingPrescription, setAddingPrescription] = useState("adding");
+  const [selectedPatientPrescription, setSelectedPatientPrescription] =
+    useState(null);
+
   const [followUpModal, setFollowUpModal] = useState(false);
   const [followUpDateTime, setFollowUpDateTime] = useState(null);
   const [existingFiles, setExistingFiles] = useState();
@@ -239,6 +246,97 @@ function DrShowPatients({
       }
     }
   };
+  const handleShowPrescriptionModal = async (patient) => {
+    setSelectedPatientPrescription(patient);
+
+    // Call the function to fetch medicine data here
+    await fetchMedicineData();
+
+    setPrescriptionVisible(!prescriptionVisible);
+  };
+
+  const handleClose = () => {
+    setPrescriptionVisible(false);
+    setSelectedPatientPrescription(null);
+    setSelectedMedicine(null);
+    setSearchTermMedicine("");
+    setDosage("");
+    setPrescription([]); // Close the modal first
+  };
+  const [medicineData, setMedicineData] = useState([]);
+  const fetchMedicineData = async () => {
+    try {
+      const response = await axios.get("/viewMedicines"); // Replace with the actual endpoint
+      if (response.status === 200) {
+        setMedicineData(response.data); // Assuming the response data is an array of medicine objects
+      }
+    } catch (error) {
+      console.error("Error fetching medicine data:", error);
+    }
+  };
+  const neededMedicineData = medicineData;
+  const [selectedMedicine, setSelectedMedicine] = useState(null);
+  const [dosage, setDosage] = useState(null);
+  // State for the search term
+  const [searchTermMedicine, setSearchTermMedicine] = useState("");
+
+  // State for filtered medicines
+  const [filteredMedicines, setFilteredMedicines] =
+    useState(neededMedicineData);
+
+  // Function to filter medicines based on search term
+  const filterMedicines = () => {
+    const filtered = neededMedicineData.filter((medicine) =>
+      medicine.name.toLowerCase().startsWith(searchTermMedicine.toLowerCase())
+    );
+    setFilteredMedicines(filtered);
+  };
+
+  // Update filtered medicines whenever the search term changes
+  useEffect(() => {
+    filterMedicines();
+  }, [searchTermMedicine, neededMedicineData]);
+
+  const handleDropdownSelect = (medicine) => {
+    setSelectedMedicine(medicine);
+    setSearchTerm(""); // Clear the search term when an item is selected
+  };
+
+  const [prescription, setPrescription] = useState([]);
+  const [showAddNewMedicineForm, setShowAddNewMedicineForm] = useState(false);
+  const [newMedicineName, setNewMedicineName] = useState("");
+  const [newMedicineDosage, setNewMedicineDosage] = useState("");
+
+  const addMedicineToPrescription = () => {
+    if (selectedMedicine && dosage) {
+      const medicineItem = {
+        medicine: selectedMedicine,
+        dosage,
+      };
+      setPrescription([...prescription, medicineItem]);
+      setSelectedMedicine(null);
+      setDosage("");
+    }
+  };
+
+  const handleAddButtonClick = () => {
+    addMedicineToPrescription();
+  };
+
+  const handleSubmitPrescription = () => {
+    // Handle submitting the prescription, you can do whatever you want here.
+    // For example, you can send the prescription to the server.
+    // Reset the state or close the modal as needed.
+    console.log("Prescription submitted:", prescription);
+    // Reset the state
+    setPrescription([]);
+    setSelectedMedicine(null);
+    setDosage("");
+    setNewMedicineName("");
+    setNewMedicineDosage("");
+    // Close the modal
+    handleClose();
+  };
 
   return (
     <div>
@@ -436,11 +534,25 @@ function DrShowPatients({
                                 }}
                                 onClick={() => addFiles(patient._id)}
                               >
-                                Add
+                                Confirm Add
                               </div>
                             </div>
                           )}
                           <p style={{ fontWeight: "bold" }}>Prescriptions:</p>
+                          <label
+                            style={{
+                              marginTop: "1rem",
+                              cursor: "pointer",
+                              color: "#099BA0",
+                              textDecoration: "underline",
+                              marginBottom: "1rem",
+                            }}
+                            onClick={() => {
+                              handleShowPrescriptionModal(patient);
+                            }}
+                          >
+                            Add New Prescription
+                          </label>
                         </div>
                       </div>
                     </Card.Text>
@@ -450,6 +562,92 @@ function DrShowPatients({
             )}
           </Card>
         ))}
+      <Modal show={prescriptionVisible} onHide={handleClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>
+            {selectedPatientPrescription
+              ? `Add Prescription for ${selectedPatientPrescription.name}`
+              : "Add Prescription"}
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div>
+            <p>Medicine: </p>
+            <Dropdown>
+              <Dropdown.Toggle
+                variant="primary"
+                id="medicine-dropdown"
+                className="custom-dropdown-toggle"
+              >
+                {selectedMedicine ? selectedMedicine.name : "Select Medicine"}
+              </Dropdown.Toggle>
+              <Dropdown.Menu style={{ width: "100%" }}>
+                <input
+                  type="text"
+                  placeholder="Search Medicine"
+                  className="form-control"
+                  value={selectedMedicine ? selectedMedicine.name : ""}
+                  onChange={() => {}}
+                  readOnly
+                />
+                {medicineData.map((medicine) => (
+                  <Dropdown.Item
+                    key={medicine.id}
+                    onClick={() => handleDropdownSelect(medicine)}
+                  >
+                    {medicine.name}
+                  </Dropdown.Item>
+                ))}
+              </Dropdown.Menu>
+            </Dropdown>
+          </div>
+          <div className="mt-3">
+            <label htmlFor="dosage">Dosage:</label>
+            <input
+              type="text"
+              id="dosage"
+              className="form-control"
+              placeholder="Enter dosage"
+              value={dosage}
+              onChange={(e) => setDosage(e.target.value)}
+            />
+          </div>
+          <div className="d-flex justify-content-center">
+            <Button
+              variant="success"
+              onClick={handleAddButtonClick}
+              className="mt-4 w-50"
+            >
+              Add Medicine
+            </Button>
+          </div>
+        </Modal.Body>
+
+        <Modal.Footer>
+          <div className="w-100">
+            {prescription.length > 0 && (
+              <div className="mb-3">
+                <p>Prescription Items:</p>
+                <ul>
+                  {prescription.map((item, index) => (
+                    <li key={index}>
+                      {item.medicine.name} - {item.dosage}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+          {prescription.length > 0 && (
+            <Button variant="primary" onClick={handleSubmitPrescription}>
+              Submit Prescription
+            </Button>
+          )}
+          <Button variant="secondary" onClick={handleClose}>
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 }

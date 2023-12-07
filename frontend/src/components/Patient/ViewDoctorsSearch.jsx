@@ -74,6 +74,7 @@ function ViewDoctorsSearch() {
                     </Dropdown.Toggle>
 
                     <Dropdown.Menu style={{ width: "100%" }}>
+                      <Dropdown.Item eventKey="">All</Dropdown.Item>
                       <Dropdown.Item eventKey="Cardiology">
                         Cardiology
                       </Dropdown.Item>

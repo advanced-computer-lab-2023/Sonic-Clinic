@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Container, Form } from "react-bootstrap";
+import { Button, Container, Dropdown, Form } from "react-bootstrap";
 import { setFilterDrAppointments } from "../../state/Doctor/filterDrAppointments";
 import { useDispatch } from "react-redux";
 
@@ -13,7 +13,7 @@ function AppointmentFilter() {
   };
 
   const handleStatusChange = (e) => {
-    setSelectedStatus(e.target.value);
+    setSelectedStatus(e);
   };
 
   const handleFilter = () => {
@@ -83,13 +83,22 @@ function AppointmentFilter() {
         >
           Status
         </div>
-        <Form.Control as="select" onChange={handleStatusChange}>
-          <option value="">Select status</option>
-          <option value="upcoming">Upcoming</option>
-          <option value="completed">Completed</option>
-          <option value="cancelled">Cancelled</option>
-          <option value="rescheduled">Rescheduled</option>
-        </Form.Control>
+        <Dropdown onSelect={handleStatusChange}>
+          <Dropdown.Toggle
+            id="dropdown-basic"
+            className="custom-dropdown-toggle"
+          >
+            {selectedStatus === "" ? "Select status " : selectedStatus}
+          </Dropdown.Toggle>
+
+          <Dropdown.Menu style={{ width: "100%" }}>
+            <Dropdown.Item eventKey="">All</Dropdown.Item> {/* Reset option */}
+            <Dropdown.Item eventKey="Upcoming">Upcoming</Dropdown.Item>
+            <Dropdown.Item eventKey="Completed">Completed</Dropdown.Item>
+            <Dropdown.Item eventKey="Cancelled">Cancelled</Dropdown.Item>
+            <Dropdown.Item eventKey="Rescheduled">Rescheduled</Dropdown.Item>
+          </Dropdown.Menu>
+        </Dropdown>
       </div>
 
       <Container

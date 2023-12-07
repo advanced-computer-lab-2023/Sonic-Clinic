@@ -26,7 +26,7 @@ function PatientOneDoctor() {
             <div className="px-5 py-4">
               <ViewDoctorDetails />
             </div>
-            <div className="px-5">
+            <div>
               <DoctorAppointments />
             </div>
           </Row>
