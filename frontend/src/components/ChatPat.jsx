@@ -8,6 +8,7 @@ import {
   faCheckDouble,
   faPhone,
   faPhoneSlash,
+  faCopy,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -450,14 +451,27 @@ export default function ChatPat({ who }) {
               />
             </div>
           </Container>
-          <Modal show={calling}>
+          <Modal show={calling} style={{ maxWidth: "90%" }}>
             <Modal.Header style={{ fontSize: "1.5rem" }}>
               {chosenName.split("-")[0]}'s Room
             </Modal.Header>
             <Modal.Body className="d-flex flex-column justify-content-center align-items-center">
-              <div style={{ fontSize: "1.1rem" }}>
-                <strong>Personal key: </strong>
-                {me}{" "}
+              <div className="d-flex flex-column">
+                <div className="d-flex flex-row" style={{ fontSize: "1.1rem" }}>
+                  <strong>Personal key: </strong>
+                  {me}{" "}
+                  <CopyToClipboard text={me}>
+                    <FontAwesomeIcon
+                      icon={faCopy}
+                      style={{
+                        fontSize: "0.9rem",
+                        marginLeft: "0.3rem",
+                        cursor: "pointer",
+                      }}
+                    />
+                  </CopyToClipboard>
+                </div>
+
                 <div className="video" style={{ marginTop: "0.3rem" }}>
                   {stream && (
                     <video
@@ -465,42 +479,12 @@ export default function ChatPat({ who }) {
                       muted
                       ref={myVideoRef}
                       autoPlay
-                      style={{ width: "25rem" }}
+                      style={{ width: "25rem", transform: "scaleX(-1)" }}
                     />
                   )}
                 </div>
               </div>
-              {/* <CopyToClipboard text={me} style={{ marginBottom: "2rem" }}>
-                <Button color="primary">Copy ID</Button>
-              </CopyToClipboard> */}
-              <div
-                className="d-flex justify-content-between"
-                style={{
-                  height: "2.5rem",
-                  width: "25rem",
-                  marginTop: "1rem",
-                }}
-              >
-                <FormControl
-                  id="filled-basic"
-                  label="ID to call"
-                  placeholder="Enter key to call"
-                  onChange={(e) => setIdToCall(e.target.value)}
-                  style={{ width: "18rem" }}
-                />
-                <Button
-                  color="primary"
-                  onClick={() => callUser(idToCall)}
-                  style={{ width: "5rem" }}
-                  disabled={idToCall === ""}
-                >
-                  Call{" "}
-                  <FontAwesomeIcon
-                    icon={faPhone}
-                    style={{ fontSize: "0.9rem", marginLeft: "0.3rem" }}
-                  />
-                </Button>
-              </div>
+
               {/* Render user video when call is accepted */}
               {callAccepted && !callEnded && (
                 <div className="d-flex flex-column justify-content-center align-items-center">
@@ -509,7 +493,12 @@ export default function ChatPat({ who }) {
                     muted
                     ref={userVideoRef}
                     autoPlay
-                    style={{ width: "25rem", marginTop: "1rem" }}
+                    style={{
+                      width: "25rem",
+                      marginTop: "2rem",
+                      transform: "scaleX(-1)",
+                      marginLeft: "1rem",
+                    }}
                   />
                   <Button
                     variant="secondary"
@@ -527,6 +516,36 @@ export default function ChatPat({ who }) {
                 </div>
               )}
 
+              {!receivingCall && !callAccepted && (
+                <div
+                  className="d-flex justify-content-between"
+                  style={{
+                    height: "2.5rem",
+                    width: "25rem",
+                    marginTop: "1rem",
+                  }}
+                >
+                  <FormControl
+                    id="filled-basic"
+                    label="ID to call"
+                    placeholder="Enter key to call"
+                    onChange={(e) => setIdToCall(e.target.value)}
+                    style={{ width: "18rem" }}
+                  />
+                  <Button
+                    color="primary"
+                    onClick={() => callUser(idToCall)}
+                    style={{ width: "5rem" }}
+                    disabled={idToCall === ""}
+                  >
+                    Call{" "}
+                    <FontAwesomeIcon
+                      icon={faPhone}
+                      style={{ fontSize: "0.9rem", marginLeft: "0.3rem" }}
+                    />
+                  </Button>
+                </div>
+              )}
               {receivingCall && !callAccepted && (
                 <Button
                   color="primary"
