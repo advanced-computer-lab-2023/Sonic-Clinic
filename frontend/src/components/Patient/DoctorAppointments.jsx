@@ -16,7 +16,12 @@ import "swiper/css/pagination";
 import "swiper/css/scrollbar";
 import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCalendar, faClock } from "@fortawesome/free-solid-svg-icons";
+import {
+  faCalendar,
+  faChevronLeft,
+  faChevronRight,
+  faClock,
+} from "@fortawesome/free-solid-svg-icons";
 import { useSelector, useDispatch } from "react-redux";
 import { updatePatientWallet } from "../../state/loginPatientReducer";
 import { setForFam } from "../../state/loginPatientReducer";
@@ -203,13 +208,18 @@ const DoctorAppointments = ({ onBookAppointment }) => {
       )}
 
       {!loading && (
-        <Container style={{ marginTop: "2rem" }}>
-          <div className="justify-content-between d-flex">
+        <Container
+          style={{
+            marginTop: "2rem",
+            marginBottom: "2rem",
+          }}
+        >
+          <div className="justify-content-between d-flex px-5">
             <h3 className="carousel-title" style={{ fontSize: "1.75rem" }}>
               Available Appointments
             </h3>
           </div>
-          <p className="carousel-description">
+          <p className="carousel-description px-5">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="16"
@@ -240,80 +250,100 @@ const DoctorAppointments = ({ onBookAppointment }) => {
             </svg>
             Book your desired appointment
           </p>
-          <Swiper
-            slidesPerView={2.5}
-            spaceBetween={10}
-            modules={[Pagination]}
-            className="mySwiper custom-swipper"
-          >
-            {neededData.length === 0 && (
-              <div className="msg">No Available Slots</div>
+          {neededData.length === 0 && (
+            <div
+              className="msg d-flex justify-content-center align-items-center w-50 "
+              style={{ marginLeft: "20rem" }}
+            >
+              No Available Slots
+            </div>
+          )}
+
+          <div className="d-flex align-items-center justify-content-center">
+            {neededData && neededData.length > 0 && (
+              <FontAwesomeIcon
+                icon={faChevronLeft}
+                style={{ fontSize: "2.5rem", color: "#05afb9" }}
+              />
             )}
-            {neededData &&
-              neededData.map((appointment) => (
-                <SwiperSlide>
-                  {/* <a onClick={() => handleCard(appointment)}> */}
-                  <Card
-                    style={{
-                      borderRadius: "0.625rem",
-                      border:
-                        " 1px solid var(--components-card-border, rgba(0, 0, 0, 0.17))",
-                      background: " var(--gray-white, #FFF)",
-                      minHeight: "7rem",
-                      cursor: "pointer",
-                    }}
-                    className="d-flex align-items-start justify-content-start"
-                  >
-                    <Card.Body className="p-2 w-100">
-                      <Card.Title className="carousel-sub-card-title">
-                        {doctorLoc}
-                      </Card.Title>
-                      <Card.Text className="carousel-sub-card-description">
-                        <div
-                          style={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                            alignItems: "center",
-                          }}
-                        >
-                          <div>
+            <Swiper
+              slidesPerView={2.5}
+              spaceBetween={10}
+              modules={[Pagination]}
+              className="mySwiper custom-swipper px-5"
+            >
+              {neededData &&
+                neededData.map((appointment) => (
+                  <SwiperSlide>
+                    {/* <a onClick={() => handleCard(appointment)}> */}
+                    <Card
+                      style={{
+                        borderRadius: "0.625rem",
+                        border:
+                          " 1px solid var(--components-card-border, rgba(0, 0, 0, 0.17))",
+                        background: " var(--gray-white, #FFF)",
+                        minHeight: "7rem",
+                        cursor: "pointer",
+                      }}
+                      className="d-flex align-items-start justify-content-start"
+                    >
+                      <Card.Body className="p-2 w-100">
+                        <Card.Title className="carousel-sub-card-title">
+                          {doctorLoc}
+                        </Card.Title>
+                        <Card.Text className="carousel-sub-card-description">
+                          <div
+                            style={{
+                              display: "flex",
+                              justifyContent: "space-between",
+                              alignItems: "center",
+                            }}
+                          >
                             <div>
-                              <FontAwesomeIcon
-                                icon={faCalendar}
-                                style={{
-                                  marginRight: "0.5rem",
-                                  fontSize: "1rem",
-                                }}
-                              />
-                              {appointment.split(" ")[0]}
-                            </div>
-                            <div>
-                              <FontAwesomeIcon
-                                icon={faClock}
-                                style={{
-                                  marginRight: "0.5rem",
-                                  fontSize: "1rem",
-                                }}
-                              />
-                              {appointment.split(" ")[1]}
+                              <div>
+                                <FontAwesomeIcon
+                                  icon={faCalendar}
+                                  style={{
+                                    marginRight: "0.5rem",
+                                    fontSize: "1rem",
+                                  }}
+                                />
+                                {appointment.split(" ")[0]}
+                              </div>
+                              <div>
+                                <FontAwesomeIcon
+                                  icon={faClock}
+                                  style={{
+                                    marginRight: "0.5rem",
+                                    fontSize: "1rem",
+                                  }}
+                                />
+                                {appointment.split(" ")[1]}
+                              </div>
                             </div>
                           </div>
-                        </div>
-                        <div className="d-flex align-items-center justify-content-center">
-                          <Button
-                            className="btn-secondary mt-4 w-50"
-                            onClick={() => handleBookClick(appointment)}
-                          >
-                            Book
-                          </Button>
-                        </div>
-                      </Card.Text>
-                    </Card.Body>
-                  </Card>
-                  {/* </a> */}
-                </SwiperSlide>
-              ))}
-          </Swiper>
+                          <div className="d-flex align-items-center justify-content-center">
+                            <Button
+                              className="btn-secondary mt-4 w-50"
+                              onClick={() => handleBookClick(appointment)}
+                            >
+                              Book
+                            </Button>
+                          </div>
+                        </Card.Text>
+                      </Card.Body>
+                    </Card>
+                    {/* </a> */}
+                  </SwiperSlide>
+                ))}
+            </Swiper>
+            {neededData && neededData.length > 0 && (
+              <FontAwesomeIcon
+                icon={faChevronRight}
+                style={{ fontSize: "2.5rem", color: "#05afb9" }}
+              />
+            )}
+          </div>
         </Container>
       )}
       <Modal show={showModal} onHide={handleClose}>

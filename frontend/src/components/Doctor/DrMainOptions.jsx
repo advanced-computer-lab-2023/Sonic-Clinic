@@ -50,14 +50,6 @@ function DrMainOptions() {
             icon={faCalendarCheck}
           />
         </div>
-        <div>
-          <AdminHomeCard
-            location="/doctor/doctor-profile"
-            cardText="Wallet"
-            cardDetails="View my wallet"
-            icon={faWallet}
-          />
-        </div>
       </animated.div>
     </div>
   );

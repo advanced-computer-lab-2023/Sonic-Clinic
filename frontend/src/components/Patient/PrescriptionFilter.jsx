@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Container, Form } from "react-bootstrap";
+import { Button, Container, Dropdown, Form } from "react-bootstrap";
 import { useDispatch } from "react-redux";
 import { setFilterPrescriptions } from "../../state/Patient/filterPrescriptions";
 
@@ -18,7 +18,7 @@ function PrescriptionFilter() {
   };
 
   const handleStatusChange = (e) => {
-    setIsFilled(e.target.value);
+    setIsFilled(e);
   };
 
   const handleSearch = () => {
@@ -118,12 +118,6 @@ function PrescriptionFilter() {
       <div className="mb-2">
         <div
           style={{
-            // color: "#000",
-            // fontSize: "1.25rem",
-            // fontStyle: "normal",
-            // fontWeight: 700,
-            // lineHeight: "100%",
-            // marginBottom: "1.4rem",
             color: "#099BA0 ",
             fontSize: "1.1rem",
             fontStyle: "normal",
@@ -134,16 +128,23 @@ function PrescriptionFilter() {
         >
           Status
         </div>
-        <Form.Control
-          as="select"
-          style={{ marginBottom: "1rem" }}
-          onChange={handleStatusChange}
-          value={isFilled}
-        >
-          <option value="">Select status</option>
-          <option value="filled">Filled</option>
-          <option value="unfilled">Unfilled</option>
-        </Form.Control>
+
+        <Dropdown onSelect={handleStatusChange}>
+          <Dropdown.Toggle
+            id="dropdown-basic"
+            className="custom-dropdown-toggle"
+          >
+            {isFilled === "" ? "Select status " : isFilled}
+          </Dropdown.Toggle>
+
+          <Dropdown.Menu style={{ width: "100%" }}>
+            <Dropdown.Item eventKey="">All</Dropdown.Item> {/* Reset option */}
+            <Dropdown.Item eventKey="Submitted">Submitted</Dropdown.Item>
+            <Dropdown.Item eventKey="Not Submitted">
+              Not Submitted
+            </Dropdown.Item>
+          </Dropdown.Menu>
+        </Dropdown>
       </div>
 
       <Container

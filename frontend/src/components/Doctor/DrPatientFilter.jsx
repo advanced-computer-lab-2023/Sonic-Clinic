@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Container, Form } from "react-bootstrap";
+import { Button, Container, Dropdown, Form } from "react-bootstrap";
 import { useSelector } from "react-redux";
 import axios from "axios";
 
@@ -95,15 +95,20 @@ function DrPatientFilter({ setPatients, responseData, setUpcomingApp }) {
         >
           Appointment Status
         </div>
-        <Form.Control
-          as="select"
-          onChange={(e) => setSelectedStatus(e.target.value)}
-          style={{ marginBottom: "1rem" }}
-        >
-          <option value="">Select status</option>
-          <option value="all">All</option>
-          <option value="upcoming">Upcoming</option>
-        </Form.Control>
+
+        <Dropdown onSelect={(e) => setSelectedStatus(e)}>
+          <Dropdown.Toggle
+            id="dropdown-basic"
+            className="custom-dropdown-toggle"
+          >
+            {selectedStatus || "Select status"}
+          </Dropdown.Toggle>
+
+          <Dropdown.Menu style={{ width: "100%" }}>
+            <Dropdown.Item eventKey="All">All</Dropdown.Item>
+            <Dropdown.Item eventKey="Upcoming">Upcoming</Dropdown.Item>
+          </Dropdown.Menu>
+        </Dropdown>
       </div>
 
       <Container

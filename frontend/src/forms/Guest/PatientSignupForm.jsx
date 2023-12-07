@@ -8,7 +8,7 @@ import { setCredentialsPatient } from "../../state/loginPatientReducer";
 
 import FormPassword from "../FormPassword";
 import FormInput from "../FormInput";
-import { Col, Form, Row } from "react-bootstrap";
+import { Col, Dropdown, Form, Row } from "react-bootstrap";
 
 const PatientSignupForm = () => {
   const [name, setName] = useState("");
@@ -222,7 +222,7 @@ const PatientSignupForm = () => {
 
         if (response.status === 200) {
           isLoading(false);
-          navigate("/login");
+          navigate("/");
         } else {
           setError("Signup failed");
           isLoading(false);
@@ -304,14 +304,20 @@ const PatientSignupForm = () => {
               >
                 Gender
               </Form.Label>
-              <Form.Control
-                as="select"
-                value={gender}
-                onChange={(e) => setGender(e.target.value)}
-              >
-                <option value="Male">Male</option>
-                <option value="Female">Female</option>
-              </Form.Control>
+
+              <Dropdown onSelect={(selectedValue) => setGender(selectedValue)}>
+                <Dropdown.Toggle
+                  id="dropdown-basic"
+                  className="custom-dropdown-toggle"
+                >
+                  {gender === "" ? "Select Gender" : gender}
+                </Dropdown.Toggle>
+
+                <Dropdown.Menu style={{ width: "100%" }}>
+                  <Dropdown.Item eventKey="Male">Male</Dropdown.Item>
+                  <Dropdown.Item eventKey="Female">Female</Dropdown.Item>
+                </Dropdown.Menu>
+              </Dropdown>
             </Form.Group>
           </div>
         </div>
