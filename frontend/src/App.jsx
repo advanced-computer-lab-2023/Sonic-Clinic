@@ -40,11 +40,7 @@ function App() {
   return (
     <div className="bg-light">
       <Routes>
-        <Route path="/" element={<GuestHomePage />} />
-
-        <Route path="login">
-          <Route index element={<Login />} />
-        </Route>
+        <Route path="/" element={<Login />} />
 
         <Route path="forgot-password">
           <Route path="otp-verification" element={<OTPVerification />} />

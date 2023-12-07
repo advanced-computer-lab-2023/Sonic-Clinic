@@ -7,6 +7,13 @@ import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { setPrescriptionData } from "../../state/prescriptionIdReducer";
 import axios from "axios";
+import {
+  faClock,
+  faCancel,
+  faCheck,
+  faPause,
+  faCheckDouble,
+} from "@fortawesome/free-solid-svg-icons";
 
 function ShowPrescriptions() {
   const [loading, setLoading] = useState(true);
@@ -85,6 +92,34 @@ function ShowPrescriptions() {
     );
   });
 
+  const getStatusIcon = (status) => {
+    const lowerCaseStatus = status.toLowerCase();
+    switch (lowerCaseStatus) {
+      case "submitted":
+        return faCheck; // Blue for Upcoming
+      case "not submitted":
+        return faCancel; // Grey for Completed
+      default:
+        return faPause; // Default color
+    }
+  };
+
+  const getStatusColor = (status) => {
+    const lowerCaseStatus = status.toLowerCase();
+    switch (lowerCaseStatus) {
+      case "submitted":
+        return "#05afb9"; // Blue for Upcoming
+      case "completed":
+        return "#adb5bd "; // Grey for Completed
+      case "Not submitted":
+        return "#ff6b35 "; // Orange for Cancelled
+      case "rescheduled":
+        return "#c4e6e6  "; // Light Blue for Rescheduled
+      default:
+        return "#ff6b35"; // Default color
+    }
+  };
+
   return (
     <div>
       {loading && (
@@ -127,47 +162,80 @@ function ShowPrescriptions() {
               className="text-decoration-none"
             >
               <Card
-                className="mb-4 mx-3~ bg-light"
-                style={{ cursor: "pointer" }}
+                style={{
+                  cursor: "pointer",
+                  borderRadius: "10px",
+                  boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                  transition: "transform 0.3s",
+                  marginBottom: "2rem",
+                  marginRight: "2rem",
+                  height: "12rem",
+                }}
               >
                 <Row>
-                  <Col lg={4}>
-                    <div className="prescription-icon-container">
-                      <Image
-                        src={prescriptionImg}
-                        fluid
-                        className="doctor-image"
+                  <Col lg={1}>
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "column", // Vertical arrangement
+                        justifyContent: "center",
+                        alignItems: "center",
+                        backgroundColor: getStatusColor(prescription.status),
+                        borderRadius: "10px 0 0 10px",
+                        height: "12rem",
+                      }}
+                    >
+                      <FontAwesomeIcon
+                        icon={getStatusIcon(prescription.status)}
+                        style={{
+                          fontSize: "1.5em",
+                          color: "white",
+                        }}
                       />
                     </div>
                   </Col>
-                  <Col lg={8}>
-                    <Card.Body className="p-4">
-                      <Card.Title className="show-more-title">
-                        Prescription {index + 1}
+                  <Col lg={4}>
+                    <Card.Body>
+                      <Card.Title
+                        style={{
+                          marginTop: "1.5rem",
+                          fontSize: "1.5rem",
+                          fontWeight: "bold",
+                          color: "#212529",
+                          marginBottom: "1rem",
+                        }}
+                      >
+                        Dr. {prescription.doctorName}
                       </Card.Title>
+                      <div
+                        style={{
+                          marginBottom: "1rem",
+                          fontSize: "1.2rem",
+                          color: "#099BA0 ",
+                        }}
+                      >
+                        Prescription {index + 1}
+                      </div>
+                    </Card.Body>
+                  </Col>
+                  <Col lg={4}>
+                    <Card.Body className="p-4">
                       <Card.Text>
-                        <div className="show-more-date">
-                          <FontAwesomeIcon
-                            icon={faCalendar}
-                            style={{ marginRight: "0.5rem" }}
-                          />
-                          {formattedDate} {/* Display the formatted date */}
-                        </div>
                         <div
-                          className={`show-more-status ${
-                            prescription.status === "Filled"
-                              ? "filled"
-                              : "unfilled"
-                          }`}
+                          style={{
+                            marginTop: "2rem",
+                            marginBottom: "1rem",
+                            fontSize: "1.1rem",
+                          }}
                         >
                           <FontAwesomeIcon
-                            icon={faCheckCircle}
-                            style={{ marginRight: "0.5rem" }}
+                            icon={faCalendar}
+                            style={{
+                              marginRight: "0.5rem",
+                              fontSize: "1.1rem",
+                            }}
                           />
-                          {prescription.status}
-                        </div>
-                        <div className="show-more-doctor">
-                          Dr. {prescription.doctorName}
+                          {formattedDate}
                         </div>
                       </Card.Text>
                     </Card.Body>

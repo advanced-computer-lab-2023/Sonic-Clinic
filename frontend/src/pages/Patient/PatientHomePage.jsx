@@ -26,9 +26,6 @@ function PatientHomePage() {
             <div>
               <SearchCard />
             </div>
-            <div>
-              <HomeMainOptions />
-            </div>
           </Row>
         </Container>
       </Container>

@@ -27,6 +27,32 @@
     #ea5b27
   ) !important; /* Change the color on hover */
 }
+.custom-dropdown-toggle {
+  background-color: white !important;
+  border-color: #ced4da !important;
+  color: black !important;
+  width: 100% !important;
+  text-align: left !important;
+  /* Additional styles to remove hover effects */
+  &:hover,
+  &:focus {
+    background-color: white !important;
+    color: black !important;
+    border-color: #ced4da !important;
+    box-shadow: none !important;
+  }
+}
+.custom-dropdown-toggle::after {
+  content: "";
+  display: inline-block;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 4px solid black; /* Arrow color */
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+}
 
 body {
   margin: 0;
