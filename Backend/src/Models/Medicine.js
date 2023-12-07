@@ -61,6 +61,10 @@ const medicineSchema = new mongoose.Schema({
     enum: ["Active", "Archived"],
     default: "Active",
   },
+  dosage: {
+    type: String,
+    required: false,
+  },
 });
 
 const Medicine = mongoose.model("Medicine", medicineSchema);

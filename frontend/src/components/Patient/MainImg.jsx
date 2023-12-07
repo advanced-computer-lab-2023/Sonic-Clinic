@@ -1,5 +1,5 @@
 import { Card, Image } from "react-bootstrap";
-import mainImg from "../../Assets/Patient/HomeImg.png";
+import mainImg from "../../Assets/Patient/patientHome1.png";
 import { useSelector } from "react-redux";
 import { Waypoint } from "react-waypoint";
 import { useSpring, animated } from "react-spring";

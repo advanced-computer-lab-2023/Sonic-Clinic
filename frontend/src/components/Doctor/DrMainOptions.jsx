@@ -25,7 +25,10 @@ function DrMainOptions() {
   });
 
   return (
-    <div className="d-flex flex-row justify-content-center">
+    <div
+      className="d-flex flex-row justify-content-center"
+      style={{ marginTop: "-3.5rem" }}
+    >
       <Waypoint
         onEnter={() => setOurDoctorsVisible(true)}
         onLeave={() => setOurDoctorsVisible(false)}
@@ -45,14 +48,6 @@ function DrMainOptions() {
             cardText="Appointments"
             cardDetails="View/manage my appointments"
             icon={faCalendarCheck}
-          />
-        </div>
-        <div>
-          <AdminHomeCard
-            location="/doctor/doctor-profile"
-            cardText="Wallet"
-            cardDetails="View my wallet"
-            icon={faWallet}
           />
         </div>
       </animated.div>

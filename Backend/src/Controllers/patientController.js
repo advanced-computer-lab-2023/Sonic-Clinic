@@ -1936,7 +1936,6 @@ const rescheduleAppForMyselfOrFam = async (req, res) => {
     //     appointment.time,
     //   "Appointment Rescheduled"
     // );
-    console.log("hena5");
 
     // notificationByMail(
     //   patient.email,
@@ -1951,9 +1950,8 @@ const rescheduleAppForMyselfOrFam = async (req, res) => {
 
     const id = appointment.patientID;
     patient = await patientModel.findById(id);
-    console.log("hena3");
+
     if (patient) {
-      console.log("hena4");
       notification =
         "The appointment with Dr. " +
         doctor.name +
@@ -2072,6 +2070,101 @@ const notificationByMail = async (email, message, title) => {
   });
 };
 
+const calculatePrescriptionPrice = async (prescription) => {
+  try {
+    const medicines = prescription.medicine;
+    let totalPrice = 0;
+    for (const medicineItem of medicines) {
+      const medicineId = medicineItem._id;
+      const medicine = await medicineModel.findById(medicineId);
+      if (medicine) {
+        totalPrice += medicine.price;
+      }
+    }
+    return totalPrice;
+  } catch (error) {
+    // Handle any errors that occur during database query
+    throw error;
+  }
+};
+
+const payPrescriptionStripe = async (req, res) => {
+  try {
+    const patient = await patientModel.findById(req.user.id);
+    if (!patient) {
+      return res.status(404).json({ message: "Patient not found." });
+    }
+    const prescription = await prescriptionModel.findOne({ _id: req.body.id });
+    if (!prescription) {
+      return res.status(404).json({ message: "Prescription not found." });
+    }
+    const price = await calculatePrescriptionPrice(prescription);
+
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ["card"],
+      mode: "payment",
+      line_items: [
+        {
+          price_data: {
+            currency: "usd",
+            product_data: { name: "prescription" },
+            unit_amount: price * 100,
+          },
+          quantity: 1,
+        },
+      ],
+
+      success_url: `${process.env.SERVER_URL}/patient/prescreption-success`,
+      cancel_url: `${process.env.SERVER_URL}/patient/fail`,
+    });
+
+    res.status(200).json({ url: session.url });
+  } catch (error) {
+    console.error("Error:", error);
+    return res.status(500).json({ message: "Server Error" });
+  }
+};
+
+const payPrescriptionWallet = async (req, res) => {
+  try {
+    const presId = req.body.id;
+    const prescription = await prescriptionModel.findById(presId);
+    if (!prescription) {
+      return res.status(404).json({ message: "prescreption not found" });
+    }
+    const price = await calculatePrescriptionPrice(prescription);
+    const patient = await patientModel.findById(req.user.id);
+    if (patient.wallet < price) {
+      return res.status(404).json({ message: "Insufficient funds in wallet." });
+    }
+    patient.wallet -= price;
+    await patient.save();
+    prescription.status = "Filled";
+    await prescription.save();
+
+    return res.status(200).json(prescription);
+  } catch (error) {
+    console.error("Error:", error);
+    return res.status(500).json({ message: "Server Error" });
+  }
+};
+
+const handlePrescreptionStripe = async (req, res) => {
+  try {
+    const presId = req.body.id;
+    const prescription = await prescriptionModel.findById(presId);
+    if (!prescription) {
+      return res.status(404).json({ message: "prescreption not found" });
+    }
+    prescription.status = "Filled";
+    await prescription.save();
+    return res.status(200).json(prescription);
+  } catch (error) {
+    console.error("Error:", error);
+    return res.status(500).json({ message: "Server Error" });
+  }
+};
+
 module.exports = {
   selectPrescription,
   viewFamilyMembers,
@@ -2113,4 +2206,7 @@ module.exports = {
   cancelAppointmentPatient,
   reqFollowUpForMyselfOrFam,
   rescheduleAppForMyselfOrFam,
+  payPrescriptionStripe,
+  payPrescriptionWallet,
+  handlePrescreptionStripe,
 };

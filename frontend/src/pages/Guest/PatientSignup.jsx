@@ -11,6 +11,7 @@ import { logoutDoctor } from "../../state/loginDoctorReducer";
 import { logoutAdmin } from "../../state/loginAdminReducer";
 import { Card, Image } from "react-bootstrap";
 import family from "../../Assets/Guest/family.jpg";
+import AppNavbarGuest from "../../components/AppNavigation/AppNavbarGuest";
 
 function PatientSignup() {
   const dispatch = useDispatch();
@@ -21,7 +22,7 @@ function PatientSignup() {
   }, []);
   return (
     <div>
-      <AppNavbar hamburgerMenu={<GuestBurgerMenu />} />
+      <AppNavbarGuest flag={false} />
       <Container fluid className="bg-light pt-3 mt-2">
         <Container className="bg-white px-5 py-4 d-flex align-items-center justify-content-center">
           <div className="d-flex w-100 align-items-center">

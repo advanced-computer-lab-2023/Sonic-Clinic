@@ -301,6 +301,7 @@ app.post(
   requireAuth,
   rescheduleAppForMyselfOrFam
 );
+
 app.post("/rescheduleAppDoc", requireAuth, rescheduleAppDoc);
 // app.post("/addMedicineToPrescription", requireAuth, addMedicineToPrescription);
 // app.post(
@@ -310,6 +311,29 @@ app.post("/rescheduleAppDoc", requireAuth, rescheduleAppDoc);
 // );
 // app.post("/updatePrescription", requireAuth, updatePrescription);
 // app.post("/addDosage", requireAuth, addDosage);
+=======
+server.post("/rescheduleAppDoc", requireAuth, rescheduleAppDoc);
+server.post(
+  "/addMedicineToPrescription",
+  requireAuth,
+  addMedicineToPrescription
+);
+server.post(
+  "/removeMedicineFromPrescription",
+  requireAuth,
+  removeMedicineFromPrescription
+);
+server.post(
+  "/updatePrescription",
+  requireAuth,
+  updatePrescription
+);
+server.post(
+  "/addDosage",
+  requireAuth,
+  addDosage
+);
+
 
 //////////////////////////////////////////// GET/////////////////////////////////////
 //admin
@@ -379,6 +403,7 @@ app.post(
 //app.post("/payPrescriptionStripe", requireAuth, payPrescriptionStripe);
 // app.post("/payPrescriptionWallet", requireAuth, payPrescriptionWallet);
 // app.post("/handlePrescreptionStripe", requireAuth, handlePrescreptionStripe);
+
 //doctor
 app.get("/viewAvailableSlots", requireAuth, viewAvailableSlots);
 app.post("/selectPatient", requireAuth, selectPatient);

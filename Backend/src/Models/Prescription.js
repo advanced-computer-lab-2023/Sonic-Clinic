@@ -4,9 +4,9 @@ const Schema = mongoose.Schema;
 const prescriptionSchema = new Schema(
   {
     medicine: {
-      type: Array,
+      type: [Object],
       required: true,
-      unique: [true, "This medicine is already created"],
+      //  unique: [true, "This medicine is already created"],
     },
     doctorID: {
       type: String,

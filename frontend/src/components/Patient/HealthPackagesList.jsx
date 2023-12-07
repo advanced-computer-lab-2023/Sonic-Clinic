@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Button, Card, Col, Container, Row, Spinner } from "react-bootstrap";
 import { useSelector, useDispatch } from "react-redux";
 import { updatePatientPackage } from "../../state/loginPatientReducer";
+import { useNavigate } from "react-router-dom";
 
 function HealthPackagesList({ refreshFlag }) {
   const [loading, setLoading] = useState(true);
@@ -58,6 +59,7 @@ function HealthPackagesList({ refreshFlag }) {
   };
 
   const NeededData = responseData;
+  const navigate = useNavigate();
 
   return (
     <>
@@ -86,6 +88,19 @@ function HealthPackagesList({ refreshFlag }) {
           }}
         >
           Your Health Packages
+        </div>
+        <div
+          className=" d-flex justify-content-center align-items-center"
+          style={{ cursor: "default", color: "#ADB5BD", fontSize: "1.1rem" }}
+        >
+          Explore Health Packages{"  "}
+          <div
+            className="  link-decoration "
+            style={{ cursor: "pointer", marginLeft: "0.5rem" }}
+            onClick={() => navigate("/patient/health-packages")}
+          >
+            <strong>Here</strong>
+          </div>
         </div>
         {NeededData &&
           NeededData.map((member, index) => (

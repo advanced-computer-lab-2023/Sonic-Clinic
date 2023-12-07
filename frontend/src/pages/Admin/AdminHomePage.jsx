@@ -42,6 +42,7 @@ export default function AdminHomePage() {
             flexDirection: "row",
             alignItems: "center",
             margin: "20px",
+            marginTop: "-3.5rem",
           }}
         >
           <Waypoint

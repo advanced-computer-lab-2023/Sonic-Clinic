@@ -228,16 +228,6 @@ function DrShowAppointments({ fetchData, appointments, loading }) {
                       >
                         {appointment.patient?.name}
                       </Card.Title>
-                      <Card.Text>
-                        <div
-                          style={{
-                            marginBottom: "1rem",
-                            fontSize: "1rem",
-                          }}
-                        >
-                          {appointment.description}
-                        </div>
-                      </Card.Text>
                     </Card.Body>
                   </Col>
                   <Col lg={4}>

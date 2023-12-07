@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useState } from "react";
-import { Form, Button, Col } from "react-bootstrap";
+import { Form, Button, Col, Dropdown } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { addFamilyMemberState } from "../../state/loginPatientReducer";
 
@@ -16,11 +16,20 @@ function AddExistingFamilyMemberForm({ onRefresh, toggleForm }) {
   });
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
+    // Check if e.target is available (for regular form elements)
+    if (e.target) {
+      const { name, value } = e.target;
+      setFormData({
+        ...formData,
+        [name]: value,
+      });
+    } else {
+      // For the Dropdown, manually set the name
+      setFormData({
+        ...formData,
+        relation: e, // Assuming 'e' is the selected value from the Dropdown
+      });
+    }
   };
   const dispatch = useDispatch();
   const handleClick = async (e) => {
@@ -136,18 +145,22 @@ function AddExistingFamilyMemberForm({ onRefresh, toggleForm }) {
         </Form.Group>
         <Form.Group controlId="relation">
           <Form.Label>Relation</Form.Label>
-          <Form.Control
-            as="select"
-            name="relation"
-            value={formData.relation}
-            onChange={handleChange}
-            required
-          >
-            <option>Husband</option>
-            <option>Wife</option>
-            <option>Child</option>
-          </Form.Control>
+          <Dropdown onSelect={handleChange}>
+            <Dropdown.Toggle
+              className="custom-dropdown-toggle"
+              id="dropdown-relation"
+            >
+              {formData.relation || "Select Relation"}
+            </Dropdown.Toggle>
+
+            <Dropdown.Menu className="w-100">
+              <Dropdown.Item eventKey="Husband">Husband</Dropdown.Item>
+              <Dropdown.Item eventKey="Wife">Wife</Dropdown.Item>
+              <Dropdown.Item eventKey="Child">Child</Dropdown.Item>
+            </Dropdown.Menu>
+          </Dropdown>
         </Form.Group>
+
         <Button
           variant="primary"
           type="submit"
