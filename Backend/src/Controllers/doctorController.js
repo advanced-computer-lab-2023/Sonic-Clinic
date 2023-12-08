@@ -226,7 +226,21 @@ const selectPatient = async (req, res) => {
 
 const addPrescription = async (req, res) => {
   try {
-    const newPrescription = await PrescriptionModel.create(req.body);
+    const patientId = req.body.id;
+    const { medicine, patientID, date } = req.body;
+    const doctor = await doctorModel.findById(req.user.id);
+    const newPrescription = await PrescriptionModel.create({
+      medicine,
+      doctorID: req.user.id,
+      patientID: patientID,
+      date,
+      status: "Not filled",
+      date,
+      docName: doctor.name,
+    });
+
+    const patient = await patientModel.findById(patientId);
+    patient.prescreptions.add(newPrescription);
     console.log("Prescription Created!");
     res.status(200).send(newPrescription);
   } catch (error) {
@@ -993,12 +1007,14 @@ const updatePrescription = async (req, res) => {
     const doctorID = req.user.id;
     const { prescriptionID, medicines } = req.body;
 
-    
-    const doctor = await doctorModel.findById(doctorID); 
-    const existingPrescription = await prescriptionModel.findById(prescriptionID);
+    const doctor = await doctorModel.findById(doctorID);
+    const existingPrescription =
+      await prescriptionModel.findById(prescriptionID);
     const medicinesArray = [];
-    if (!existingPrescription.doctorID===doctorID) {
-      return res.status(400).json({ error: `You can not edit in this prescription` });
+    if (!existingPrescription.doctorID === doctorID) {
+      return res
+        .status(400)
+        .json({ error: `You can not edit in this prescription` });
     }
 
     if (!existingPrescription) {
@@ -1011,12 +1027,13 @@ const updatePrescription = async (req, res) => {
       if (!existingMedicine) {
         return res.status(400).json({ error: `Medicine not found` });
       }
-     
+
       medicinesArray.push(existingMedicine);
-    } 
+    }
     // Update prescription properties with new values
-    existingPrescription.medicine = existingPrescription.medicine.concat(medicinesArray);
-      
+    existingPrescription.medicine =
+      existingPrescription.medicine.concat(medicinesArray);
+
     // Save the updated prescription
     await existingPrescription.save();
 
@@ -1034,9 +1051,12 @@ const addDosage = async (req, res) => {
 
     // Fetch doctorName from req.user.name
     const doctor = await doctorModel.findById(doctorID);
-    const existingPrescription = await prescriptionModel.findById(prescriptionID);
-    if (!existingPrescription.doctorID===doctorID) {
-      return res.status(400).json({ error: `You can not edit in this prescription` });
+    const existingPrescription =
+      await prescriptionModel.findById(prescriptionID);
+    if (!existingPrescription.doctorID === doctorID) {
+      return res
+        .status(400)
+        .json({ error: `You can not edit in this prescription` });
     }
 
     if (!existingPrescription) {
@@ -1050,7 +1070,9 @@ const addDosage = async (req, res) => {
 
     // Check if the medicine with the specified medicineId exists in the prescription
     if (medicineIndex === -1) {
-      return res.status(400).json({ error: `Medicine not found in the prescription` });
+      return res
+        .status(400)
+        .json({ error: `Medicine not found in the prescription` });
     }
 
     // Update the dosage of the found medicine
@@ -1066,7 +1088,6 @@ const addDosage = async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
-
 
 module.exports = {
   selectPatient,

@@ -1319,11 +1319,14 @@ const addAppointmentForMyselfOrFam = async (req, res) => {
       patient = await familyMemberModel.findById(famID);
     }
     if (!famID) {
-      doctor.patients.push(patient._id);
+      if (!doctor.patients.includes(patient._id)) {
+        doctor.patients.push(patient._id);
+      }
     } else {
-      doctor.patients.push(famID);
+      if (!doctor.patients.includes(famID)) {
+        doctor.patients.push(famID);
+      }
     }
-
     await doctor.save();
 
     notificationByMail(
