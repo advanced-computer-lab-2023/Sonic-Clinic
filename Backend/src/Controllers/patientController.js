@@ -1319,11 +1319,14 @@ const addAppointmentForMyselfOrFam = async (req, res) => {
       patient = await familyMemberModel.findById(famID);
     }
     if (!famID) {
-      doctor.patients.push(patient._id);
+      if (!doctor.patients.includes(patient._id)) {
+        doctor.patients.push(patient._id);
+      }
     } else {
-      doctor.patients.push(famID);
+      if (!doctor.patients.includes(famID)) {
+        doctor.patients.push(famID);
+      }
     }
-
     await doctor.save();
 
     notificationByMail(
@@ -2075,8 +2078,7 @@ const calculatePrescriptionPrice = async (prescription) => {
     const medicines = prescription.medicine;
     let totalPrice = 0;
     for (const medicineItem of medicines) {
-      const medicineId = medicineItem._id;
-      const medicine = await medicineModel.findById(medicineId);
+      const medicine = await medicineModel.findOne({ name: medicineItem[0] });
       if (medicine) {
         totalPrice += medicine.price;
       }

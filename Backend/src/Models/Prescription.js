@@ -4,7 +4,7 @@ const Schema = mongoose.Schema;
 const prescriptionSchema = new Schema(
   {
     medicine: {
-      type: [Object],
+      type: [[String, String, String]],
       required: true,
       //  unique: [true, "This medicine is already created"],
     },
@@ -21,7 +21,7 @@ const prescriptionSchema = new Schema(
       required: true,
     },
     date: {
-      type: Date,
+      type: String,
       required: true,
     },
     doctorName: {
