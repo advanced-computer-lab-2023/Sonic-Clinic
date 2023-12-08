@@ -226,21 +226,28 @@ const selectPatient = async (req, res) => {
 
 const addPrescription = async (req, res) => {
   try {
-    const patientId = req.body.id;
-    const { medicine, patientID, dosage } = req.body;
+    // const patientId = req.body.id;
+    const { medicine, patientID } = req.body;
+    const date = new Date();
+    const dateString =
+      date.getFullYear() +
+      "-" +
+      ("0" + (date.getMonth() + 1)).slice(-2) +
+      "-" + // Months are 0-indexed
+      ("0" + date.getDate()).slice(-2); // Add leading zero for single digit dates
+
     const doctor = await doctorModel.findById(req.user.id);
     const newPrescription = await PrescriptionModel.create({
       medicine,
       doctorID: req.user.id,
       patientID: patientID,
-      date,
+      date: dateString,
       status: "Not filled",
-      date,
-      docName: doctor.name,
+      doctorName: doctor.name,
     });
-
-    const patient = await patientModel.findById(patientId);
-    patient.prescreptions.add(newPrescription);
+    const patient = await patientModel.findById(patientID);
+    patient.prescreptions.push(newPrescription);
+    await patient.save();
     console.log("Prescription Created!");
     res.status(200).send(newPrescription);
   } catch (error) {

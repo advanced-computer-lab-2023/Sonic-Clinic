@@ -323,16 +323,42 @@ function DrShowPatients({
     addMedicineToPrescription();
   };
 
-  const handleSubmitPrescription = () => {
-    console.log("Prescription submitted:", prescription);
+  const handleSubmitPrescription = async () => {
+    try {
+      // Map through the prescription array and convert each object's values to an array of strings
+      const prescriptionValues = prescription.map((item) => [
+        String(item.name),
+        String(item.price),
+        String(item.dosage),
+      ]);
 
-    setPrescription([]);
-    setSelectedMedicine(null);
-    setDosage("");
-    setNewMedicineName("");
-    setNewMedicineDosage("");
+      const response = await axios.post("/AddPrescription", {
+        medicine: prescriptionValues, // Now sending an array of arrays of strings
+        patientID: selectedPatient,
+        // Add any other necessary prescription data here
+      });
 
-    handleClose();
+      if (response.status === 200) {
+        console.log("Prescription saved successfully:", response.data);
+        // Clear the prescription form if the post is successful
+        setPrescription([]);
+        setSelectedMedicine(null);
+        setDosage("");
+        setNewMedicineName("");
+        setNewMedicineDosage("");
+      } else {
+        // Handle any statuses that indicate a failed request
+        console.error(
+          "Prescription submission failed with status:",
+          response.status
+        );
+      }
+    } catch (error) {
+      // Handle errors from the POST request here
+      console.error("Error submitting prescription:", error);
+    }
+
+    handleClose(); // Assuming this closes a modal or similar
   };
 
   return (
