@@ -227,7 +227,7 @@ const selectPatient = async (req, res) => {
 const addPrescription = async (req, res) => {
   try {
     const patientId = req.body.id;
-    const { medicine, patientID, date } = req.body;
+    const { medicine, patientID, dosage } = req.body;
     const doctor = await doctorModel.findById(req.user.id);
     const newPrescription = await PrescriptionModel.create({
       medicine,
