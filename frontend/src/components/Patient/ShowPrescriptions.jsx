@@ -1,9 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { Card, Col, Row, Image, Spinner } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCalendar, faCheckCircle } from "@fortawesome/free-solid-svg-icons";
+import {
+  faAnglesRight,
+  faCalendar,
+  faCheckCircle,
+  faChevronCircleRight,
+  faChevronRight,
+  faCircleInfo,
+} from "@fortawesome/free-solid-svg-icons";
 import prescriptionImg from "../../Assets/Prescription.jpg";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { setPrescriptionData } from "../../state/prescriptionIdReducer";
 import axios from "axios";
@@ -156,93 +163,115 @@ function ShowPrescriptions() {
             .padStart(2, "0")}/${prescriptionDate.getFullYear()}`;
 
           return (
-            <a
-              onClick={() => handleCard(prescription, index + 1)}
-              key={prescription.prescriptionId}
-              className="text-decoration-none"
+            // <a
+            //   onClick={() => handleCard(prescription, index + 1)}
+            //   key={prescription.prescriptionId}
+            //   className="text-decoration-none"
+            // >
+            <Card
+              style={{
+                borderRadius: "10px",
+                boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                transition: "transform 0.3s",
+                marginBottom: "2rem",
+                marginRight: "2rem",
+                height: "12rem",
+              }}
             >
-              <Card
-                style={{
-                  cursor: "pointer",
-                  borderRadius: "10px",
-                  boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-                  transition: "transform 0.3s",
-                  marginBottom: "2rem",
-                  marginRight: "2rem",
-                  height: "12rem",
-                }}
-              >
-                <Row>
-                  <Col lg={1}>
+              <Row>
+                <Col
+                  lg={1}
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    backgroundColor: getStatusColor(prescription.status),
+                    borderRadius: "10px 0 0 10px",
+                    height: "12rem",
+                  }}
+                >
+                  <FontAwesomeIcon
+                    icon={getStatusIcon(prescription.status)}
+                    style={{
+                      fontSize: "1.5em",
+                      color: "white",
+                    }}
+                  />
+                </Col>
+                <Col lg={4}>
+                  <Card.Body>
+                    <Card.Title
+                      style={{
+                        marginTop: "1.5rem",
+                        fontSize: "1.5rem",
+                        fontWeight: "bold",
+                        color: "#212529",
+                      }}
+                    >
+                      Dr. {prescription.doctorName}
+                    </Card.Title>
                     <div
                       style={{
-                        display: "flex",
-                        flexDirection: "column", // Vertical arrangement
-                        justifyContent: "center",
-                        alignItems: "center",
-                        backgroundColor: getStatusColor(prescription.status),
-                        borderRadius: "10px 0 0 10px",
-                        height: "12rem",
+                        marginBottom: "1rem",
+                        fontSize: "1.2rem",
+                        color: "#099BA0",
+                      }}
+                    >
+                      Prescription {index + 1}
+                    </div>
+                  </Card.Body>
+                </Col>
+                <Col lg={4}>
+                  <Card.Body className="p-4">
+                    <Card.Text
+                      style={{
+                        fontSize: "1.1rem",
                       }}
                     >
                       <FontAwesomeIcon
-                        icon={getStatusIcon(prescription.status)}
+                        icon={faCalendar}
                         style={{
-                          fontSize: "1.5em",
-                          color: "white",
+                          marginLeft: "-1.5rem",
+                          marginTop: "3.3rem",
                         }}
                       />
-                    </div>
-                  </Col>
-                  <Col lg={4}>
-                    <Card.Body>
-                      <Card.Title
-                        style={{
-                          marginTop: "1.5rem",
-                          fontSize: "1.5rem",
-                          fontWeight: "bold",
-                          color: "#212529",
-                          marginBottom: "1rem",
-                        }}
-                      >
-                        Dr. {prescription.doctorName}
-                      </Card.Title>
-                      <div
-                        style={{
-                          marginBottom: "1rem",
-                          fontSize: "1.2rem",
-                          color: "#099BA0 ",
-                        }}
-                      >
-                        Prescription {index + 1}
-                      </div>
-                    </Card.Body>
-                  </Col>
-                  <Col lg={4}>
-                    <Card.Body className="p-4">
-                      <Card.Text>
-                        <div
-                          style={{
-                            marginTop: "2rem",
-                            marginBottom: "1rem",
-                            fontSize: "1.1rem",
-                          }}
-                        >
-                          <FontAwesomeIcon
-                            icon={faCalendar}
-                            style={{
-                              marginRight: "0.5rem",
-                              fontSize: "1.1rem",
-                            }}
-                          />
-                          {formattedDate}
-                        </div>
-                      </Card.Text>
-                    </Card.Body>
-                  </Col>
-                </Row>
-              </Card>
-            </a>
+                      {formattedDate}
+                    </Card.Text>
+                  </Card.Body>
+                </Col>
+                <Col
+                  lg={3}
+                  style={{
+                    display: "flex",
+                    justifyContent: "flex-end",
+                    alignItems: "flex-end",
+                    paddingBottom: "1rem",
+                    marginLeft: "-1rem",
+                    height: "12rem", // This ensures the column stretches to the bottom of the card
+                  }}
+                >
+                  <Link
+                    style={{
+                      fontSize: "1.3rem",
+                      color: "#05afb9",
+                      textDecoration: "none",
+                    }}
+                  >
+                    View Details
+                    <FontAwesomeIcon
+                      icon={faAnglesRight}
+                      style={{
+                        marginLeft: "0.5rem",
+                        fontSize: "1.3rem",
+                      }}
+                    />
+                  </Link>
+                </Col>
+              </Row>
+            </Card>
+
+            // </a>
           );
         })}
     </div>
