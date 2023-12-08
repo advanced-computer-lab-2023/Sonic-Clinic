@@ -34,7 +34,6 @@ function DrShowPatients({
   const [selectedPatient, setSelectedPatient] = useState(null);
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const [uploadVisible, setUploadVisible] = useState(false);
-
   const [prescriptionVisible, setPrescriptionVisible] = useState(false);
   const [addingPrescription, setAddingPrescription] = useState("adding");
   const [selectedPatientPrescription, setSelectedPatientPrescription] =
@@ -310,7 +309,8 @@ function DrShowPatients({
   const addMedicineToPrescription = () => {
     if (selectedMedicine && dosage) {
       const medicineItem = {
-        medicine: selectedMedicine,
+        name: selectedMedicine.name,
+        price: selectedMedicine.price,
         dosage,
       };
       setPrescription([...prescription, medicineItem]);
@@ -324,17 +324,14 @@ function DrShowPatients({
   };
 
   const handleSubmitPrescription = () => {
-    // Handle submitting the prescription, you can do whatever you want here.
-    // For example, you can send the prescription to the server.
-    // Reset the state or close the modal as needed.
     console.log("Prescription submitted:", prescription);
-    // Reset the state
+
     setPrescription([]);
     setSelectedMedicine(null);
     setDosage("");
     setNewMedicineName("");
     setNewMedicineDosage("");
-    // Close the modal
+
     handleClose();
   };
 
@@ -631,7 +628,7 @@ function DrShowPatients({
                 <ul>
                   {prescription.map((item, index) => (
                     <li key={index}>
-                      {item.medicine.name} - {item.dosage}
+                      {item.name} - {item.dosage}
                     </li>
                   ))}
                 </ul>
