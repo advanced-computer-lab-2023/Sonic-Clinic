@@ -2078,8 +2078,7 @@ const calculatePrescriptionPrice = async (prescription) => {
     const medicines = prescription.medicine;
     let totalPrice = 0;
     for (const medicineItem of medicines) {
-      const medicineId = medicineItem._id;
-      const medicine = await medicineModel.findById(medicineId);
+      const medicine = await medicineModel.findOne({ name: medicineItem[0] });
       if (medicine) {
         totalPrice += medicine.price;
       }
