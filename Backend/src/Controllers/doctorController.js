@@ -1054,7 +1054,7 @@ const updatePrescription = async (req, res) => {
 const addDosage = async (req, res) => {
   try {
     const doctorID = req.user.id;
-    const { prescriptionID, medicineId, dosage } = req.body;
+    const { prescriptionID, medicineName, dosage } = req.body;
 
     // Fetch doctorName from req.user.name
     const doctor = await doctorModel.findById(doctorID);
@@ -1072,7 +1072,7 @@ const addDosage = async (req, res) => {
 
     // Find the index of the medicine with the specified medicineId in the prescription
     const medicineIndex = existingPrescription.medicine.findIndex(
-      (medicine) => medicine._id.toString() === medicineId
+      (medicine) => medicine.name.toString() === medicineName
     );
 
     // Check if the medicine with the specified medicineId exists in the prescription
