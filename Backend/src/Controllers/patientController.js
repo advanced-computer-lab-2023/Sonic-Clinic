@@ -1545,7 +1545,6 @@ const payAppointmentWallet = async (req, res) => {
         await doctor.save();
       }
     } else {
-      console.log("4");
       const patient = await patientModel.findById(req.user.id);
       const pName = patient.name;
       notificationPatient =
@@ -1579,12 +1578,15 @@ const payAppointmentWallet = async (req, res) => {
       status,
       time,
     });
-
     await appointment.save();
     if (!famID) {
-      doctor.patients.push(patient._id);
+      if (!doctor.patients.includes(patient._id)) {
+        doctor.patients.push(patient._id);
+      }
     } else {
-      doctor.patients.push(famID);
+      if (!doctor.patients.includes(famID)) {
+        doctor.patients.push(famID);
+      }
     }
 
     await doctor.save();
