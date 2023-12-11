@@ -100,7 +100,7 @@ const {
   addMedicineToPrescription,
   removeMedicineFromPrescription,
   updatePrescription,
-  addDosage,
+  
 } = require("./Controllers/doctorController");
 
 ///////////////////////////////adminstratorController//////////////////////////////////////
@@ -319,7 +319,7 @@ app.post(
   removeMedicineFromPrescription
 );
 app.post("/updatePrescription", requireAuth, updatePrescription);
-app.post("/addDosage", requireAuth, addDosage);
+
 
 //////////////////////////////////////////// GET/////////////////////////////////////
 //admin

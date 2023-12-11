@@ -1012,12 +1012,12 @@ const removeMedicineFromPrescription = async (req, res) => {
 const updatePrescription = async (req, res) => {
   try {
     const doctorID = req.user.id;
-    const { prescriptionID, medicines } = req.body;
+    const { prescriptionID, medicine } = req.body;
 
     const doctor = await doctorModel.findById(doctorID);
     const existingPrescription =
       await prescriptionModel.findById(prescriptionID);
-    const medicinesArray = [];
+   
     if (!existingPrescription.doctorID === doctorID) {
       return res
         .status(400)
@@ -1026,20 +1026,9 @@ const updatePrescription = async (req, res) => {
 
     if (!existingPrescription) {
       return res.status(400).json({ error: `Prescription not found` });
-    }
-
-    for (const medicineID of medicines) {
-      const existingMedicine = await medicineModel.findById(medicineID);
-
-      if (!existingMedicine) {
-        return res.status(400).json({ error: `Medicine not found` });
-      }
-
-      medicinesArray.push(existingMedicine);
     }
     // Update prescription properties with new values
-    existingPrescription.medicine =
-      existingPrescription.medicine.concat(medicinesArray);
+    existingPrescription.medicine =medicine;
 
     // Save the updated prescription
     await existingPrescription.save();
@@ -1051,50 +1040,8 @@ const updatePrescription = async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
-const addDosage = async (req, res) => {
-  try {
-    const doctorID = req.user.id;
-    const { prescriptionID, medicineName, dosage } = req.body;
 
-    // Fetch doctorName from req.user.name
-    const doctor = await doctorModel.findById(doctorID);
-    const existingPrescription =
-      await prescriptionModel.findById(prescriptionID);
-    if (!existingPrescription.doctorID === doctorID) {
-      return res
-        .status(400)
-        .json({ error: `You can not edit in this prescription` });
-    }
-
-    if (!existingPrescription) {
-      return res.status(400).json({ error: `Prescription not found` });
-    }
-
-    // Find the index of the medicine with the specified medicineId in the prescription
-    const medicineIndex = existingPrescription.medicine.findIndex(
-      (medicine) => medicine.name.toString() === medicineName
-    );
-
-    // Check if the medicine with the specified medicineId exists in the prescription
-    if (medicineIndex === -1) {
-      return res
-        .status(400)
-        .json({ error: `Medicine not found in the prescription` });
-    }
-
-    // Update the dosage of the found medicine
-    existingPrescription.medicine[medicineIndex].dosage = dosage;
-
-    // Save the updated prescription
-    await existingPrescription.save();
-
-    // Send a success response
-    res.status(200).json(existingPrescription);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Internal Server Error" });
-  }
-};
+ 
 
 module.exports = {
   selectPatient,
@@ -1126,5 +1073,5 @@ module.exports = {
   addMedicineToPrescription,
   removeMedicineFromPrescription,
   updatePrescription,
-  addDosage,
+  
 };
