@@ -73,10 +73,22 @@ const DoctorAppointments = ({ onBookAppointment }) => {
     setDescription("");
     setSelectedAppointment(null);
   };
-  const handleFamilyMemberChange = (e) => {
-    const selectedId = e.target.value;
-    console.log("aho" + selectedId);
+  const [selectedDisplayText, setSelectedDisplayText] =
+    useState("Select Member");
+  const handleFamilyMemberChange = (selectedId) => {
+    console.log("Selected ID: " + selectedId);
     setSelectedFamilyMemberId(selectedId === "myself" ? "" : selectedId);
+
+    if (selectedId === "myself") {
+      setSelectedDisplayText("Myself");
+    } else {
+      const selectedMember = familyMembers.find(
+        (member) => member[0] === selectedId
+      );
+      setSelectedDisplayText(
+        selectedMember ? selectedMember[1] : "Select Member"
+      );
+    }
   };
 
   const handleBookClick = (appointment) => {
@@ -270,19 +282,18 @@ const DoctorAppointments = ({ onBookAppointment }) => {
               slidesPerView={2.5}
               spaceBetween={10}
               modules={[Pagination]}
-              className="mySwiper custom-swipper px-5"
+              className="mySwiper custom-swipper px-5 w-100"
             >
               {neededData &&
                 neededData.map((appointment) => (
-                  <SwiperSlide>
-                    {/* <a onClick={() => handleCard(appointment)}> */}
+                  <SwiperSlide style={{ height: "200px" }}>
                     <Card
                       style={{
                         borderRadius: "0.625rem",
                         border:
-                          " 1px solid var(--components-card-border, rgba(0, 0, 0, 0.17))",
-                        background: " var(--gray-white, #FFF)",
-                        minHeight: "7rem",
+                          "1px solid var(--components-card-border, rgba(0, 0, 0, 0.17))",
+                        background: "var(--gray-white, #FFF)",
+                        minHeight: "100%",
                         cursor: "pointer",
                       }}
                       className="d-flex align-items-start justify-content-start"
@@ -370,9 +381,8 @@ const DoctorAppointments = ({ onBookAppointment }) => {
                       className="custom-dropdown-toggle"
                       id="dropdown-booking-name"
                     >
-                      {getDisplayText()}
+                      {selectedDisplayText}
                     </Dropdown.Toggle>
-
                     <Dropdown.Menu className="w-100">
                       <Dropdown.Item eventKey="myself">Myself</Dropdown.Item>
                       {familyMembers.map((member) => (

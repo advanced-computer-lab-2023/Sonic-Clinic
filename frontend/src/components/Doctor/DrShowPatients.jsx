@@ -518,8 +518,6 @@ function DrShowPatients({
     }
   };
 
-  console.log("EDITED", editedPrescription);
-
   const handleEditDosageChange = (medicineName, newDosage) => {
     if (editedPrescription) {
       const updatedMedicine = editedPrescription.medicine.map((med) =>
@@ -529,6 +527,31 @@ function DrShowPatients({
         ...editedPrescription,
         medicine: updatedMedicine,
       });
+    }
+  };
+
+  const handleDownloadPrescription = async () => {
+    console.log("GGG", selectedViewPrescription._id);
+    const queryParameters = new URLSearchParams({
+      PrescriptionId: selectedViewPrescription._id,
+    }).toString();
+    const url = `/downloadPrescriptions?${queryParameters}`;
+    try {
+      const response = await axios.post(url, null);
+      if (response.status === 200) {
+        // setPatients(response.data.doctorsWithSessionPrice);
+      } else {
+        console.log("Server error");
+      }
+    } catch (error) {
+      //fix error messages
+      if (error.response && error.response.status === 409) {
+        // setError("Error occured");
+      } else {
+        // setError(
+        //   "An error occurred while adding admin. Please try again later"
+        // );
+      }
     }
   };
 
@@ -738,7 +761,7 @@ function DrShowPatients({
                             <ListGroup className="d-flex w-100">
                               {existingPrescriptions.map(
                                 (prescription, index) => (
-                                  <Card className="d-flex justify-content-between  w-100 p-2">
+                                  <Card className="d-flex justify-content-between  w-100 p-2 mb-3">
                                     <div>
                                       <span
                                         style={{
@@ -1105,7 +1128,7 @@ function DrShowPatients({
                 </div>
                 <div className="d-flex align-items-center justify-content-center">
                   <Button
-                    // onClick={handleCloseModal}
+                    onClick={handleDownloadPrescription}
                     style={{ marginTop: "10px", marginLeft: "10px" }}
                   >
                     Download PDF
