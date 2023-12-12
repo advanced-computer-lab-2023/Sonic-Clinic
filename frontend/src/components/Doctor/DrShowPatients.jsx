@@ -265,7 +265,7 @@ function DrShowPatients({
     setPrescriptionVisible(false);
     setSelectedPatientPrescription(null);
     setSelectedMedicine(null);
-    setSearchTermMedicine("");
+    setSearchAddMedicine("");
     setDosage("");
     setPrescription([]); // Close the modal first
   };
@@ -284,29 +284,29 @@ function DrShowPatients({
   const [selectedMedicine, setSelectedMedicine] = useState(null);
   const [dosage, setDosage] = useState(null);
   // State for the search term
-  const [searchTermMedicine, setSearchTermMedicine] = useState("");
 
-  // State for filtered medicines
-  const [filteredMedicines, setFilteredMedicines] =
-    useState(neededMedicineData);
+  const [filteredMedicines, setFilteredMedicines] = useState(medicineData);
+  const [searchAddMedicine, setSearchAddMedicine] = useState(""); // Updated the variable name
 
-  // Function to filter medicines based on search term
-  const filterMedicines = () => {
-    const filtered = neededMedicineData.filter((medicine) =>
-      medicine.name.toLowerCase().startsWith(searchTermMedicine.toLowerCase())
+  const filterMedicines = (searchTerm) => {
+    setSearchAddMedicine(searchTerm); // Updated the state variable name
+
+    const filteredResults = medicineData.filter((medicine) =>
+      medicine.name.toLowerCase().includes((searchTerm || "").toLowerCase())
     );
-    setFilteredMedicines(filtered);
+
+    setFilteredMedicines(filteredResults);
+  };
+
+  const handleDropdownSelect = (medicine) => {
+    setSelectedMedicine(medicine);
+    setSearchAddMedicine(""); // Clear the search term when an item is selected
   };
 
   // Update filtered medicines whenever the search term changes
   useEffect(() => {
     filterMedicines();
-  }, [searchTermMedicine, neededMedicineData]);
-
-  const handleDropdownSelect = (medicine) => {
-    setSelectedMedicine(medicine);
-    setSearchTerm(""); // Clear the search term when an item is selected
-  };
+  }, [searchAddMedicine, neededMedicineData]);
 
   const [prescription, setPrescription] = useState([]);
   const [showAddNewMedicineForm, setShowAddNewMedicineForm] = useState(false);
@@ -383,7 +383,6 @@ function DrShowPatients({
     setShowViewSelectedPrescription(false);
     setIsEditMode(false);
     setSelectedMedicine(null);
-    setSearchTermMedicine("");
     setDosage("");
   };
 
@@ -417,23 +416,41 @@ function DrShowPatients({
   const handleEditClick = async () => {
     if (isEditMode) {
       // Cancel edit and reset to original prescription
-      await fetchMedicineData();
+
       setIsEditMode(false);
       setEditedPrescription(null);
     } else {
       // Enter edit mode and initialize editedPrescription with the current prescription
+      await fetchMedicineData();
       setIsEditMode(true);
       setEditedPrescription({ ...selectedViewPrescription });
     }
   };
-  const handleSaveChanges = () => {
-    // Implement the logic/API call to save the edited prescription
-    console.log("Saving changes:", editedPrescription);
 
-    // Exit edit mode and update the selectedViewPrescription
-    setIsEditMode(false);
-    setSelectedViewPrescription(editedPrescription);
+  const handleSaveChanges = async () => {
+    try {
+      const response = await axios.post("/updatePrescription ", {
+        medicine: editedPrescription.medicine, // Now sending an array of arrays of strings
+        prescriptionID: editedPrescription._id,
+        // Add any other necessary prescription data here
+      });
+
+      if (response.status === 200) {
+        fetchData();
+        setIsEditMode(false);
+        setSelectedViewPrescription(editedPrescription);
+      } else {
+        // Handle any statuses that indicate a failed request
+        console.error("Prescription edit failed with status:", response.status);
+      }
+    } catch (error) {
+      // Handle errors from the POST request here
+      console.error("Error editing prescription:", error);
+    }
+
+    handleClose(); // Assuming this closes a modal or similar
   };
+
   const handleSaveDosage = async (medicineName) => {
     // Here, implement the API call or logic to save the updated dosage
     console.log(`Saving new dosage for ${medicineName}: ${editedDosage}`);
@@ -529,28 +546,50 @@ function DrShowPatients({
       });
     }
   };
-
   const handleDownloadPrescription = async () => {
-    console.log("GGG", selectedViewPrescription._id);
     const queryParameters = new URLSearchParams({
-      PrescriptionId: selectedViewPrescription._id,
+      id: selectedViewPrescription._id,
     }).toString();
     const url = `/downloadPrescriptions?${queryParameters}`;
     try {
-      const response = await axios.post(url, null);
+      const response = await axios.post(url, null, { responseType: "blob" });
+      console.log("Response Status:", response.status);
+
       if (response.status === 200) {
-        // setPatients(response.data.doctorsWithSessionPrice);
+        // Create a Blob from the response data
+        const blob = new Blob([response.data], { type: "application/pdf" });
+
+        // Create a Blob URL for the PDF
+        const blobUrl = window.URL.createObjectURL(blob);
+        console.log("Blob URL:", blobUrl);
+
+        // Create an anchor element to trigger the download
+        const a = document.createElement("a");
+        a.href = blobUrl;
+        a.download = "prescription.pdf"; // You can set the desired filename
+        document.body.appendChild(a);
+        console.log("Anchor Element:", a);
+
+        // Programmatically click the anchor element to trigger the download
+        a.click();
+
+        // Remove the anchor element from the DOM
+        document.body.removeChild(a);
+
+        // Revoke the Blob URL to free up resources
+        window.URL.revokeObjectURL(blobUrl);
+        console.log("Blob URL Revoked");
       } else {
         console.log("Server error");
       }
     } catch (error) {
-      //fix error messages
+      // Handle errors here
+      console.error("Error:", error);
+
       if (error.response && error.response.status === 409) {
-        // setError("Error occured");
+        console.log("Conflict error");
       } else {
-        // setError(
-        //   "An error occurred while adding admin. Please try again later"
-        // );
+        console.log("Other error occurred");
       }
     }
   };
@@ -853,15 +892,14 @@ function DrShowPatients({
                 {selectedMedicine ? selectedMedicine.name : "Select Medicine"}
               </Dropdown.Toggle>
               <Dropdown.Menu style={{ width: "100%" }}>
-                <input
+                <FormControl
                   type="text"
                   placeholder="Search Medicine"
                   className="form-control"
-                  value={selectedMedicine ? selectedMedicine.name : ""}
-                  onChange={() => {}}
-                  readOnly
+                  value={searchAddMedicine}
+                  onChange={(e) => filterMedicines(e.target.value)}
                 />
-                {medicineData.map((medicine) => (
+                {filteredMedicines.map((medicine) => (
                   <Dropdown.Item
                     key={medicine.id}
                     onClick={() => handleDropdownSelect(medicine)}
@@ -914,7 +952,7 @@ function DrShowPatients({
               Submit Prescription
             </Button>
           )}
-          <Button variant="secondary" onClick={handleCloseModal}>
+          <Button variant="secondary" onClick={handleClose}>
             Close
           </Button>
         </Modal.Footer>
@@ -1118,13 +1156,16 @@ function DrShowPatients({
             <>
               <div className="d-flex align-items-center justify-content-between w-100">
                 <div className="d-flex align-items-center justify-content-center">
-                  <Button
-                    variant="secondary"
-                    onClick={() => handleEditClick()}
-                    style={{ marginTop: "5px" }}
-                  >
-                    Edit Prescription
-                  </Button>
+                  {selectedViewPrescription &&
+                    selectedViewPrescription.status !== "filled" && (
+                      <Button
+                        variant="secondary"
+                        onClick={() => handleEditClick()}
+                        style={{ marginTop: "5px" }}
+                      >
+                        Edit Prescription
+                      </Button>
+                    )}
                 </div>
                 <div className="d-flex align-items-center justify-content-center">
                   <Button
