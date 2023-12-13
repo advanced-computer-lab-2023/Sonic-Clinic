@@ -130,6 +130,7 @@ function AddExistingFamilyMemberForm({ onRefresh, toggleForm }) {
             value={formData.email}
             placeholder="JohnDoe@gmail.com"
             onChange={handleChange}
+            style={{ marginBottom: "0.5rem" }}
           />
         </Form.Group>
 
@@ -141,11 +142,12 @@ function AddExistingFamilyMemberForm({ onRefresh, toggleForm }) {
             placeholder="0506404491"
             value={formData.number}
             onChange={handleChange}
+            style={{ marginBottom: "0.5rem" }}
           />
         </Form.Group>
         <Form.Group controlId="relation">
           <Form.Label>Relation</Form.Label>
-          <Dropdown onSelect={handleChange}>
+          <Dropdown onSelect={handleChange} style={{ marginBottom: "0.5rem" }}>
             <Dropdown.Toggle
               className="custom-dropdown-toggle"
               id="dropdown-relation"
@@ -171,15 +173,15 @@ function AddExistingFamilyMemberForm({ onRefresh, toggleForm }) {
         </Button>
         <div
           className="form-comment align-items-center justify-content-center d-flex"
-          style={{ cursor: "default" }}
+          style={{ cursor: "default", marginLeft: "14.5rem" }}
         >
-          Family Member is a{" "}
+          Family member is a{" "}
           <div
             className="text-decoration-none  link-decoration "
             style={{ cursor: "pointer", fontWeight: "600" }}
             onClick={toggleForm}
           >
-            New User?
+            new user?
           </div>
         </div>
       </Form>

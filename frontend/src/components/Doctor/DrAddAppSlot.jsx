@@ -122,7 +122,7 @@ function DrAddAppSlot() {
   return (
     <div className="d-flex, column-flex">
       <div
-        className="d-flex flex-row"
+        className="d-flex flex-row justify-content-between"
         style={{ marginBottom: "2rem", marginLeft: "5rem" }}
       >
         <div
@@ -181,6 +181,7 @@ function DrAddAppSlot() {
             color: #ff6b35  ;
             font-weight: bold;
             font-size: 2rem;
+            margin-left: 30rem;
           }
           .events-container {
             overflow-y: auto; /* Enable vertical scrolling */

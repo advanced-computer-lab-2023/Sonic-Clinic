@@ -9,6 +9,7 @@ import {
   faPhone,
   faPhoneSlash,
   faCopy,
+  faAnglesRight,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -113,6 +114,7 @@ export default function ChatPat({ who }) {
     marginBottom: "0.7rem",
     width: "fit-content",
     alignSelf: "flex-end",
+    fontSize: "0.98rem",
   };
 
   const otherMsg = {
@@ -123,6 +125,7 @@ export default function ChatPat({ who }) {
     padding: "5px 10px",
     marginBottom: "0.7rem",
     width: "fit-content",
+    fontSize: "0.98rem",
   };
 
   const inputDiv = {
@@ -139,9 +142,16 @@ export default function ChatPat({ who }) {
 
   useEffect(() => {
     fetchData();
+    socketRef.current = io.connect("http://localhost:8000");
+    socketRef.current.on("me", (id) => {
+      setMe(id);
+      console.log("socket it:", id);
+    });
   }, []);
 
   const callUser = (id) => {
+    console.log(idToCall);
+    socketRef.current = io.connect("http://localhost:8000");
     const peer = new Peer({
       initiator: true,
       trickle: false,
@@ -186,7 +196,9 @@ export default function ChatPat({ who }) {
 
   const leaveCall = () => {
     setCallEnded(true);
-    connectionRef.current.destroy();
+    if (typeof window !== "undefined" && connectionRef.current) {
+      connectionRef.current.destroy();
+    }
   };
 
   const setChat = (name) => {
@@ -227,11 +239,18 @@ export default function ChatPat({ who }) {
 
   const sendMessage = async () => {
     const id = chosenName.split("-")[1];
+    let msg = "";
     if (myMessage) {
+      msg = myMessage;
+    }
+    if (calling) {
+      msg = "Video key: " + me;
+    }
+    if (myMessage || calling) {
       try {
         const response = await axios.post("/sendMessage", {
           recipientID: id,
-          message: myMessage,
+          message: msg,
         });
         if (response.status === 200) {
           fetchChatData(chosenName);
@@ -258,18 +277,19 @@ export default function ChatPat({ who }) {
           console.error("Error accessing media devices:", error);
         });
 
-      socketRef.current.on("me", (id) => {
-        setMe(id);
-        console.log("socket it:", id);
-      });
-
       socketRef.current.on("callUser", (data) => {
         setReceivingCall(true);
         setCaller(data.from);
         setName(data.name);
         setCallerSignal(data.signal);
       });
+
       callUser(idToCall); // Initiating the call
+
+      // Handle callEnded event from the server
+      socketRef.current.on("callEnded", () => {
+        setCallEnded(true); // Set the call ended state appropriately
+      });
     }
   }, [idToCall, calling, myVideoRef]);
 
@@ -278,6 +298,7 @@ export default function ChatPat({ who }) {
       {!isOpen && (
         <Button
           style={buttonStyle}
+          variant="secondary"
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
           onClick={() => setIsOpen(true)}
@@ -311,7 +332,7 @@ export default function ChatPat({ who }) {
         >
           <Navbar
             className="d-flex justify-content-between p-1"
-            style={{ backgroundColor: "#ff6b35", width: "100%" }}
+            style={{ backgroundColor: "#ff6b35 ", width: "100%" }}
           >
             <div style={{ color: "white", marginLeft: "1rem" }}>
               {who === "patient" ? "Your Doctors" : "Your Patients"}
@@ -361,7 +382,7 @@ export default function ChatPat({ who }) {
           >
             <Navbar
               className="d-flex justify-content-between p-1"
-              style={{ backgroundColor: "#ff6b35", width: "100%" }}
+              style={{ backgroundColor: "#ff6b35 ", width: "100%" }}
             >
               <div>
                 {" "}
@@ -444,7 +465,7 @@ export default function ChatPat({ who }) {
               <FontAwesomeIcon
                 icon={faPaperPlane}
                 style={{
-                  color: "#05afb9",
+                  color: "#ff6b35 ",
                   marginRight: "1rem",
                   cursor: "pointer",
                 }}
@@ -452,25 +473,42 @@ export default function ChatPat({ who }) {
               />
             </div>
           </Container>
-          <Modal show={calling} style={{ maxWidth: "90%" }}>
-            <Modal.Header style={{ fontSize: "1.5rem" }}>
-              {chosenName.split("-")[0]}'s Room
+          <Modal show={calling}>
+            <Modal.Header>
+              <Modal.Title>{chosenName.split("-")[0]}'s Room</Modal.Title>
             </Modal.Header>
             <Modal.Body className="d-flex flex-column justify-content-center align-items-center">
               <div className="d-flex flex-column">
-                <div className="d-flex flex-row" style={{ fontSize: "1.1rem" }}>
-                  <strong>Personal key: </strong>
-                  {me}{" "}
-                  <CopyToClipboard text={me}>
+                <div
+                  className="d-flex flex-row justify-content-between"
+                  style={{ fontSize: "1.1rem" }}
+                >
+                  <div>
+                    <strong>Personal key: </strong>
+                    {me}
+                  </div>
+                  <div
+                    style={{
+                      fontWeight: "bold",
+                      color: "#05afb9 ",
+                      cursor: "pointer",
+                    }}
+                    onClick={() => sendMessage()}
+                  >
+                    send{" "}
                     <FontAwesomeIcon
-                      icon={faCopy}
+                      icon={faAnglesRight}
                       style={{
-                        fontSize: "0.9rem",
+                        opacity: 1,
+                        color: "#05afb9 ",
+                        fontSize: "15px",
+                        transition: "transform 0.3s ease-in-out",
                         marginLeft: "0.3rem",
-                        cursor: "pointer",
+                        animation:
+                          "arrowAnimation2 1s infinite alternate ease-in-out",
                       }}
                     />
-                  </CopyToClipboard>
+                  </div>
                 </div>
 
                 <div className="video" style={{ marginTop: "0.3rem" }}>
@@ -485,7 +523,6 @@ export default function ChatPat({ who }) {
                   )}
                 </div>
               </div>
-
               {/* Render user video when call is accepted */}
               {callAccepted && !callEnded && (
                 <div className="d-flex flex-column justify-content-center align-items-center">
@@ -508,10 +545,66 @@ export default function ChatPat({ who }) {
                     }}
                     style={{ fontSize: "0.9rem", marginTop: "0.5rem" }}
                   >
-                    End Call{" "}
                     <FontAwesomeIcon
                       icon={faPhoneSlash}
-                      style={{ fontSize: "0.9rem", marginLeft: "0.3rem" }}
+                      style={{ fontSize: "0.9rem" }}
+                    />
+                  </Button>
+                </div>
+              )}
+              {!receivingCall && !callAccepted && (
+                <div
+                  className="d-flex justify-content-between"
+                  style={{
+                    height: "2.5rem",
+                    width: "25rem",
+                    marginTop: "1rem",
+                  }}
+                >
+                  <FormControl
+                    id="filled-basic"
+                    label="ID to call"
+                    placeholder="Enter received key to call"
+                    onChange={(e) => setIdToCall(e.target.value)}
+                    style={{ width: "21rem" }}
+                  />
+                  <Button
+                    color="primary"
+                    onClick={() => callUser(idToCall)}
+                    style={{ width: "3rem" }}
+                    disabled={idToCall === ""}
+                  >
+                    <FontAwesomeIcon
+                      icon={faPhone}
+                      style={{ fontSize: "0.9rem" }}
+                    />
+                  </Button>
+                </div>
+              )}
+              {/* Render user video when call is accepted */}
+              {callAccepted && !callEnded && (
+                <div className="d-flex flex-column justify-content-center align-items-center">
+                  <video
+                    playsInline
+                    muted
+                    ref={userVideoRef}
+                    autoPlay
+                    style={{
+                      width: "25rem",
+                      marginTop: "1rem",
+                      transform: "scaleX(-1)",
+                    }}
+                  />
+                  <Button
+                    variant="secondary"
+                    onClick={() => {
+                      leaveCall();
+                    }}
+                    style={{ fontSize: "0.9rem", marginTop: "0.5rem" }}
+                  >
+                    <FontAwesomeIcon
+                      icon={faPhoneSlash}
+                      style={{ fontSize: "0.9rem" }}
                     />
                   </Button>
                 </div>

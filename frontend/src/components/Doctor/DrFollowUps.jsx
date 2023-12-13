@@ -187,7 +187,7 @@ function DrFollowUps() {
                     <Card.Body className="p-4">
                       <Card.Title
                         style={{
-                          marginTop: "2rem",
+                          marginTop: "2.3rem",
                           fontSize: "1.5rem",
                           fontWeight: "bold",
                           color: "#212529",
@@ -214,29 +214,29 @@ function DrFollowUps() {
                         <div
                           className="show-more-date"
                           style={{
-                            marginTop: "2rem",
+                            marginTop: "1.5rem",
                             marginBottom: "1rem",
-                            fontSize: "1rem",
+                            fontSize: "1.1rem",
                           }}
                         >
                           <FontAwesomeIcon
                             icon={faCalendar}
                             style={{
                               marginRight: "0.5rem",
-                              fontSize: "1.2rem",
+                              fontSize: "1.1rem",
                             }}
                           />
                           {formattedDate}
                         </div>
                         <div
                           className="show-more-time"
-                          style={{ marginBottom: "1rem", fontSize: "1rem" }}
+                          style={{ marginBottom: "1rem", fontSize: "1.1rem" }}
                         >
                           <FontAwesomeIcon
                             icon={faClock}
                             style={{
                               marginRight: "0.5rem",
-                              fontSize: "1.2rem",
+                              fontSize: "1.1rem",
                             }}
                           />
                           {appointment.time}
@@ -247,7 +247,7 @@ function DrFollowUps() {
                   <Col lg={2}>
                     <div
                       className="d-flex flex-row justify-content-space-between"
-                      style={{ marginTop: "6rem", marginLeft: "1rem" }}
+                      style={{ marginTop: "2.3rem", marginLeft: "1rem" }}
                     >
                       <Modal show={acceptModal}>
                         <Modal.Body>

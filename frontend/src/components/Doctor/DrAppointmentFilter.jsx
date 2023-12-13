@@ -96,7 +96,6 @@ function AppointmentFilter() {
             <Dropdown.Item eventKey="Upcoming">Upcoming</Dropdown.Item>
             <Dropdown.Item eventKey="Completed">Completed</Dropdown.Item>
             <Dropdown.Item eventKey="Cancelled">Cancelled</Dropdown.Item>
-            <Dropdown.Item eventKey="Rescheduled">Rescheduled</Dropdown.Item>
           </Dropdown.Menu>
         </Dropdown>
       </div>

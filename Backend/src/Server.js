@@ -208,7 +208,7 @@ io.on("connection", (socket) => {
   socket.emit("me", socket.id);
 
   socket.on("disconnect", () => {
-    socket.broadcast.emit("callEnded");
+    io.emit("callEnded"); // Broadcast callEnded event to all connected sockets
   });
 
   socket.on("callUser", (data) => {
@@ -318,6 +318,8 @@ app.post(
   removeMedicineFromPrescription
 );
 app.post("/updatePrescription", requireAuth, updatePrescription);
+app.post("/addDosage", requireAuth, addDosage);
+
 
 //////////////////////////////////////////// GET/////////////////////////////////////
 //admin

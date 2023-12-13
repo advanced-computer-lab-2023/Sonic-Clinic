@@ -8,7 +8,16 @@ import {
   faPause,
   faCheckDouble,
 } from "@fortawesome/free-solid-svg-icons";
-import { Card, Col, Row, Spinner, Button, Modal, Form } from "react-bootstrap";
+import {
+  Card,
+  Col,
+  Row,
+  Spinner,
+  Button,
+  Modal,
+  Form,
+  Dropdown,
+} from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
@@ -184,6 +193,8 @@ function ShowAppointments() {
     }
   };
 
+  const reverseAppointments = [...filteredAppointments].reverse();
+
   return (
     <div>
       {loading && (
@@ -207,7 +218,7 @@ function ShowAppointments() {
       )}
       {error1 && <div className="error">{error1}</div>}
       {!loading &&
-        filteredAppointments.map((appointment, index) => {
+        reverseAppointments.map((appointment, index) => {
           // Parse the date string into a Date object
           const appointmentDate = new Date(appointment.date);
           // Format the date as "dd/mm/yyyy"
@@ -238,7 +249,7 @@ function ShowAppointments() {
                   transition: "transform 0.3s",
                   marginBottom: "2rem",
                   marginRight: "2rem",
-                  height: "12rem",
+                  height: "10rem",
                 }}
               >
                 <Row>
@@ -251,7 +262,7 @@ function ShowAppointments() {
                         alignItems: "center",
                         backgroundColor: getStatusColor(appointment.status),
                         borderRadius: "10px 0 0 10px",
-                        height: "12rem",
+                        height: "10rem",
                       }}
                     >
                       <FontAwesomeIcon
@@ -267,7 +278,7 @@ function ShowAppointments() {
                     <Card.Body>
                       <Card.Title
                         style={{
-                          marginTop: "1.5rem",
+                          marginTop: "2rem",
                           fontSize: "1.5rem",
                           fontWeight: "bold",
                           color: "#212529",
@@ -292,7 +303,7 @@ function ShowAppointments() {
                       <Card.Text>
                         <div
                           style={{
-                            marginTop: "2rem",
+                            marginTop: "1.5rem",
                             marginBottom: "1rem",
                             fontSize: "1.1rem",
                           }}
@@ -304,7 +315,7 @@ function ShowAppointments() {
                               fontSize: "1.1rem",
                             }}
                           />
-                          {appointment.date}
+                          {appointment.date.split("-").reverse().join("/")}
                         </div>
                         <div
                           style={{ marginBottom: "1rem", fontSize: "1.1rem" }}
@@ -324,7 +335,7 @@ function ShowAppointments() {
                   <Col lg={2}>
                     <div
                       style={{
-                        marginTop: "3rem",
+                        marginTop: "2.3rem",
                         marginLeft: "1rem",
                       }}
                     >
@@ -364,18 +375,32 @@ function ShowAppointments() {
                               >
                                 Available Slots
                               </div>
-                              <Form.Control
-                                as="select"
-                                value={rescheduleSlot}
-                                onChange={(e) =>
-                                  setRescheduleSlot(e.target.value)
-                                }
-                              >
-                                <option value="">Select available slot</option>
-                                {rescheduleSlots.map((slot) => (
-                                  <option value={slot}>{slot}</option>
-                                ))}
-                              </Form.Control>
+                              <Dropdown>
+                                <Dropdown.Toggle
+                                  className="custom-dropdown-toggle"
+                                  id="dropdown-basic"
+                                >
+                                  {rescheduleSlot === null
+                                    ? "Select available slot "
+                                    : rescheduleSlot}
+                                </Dropdown.Toggle>
+
+                                <Dropdown.Menu style={{ width: "100%" }}>
+                                  {rescheduleSlots.map((slot, index) => (
+                                    <Dropdown.Item
+                                      key={index}
+                                      onClick={() => setRescheduleSlot(slot)}
+                                    >
+                                      {slot
+                                        .split(" ")[0]
+                                        .split("-")
+                                        .reverse()
+                                        .join("/")}{" "}
+                                      at {slot.split(" ")[1]}
+                                    </Dropdown.Item>
+                                  ))}
+                                </Dropdown.Menu>
+                              </Dropdown>
                             </Modal.Body>
                             <Modal.Footer>
                               <Button
@@ -473,18 +498,32 @@ function ShowAppointments() {
                               >
                                 Available Slots
                               </div>
-                              <Form.Control
-                                as="select"
-                                value={followUpSlot}
-                                onChange={(e) =>
-                                  setFollowUpSlot(e.target.value)
-                                }
-                              >
-                                <option value="">Select available slot</option>
-                                {rescheduleSlots.map((slot) => (
-                                  <option value={slot}>{slot}</option>
-                                ))}
-                              </Form.Control>
+                              <Dropdown>
+                                <Dropdown.Toggle
+                                  className="custom-dropdown-toggle"
+                                  id="dropdown-basic"
+                                >
+                                  {followUpSlot === null
+                                    ? "Select available slot "
+                                    : followUpSlot}
+                                </Dropdown.Toggle>
+
+                                <Dropdown.Menu style={{ width: "100%" }}>
+                                  {rescheduleSlots.map((slot, index) => (
+                                    <Dropdown.Item
+                                      key={index}
+                                      onClick={() => setFollowUpSlot(slot)}
+                                    >
+                                      {slot
+                                        .split(" ")[0]
+                                        .split("-")
+                                        .reverse()
+                                        .join("/")}{" "}
+                                      at {slot.split(" ")[1]}
+                                    </Dropdown.Item>
+                                  ))}
+                                </Dropdown.Menu>
+                              </Dropdown>
                             </Modal.Body>
                             <Modal.Footer>
                               <Button

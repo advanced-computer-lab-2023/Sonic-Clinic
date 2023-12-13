@@ -190,7 +190,7 @@ function DrShowAppointments({ fetchData, appointments, loading }) {
                   transition: "transform 0.3s",
                   marginBottom: "2rem",
                   marginRight: "2rem",
-                  height: "12rem",
+                  height: "10rem",
                 }}
               >
                 <Row>
@@ -203,7 +203,7 @@ function DrShowAppointments({ fetchData, appointments, loading }) {
                         alignItems: "center",
                         backgroundColor: getStatusColor(appointment.status),
                         borderRadius: "10px 0 0 10px",
-                        height: "12rem",
+                        height: "10rem",
                       }}
                     >
                       <FontAwesomeIcon
@@ -219,7 +219,7 @@ function DrShowAppointments({ fetchData, appointments, loading }) {
                     <Card.Body className="p-4">
                       <Card.Title
                         style={{
-                          marginTop: "2rem",
+                          marginTop: "2.3rem",
                           fontSize: "1.5rem",
                           fontWeight: "bold",
                           color: "#212529",
@@ -236,29 +236,29 @@ function DrShowAppointments({ fetchData, appointments, loading }) {
                         <div
                           className="show-more-date"
                           style={{
-                            marginTop: "2rem",
+                            marginTop: "1.5rem",
                             marginBottom: "1rem",
-                            fontSize: "1rem",
+                            fontSize: "1.1rem",
                           }}
                         >
                           <FontAwesomeIcon
                             icon={faCalendar}
                             style={{
                               marginRight: "0.5rem",
-                              fontSize: "1.2rem",
+                              fontSize: "1.1rem",
                             }}
                           />
                           {formattedDate}
                         </div>
                         <div
                           className="show-more-time"
-                          style={{ marginBottom: "1rem", fontSize: "1rem" }}
+                          style={{ marginBottom: "1rem", fontSize: "1.1rem" }}
                         >
                           <FontAwesomeIcon
                             icon={faClock}
                             style={{
                               marginRight: "0.5rem",
-                              fontSize: "1.2rem",
+                              fontSize: "1.1rem",
                             }}
                           />
                           {appointment.time}
@@ -269,7 +269,7 @@ function DrShowAppointments({ fetchData, appointments, loading }) {
                   <Col lg={2}>
                     <div
                       style={{
-                        marginTop: "3rem",
+                        marginTop: "2.3rem",
                         marginLeft: "1rem",
                       }}
                     >
