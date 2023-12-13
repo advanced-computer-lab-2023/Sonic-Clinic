@@ -19,6 +19,7 @@ const initialState = {
   newPackage: "",
   forFam: "",
   newApp: "",
+  newPres: "",
 };
 
 const loginSlice = createSlice({
@@ -67,8 +68,16 @@ const loginSlice = createSlice({
       state.newApp = action.payload.newApp;
     },
     removeNewApp: (state, action) => {
-      state.newAPp = "";
+      state.newApp = "";
     },
+
+    setNewPres: (state, action) => {
+      state.newPres = action.payload.newPres;
+    },
+    removeNewPres: (state, action) => {
+      state.newPres = "";
+    },
+
     updateMyMedicalHistory: (state, action) => {
       state.medicalHistory = action.payload.medicalHistory;
     },
@@ -101,6 +110,7 @@ const loginSlice = createSlice({
       state.newPackage = "";
       state.forFam = "";
       state.newApp = "";
+      state.newPres = "";
     },
     clearPassword: (state, action) => {
       state = {
@@ -128,6 +138,8 @@ export const {
   setForFam,
   removeNewApp,
   setNewApp,
+  removeNewPres,
+  setNewPres,
   logoutPatient,
   clearPassword,
   setUserId,
