@@ -35,6 +35,7 @@ import PasswordChanged from "./pages/Guest/PasswordChanged";
 import PatientPackageSuccess from "./pages/Patient/PatientPackageSuccess";
 import PatientAppSuccess from "./pages/Patient/PatientAppSuccess";
 import PatientFail from "./pages/Patient/PatientFail";
+import PatientPrescriptionSuccess from "./pages/Patient/PatientPrescriptionSuccess";
 
 function App() {
   return (
@@ -80,6 +81,10 @@ function App() {
           <Route
             path="health-packages-success"
             element={<PatientPackageSuccess />}
+          />
+          <Route
+            path="prescreption-success"
+            element={<PatientPrescriptionSuccess />}
           />
           <Route path="app-success" element={<PatientAppSuccess />} />
           <Route path="fail" element={<PatientFail />} />

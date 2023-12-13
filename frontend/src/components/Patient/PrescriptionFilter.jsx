@@ -139,10 +139,8 @@ function PrescriptionFilter() {
 
           <Dropdown.Menu style={{ width: "100%" }}>
             <Dropdown.Item eventKey="">All</Dropdown.Item> {/* Reset option */}
-            <Dropdown.Item eventKey="Submitted">Submitted</Dropdown.Item>
-            <Dropdown.Item eventKey="Not Submitted">
-              Not Submitted
-            </Dropdown.Item>
+            <Dropdown.Item eventKey="Filled">Filled</Dropdown.Item>
+            <Dropdown.Item eventKey="Not Filled">Not Filled</Dropdown.Item>
           </Dropdown.Menu>
         </Dropdown>
       </div>

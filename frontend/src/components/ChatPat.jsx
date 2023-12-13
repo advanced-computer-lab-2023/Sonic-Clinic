@@ -54,7 +54,7 @@ export default function ChatPat({ who }) {
 
   const buttonStyle = {
     position: "fixed",
-    bottom: "5rem",
+    bottom: "1rem",
     right: "1rem",
     fontSize: "1.1rem",
     backgroundColor: "transparent",
@@ -67,7 +67,7 @@ export default function ChatPat({ who }) {
 
   const containerStyle = {
     position: "fixed",
-    bottom: "5rem",
+    bottom: "1rem",
     right: "1rem",
     fontSize: "1.1rem",
     backgroundColor: "transparent",
@@ -82,7 +82,7 @@ export default function ChatPat({ who }) {
 
   const chatContainerStyle = {
     position: "fixed",
-    bottom: "5rem",
+    bottom: "1rem",
     right: "1rem",
     fontSize: "1.1rem",
     backgroundColor: "transparent",
@@ -302,6 +302,7 @@ export default function ChatPat({ who }) {
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
           onClick={() => setIsOpen(true)}
+          variant="secondary"
         >
           <div style={buttonContentStyle}>
             <FontAwesomeIcon
@@ -522,7 +523,6 @@ export default function ChatPat({ who }) {
                   )}
                 </div>
               </div>
-
               {/* Render user video when call is accepted */}
               {callAccepted && !callEnded && (
                 <div className="d-flex flex-column justify-content-center align-items-center">
@@ -610,6 +610,36 @@ export default function ChatPat({ who }) {
                 </div>
               )}
 
+              {!receivingCall && !callAccepted && (
+                <div
+                  className="d-flex justify-content-between"
+                  style={{
+                    height: "2.5rem",
+                    width: "25rem",
+                    marginTop: "1rem",
+                  }}
+                >
+                  <FormControl
+                    id="filled-basic"
+                    label="ID to call"
+                    placeholder="Enter key to call"
+                    onChange={(e) => setIdToCall(e.target.value)}
+                    style={{ width: "18rem" }}
+                  />
+                  <Button
+                    color="primary"
+                    onClick={() => callUser(idToCall)}
+                    style={{ width: "5rem" }}
+                    disabled={idToCall === ""}
+                  >
+                    Call{" "}
+                    <FontAwesomeIcon
+                      icon={faPhone}
+                      style={{ fontSize: "0.9rem", marginLeft: "0.3rem" }}
+                    />
+                  </Button>
+                </div>
+              )}
               {receivingCall && !callAccepted && (
                 <Button
                   color="primary"

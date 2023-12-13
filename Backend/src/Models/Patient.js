@@ -107,6 +107,10 @@ const patientSchema = new Schema(
       type: Boolean,
       required: false,
     },
+    prescreptions: {
+      type: [Object],
+      required: false,
+    },
   },
   { timestamps: true }
 );

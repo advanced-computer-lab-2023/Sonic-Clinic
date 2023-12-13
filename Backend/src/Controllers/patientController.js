@@ -267,6 +267,19 @@ const addFamilyMember = async (req, res) => {
     const gender = req.body.gender;
     const relationToPatient = req.body.relationToPatient;
 
+    // Check if the relation is husband or wife
+    if (relationToPatient.toLowerCase() === 'husband' || relationToPatient.toLowerCase() === 'wife') {
+      // Check if the patient already has a family member with a husband/wife relation
+      const existingHusbandOrWife = await familyMemberModel.findOne({
+        patientID: patient.id,
+        'relationToPatient': { $in: ['husband', 'wife'] }
+      });
+
+      if (existingHusbandOrWife) {
+        return res.status(400).send({ error: "Patient already has a husband/wife in the family." });
+      }
+    }
+
     // Create the new family member
     const newFamilyMember = await familyMemberModel.create({
       name,
@@ -291,6 +304,7 @@ const addFamilyMember = async (req, res) => {
   }
 };
 
+
 const addFamilyMemberExisting = async (req, res) => {
   const email = req.body.email;
   const relationToPatient = req.body.relationToPatient;
@@ -307,6 +321,19 @@ const addFamilyMemberExisting = async (req, res) => {
 
     if (!familyMember) {
       return res.status(404).json({ error: "Patient not found" });
+    }
+
+    // Check if the relation is husband or wife
+    if (relationToPatient.toLowerCase() === 'husband' || relationToPatient.toLowerCase() === 'wife') {
+      // Check if the patient already has a family member with a husband/wife relation
+      const existingHusbandOrWife = await familyMemberModel.findOne({
+        patientID: patient.id,
+        'relationToPatient': { $in: ['husband', 'wife'] }
+      });
+
+      if (existingHusbandOrWife) {
+        return res.status(400).send({ error: "Patient already has a husband/wife in the family." });
+      }
     }
 
     const name = familyMember.name;
@@ -1319,11 +1346,14 @@ const addAppointmentForMyselfOrFam = async (req, res) => {
       patient = await familyMemberModel.findById(famID);
     }
     if (!famID) {
-      doctor.patients.push(patient._id);
+      if (!doctor.patients.includes(patient._id)) {
+        doctor.patients.push(patient._id);
+      }
     } else {
-      doctor.patients.push(famID);
+      if (!doctor.patients.includes(famID)) {
+        doctor.patients.push(famID);
+      }
     }
-
     await doctor.save();
 
     notificationByMail(
@@ -1542,7 +1572,6 @@ const payAppointmentWallet = async (req, res) => {
         await doctor.save();
       }
     } else {
-      console.log("4");
       const patient = await patientModel.findById(req.user.id);
       const pName = patient.name;
       notificationPatient =
@@ -1576,12 +1605,15 @@ const payAppointmentWallet = async (req, res) => {
       status,
       time,
     });
-
     await appointment.save();
     if (!famID) {
-      doctor.patients.push(patient._id);
+      if (!doctor.patients.includes(patient._id)) {
+        doctor.patients.push(patient._id);
+      }
     } else {
-      doctor.patients.push(famID);
+      if (!doctor.patients.includes(famID)) {
+        doctor.patients.push(famID);
+      }
     }
 
     await doctor.save();
@@ -2075,8 +2107,7 @@ const calculatePrescriptionPrice = async (prescription) => {
     const medicines = prescription.medicine;
     let totalPrice = 0;
     for (const medicineItem of medicines) {
-      const medicineId = medicineItem._id;
-      const medicine = await medicineModel.findById(medicineId);
+      const medicine = await medicineModel.findOne({ name: medicineItem[0] });
       if (medicine) {
         totalPrice += medicine.price;
       }
@@ -2139,10 +2170,24 @@ const payPrescriptionWallet = async (req, res) => {
     }
     patient.wallet -= price;
     await patient.save();
+    const prescreptions = patient.prescreptions;
+
+    for (const prescreptionP of prescreptions) {
+      console.log(prescreptionP._id + "  " + presId);
+      if (prescreptionP._id == presId) {
+        console.log("Inside the if statement");
+        prescreptionP.status = "Filled";
+        patient.markModified("prescreptions");
+        await patient.save();
+        console.log("Patient saved successfully");
+      }
+    }
+
     prescription.status = "Filled";
     await prescription.save();
+    await patient.save();
 
-    return res.status(200).json(prescription);
+    return res.status(200).json(patient);
   } catch (error) {
     console.error("Error:", error);
     return res.status(500).json({ message: "Server Error" });
@@ -2158,6 +2203,16 @@ const handlePrescreptionStripe = async (req, res) => {
     }
     prescription.status = "Filled";
     await prescription.save();
+    const patient = await patientModel.findById(prescription.patientID);
+    const prescreptions = patient.prescreptions;
+    for (const prescreptionP of prescreptions) {
+      if (prescreptionP._id == presId) {
+        console.log("Inside the if statement");
+        prescreptionP.status = "Filled";
+        patient.markModified("prescreptions");
+        await patient.save();
+      }
+    }
     return res.status(200).json(prescription);
   } catch (error) {
     console.error("Error:", error);

@@ -9,17 +9,22 @@ import {
   Spinner,
   Modal,
   Dropdown,
+  FormControl,
 } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
+  faAnglesRight,
   faChevronDown,
   faChevronUp,
+  faPlusSquare,
   faSearch,
+  faTrashAlt,
   faX,
 } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
 import { setNewNotifications } from "../../state/notifications";
 import { useDispatch } from "react-redux";
+import { Link } from "react-router-dom";
 
 function DrShowPatients({
   patients,
@@ -34,7 +39,6 @@ function DrShowPatients({
   const [selectedPatient, setSelectedPatient] = useState(null);
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const [uploadVisible, setUploadVisible] = useState(false);
-
   const [prescriptionVisible, setPrescriptionVisible] = useState(false);
   const [addingPrescription, setAddingPrescription] = useState("adding");
   const [selectedPatientPrescription, setSelectedPatientPrescription] =
@@ -43,6 +47,7 @@ function DrShowPatients({
   const [followUpModal, setFollowUpModal] = useState(false);
   const [followUpDateTime, setFollowUpDateTime] = useState(null);
   const [existingFiles, setExistingFiles] = useState();
+  const [existingPrescriptions, setExistingPrescriptions] = useState();
   const [isLoading, setIsLoading] = useState(false);
   const [confirmModal, setConfirmModal] = useState(false);
 
@@ -130,6 +135,7 @@ function DrShowPatients({
       setSelectedPatient(id);
       if (patients && patients[index]) {
         setExistingFiles(patients[index].medicalHistory);
+        setExistingPrescriptions(patients[index].prescreptions);
       }
     }
   };
@@ -259,7 +265,7 @@ function DrShowPatients({
     setPrescriptionVisible(false);
     setSelectedPatientPrescription(null);
     setSelectedMedicine(null);
-    setSearchTermMedicine("");
+    setSearchAddMedicine("");
     setDosage("");
     setPrescription([]); // Close the modal first
   };
@@ -278,29 +284,29 @@ function DrShowPatients({
   const [selectedMedicine, setSelectedMedicine] = useState(null);
   const [dosage, setDosage] = useState(null);
   // State for the search term
-  const [searchTermMedicine, setSearchTermMedicine] = useState("");
 
-  // State for filtered medicines
-  const [filteredMedicines, setFilteredMedicines] =
-    useState(neededMedicineData);
+  const [filteredMedicines, setFilteredMedicines] = useState(medicineData);
+  const [searchAddMedicine, setSearchAddMedicine] = useState(""); // Updated the variable name
 
-  // Function to filter medicines based on search term
-  const filterMedicines = () => {
-    const filtered = neededMedicineData.filter((medicine) =>
-      medicine.name.toLowerCase().startsWith(searchTermMedicine.toLowerCase())
+  const filterMedicines = (searchTerm) => {
+    setSearchAddMedicine(searchTerm); // Updated the state variable name
+
+    const filteredResults = medicineData.filter((medicine) =>
+      medicine.name.toLowerCase().includes((searchTerm || "").toLowerCase())
     );
-    setFilteredMedicines(filtered);
+
+    setFilteredMedicines(filteredResults);
+  };
+
+  const handleDropdownSelect = (medicine) => {
+    setSelectedMedicine(medicine);
+    setSearchAddMedicine(""); // Clear the search term when an item is selected
   };
 
   // Update filtered medicines whenever the search term changes
   useEffect(() => {
     filterMedicines();
-  }, [searchTermMedicine, neededMedicineData]);
-
-  const handleDropdownSelect = (medicine) => {
-    setSelectedMedicine(medicine);
-    setSearchTerm(""); // Clear the search term when an item is selected
-  };
+  }, [searchAddMedicine, neededMedicineData]);
 
   const [prescription, setPrescription] = useState([]);
   const [showAddNewMedicineForm, setShowAddNewMedicineForm] = useState(false);
@@ -310,7 +316,8 @@ function DrShowPatients({
   const addMedicineToPrescription = () => {
     if (selectedMedicine && dosage) {
       const medicineItem = {
-        medicine: selectedMedicine,
+        name: selectedMedicine.name,
+        price: selectedMedicine.price,
         dosage,
       };
       setPrescription([...prescription, medicineItem]);
@@ -323,19 +330,268 @@ function DrShowPatients({
     addMedicineToPrescription();
   };
 
-  const handleSubmitPrescription = () => {
-    // Handle submitting the prescription, you can do whatever you want here.
-    // For example, you can send the prescription to the server.
-    // Reset the state or close the modal as needed.
-    console.log("Prescription submitted:", prescription);
-    // Reset the state
-    setPrescription([]);
+  const handleSubmitPrescription = async () => {
+    try {
+      // Map through the prescription array and convert each object's values to an array of strings
+      const prescriptionValues = prescription.map((item) => [
+        String(item.name),
+        String(item.price),
+        String(item.dosage),
+      ]);
+
+      const response = await axios.post("/AddPrescription", {
+        medicine: prescriptionValues, // Now sending an array of arrays of strings
+        patientID: selectedPatient,
+        // Add any other necessary prescription data here
+      });
+
+      if (response.status === 200) {
+        console.log("Prescription saved successfully:", response.data);
+        fetchData();
+        // Clear the prescription form if the post is successful
+        setPrescription([]);
+        setSelectedMedicine(null);
+        setDosage("");
+        setNewMedicineName("");
+        setNewMedicineDosage("");
+      } else {
+        // Handle any statuses that indicate a failed request
+        console.error(
+          "Prescription submission failed with status:",
+          response.status
+        );
+      }
+    } catch (error) {
+      // Handle errors from the POST request here
+      console.error("Error submitting prescription:", error);
+    }
+
+    handleClose(); // Assuming this closes a modal or similar
+  };
+
+  const [selectedViewPrescription, setSelectedViewPrescription] =
+    useState(null);
+  const [showViewSelectedPrescription, setShowViewSelectedPrescription] =
+    useState(false);
+
+  const handleViewMoreClick = (prescription) => {
+    setSelectedViewPrescription(prescription);
+    setShowViewSelectedPrescription(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowViewSelectedPrescription(false);
+    setIsEditMode(false);
     setSelectedMedicine(null);
     setDosage("");
+  };
+
+  const [editingMedicine, setEditingMedicine] = useState(null);
+
+  const [newMedicineNameToPrescription, setNewMedicineNameToPrescription] =
+    useState("");
+  const [newMedicineDosageToPrescription, setNewMedicineDosageToPrescription] =
+    useState("");
+
+  const handleAddMedicine = () => {
+    // Add new medicine to state
+    const newMedicine = [
+      newMedicineName,
+      "Price Placeholder",
+      newMedicineDosage,
+    ];
+    setSelectedViewPrescription({
+      ...selectedViewPrescription,
+      medicine: [...selectedViewPrescription.medicine, newMedicine],
+    });
+    // Optionally, make an API call to update the prescription in the backend
     setNewMedicineName("");
     setNewMedicineDosage("");
-    // Close the modal
-    handleClose();
+  };
+
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [editedDosage, setEditedDosage] = useState("");
+  const [editedPrescription, setEditedPrescription] = useState(null);
+
+  const handleEditClick = async () => {
+    if (isEditMode) {
+      // Cancel edit and reset to original prescription
+
+      setIsEditMode(false);
+      setEditedPrescription(null);
+    } else {
+      // Enter edit mode and initialize editedPrescription with the current prescription
+      await fetchMedicineData();
+      setIsEditMode(true);
+      setEditedPrescription({ ...selectedViewPrescription });
+    }
+  };
+
+  const handleSaveChanges = async () => {
+    try {
+      const response = await axios.post("/updatePrescription ", {
+        medicine: editedPrescription.medicine, // Now sending an array of arrays of strings
+        prescriptionID: editedPrescription._id,
+        // Add any other necessary prescription data here
+      });
+
+      if (response.status === 200) {
+        fetchData();
+        setIsEditMode(false);
+        setSelectedViewPrescription(editedPrescription);
+      } else {
+        // Handle any statuses that indicate a failed request
+        console.error("Prescription edit failed with status:", response.status);
+      }
+    } catch (error) {
+      // Handle errors from the POST request here
+      console.error("Error editing prescription:", error);
+    }
+
+    handleClose(); // Assuming this closes a modal or similar
+  };
+
+  const handleSaveDosage = async (medicineName) => {
+    // Here, implement the API call or logic to save the updated dosage
+    console.log(`Saving new dosage for ${medicineName}: ${editedDosage}`);
+    setEditedDosage(""); // Reset edited dosage
+  };
+
+  const handleDeleteMedicine = (medicineName) => {
+    // Filter out the medicine to be deleted
+    const updatedMedicines = editedPrescription.medicine.filter(
+      (med) => med[0] !== medicineName
+    );
+
+    // Update the edited prescription with the modified medicines list
+    setEditedPrescription({
+      ...editedPrescription,
+      medicine: updatedMedicines,
+    });
+  };
+  const renderMedicineItems = () => {
+    return (
+      <ul>
+        {selectedViewPrescription.medicine.map((med, index) => (
+          <li key={index}>
+            <strong>Name:</strong> {med[0]}
+            {isEditMode ? (
+              <div>
+                <FormControl
+                  type="text"
+                  value={editedDosage}
+                  onChange={(e) => setEditedDosage(e.target.value)}
+                />
+                <Button
+                  variant="outline-success"
+                  onClick={() => handleSaveDosage(med[0])}
+                >
+                  Save
+                </Button>
+                <FontAwesomeIcon
+                  icon={faTrashAlt}
+                  onClick={() => handleDeleteMedicine(med[0])}
+                  style={{ cursor: "pointer", marginLeft: "10px" }}
+                />
+              </div>
+            ) : (
+              <div>
+                <strong>Dosage:</strong> {med[2]}
+              </div>
+            )}
+          </li>
+        ))}
+      </ul>
+    );
+  };
+
+  const handleAddEditButtonClick = () => {
+    if (selectedMedicine && dosage) {
+      const medicineItem = {
+        name: selectedMedicine.name,
+        price: selectedMedicine.price,
+        dosage,
+      };
+
+      // Create a copy of the current medicines and add the new medicine in the same format
+      const updatedMedicineList = [
+        ...editedPrescription.medicine,
+        [
+          medicineItem.name,
+          String(medicineItem.price),
+          String(medicineItem.dosage),
+        ],
+      ];
+
+      // Update the editedPrescription with the updated medicine list
+      setEditedPrescription({
+        ...editedPrescription,
+        medicine: updatedMedicineList,
+      });
+
+      // Reset the selected medicine and dosage inputs
+      setSelectedMedicine(null);
+      setDosage("");
+    }
+  };
+
+  const handleEditDosageChange = (medicineName, newDosage) => {
+    if (editedPrescription) {
+      const updatedMedicine = editedPrescription.medicine.map((med) =>
+        med[0] === medicineName ? [med[0], med[1], newDosage] : med
+      );
+      setEditedPrescription({
+        ...editedPrescription,
+        medicine: updatedMedicine,
+      });
+    }
+  };
+  const handleDownloadPrescription = async () => {
+    const queryParameters = new URLSearchParams({
+      id: selectedViewPrescription._id,
+    }).toString();
+    const url = `/downloadPrescriptions?${queryParameters}`;
+    try {
+      const response = await axios.post(url, null, { responseType: "blob" });
+      console.log("Response Status:", response.status);
+
+      if (response.status === 200) {
+        // Create a Blob from the response data
+        const blob = new Blob([response.data], { type: "application/pdf" });
+
+        // Create a Blob URL for the PDF
+        const blobUrl = window.URL.createObjectURL(blob);
+        console.log("Blob URL:", blobUrl);
+
+        // Create an anchor element to trigger the download
+        const a = document.createElement("a");
+        a.href = blobUrl;
+        a.download = "prescription.pdf"; // You can set the desired filename
+        document.body.appendChild(a);
+        console.log("Anchor Element:", a);
+
+        // Programmatically click the anchor element to trigger the download
+        a.click();
+
+        // Remove the anchor element from the DOM
+        document.body.removeChild(a);
+
+        // Revoke the Blob URL to free up resources
+        window.URL.revokeObjectURL(blobUrl);
+        console.log("Blob URL Revoked");
+      } else {
+        console.log("Server error");
+      }
+    } catch (error) {
+      // Handle errors here
+      console.error("Error:", error);
+
+      if (error.response && error.response.status === 409) {
+        console.log("Conflict error");
+      } else {
+        console.log("Other error occurred");
+      }
+    }
   };
 
   return (
@@ -402,7 +658,7 @@ function DrShowPatients({
             {expandedPatient === index && (
               <Card.Body>
                 <Row>
-                  <Col lg={8}>
+                  <Col lg={12}>
                     <Card.Text>
                       <Button
                         style={{ marginBottom: "1rem" }}
@@ -453,7 +709,7 @@ function DrShowPatients({
                         </p>
                         <p>Gender: {patient.gender}</p>
                         <p style={{ fontWeight: "bold" }}>Medical History:</p>
-                        {existingFiles ? (
+                        {existingFiles && existingFiles.length > 0 ? (
                           <ListGroup>
                             {existingFiles.map((file, index) => (
                               <ListGroup.Item key={index}>
@@ -539,6 +795,60 @@ function DrShowPatients({
                             </div>
                           )}
                           <p style={{ fontWeight: "bold" }}>Prescriptions:</p>
+                          {existingPrescriptions &&
+                          existingPrescriptions.length > 0 ? (
+                            <ListGroup className="d-flex w-100">
+                              {existingPrescriptions.map(
+                                (prescription, index) => (
+                                  <Card className="d-flex justify-content-between  w-100 p-2 mb-3">
+                                    <div>
+                                      <span
+                                        style={{
+                                          color: "#ff6b35",
+                                        }}
+                                      >
+                                        Prescription {index + 1}
+                                      </span>
+                                      <span
+                                        style={{
+                                          marginLeft: "5rem",
+                                          color: "black",
+                                        }}
+                                      >
+                                        {prescription.date
+                                          .split("-")
+                                          .reverse()
+                                          .join("/")}
+                                      </span>
+
+                                      <Link
+                                        style={{
+                                          fontSize: "1rem",
+                                          color: "#ff6b35",
+                                          textDecoration: "none",
+                                          marginLeft: "15.5rem",
+                                        }}
+                                        onClick={() =>
+                                          handleViewMoreClick(prescription)
+                                        }
+                                      >
+                                        View Details
+                                        <FontAwesomeIcon
+                                          icon={faAnglesRight}
+                                          style={{
+                                            marginLeft: "0.5rem",
+                                            fontSize: "1.3rem",
+                                          }}
+                                        />
+                                      </Link>
+                                    </div>
+                                  </Card>
+                                )
+                              )}
+                            </ListGroup>
+                          ) : (
+                            <div>No previous prescriptions found</div>
+                          )}
                           <label
                             style={{
                               marginTop: "1rem",
@@ -582,15 +892,14 @@ function DrShowPatients({
                 {selectedMedicine ? selectedMedicine.name : "Select Medicine"}
               </Dropdown.Toggle>
               <Dropdown.Menu style={{ width: "100%" }}>
-                <input
+                <FormControl
                   type="text"
                   placeholder="Search Medicine"
                   className="form-control"
-                  value={selectedMedicine ? selectedMedicine.name : ""}
-                  onChange={() => {}}
-                  readOnly
+                  value={searchAddMedicine}
+                  onChange={(e) => filterMedicines(e.target.value)}
                 />
-                {medicineData.map((medicine) => (
+                {filteredMedicines.map((medicine) => (
                   <Dropdown.Item
                     key={medicine.id}
                     onClick={() => handleDropdownSelect(medicine)}
@@ -631,7 +940,7 @@ function DrShowPatients({
                 <ul>
                   {prescription.map((item, index) => (
                     <li key={index}>
-                      {item.medicine.name} - {item.dosage}
+                      {item.name} - {item.dosage}
                     </li>
                   ))}
                 </ul>
@@ -646,6 +955,236 @@ function DrShowPatients({
           <Button variant="secondary" onClick={handleClose}>
             Close
           </Button>
+        </Modal.Footer>
+      </Modal>
+
+      <Modal show={showViewSelectedPrescription} onHide={handleCloseModal}>
+        <Modal.Header closeButton>
+          <Modal.Title>Prescription Details</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {selectedViewPrescription ? (
+            <div>
+              <p>
+                <strong>Date:</strong>{" "}
+                {selectedViewPrescription.date?.split("-").reverse().join("/")}
+              </p>
+              <p>
+                <strong>Status:</strong> {selectedViewPrescription.status}
+              </p>
+              {isEditMode ? (
+                <div>
+                  {editedPrescription.medicine.map((med, index) => (
+                    <Card key={index} className="mb-3">
+                      <Card.Header
+                        className="text-white"
+                        style={{ backgroundColor: "#05afb9 " }}
+                      >
+                        <div className="d-flex justify-content-between align-items-center">
+                          <div>
+                            <strong>Name:</strong> {med[0]}
+                          </div>
+                        </div>
+                      </Card.Header>
+                      <Card.Body style={{ position: "relative" }}>
+                        <div
+                          className="d-flex"
+                          style={{
+                            justifyContent: "space-between",
+                            alignItems: "flex-end",
+                          }}
+                        >
+                          <div style={{ flex: 1 }}>
+                            <FormControl
+                              type="text"
+                              value={med[2]}
+                              onChange={(e) =>
+                                handleEditDosageChange(med[0], e.target.value)
+                              }
+                              style={{ width: "80%" }} // Make the FormControl take all available space
+                            />
+                          </div>
+                          <div
+                            style={{
+                              position: "absolute",
+                              bottom: "0",
+                              right: "0",
+                              marginBottom: "0.5rem",
+                              marginRight: "0.5rem",
+                            }}
+                          >
+                            <FontAwesomeIcon
+                              icon={faTrashAlt}
+                              onClick={() => handleDeleteMedicine(med[0])}
+                              style={{
+                                cursor: "pointer",
+                                color: "#ff6b35",
+                              }}
+                            />
+                          </div>
+                        </div>
+                      </Card.Body>
+                    </Card>
+                  ))}
+                  <div className="d-flex flex-wrap justify-content-between align-items-center">
+                    <div>
+                      <strong>Add a New Medicine</strong>
+                    </div>
+                    <div className="d-flex align-items-center justify-content-center mt-3 w-100">
+                      <div style={{ width: "50%" }}>
+                        <Dropdown>
+                          <Dropdown.Toggle
+                            variant="primary"
+                            id="medicine-dropdown"
+                            className="custom-dropdown-toggle"
+                          >
+                            {selectedMedicine
+                              ? selectedMedicine.name
+                              : "Select Medicine"}
+                          </Dropdown.Toggle>
+                          <Dropdown.Menu style={{ width: "100%" }}>
+                            <input
+                              type="text"
+                              placeholder="Search Medicine"
+                              className="form-control"
+                              value={
+                                selectedMedicine ? selectedMedicine.name : ""
+                              }
+                              onChange={() => {}}
+                              readOnly
+                            />
+                            {medicineData.map((medicine) => (
+                              <Dropdown.Item
+                                key={medicine.id}
+                                onClick={() => handleDropdownSelect(medicine)}
+                              >
+                                {medicine.name}
+                              </Dropdown.Item>
+                            ))}
+                          </Dropdown.Menu>
+                        </Dropdown>
+                      </div>
+                      <div style={{ width: "50%", marginLeft: "10px" }}>
+                        <input
+                          type="text"
+                          id="dosage"
+                          className="form-control"
+                          placeholder="Enter dosage"
+                          value={dosage}
+                          onChange={(e) => setDosage(e.target.value)}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="d-flex justify-content-center mt-4 w-100">
+                      <Button
+                        variant="success"
+                        onClick={handleAddEditButtonClick}
+                        className="w-50"
+                      >
+                        Add Medicine
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div>
+                  <strong>Medicines:</strong>
+                  {selectedViewPrescription.medicine.length === 0 ? (
+                    <div>No medicines added.</div>
+                  ) : (
+                    <div>
+                      {selectedViewPrescription.medicine.map((med, index) => (
+                        <Card key={index} className="mb-3">
+                          <Card.Header
+                            className="text-white"
+                            style={{ backgroundColor: "#05afb9 " }}
+                          >
+                            <div className="d-flex justify-content-between align-items-center">
+                              <div>
+                                <strong>Name:</strong> {med[0]}
+                              </div>
+                            </div>
+                          </Card.Header>
+                          <Card.Body>
+                            <div className="d-flex justify-content-between align-items-center"></div>
+                            <div>
+                              <strong>Dosage:</strong> {med[2]}
+                            </div>
+                          </Card.Body>
+                        </Card>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          ) : (
+            <div>Loading prescription details...</div>
+          )}
+        </Modal.Body>
+        <Modal.Footer>
+          {isEditMode ? (
+            <>
+              <div className="d-flex align-items-center justify-content-between w-100">
+                <div className="d-flex align-items-center justify-content-center">
+                  <Button
+                    variant="primary"
+                    onClick={handleSaveChanges}
+                    style={{ marginTop: "10px" }}
+                  >
+                    Save Changes
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    onClick={handleEditClick}
+                    style={{ marginTop: "10px", marginLeft: "10px" }}
+                  >
+                    Cancel Edit
+                  </Button>
+                </div>
+                <Button
+                  variant="secondary"
+                  onClick={handleCloseModal}
+                  style={{ marginTop: "10px", marginLeft: "10px" }}
+                >
+                  Close
+                </Button>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="d-flex align-items-center justify-content-between w-100">
+                <div className="d-flex align-items-center justify-content-center">
+                  {selectedViewPrescription &&
+                    selectedViewPrescription.status !== "Filled" && (
+                      <Button
+                        variant="secondary"
+                        onClick={() => handleEditClick()}
+                        style={{ marginTop: "5px" }}
+                      >
+                        Edit Prescription
+                      </Button>
+                    )}
+                </div>
+                <div className="d-flex align-items-center justify-content-center">
+                  <Button
+                    onClick={handleDownloadPrescription}
+                    style={{ marginTop: "10px", marginLeft: "10px" }}
+                  >
+                    Download PDF
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    onClick={handleCloseModal}
+                    style={{ marginTop: "10px", marginLeft: "10px" }}
+                  >
+                    Close
+                  </Button>
+                </div>
+              </div>
+            </>
+          )}
         </Modal.Footer>
       </Modal>
     </div>
