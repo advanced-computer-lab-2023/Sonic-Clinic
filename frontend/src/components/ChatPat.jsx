@@ -302,7 +302,6 @@ export default function ChatPat({ who }) {
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
           onClick={() => setIsOpen(true)}
-          variant="secondary"
         >
           <div style={buttonContentStyle}>
             <FontAwesomeIcon
