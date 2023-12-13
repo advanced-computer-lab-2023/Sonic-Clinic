@@ -163,6 +163,7 @@ function AddFamilyMemberForm({ onRefresh, toggleForm }) {
             placeholder="John Doe"
             onChange={handleChange}
             required
+            style={{ marginBottom: "0.5rem" }}
           />
         </Form.Group>
 
@@ -177,6 +178,7 @@ function AddFamilyMemberForm({ onRefresh, toggleForm }) {
             maxLength="16"
             minLength="16"
             required
+            style={{ marginBottom: "0.5rem" }}
           />
         </Form.Group>
 
@@ -189,12 +191,13 @@ function AddFamilyMemberForm({ onRefresh, toggleForm }) {
             value={formData.age}
             onChange={handleChange}
             required
+            style={{ marginBottom: "0.5rem" }}
           />
         </Form.Group>
 
         <Form.Group controlId="relation">
           <Form.Label>Gender</Form.Label>
-          <Dropdown onSelect={handleChange}>
+          <Dropdown onSelect={handleChange} style={{ marginBottom: "0.5rem" }}>
             <Dropdown.Toggle
               className="custom-dropdown-toggle"
               id="dropdown-relation"
@@ -211,7 +214,7 @@ function AddFamilyMemberForm({ onRefresh, toggleForm }) {
 
         <Form.Group controlId="relation">
           <Form.Label>Relation</Form.Label>
-          <Dropdown onSelect={handleChange}>
+          <Dropdown onSelect={handleChange} style={{ marginBottom: "0.5rem" }}>
             <Dropdown.Toggle
               className="custom-dropdown-toggle"
               id="dropdown-relation"
@@ -235,14 +238,17 @@ function AddFamilyMemberForm({ onRefresh, toggleForm }) {
         >
           Add Family Member
         </Button>
-        <div className="form-comment" style={{ cursor: "default" }}>
-          Family Member{" "}
+        <div
+          className="form-comment"
+          style={{ cursor: "default", marginLeft: "14.5rem" }}
+        >
+          Family member is{" "}
           <div
             className="text-decoration-none  link-decoration "
             style={{ cursor: "pointer", fontWeight: "600" }}
             onClick={toggleForm}
           >
-            Already a User?
+            already a user?
           </div>
         </div>
       </Form>

@@ -17,10 +17,11 @@ import "swiper/css/scrollbar";
 import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faCalendar,
-  faChevronLeft,
-  faChevronRight,
+  faCalendarAlt,
+  faAnglesLeft,
+  faAnglesRight,
   faClock,
+  faLocationDot,
 } from "@fortawesome/free-solid-svg-icons";
 import { useSelector, useDispatch } from "react-redux";
 import { updatePatientWallet } from "../../state/loginPatientReducer";
@@ -215,7 +216,10 @@ const DoctorAppointments = ({ onBookAppointment }) => {
           }}
         >
           <div className="justify-content-between d-flex px-5">
-            <h3 className="carousel-title" style={{ fontSize: "1.75rem" }}>
+            <h3
+              className="carousel-title"
+              style={{ fontSize: "1.75rem", fontWeight: "500" }}
+            >
               Available Appointments
             </h3>
           </div>
@@ -243,17 +247,20 @@ const DoctorAppointments = ({ onBookAppointment }) => {
                 />
               </g>
               <defs>
-                <clipPath id="clip0_2849_11118">
+                <clipPath id="clip0_2849_11118" style={{ marginRight: "5rem" }}>
                   <rect width="16" height="16" fill="white" />
                 </clipPath>
               </defs>
             </svg>
-            Book your desired appointment
+            <span style={{ marginLeft: "0.2rem" }}>
+              {" "}
+              Book your desired appointment
+            </span>
           </p>
           {neededData.length === 0 && (
             <div
               className="msg d-flex justify-content-center align-items-center w-50 "
-              style={{ marginLeft: "20rem" }}
+              style={{ marginLeft: "20rem", marginTop: "5rem" }}
             >
               No Available Slots
             </div>
@@ -262,20 +269,26 @@ const DoctorAppointments = ({ onBookAppointment }) => {
           <div className="d-flex align-items-center justify-content-center">
             {neededData && neededData.length > 0 && (
               <FontAwesomeIcon
-                icon={faChevronLeft}
-                style={{ fontSize: "2.5rem", color: "#05afb9" }}
+                icon={faAnglesLeft}
+                style={{
+                  fontSize: "1.5rem",
+                  marginRight: "1rem",
+                  color: "#adb5bd",
+                  transition: "transform 0.3s ease-in-out",
+                  animation:
+                    "arrowAnimation2 1s infinite alternate ease-in-out",
+                }}
               />
             )}
             <Swiper
               slidesPerView={2.5}
               spaceBetween={10}
               modules={[Pagination]}
-              className="mySwiper custom-swipper px-5"
+              className="mySwiper custom-swipper w-100"
             >
               {neededData &&
                 neededData.map((appointment) => (
-                  <SwiperSlide>
-                    {/* <a onClick={() => handleCard(appointment)}> */}
+                  <SwiperSlide style={{ height: "11rem" }}>
                     <Card
                       style={{
                         borderRadius: "0.625rem",
@@ -289,6 +302,12 @@ const DoctorAppointments = ({ onBookAppointment }) => {
                     >
                       <Card.Body className="p-2 w-100">
                         <Card.Title className="carousel-sub-card-title">
+                          <FontAwesomeIcon
+                            icon={faLocationDot}
+                            style={{
+                              marginRight: "0.5rem",
+                            }}
+                          />
                           {doctorLoc}
                         </Card.Title>
                         <Card.Text className="carousel-sub-card-description">
@@ -300,25 +319,38 @@ const DoctorAppointments = ({ onBookAppointment }) => {
                             }}
                           >
                             <div>
-                              <div>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  fontSize: "1.1rem",
+                                  marginBottom: "0.3rem",
+                                }}
+                              >
                                 <FontAwesomeIcon
-                                  icon={faCalendar}
+                                  icon={faCalendarAlt}
                                   style={{
                                     marginRight: "0.5rem",
-                                    fontSize: "1rem",
                                   }}
                                 />
-                                {appointment.split(" ")[0]}
+                                {appointment
+                                  .split(" ")[0]
+                                  .split("-")
+                                  .reverse()
+                                  .join("/")}
                               </div>
+
                               <div>
                                 <FontAwesomeIcon
                                   icon={faClock}
                                   style={{
                                     marginRight: "0.5rem",
-                                    fontSize: "1rem",
+                                    fontSize: "1.1rem",
                                   }}
                                 />
-                                {appointment.split(" ")[1]}
+                                <span style={{ fontSize: "1.1rem" }}>
+                                  {appointment.split(" ")[1]}
+                                </span>
                               </div>
                             </div>
                           </div>
@@ -339,8 +371,15 @@ const DoctorAppointments = ({ onBookAppointment }) => {
             </Swiper>
             {neededData && neededData.length > 0 && (
               <FontAwesomeIcon
-                icon={faChevronRight}
-                style={{ fontSize: "2.5rem", color: "#05afb9" }}
+                icon={faAnglesRight}
+                style={{
+                  fontSize: "1.5rem",
+                  marginLeft: "1rem",
+                  color: "#adb5bd",
+                  transition: "transform 0.3s ease-in-out",
+                  animation:
+                    "arrowAnimation2 1s infinite alternate ease-in-out",
+                }}
               />
             )}
           </div>

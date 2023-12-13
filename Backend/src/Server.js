@@ -209,7 +209,7 @@ io.on("connection", (socket) => {
   socket.emit("me", socket.id);
 
   socket.on("disconnect", () => {
-    socket.broadcast.emit("callEnded");
+    io.emit("callEnded"); // Broadcast callEnded event to all connected sockets
   });
 
   socket.on("callUser", (data) => {
@@ -311,29 +311,15 @@ app.post("/rescheduleAppDoc", requireAuth, rescheduleAppDoc);
 // );
 // app.post("/updatePrescription", requireAuth, updatePrescription);
 // app.post("/addDosage", requireAuth, addDosage);
-=======
-server.post("/rescheduleAppDoc", requireAuth, rescheduleAppDoc);
-server.post(
-  "/addMedicineToPrescription",
-  requireAuth,
-  addMedicineToPrescription
-);
-server.post(
+app.post("/rescheduleAppDoc", requireAuth, rescheduleAppDoc);
+app.post("/addMedicineToPrescription", requireAuth, addMedicineToPrescription);
+app.post(
   "/removeMedicineFromPrescription",
   requireAuth,
   removeMedicineFromPrescription
 );
-server.post(
-  "/updatePrescription",
-  requireAuth,
-  updatePrescription
-);
-server.post(
-  "/addDosage",
-  requireAuth,
-  addDosage
-);
-
+app.post("/updatePrescription", requireAuth, updatePrescription);
+app.post("/addDosage", requireAuth, addDosage);
 
 //////////////////////////////////////////// GET/////////////////////////////////////
 //admin

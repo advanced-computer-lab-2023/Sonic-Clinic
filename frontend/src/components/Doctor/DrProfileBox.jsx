@@ -16,6 +16,8 @@ function DrProfileBox() {
     backgroundColor: "#ffffff",
     textAlign: "center",
     marginLeft: "10rem",
+    border: "1px solid #ccc",
+    borderRadius: "0.3rem",
   };
 
   const profileImageStyle = {
@@ -42,8 +44,8 @@ function DrProfileBox() {
     width: "12rem",
     marginRight: "0.5rem",
     fontWeight: "bold",
-    color: "#adb5bd ",
-    fontSize: "1rem",
+    color: "#05afb9  ",
+    fontSize: "1.05rem",
     textAlign: "left",
   };
 
@@ -66,7 +68,6 @@ function DrProfileBox() {
   const [isEditing, setIsEditing] = useState(false);
   const [showChangePass, setShowChangePass] = useState(false);
   const [error, setError] = useState(null);
-  const _id = useSelector((state) => state.doctorLogin.userId);
   const dispatch = useDispatch();
 
   const handleInputChange = (e, field) => {
@@ -150,7 +151,7 @@ function DrProfileBox() {
       <h2 style={{ marginBottom: "1rem" }}>
         <strong>Dr. {profileData.name}</strong>
       </h2>
-      <h2 style={{ marginBottom: "2rem", fontSize: "20px", color: "#05afb9 " }}>
+      <h2 style={{ marginBottom: "2rem", fontSize: "20px", color: "#adb5bd" }}>
         <strong>{profileData.speciality}</strong>
       </h2>
       <div className="d-flex flex-column align-items-start">
