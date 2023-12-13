@@ -138,16 +138,29 @@ Make sure you have the following software installed on your system:
 ### Clone the Repository
 
 ```bash
-
 git https://github.com/advanced-computer-lab-2023/Sonic-Clinic.git
-
+```
+To run the backend:
+```bash
 cd backend/src
+```
+```bash
 npm i
-node server.js
-
+```
+```bash
+nodemon server.js
+```
+to run the frontend:
+```bash
 cd frontend/src
+```
+```bash
 npm i
+```
+```bash
 npm update
+```
+```bash
 npm start
 
 ```
