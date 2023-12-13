@@ -165,7 +165,7 @@ npm start
 
 ```
 ### Create .env file and add the following:
-MONGO_URI= "mongodb://Clinic:Pass_123@ac-gme9km7-shard-00-00.afyaloc.mongodb.net:27017,ac-gme9km7-shard-00-01.afyaloc.mongodb.net:27017,ac-gme9km7-shard-00-02.afyaloc.mongodb.net:27017/?ssl=true&replicaSet=atlas-y3b7cy-shard-0&authSource=admin&retryWrites=true&w=majority "
+MONGO_URI= "mongodb+srv://Clinic:Pass_123@cluster0.afyaloc.mongodb.net/?retryWrites=true&w=majority"
 PORT=8000
 
 
