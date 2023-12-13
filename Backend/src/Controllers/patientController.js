@@ -267,6 +267,19 @@ const addFamilyMember = async (req, res) => {
     const gender = req.body.gender;
     const relationToPatient = req.body.relationToPatient;
 
+    // Check if the relation is husband or wife
+    if (relationToPatient.toLowerCase() === 'husband' || relationToPatient.toLowerCase() === 'wife') {
+      // Check if the patient already has a family member with a husband/wife relation
+      const existingHusbandOrWife = await familyMemberModel.findOne({
+        patientID: patient.id,
+        'relationToPatient': { $in: ['husband', 'wife'] }
+      });
+
+      if (existingHusbandOrWife) {
+        return res.status(400).send({ error: "Patient already has a husband/wife in the family." });
+      }
+    }
+
     // Create the new family member
     const newFamilyMember = await familyMemberModel.create({
       name,
@@ -291,6 +304,7 @@ const addFamilyMember = async (req, res) => {
   }
 };
 
+
 const addFamilyMemberExisting = async (req, res) => {
   const email = req.body.email;
   const relationToPatient = req.body.relationToPatient;
@@ -307,6 +321,19 @@ const addFamilyMemberExisting = async (req, res) => {
 
     if (!familyMember) {
       return res.status(404).json({ error: "Patient not found" });
+    }
+
+    // Check if the relation is husband or wife
+    if (relationToPatient.toLowerCase() === 'husband' || relationToPatient.toLowerCase() === 'wife') {
+      // Check if the patient already has a family member with a husband/wife relation
+      const existingHusbandOrWife = await familyMemberModel.findOne({
+        patientID: patient.id,
+        'relationToPatient': { $in: ['husband', 'wife'] }
+      });
+
+      if (existingHusbandOrWife) {
+        return res.status(400).send({ error: "Patient already has a husband/wife in the family." });
+      }
     }
 
     const name = familyMember.name;

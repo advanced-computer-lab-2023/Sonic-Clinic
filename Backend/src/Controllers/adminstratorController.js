@@ -13,7 +13,7 @@ const addAdmin = async (req, res) => {
 
   try {
     let password = req.body.password;
-    const { username, email } = req.body;
+    const { username, email, name } = req.body;
     const salt = await bcrypt.genSalt();
     const newPassword = await bcrypt.hash(password, salt);
     password = newPassword;
@@ -30,6 +30,7 @@ const addAdmin = async (req, res) => {
     const newAdmin = await administratorModel.create({
       username,
       password,
+      name,
       email,
     });
     console.log("Admin Created!");
