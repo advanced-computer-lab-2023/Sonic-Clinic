@@ -81,6 +81,10 @@ function App() {
             path="health-packages-success"
             element={<PatientPackageSuccess />}
           />
+          <Route
+            path="prescription-success"
+            element={<PatientPackageSuccess />}
+          />
           <Route path="app-success" element={<PatientAppSuccess />} />
           <Route path="fail" element={<PatientFail />} />
         </Route>

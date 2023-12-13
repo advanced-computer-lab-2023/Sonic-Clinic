@@ -193,7 +193,7 @@ function ShowPrescriptions() {
         });
       } else {
         response = await axios.post(`${apiUrl}`, {
-          prescriptionId: selectedViewPrescription._id,
+          id: selectedViewPrescription._id,
         });
       }
 
@@ -485,7 +485,7 @@ function ShowPrescriptions() {
                   Download PDF
                 </Button>
                 {selectedViewPrescription &&
-                  selectedViewPrescription.status !== "filled" && (
+                  selectedViewPrescription.status !== "Filled" && (
                     <div className="d-flex align-items-center justify-content-center">
                       <Button
                         // Add the logic to handle payment here

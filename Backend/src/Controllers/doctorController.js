@@ -1017,7 +1017,9 @@ const updatePrescription = async (req, res) => {
     const doctor = await doctorModel.findById(doctorID);
     const existingPrescription =
       await prescriptionModel.findById(prescriptionID);
-   
+
+    const patient = await patientModel.findById(existingPrescription.patientID);
+
     if (!existingPrescription.doctorID === doctorID) {
       return res
         .status(400)
@@ -1028,10 +1030,19 @@ const updatePrescription = async (req, res) => {
       return res.status(400).json({ error: `Prescription not found` });
     }
     // Update prescription properties with new values
-    existingPrescription.medicine =medicine;
+    existingPrescription.medicine = medicine;
 
     // Save the updated prescription
     await existingPrescription.save();
+    const patientPres = patient.prescreptions;
+    for (const pres of patientPres) {
+      if (pres._id === prescriptionID) {
+        pres.medicine = medicine;
+        patient.markModified("prescription");
+        await patient.save();
+      }
+    }
+    await patient.save();
 
     // Send a success response
     res.status(200).json(existingPrescription);
@@ -1040,8 +1051,6 @@ const updatePrescription = async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
-
- 
 
 module.exports = {
   selectPatient,
@@ -1073,5 +1082,4 @@ module.exports = {
   addMedicineToPrescription,
   removeMedicineFromPrescription,
   updatePrescription,
-  
 };

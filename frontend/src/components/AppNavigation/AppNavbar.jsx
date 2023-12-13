@@ -71,7 +71,7 @@ const AppNavbar = (props) => {
                 fontWeight: "700",
               }}
             >
-              El7a2ny Clinic
+              eHealth Clinic
             </div>
           </div>
 
@@ -91,7 +91,7 @@ const AppNavbar = (props) => {
                     fontSize: "1.1rem",
                   }}
                 >
-                  Balance: ${wallet}
+                  Balance: ${parseFloat(wallet).toFixed(2)}
                 </div>
               )}
 
