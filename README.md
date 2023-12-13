@@ -1,4 +1,4 @@
-# Sonic
+# Sonic-Clinic
 
 ## Project Title
 El7a2ny is a complete software solution designed for clinics, doctors, pharmacists, and patients. It aims to facilitate and automate interactions between patients, doctors, and pharmacists. The system helps find suitable doctors, schedule meetings, manage prescriptions, set and receive reminders, access medical history, conduct video and text chats, and order prescribed medications.
@@ -97,18 +97,7 @@ The motivation behind El7a2ny is to enhance the healthcare experience using tech
 - **Doctor Registration:**
   - Apply as a doctor.
 
-
-## Authorization and Security
-
-- **User Authentication  (JWT athentication) :**
-  - Implement role-based authentication for patients, doctors, and administrators.
-  - Logout securely.
-
-- **Password Management:**
-  - Implement password change functionality securely with OTP verification for patients, doctors, and administrators.
-
-
-## General Features
+### General Features
 
 - **Notification System:**
   - View notifications for appointments, follow-ups, and other important events.
@@ -120,6 +109,17 @@ The motivation behind El7a2ny is to enhance the healthcare experience using tech
 
 - **Video Chat Functionality:**
   - Users can do video calls.
+
+
+## Authorization and Security
+
+- **User Authentication  (JWT athentication) :**
+  - Implement role-based authentication for patients, doctors, and administrators.
+  - Logout securely.
+
+- **Password Management:**
+  - Implement password change functionality securely with OTP verification for patients, doctors, and administrators.
+
 
 
 ## Installation
