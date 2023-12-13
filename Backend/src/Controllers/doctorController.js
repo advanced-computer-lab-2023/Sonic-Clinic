@@ -1038,7 +1038,11 @@ const updatePrescription = async (req, res) => {
     for (const pres of patientPres) {
       if (pres._id == prescriptionID) {
         pres.medicine = medicine;
+<<<<<<< HEAD
         patient.markModified("prescreptions");
+=======
+        patient.markModified("prescriptions");
+>>>>>>> 10a3f7ec629383ad020d62ee94e9cb6c5e3af114
         await patient.save();
       }
     }
