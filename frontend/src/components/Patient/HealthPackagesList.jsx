@@ -85,13 +85,19 @@ function HealthPackagesList({ refreshFlag }) {
             fontWeight: "600",
             color: "#212529",
             lineHeight: "1.5",
+            // marginBottom: "0.5rem",
           }}
         >
           Your Health Packages
         </div>
         <div
           className=" d-flex justify-content-center align-items-center"
-          style={{ cursor: "default", color: "#ADB5BD", fontSize: "1.1rem" }}
+          style={{
+            cursor: "default",
+            color: "#ADB5BD",
+            fontSize: "1.1rem",
+            marginBottom: "1rem",
+          }}
         >
           Explore Health Packages{"  "}
           <div
@@ -110,7 +116,7 @@ function HealthPackagesList({ refreshFlag }) {
                   <div
                     style={{
                       color: "#099BA0",
-                      fontSize: "30px",
+                      fontSize: "1.7rem",
                       fontWeight: "600",
                       marginBottom: "10px",
                     }}
@@ -125,7 +131,10 @@ function HealthPackagesList({ refreshFlag }) {
                             {Array.isArray(innerMember.package) ? (
                               innerMember.package.map(
                                 (packagee, packageIndex) => (
-                                  <div key={`innerPackage_${packageIndex}`}>
+                                  <div
+                                    key={`innerPackage_${packageIndex}`}
+                                    style={{ fontSize: "1.05rem" }}
+                                  >
                                     <p>
                                       <strong>Package:</strong>{" "}
                                       {packagee.type.split(" ")[0]}
@@ -156,7 +165,7 @@ function HealthPackagesList({ refreshFlag }) {
                                 )
                               )
                             ) : (
-                              <>
+                              <div style={{ fontSize: "1.05rem" }}>
                                 <p>
                                   <strong>Package:</strong>{" "}
                                   {innerMember.package.type.split(" ")[0]}
@@ -178,12 +187,12 @@ function HealthPackagesList({ refreshFlag }) {
                                     </p>
                                   </>
                                 ) : (
-                                  <p>
+                                  <p style={{ fontSize: "1.05rem" }}>
                                     <strong>End Date:</strong>{" "}
                                     {innerMember.package.endDate}
                                   </p>
                                 )}
-                              </>
+                              </div>
                             )}
                           </Col>
                           <Col
@@ -211,7 +220,7 @@ function HealthPackagesList({ refreshFlag }) {
                   <div
                     style={{
                       color: "#099BA0",
-                      fontSize: "30px",
+                      fontSize: "1.7rem",
                       fontWeight: "600",
                       marginBottom: "10px",
                     }}
@@ -222,7 +231,10 @@ function HealthPackagesList({ refreshFlag }) {
                     <Col md={8}>
                       {Array.isArray(member.package) ? (
                         member.package.map((packagee, packageIndex) => (
-                          <div key={`innerPackage_${packageIndex}`}>
+                          <div
+                            key={`innerPackage_${packageIndex}`}
+                            style={{ fontSize: "1.05rem" }}
+                          >
                             <p>
                               <strong>Package:</strong>{" "}
                               {packagee.type.split(" ")[0]}
@@ -242,14 +254,14 @@ function HealthPackagesList({ refreshFlag }) {
                                 </p>
                               </>
                             ) : (
-                              <p>
+                              <p style={{ fontSize: "1.05rem" }}>
                                 <strong>End Date:</strong> {packagee.endDate}
                               </p>
                             )}
                           </div>
                         ))
                       ) : (
-                        <>
+                        <div style={{ fontSize: "1.05rem" }}>
                           {" "}
                           <p>
                             <strong>Package:</strong>{" "}
@@ -260,7 +272,7 @@ function HealthPackagesList({ refreshFlag }) {
                             {member.package.status}
                           </p>
                           {member.package.status === "Subscribed" ? (
-                            <>
+                            <div>
                               {" "}
                               <p>
                                 <strong>Price:</strong>$ {member.package.price}
@@ -269,14 +281,14 @@ function HealthPackagesList({ refreshFlag }) {
                                 <strong>Renewal Date:</strong>{" "}
                                 {member.package.renewalDate}
                               </p>
-                            </>
+                            </div>
                           ) : (
                             <p>
                               <strong>End Date:</strong>{" "}
                               {member.package.endDate}
                             </p>
                           )}
-                        </>
+                        </div>
                       )}
                     </Col>
                     <Col

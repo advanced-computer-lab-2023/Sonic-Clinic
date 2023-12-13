@@ -187,14 +187,15 @@ function UploadDocuments() {
           fontWeight: "600",
           color: "#212529",
           lineHeight: "1.5",
+          marginBottom: "1rem",
         }}
       >
         Medical History
       </div>
       <Card>
-        <Card.Header>
+        {/* <Card.Header>
           <h5>My Documents</h5>
-        </Card.Header>
+        </Card.Header> */}
         <Card.Body>
           <label
             style={{
@@ -202,6 +203,7 @@ function UploadDocuments() {
               cursor: "pointer",
               color: "#099BA0",
               textDecoration: "underline",
+              fontSize: "1.05rem",
             }}
             onClick={() => setUploadVisible(!uploadVisible)}
             htmlFor="weee"
@@ -256,7 +258,15 @@ function UploadDocuments() {
 
           {existingFiles && existingFiles.length > 0 ? (
             <div>
-              <h6>Existing Documents:</h6>
+              <div
+                style={{
+                  fontSize: "1.1rem",
+                  marginBottom: "0.5rem",
+                  fontWeight: "bold",
+                }}
+              >
+                Existing Documents:
+              </div>
               <ListGroup>
                 {existingFiles.map((file, index) => (
                   <>

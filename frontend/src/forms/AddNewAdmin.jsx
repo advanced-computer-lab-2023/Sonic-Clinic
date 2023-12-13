@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Form from "react-bootstrap/Form";
-import { Button } from "react-bootstrap";
+import { Button, Col } from "react-bootstrap";
 import axios from "axios";
 
 export default function AddNewAdmin({ fetchData, closeForm }) {
@@ -8,6 +8,7 @@ export default function AddNewAdmin({ fetchData, closeForm }) {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
+  const [name, setName] = useState("");
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
 
@@ -18,7 +19,8 @@ export default function AddNewAdmin({ fetchData, closeForm }) {
       username == "" ||
       password == "" ||
       confirmPassword == "" ||
-      email == ""
+      email == "" ||
+      name == ""
     ) {
       setError("Please fill in all the required fields");
       console.log(error);
@@ -87,6 +89,7 @@ export default function AddNewAdmin({ fetchData, closeForm }) {
         setPassword("");
         setConfirmPassword("");
         setEmail("");
+        setName("");
         closeForm();
         fetchData();
       } else if (response.status === 409) {
@@ -114,44 +117,74 @@ export default function AddNewAdmin({ fetchData, closeForm }) {
       <Form
         onSubmit={handleSubmit}
         className="d-flex justify-content-center align-items-center"
+        style={{ width: "48rem", marginBottom: "2rem" }}
       >
-        <Form.Control
-          style={{ width: "13rem", marginRight: "0.5rem" }}
-          type="text"
-          name="username"
-          placeholder="Enter username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          required
-        />
-        <Form.Control
-          style={{ width: "13rem", marginRight: "0.5rem" }}
-          type="email"
-          name="email"
-          placeholder="Enter Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-        <Form.Control
-          style={{ width: "13rem", marginRight: "0.5rem" }}
-          type="password"
-          name="pass"
-          placeholder="Enter password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-        <Form.Control
-          style={{ width: "13rem", marginRight: "0.5rem" }}
-          type="password"
-          name="confirmPass"
-          placeholder="Confirm Password"
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
-          required
-        />
-        <Button type="submit" style={{ width: "8rem", margin: "20px" }}>
+        <Col lg={5}>
+          {" "}
+          <Form.Control
+            style={{
+              width: "13rem",
+              marginRight: "0.5rem",
+            }}
+            type="text"
+            name="username"
+            placeholder="Enter username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            required
+          />
+        </Col>
+        <Col lg={5}>
+          <Form.Control
+            style={{
+              width: "13rem",
+              marginRight: "0.5rem",
+              marginBottom: "1rem",
+            }}
+            type="text"
+            name="name"
+            placeholder="Enter name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            required
+          />
+          <Form.Control
+            style={{ width: "13rem", marginRight: "0.5rem" }}
+            type="email"
+            name="email"
+            placeholder="Enter Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+        </Col>
+
+        <Col lg={5}>
+          <Form.Control
+            style={{
+              width: "13rem",
+              marginRight: "0.5rem",
+              marginBottom: "1rem",
+            }}
+            type="password"
+            name="pass"
+            placeholder="Enter password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+          <Form.Control
+            style={{ width: "13rem", marginRight: "0.5rem" }}
+            type="password"
+            name="confirmPass"
+            placeholder="Confirm Password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            required
+          />
+        </Col>
+
+        <Button type="submit" style={{ width: "8rem" }}>
           Create
         </Button>
       </Form>
