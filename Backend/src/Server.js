@@ -100,7 +100,6 @@ const {
   addMedicineToPrescription,
   removeMedicineFromPrescription,
   updatePrescription,
-  
 } = require("./Controllers/doctorController");
 
 ///////////////////////////////adminstratorController//////////////////////////////////////
@@ -320,7 +319,6 @@ app.post(
 );
 app.post("/updatePrescription", requireAuth, updatePrescription);
 
-
 //////////////////////////////////////////// GET/////////////////////////////////////
 //admin
 app.get("/viewAllPatients", requireAuth, viewAllPatients);
@@ -386,8 +384,8 @@ app.post(
   subscribeHealthPackageWallet
 );
 
-//app.post("/payPrescriptionStripe", requireAuth, payPrescriptionStripe);
-// app.post("/payPrescriptionWallet", requireAuth, payPrescriptionWallet);
+// app.post("/payPrescriptionStripe", requireAuth, payPrescriptionStripe);
+app.post("/payPrescriptionWallet", requireAuth, payPrescriptionWallet);
 // app.post("/handlePrescreptionStripe", requireAuth, handlePrescreptionStripe);
 
 //doctor
