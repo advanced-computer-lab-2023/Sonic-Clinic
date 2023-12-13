@@ -2143,10 +2143,24 @@ const payPrescriptionWallet = async (req, res) => {
     }
     patient.wallet -= price;
     await patient.save();
+    const prescreptions = patient.prescreptions;
+
+    for (const prescreptionP of prescreptions) {
+      console.log(prescreptionP._id + "  " + presId);
+      if (prescreptionP._id == presId) {
+        console.log("Inside the if statement");
+        prescreptionP.status = "Filled";
+        patient.markModified("prescreptions");
+        await patient.save();
+        console.log("Patient saved successfully");
+      }
+    }
+
     prescription.status = "Filled";
     await prescription.save();
+    await patient.save();
 
-    return res.status(200).json(prescription);
+    return res.status(200).json(patient);
   } catch (error) {
     console.error("Error:", error);
     return res.status(500).json({ message: "Server Error" });
