@@ -384,9 +384,9 @@ app.post(
   subscribeHealthPackageWallet
 );
 
-// app.post("/payPrescriptionStripe", requireAuth, payPrescriptionStripe);
+app.post("/payPrescriptionStripe", requireAuth, payPrescriptionStripe);
 app.post("/payPrescriptionWallet", requireAuth, payPrescriptionWallet);
-// app.post("/handlePrescreptionStripe", requireAuth, handlePrescreptionStripe);
+app.post("/handlePrescreptionStripe", requireAuth, handlePrescreptionStripe);
 
 //doctor
 app.get("/viewAvailableSlots", requireAuth, viewAvailableSlots);
