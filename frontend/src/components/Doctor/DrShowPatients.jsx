@@ -1157,7 +1157,7 @@ function DrShowPatients({
               <div className="d-flex align-items-center justify-content-between w-100">
                 <div className="d-flex align-items-center justify-content-center">
                   {selectedViewPrescription &&
-                    selectedViewPrescription.status !== "filled" && (
+                    selectedViewPrescription.status !== "Filled" && (
                       <Button
                         variant="secondary"
                         onClick={() => handleEditClick()}
