@@ -140,7 +140,7 @@ Make sure you have the following software installed on your system:
 ```bash
 git https://github.com/advanced-computer-lab-2023/Sonic-Clinic.git
 ```
-To run the backend:
+#### To run the backend:
 ```bash
 cd backend/src
 ```
@@ -150,7 +150,7 @@ npm i
 ```bash
 nodemon server.js
 ```
-to run the frontend:
+#### To run the frontend:
 ```bash
 cd frontend/src
 ```
@@ -285,7 +285,7 @@ A big thank you to the creators of these tutorials for their valuable contributi
 
 ## Code Style
 
-We adhere to a set of coding conventions to maintain consistency and readability across the project. Please follow these guidelines when contributing to the codebase:
+We applied a set of coding conventions to maintain consistency and readability across the project. Please follow these guidelines when contributing to the codebase:
 
 - **JavaScript/Node.js:** We follow the [Airbnb JavaScript Style Guide](https://github.com/airbnb/javascript) for JavaScript and Node.js projects.
 
@@ -299,7 +299,7 @@ We adhere to a set of coding conventions to maintain consistency and readability
 
 - **Comments:** Include comments where necessary to explain complex code sections or to provide context. Follow a consistent comment style.
 
-Before submitting a pull request, please ensure that your code adheres to these conventions. Consistent coding practices enhance collaboration and make the codebase more maintainable.
+Before submitting a pull request, please ensure that your code sticks to these conventions. Consistent coding practices enhance collaboration and make the codebase more maintainable.
 
 
 ## Contribute
