@@ -211,8 +211,8 @@ Follow these steps to navigate and use Sonic-Clinic effectively:
 ### Patient:
 ### 1. View Doctors and Manage Appointments
 
--Click on "View All Doctors" in the Home Page, filter doctos by speciality, date and time and click on apply or you can search for a doctor by his name. to create a new appointment choose the desired doctor and book a slot.
--To view, reschedule (follow-ups), cancel and filter appointments: Click on the "My Appointments" section in the menu
+- Click on "View All Doctors" in the Home Page, filter doctos by speciality, date and time and click on apply or you can search for a doctor by his name. to create a new appointment choose the desired doctor and book a slot.
+- To view, reschedule (follow-ups), cancel and filter appointments: Click on the "My Appointments" section in the menu
 
 ### 2. Manage Prescriptions
 
@@ -227,9 +227,9 @@ Follow these steps to navigate and use Sonic-Clinic effectively:
 ### Doctor:
 ### 1. Manage Appointments
 
--Access "My Appointments" in the menu to view and filter booked appointments by date and time.
--Access "Free slots" inside the "My Appointments" section to add free appointments slots that patients can book.
--Access "Follow-up requests" inside the "My Appointments" section to search and accept or reject follow-ups.
+- Access "My Appointments" in the menu to view and filter booked appointments by date and time.
+- Access "Free slots" inside the "My Appointments" section to add free appointments slots that patients can book.
+- Access "Follow-up requests" inside the "My Appointments" section to search and accept or reject follow-ups.
 
 ### 2. Manage Patients
 
