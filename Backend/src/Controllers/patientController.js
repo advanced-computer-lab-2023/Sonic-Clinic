@@ -2176,6 +2176,16 @@ const handlePrescreptionStripe = async (req, res) => {
     }
     prescription.status = "Filled";
     await prescription.save();
+    const patient = await patientModel.findById(prescription.patientID);
+    const prescreptions = patient.prescreptions;
+    for (const prescreptionP of prescreptions) {
+      if (prescreptionP._id == presId) {
+        console.log("Inside the if statement");
+        prescreptionP.status = "Filled";
+        patient.markModified("prescreptions");
+        await patient.save();
+      }
+    }
     return res.status(200).json(prescription);
   } catch (error) {
     console.error("Error:", error);

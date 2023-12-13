@@ -30,7 +30,10 @@ import {
   faPause,
   faCheckDouble,
 } from "@fortawesome/free-solid-svg-icons";
-import { updatePatientWallet } from "../../state/loginPatientReducer";
+import {
+  setNewPres,
+  updatePatientWallet,
+} from "../../state/loginPatientReducer";
 
 function ShowPrescriptions() {
   const [loading, setLoading] = useState(true);
@@ -189,7 +192,7 @@ function ShowPrescriptions() {
 
       if (paymentMethod === "creditCard") {
         response = await axios.post(`${apiUrl}`, {
-          prescriptionId: selectedViewPrescription._id,
+          id: selectedViewPrescription._id,
         });
       } else {
         response = await axios.post(`${apiUrl}`, {
@@ -202,11 +205,11 @@ function ShowPrescriptions() {
           setResponseUrl(response.data.url);
           if (response.data.url) {
             window.location.href = response.data.url;
-            // dispatch(
-            //   setNewApp({
-            //     newApp: newAppointment,
-            //   })
-            // );
+            dispatch(
+              setNewPres({
+                newPres: selectedViewPrescription._id,
+              })
+            );
           }
         } else {
           fetchData();
