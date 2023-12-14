@@ -145,29 +145,33 @@ export default function ChatPat({ who }) {
     socketRef.current = io.connect("http://localhost:8000");
     socketRef.current.on("me", (id) => {
       setMe(id);
-      console.log("socket it:", id);
     });
   }, []);
 
   const callUser = (id) => {
     console.log(idToCall);
     socketRef.current = io.connect("http://localhost:8000");
+
     const peer = new Peer({
       initiator: true,
       trickle: false,
       stream: stream,
     });
+
     peer.on("signal", (data) => {
+      // Ensure you're emitting the "callUser" event on the right socket reference
       socketRef.current.emit("callUser", {
-        userToCall: id,
+        userToCall: id, // Consider using the 'id' parameter instead of 'idToCall'
         signalData: data,
         from: me,
         name: name,
       });
     });
+
     peer.on("stream", (stream) => {
       userVideoRef.current.srcObject = stream;
     });
+
     socketRef.current.on("callAccepted", (signal) => {
       setCallAccepted(true);
       peer.signal(signal);
@@ -576,65 +580,6 @@ export default function ChatPat({ who }) {
                     <FontAwesomeIcon
                       icon={faPhone}
                       style={{ fontSize: "0.9rem" }}
-                    />
-                  </Button>
-                </div>
-              )}
-              {/* Render user video when call is accepted */}
-              {callAccepted && !callEnded && (
-                <div className="d-flex flex-column justify-content-center align-items-center">
-                  <video
-                    playsInline
-                    muted
-                    ref={userVideoRef}
-                    autoPlay
-                    style={{
-                      width: "25rem",
-                      marginTop: "1rem",
-                      transform: "scaleX(-1)",
-                    }}
-                  />
-                  <Button
-                    variant="secondary"
-                    onClick={() => {
-                      leaveCall();
-                    }}
-                    style={{ fontSize: "0.9rem", marginTop: "0.5rem" }}
-                  >
-                    <FontAwesomeIcon
-                      icon={faPhoneSlash}
-                      style={{ fontSize: "0.9rem" }}
-                    />
-                  </Button>
-                </div>
-              )}
-
-              {!receivingCall && !callAccepted && (
-                <div
-                  className="d-flex justify-content-between"
-                  style={{
-                    height: "2.5rem",
-                    width: "25rem",
-                    marginTop: "1rem",
-                  }}
-                >
-                  <FormControl
-                    id="filled-basic"
-                    label="ID to call"
-                    placeholder="Enter key to call"
-                    onChange={(e) => setIdToCall(e.target.value)}
-                    style={{ width: "18rem" }}
-                  />
-                  <Button
-                    color="primary"
-                    onClick={() => callUser(idToCall)}
-                    style={{ width: "5rem" }}
-                    disabled={idToCall === ""}
-                  >
-                    Call{" "}
-                    <FontAwesomeIcon
-                      icon={faPhone}
-                      style={{ fontSize: "0.9rem", marginLeft: "0.3rem" }}
                     />
                   </Button>
                 </div>
