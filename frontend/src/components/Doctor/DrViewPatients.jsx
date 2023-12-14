@@ -24,6 +24,7 @@ export default function DrViewPatients() {
         setPatients(response.data.patients);
         setResponseData(response.data.patients);
         setLoading(false);
+        console.log("fetched");
       } else {
         console.log("Server error");
         setLoading(false);

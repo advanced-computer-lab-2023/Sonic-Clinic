@@ -270,6 +270,7 @@ function DrShowPatients({
     setPrescription([]); // Close the modal first
   };
   const [medicineData, setMedicineData] = useState([]);
+
   const fetchMedicineData = async () => {
     try {
       const response = await axios.get("/viewMedicines"); // Replace with the actual endpoint
@@ -280,6 +281,7 @@ function DrShowPatients({
       console.error("Error fetching medicine data:", error);
     }
   };
+
   const neededMedicineData = medicineData;
   const [selectedMedicine, setSelectedMedicine] = useState(null);
   const [dosage, setDosage] = useState(null);
@@ -348,6 +350,7 @@ function DrShowPatients({
       if (response.status === 200) {
         console.log("Prescription saved successfully:", response.data);
         fetchData();
+
         // Clear the prescription form if the post is successful
         setPrescription([]);
         setSelectedMedicine(null);
@@ -369,6 +372,13 @@ function DrShowPatients({
     handleClose(); // Assuming this closes a modal or similar
   };
 
+  useEffect(() => {
+    console.log("aho2", existingPrescriptions);
+    if (patients && expandedPatient !== null) {
+      setExistingPrescriptions(patients[expandedPatient]?.prescreptions || []);
+    }
+  }, [patients, expandedPatient]);
+
   const [selectedViewPrescription, setSelectedViewPrescription] =
     useState(null);
   const [showViewSelectedPrescription, setShowViewSelectedPrescription] =
@@ -384,29 +394,6 @@ function DrShowPatients({
     setIsEditMode(false);
     setSelectedMedicine(null);
     setDosage("");
-  };
-
-  const [editingMedicine, setEditingMedicine] = useState(null);
-
-  const [newMedicineNameToPrescription, setNewMedicineNameToPrescription] =
-    useState("");
-  const [newMedicineDosageToPrescription, setNewMedicineDosageToPrescription] =
-    useState("");
-
-  const handleAddMedicine = () => {
-    // Add new medicine to state
-    const newMedicine = [
-      newMedicineName,
-      "Price Placeholder",
-      newMedicineDosage,
-    ];
-    setSelectedViewPrescription({
-      ...selectedViewPrescription,
-      medicine: [...selectedViewPrescription.medicine, newMedicine],
-    });
-    // Optionally, make an API call to update the prescription in the backend
-    setNewMedicineName("");
-    setNewMedicineDosage("");
   };
 
   const [isEditMode, setIsEditMode] = useState(false);
@@ -800,47 +787,45 @@ function DrShowPatients({
                             <ListGroup className="d-flex w-100">
                               {existingPrescriptions.map(
                                 (prescription, index) => (
-                                  <Card className="d-flex justify-content-between  w-100 p-2 mb-3">
-                                    <div>
-                                      <span
-                                        style={{
-                                          color: "#ff6b35",
-                                        }}
-                                      >
-                                        Prescription {index + 1}
-                                      </span>
-                                      <span
-                                        style={{
-                                          marginLeft: "5rem",
-                                          color: "black",
-                                        }}
-                                      >
+                                  <Card className="d-flex w-100 p-2 mb-3">
+                                    <div className="d-flex justify-content-between w-100">
+                                      <div>
+                                        <span style={{ color: "#ff6b35" }}>
+                                          Prescription {index + 1}
+                                        </span>
+                                      </div>
+                                      <span style={{ color: "black" }}>
                                         {prescription.date
                                           .split("-")
                                           .reverse()
                                           .join("/")}
                                       </span>
-
-                                      <Link
-                                        style={{
-                                          fontSize: "1rem",
-                                          color: "#ff6b35",
-                                          textDecoration: "none",
-                                          marginLeft: "15.5rem",
-                                        }}
-                                        onClick={() =>
-                                          handleViewMoreClick(prescription)
-                                        }
-                                      >
-                                        View Details
-                                        <FontAwesomeIcon
-                                          icon={faAnglesRight}
+                                      <div className="d-flex align-items-center">
+                                        <Link
                                           style={{
-                                            marginLeft: "0.5rem",
-                                            fontSize: "1.3rem",
+                                            fontSize: "1rem",
+                                            color: "#ff6b35",
+                                            textDecoration: "none",
                                           }}
-                                        />
-                                      </Link>
+                                          onClick={() =>
+                                            handleViewMoreClick(prescription)
+                                          }
+                                        >
+                                          View Details
+                                          <FontAwesomeIcon
+                                            icon={faAnglesRight}
+                                            style={{
+                                              fontSize: "0.8rem",
+                                              marginLeft: "0.5rem",
+                                              transition:
+                                                "transform 0.3s ease-in-out",
+
+                                              animation:
+                                                "arrowAnimation2 1.5s infinite alternate ease-in-out",
+                                            }}
+                                          />
+                                        </Link>
+                                      </div>
                                     </div>
                                   </Card>
                                 )
