@@ -1,4 +1,4 @@
-# Sonic
+# Sonic-Clinic
 
 ## Project Title
 El7a2ny is a complete software solution designed for clinics, doctors, pharmacists, and patients. It aims to facilitate and automate interactions between patients, doctors, and pharmacists. The system helps find suitable doctors, schedule meetings, manage prescriptions, set and receive reminders, access medical history, conduct video and text chats, and order prescribed medications.
@@ -97,18 +97,7 @@ The motivation behind El7a2ny is to enhance the healthcare experience using tech
 - **Doctor Registration:**
   - Apply as a doctor.
 
-
-## Authorization and Security
-
-- **User Authentication  (JWT athentication) :**
-  - Implement role-based authentication for patients, doctors, and administrators.
-  - Logout securely.
-
-- **Password Management:**
-  - Implement password change functionality securely with OTP verification for patients, doctors, and administrators.
-
-
-## General Features
+### General Features
 
 - **Notification System:**
   - View notifications for appointments, follow-ups, and other important events.
@@ -120,6 +109,17 @@ The motivation behind El7a2ny is to enhance the healthcare experience using tech
 
 - **Video Chat Functionality:**
   - Users can do video calls.
+
+
+## Authorization and Security
+
+- **User Authentication  (JWT athentication) :**
+  - Implement role-based authentication for patients, doctors, and administrators.
+  - Logout securely.
+
+- **Password Management:**
+  - Implement password change functionality securely with OTP verification for patients, doctors, and administrators.
+
 
 
 ## Installation
@@ -140,7 +140,7 @@ Make sure you have the following software installed on your system:
 ```bash
 git https://github.com/advanced-computer-lab-2023/Sonic-Clinic.git
 ```
-To run the backend:
+#### To run the backend:
 ```bash
 cd backend/src
 ```
@@ -150,7 +150,7 @@ npm i
 ```bash
 nodemon server.js
 ```
-to run the frontend:
+#### To run the frontend:
 ```bash
 cd frontend/src
 ```
@@ -211,8 +211,8 @@ Follow these steps to navigate and use Sonic-Clinic effectively:
 ### Patient:
 ### 1. View Doctors and Manage Appointments
 
--Click on "View All Doctors" in the Home Page, filter doctos by speciality, date and time and click on apply or you can search for a doctor by his name. to create a new appointment choose the desired doctor and book a slot.
--To view, reschedule (follow-ups), cancel and filter appointments: Click on the "My Appointments" section in the menu
+- Click on "View All Doctors" in the Home Page, filter doctos by speciality, date and time and click on apply or you can search for a doctor by his name. to create a new appointment choose the desired doctor and book a slot.
+- To view, reschedule (follow-ups), cancel and filter appointments: Click on the "My Appointments" section in the menu
 
 ### 2. Manage Prescriptions
 
@@ -227,9 +227,9 @@ Follow these steps to navigate and use Sonic-Clinic effectively:
 ### Doctor:
 ### 1. Manage Appointments
 
--Access "My Appointments" in the menu to view and filter booked appointments by date and time.
--Access "Free slots" inside the "My Appointments" section to add free appointments slots that patients can book.
--Access "Follow-up requests" inside the "My Appointments" section to search and accept or reject follow-ups.
+- Access "My Appointments" in the menu to view and filter booked appointments by date and time.
+- Access "Free slots" inside the "My Appointments" section to add free appointments slots that patients can book.
+- Access "Follow-up requests" inside the "My Appointments" section to search and accept or reject follow-ups.
 
 ### 2. Manage Patients
 
@@ -285,7 +285,7 @@ A big thank you to the creators of these tutorials for their valuable contributi
 
 ## Code Style
 
-We adhere to a set of coding conventions to maintain consistency and readability across the project. Please follow these guidelines when contributing to the codebase:
+We applied a set of coding conventions to maintain consistency and readability across the project. Please follow these guidelines when contributing to the codebase:
 
 - **JavaScript/Node.js:** We follow the [Airbnb JavaScript Style Guide](https://github.com/airbnb/javascript) for JavaScript and Node.js projects.
 
@@ -299,7 +299,7 @@ We adhere to a set of coding conventions to maintain consistency and readability
 
 - **Comments:** Include comments where necessary to explain complex code sections or to provide context. Follow a consistent comment style.
 
-Before submitting a pull request, please ensure that your code adheres to these conventions. Consistent coding practices enhance collaboration and make the codebase more maintainable.
+Before submitting a pull request, please ensure that your code sticks to these conventions. Consistent coding practices enhance collaboration and make the codebase more maintainable.
 
 
 ## Contribute
