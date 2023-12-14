@@ -108,7 +108,17 @@ function HealthPackagesList({ refreshFlag }) {
             <strong>Here</strong>
           </div>
         </div>
+        {(NeededData.every((member) => member.length === 0) ||
+          NeededData.length === 0) && (
+          <div
+            className="msg"
+            style={{ width: "30rem", marginLeft: "12rem", marginTop: "3rem" }}
+          >
+            No health package history
+          </div>
+        )}
         {NeededData &&
+          NeededData.every((member) => member.length > 0) &&
           NeededData.map((member, index) => (
             <Card key={`outer_${index}`} className="mb-4">
               {Array.isArray(member) ? (

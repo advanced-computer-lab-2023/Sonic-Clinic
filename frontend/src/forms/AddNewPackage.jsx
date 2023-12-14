@@ -12,13 +12,14 @@ export default function AddNewPackage({ fetchData }) {
   const [success, setSuccess] = useState(false);
 
   const inputStyle = {
-    fontSize: "15px",
+    fontSize: "0.9rem",
     height: "30px",
     borderRadius: "3px",
   };
   const titleStyle = {
     fontWeight: "bold",
     color: "#ADB5BD ",
+    fontSize: "1rem",
   };
 
   const handleSubmit = async (e) => {
@@ -161,7 +162,7 @@ export default function AddNewPackage({ fetchData }) {
           />
         </Form.Group>
         <Form.Group className="p-2">
-          <Button style={{ width: "100%", fontSize: "15px" }} type="submit">
+          <Button style={{ width: "100%", fontSize: "1rem" }} type="submit">
             Add Package
           </Button>
         </Form.Group>

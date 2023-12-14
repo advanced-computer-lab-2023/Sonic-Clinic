@@ -28,6 +28,7 @@ function ShowAppointments() {
   const [loading, setLoading] = useState(true);
   const [responseData, setResponseData] = useState([]);
   const [error1, setError] = useState(null);
+  const [modalError, setModalError] = useState(null);
   const [msg, setMsg] = useState(null);
   const [rescheduleModal, setRescheduleModal] = useState(false);
   const [rescheduleSlots, setRescheduleSlots] = useState([]);
@@ -127,11 +128,11 @@ function ShowAppointments() {
       if (response.status === 200) {
         fetchData();
         dispatch(setNewNotifications(true));
-        setError(null);
+        setModalError(null);
         setCancelModal(false);
       }
     } catch (error) {
-      setError(error.response.data.message);
+      setModalError(error.response.data.message);
     }
   };
 
@@ -143,9 +144,10 @@ function ShowAppointments() {
       if (response.status === 200) {
         setError(null);
         setRescheduleSlots(response.data.availableSlots);
+        setModalError(null);
       }
     } catch (error) {
-      setError(error.response.data.message);
+      setModalError(error.response.data.message);
     }
   };
 
@@ -160,14 +162,14 @@ function ShowAppointments() {
       });
       if (response.status === 200) {
         fetchData();
-        setError(null);
+        setModalError(null);
         setConfirmModal(true);
         dispatch(setNewNotifications(true));
         setRescheduleModal(false);
         setRescheduleSlot(null);
       }
     } catch (error) {
-      setError(error.response.data.message);
+      setModalError(error.response.data.message);
     }
   };
 
@@ -182,14 +184,14 @@ function ShowAppointments() {
       });
       if (response.status === 200) {
         fetchData();
-        setError(null);
+        setModalError(null);
         dispatch(setNewNotifications(true));
         setFollowUpSlot(null);
         setConfirmFollowModal(true);
         setFollowUpModal(false);
       }
     } catch (error) {
-      setError(error.response.data.message);
+      setModalError(error.response.data.message);
     }
   };
 
@@ -212,8 +214,8 @@ function ShowAppointments() {
         </div>
       )}
       {filteredAppointments.length === 0 && !loading && (
-        <div style={{ textAlign: "center", marginTop: "20px" }} className="msg">
-          {msg}
+        <div style={{ textAlign: "center", marginTop: "2rem" }} className="msg">
+          {msg ? msg : "No appointments found"}
         </div>
       )}
       {error1 && <div className="error">{error1}</div>}
@@ -401,6 +403,9 @@ function ShowAppointments() {
                                   ))}
                                 </Dropdown.Menu>
                               </Dropdown>
+                              {modalError && (
+                                <div className="error">{modalError}</div>
+                              )}
                             </Modal.Body>
                             <Modal.Footer>
                               <Button
@@ -446,6 +451,9 @@ function ShowAppointments() {
                           <Modal show={cancelModal}>
                             <Modal.Body>
                               Are you sure you want to cancel this appointment?
+                              {modalError && (
+                                <div className="error">{modalError}</div>
+                              )}
                             </Modal.Body>
                             <Modal.Footer className="d-flex align-items-center justify-content-center">
                               <Button
@@ -524,6 +532,9 @@ function ShowAppointments() {
                                   ))}
                                 </Dropdown.Menu>
                               </Dropdown>
+                              {modalError && (
+                                <div className="error">{modalError}</div>
+                              )}
                             </Modal.Body>
                             <Modal.Footer>
                               <Button

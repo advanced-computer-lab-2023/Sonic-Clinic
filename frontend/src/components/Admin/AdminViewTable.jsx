@@ -47,7 +47,7 @@ export default function AdminViewTable({ onAdmins, onDocs, api }) {
   const users = responseData;
   console.log(users);
   const filteredUsers = users.filter((user) =>
-    user.username.toLowerCase().includes(searchTerm.toLowerCase())
+    user.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   useEffect(() => {}, [username]);
@@ -125,7 +125,7 @@ export default function AdminViewTable({ onAdmins, onDocs, api }) {
       >
         <Form.Control
           type="Text"
-          placeholder="Search Username"
+          placeholder="Search by name"
           style={{ height: "2.5rem" }}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
@@ -147,7 +147,7 @@ export default function AdminViewTable({ onAdmins, onDocs, api }) {
       <Table striped bordered hover variant="light" style={{ width: "65rem" }}>
         <thead>
           <tr>
-            {!onAdmins && <th style={{ color: "#099BA0" }}>Full Name</th>}
+            <th style={{ color: "#099BA0" }}>Full Name</th>
             <th style={{ color: "#099BA0" }}>Username</th>
             <th style={{ color: "#099BA0" }}>Email</th>
             {onDocs && <th style={{ color: "#099BA0" }}>Affiliation</th>}
@@ -158,7 +158,7 @@ export default function AdminViewTable({ onAdmins, onDocs, api }) {
           {users &&
             filteredUsers.map((user) => (
               <tr key={user._id}>
-                {!onAdmins && <td>{user.name}</td>}
+                <td>{user.name}</td>
                 <td>{user.username} </td>
                 <td>{user.email}</td>
                 {onDocs && <td>{user.affiliation}</td>}

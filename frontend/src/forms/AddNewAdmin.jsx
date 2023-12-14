@@ -78,6 +78,7 @@ export default function AddNewAdmin({ fetchData, closeForm }) {
         username: username,
         password: password,
         email: email,
+        name: name,
       });
 
       if (response.status === 200) {
@@ -123,7 +124,7 @@ export default function AddNewAdmin({ fetchData, closeForm }) {
           {" "}
           <Form.Control
             style={{
-              width: "13rem",
+              width: "15rem",
               marginRight: "0.5rem",
             }}
             type="text"
@@ -137,7 +138,7 @@ export default function AddNewAdmin({ fetchData, closeForm }) {
         <Col lg={5}>
           <Form.Control
             style={{
-              width: "13rem",
+              width: "15rem",
               marginRight: "0.5rem",
               marginBottom: "1rem",
             }}
@@ -149,7 +150,7 @@ export default function AddNewAdmin({ fetchData, closeForm }) {
             required
           />
           <Form.Control
-            style={{ width: "13rem", marginRight: "0.5rem" }}
+            style={{ width: "15rem", marginRight: "0.5rem" }}
             type="email"
             name="email"
             placeholder="Enter Email"
@@ -162,7 +163,7 @@ export default function AddNewAdmin({ fetchData, closeForm }) {
         <Col lg={5}>
           <Form.Control
             style={{
-              width: "13rem",
+              width: "15rem",
               marginRight: "0.5rem",
               marginBottom: "1rem",
             }}
@@ -174,7 +175,7 @@ export default function AddNewAdmin({ fetchData, closeForm }) {
             required
           />
           <Form.Control
-            style={{ width: "13rem", marginRight: "0.5rem" }}
+            style={{ width: "15rem", marginRight: "0.5rem" }}
             type="password"
             name="confirmPass"
             placeholder="Confirm Password"

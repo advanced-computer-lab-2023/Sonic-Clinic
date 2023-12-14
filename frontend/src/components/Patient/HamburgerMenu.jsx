@@ -73,7 +73,7 @@ function HamburgerMenu() {
         width={"20rem"} // Set the width to 20rem
         styles={{
           bmBurgerButton: {
-            position: "fixed",
+            position: "absolute",
             width: "40px",
             height: "40px",
             left: "20px", // Adjust the distance from the left edge

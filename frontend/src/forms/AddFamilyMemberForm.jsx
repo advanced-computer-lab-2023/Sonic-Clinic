@@ -115,23 +115,9 @@ function AddFamilyMemberForm({ onRefresh, toggleForm }) {
               family: [response.data._id, response.data.name],
             })
           );
-        } else {
-          setError("Signup failed");
-          isLoading(false);
         }
       } catch (error) {
-        console.error("Error:", error);
-
-        if (error.response && error.response.status === 409) {
-          setError("Username taken!");
-        } else if (error.response && error.response.status !== 200) {
-          setError("Signup failed");
-        } else {
-          setError(
-            "An error occurred while signing up. Please try again later."
-          );
-        }
-
+        setError(error.response.data.error);
         isLoading(false);
       }
     }

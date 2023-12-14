@@ -144,6 +144,7 @@ const LoginForm = () => {
               userName: username,
               email: user.email,
               userId: user._id,
+              name: user.name,
             })
           );
 

@@ -53,12 +53,14 @@ const AppNavbar = (props) => {
         <Container
           fluid
           className="px-5 d-flex align-items-center w-100"
-          style={{ display: "flex" }}
+          style={{ display: "flex", height: "100%" }}
         >
           <div style={{ flex: 1 }}>
-            {" "}
             {/* Left section */}
-            <Navbar.Collapse>{hamburgerMenu}</Navbar.Collapse>
+            <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+            <Navbar.Collapse id="responsive-navbar-nav">
+              {hamburgerMenu}
+            </Navbar.Collapse>
           </div>
 
           <div style={{ flex: 1, textAlign: "center" }}>

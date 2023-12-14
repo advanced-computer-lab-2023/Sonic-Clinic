@@ -109,6 +109,17 @@ function AdminProfilePage() {
                                     fontWeight: "bold",
                                   }}
                                 >
+                                  Full name:
+                                </span>{" "}
+                                {user.name}
+                              </div>
+                              <div style={listItemStyle}>
+                                <span
+                                  style={{
+                                    color: "#099BA0",
+                                    fontWeight: "bold",
+                                  }}
+                                >
                                   Email:
                                 </span>{" "}
                                 {user.email}

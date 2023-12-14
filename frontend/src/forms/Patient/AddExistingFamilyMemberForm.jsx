@@ -90,19 +90,9 @@ function AddExistingFamilyMemberForm({ onRefresh, toggleForm }) {
             family: [response.data._id, response.data.name],
           })
         );
-      } else {
-        setError("Server Error");
-        isLoading(false);
       }
     } catch (error) {
-      if (error.response && error.response.status === 404) {
-        console.log(error.response);
-        setError(error.response.data.error);
-      } else {
-        setError(
-          "An error occurred while adding the family member. Please try again later."
-        );
-      }
+      setError(error.response.data.error);
       isLoading(false);
     }
   };

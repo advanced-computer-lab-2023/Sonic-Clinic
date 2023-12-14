@@ -1,22 +1,9 @@
 import React, { useEffect, useState } from "react";
-import {
-  Card,
-  Col,
-  Row,
-  Image,
-  Spinner,
-  Modal,
-  Button,
-  Form,
-} from "react-bootstrap";
+import { Card, Col, Row, Spinner, Modal, Button, Form } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faAnglesRight,
-  faCalendar,
-  faCheckCircle,
-  faChevronCircleRight,
-  faChevronRight,
-  faCircleInfo,
+  faCalendarAlt,
 } from "@fortawesome/free-solid-svg-icons";
 import prescriptionImg from "../../Assets/Prescription.jpg";
 import { Link, useNavigate } from "react-router-dom";
@@ -24,11 +11,9 @@ import { useSelector, useDispatch } from "react-redux";
 import { setPrescriptionData } from "../../state/prescriptionIdReducer";
 import axios from "axios";
 import {
-  faClock,
-  faCancel,
-  faCheck,
-  faPause,
+  faPrescriptionBottle,
   faCheckDouble,
+  faPause,
 } from "@fortawesome/free-solid-svg-icons";
 import {
   setNewPres,
@@ -116,11 +101,11 @@ function ShowPrescriptions() {
     const lowerCaseStatus = status.toLowerCase();
     switch (lowerCaseStatus) {
       case "filled":
-        return faCheck; // Blue for Upcoming
+        return faCheckDouble;
       case "not filled":
-        return faCancel; // Grey for Completed
+        return faPrescriptionBottle;
       default:
-        return faPause; // Default color
+        return faPause;
     }
   };
 
@@ -128,11 +113,11 @@ function ShowPrescriptions() {
     const lowerCaseStatus = status.toLowerCase();
     switch (lowerCaseStatus) {
       case "filled":
-        return "#05afb9"; // Blue for Upcoming
+        return "#adb5bd"; // Grey for Filled
       case "not filled":
-        return "#ff6b35 "; // Orange for Cancelled
+        return "#05afb9  "; // Blue for Not
       default:
-        return "#ff6b35"; // Default color
+        return "#05afb9 "; // Default color
     }
   };
 
@@ -328,7 +313,7 @@ function ShowPrescriptions() {
                 transition: "transform 0.3s",
                 marginBottom: "2rem",
                 marginRight: "2rem",
-                height: "12rem",
+                height: "10rem",
               }}
             >
               <Row>
@@ -336,12 +321,12 @@ function ShowPrescriptions() {
                   lg={1}
                   style={{
                     display: "flex",
-                    flexDirection: "column",
+                    flexDirection: "column", // Vertical arrangement
                     justifyContent: "center",
                     alignItems: "center",
                     backgroundColor: getStatusColor(prescription.status),
                     borderRadius: "10px 0 0 10px",
-                    height: "12rem",
+                    height: "10rem",
                   }}
                 >
                   <FontAwesomeIcon
@@ -356,7 +341,7 @@ function ShowPrescriptions() {
                   <Card.Body>
                     <Card.Title
                       style={{
-                        marginTop: "1.5rem",
+                        marginTop: "2rem",
                         fontSize: "1.5rem",
                         fontWeight: "bold",
                         color: "#212529",
@@ -379,14 +364,16 @@ function ShowPrescriptions() {
                   <Card.Body className="p-4">
                     <Card.Text
                       style={{
-                        fontSize: "1.1rem",
+                        fontSize: "1.2rem",
                       }}
                     >
                       <FontAwesomeIcon
-                        icon={faCalendar}
+                        icon={faCalendarAlt}
                         style={{
-                          marginLeft: "-1.5rem",
-                          marginTop: "3.3rem",
+                          //        marginLeft: "-1.5rem",
+                          marginTop: "3rem",
+                          fontSize: "1.2rem",
+                          marginRight: "0.5rem",
                         }}
                       />
                       {formattedDate}
@@ -401,12 +388,12 @@ function ShowPrescriptions() {
                     alignItems: "flex-end",
                     paddingBottom: "1rem",
                     marginLeft: "-1rem",
-                    height: "12rem", // This ensures the column stretches to the bottom of the card
+                    height: "10rem", // This ensures the column stretches to the bottom of the card
                   }}
                 >
                   <Link
                     style={{
-                      fontSize: "1.3rem",
+                      fontSize: "1.2rem",
                       color: "#05afb9",
                       textDecoration: "none",
                     }}
@@ -417,7 +404,10 @@ function ShowPrescriptions() {
                       icon={faAnglesRight}
                       style={{
                         marginLeft: "0.5rem",
-                        fontSize: "1.3rem",
+                        fontSize: "1.2rem",
+                        transition: "transform 0.3s ease-in-out",
+                        animation:
+                          "arrowAnimation2 1.5s infinite alternate ease-in-out",
                       }}
                     />
                   </Link>
