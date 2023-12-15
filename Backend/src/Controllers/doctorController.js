@@ -574,7 +574,7 @@ const cancelAppointmentDoc = async (req, res) => {
       "The appointment with Dr. " +
         doctor.name +
         " on " +
-        appointment.date +
+        appointment.date.split("-").reverse().join("/") +
         " at " +
         appointment.time +
         " has been cancelled",
@@ -587,12 +587,11 @@ const cancelAppointmentDoc = async (req, res) => {
       "An appointment has been cancelled with " +
         patient.name +
         " on " +
-        appointment.date +
+        appointment.date.split("-").reverse().join("/") +
         " at " +
         appointment.time,
       "Appointment Cancelled"
     );
-    console.log("5");
     const id = appointment.patientID;
     console.log(appointment.patientID);
     patient = await patientModel.findById(id);
@@ -756,7 +755,7 @@ const rescheduleAppDoc = async (req, res) => {
       "Your appointment with Dr. " +
       docName +
       " has been rescheduled upon the Dr request to be on " +
-      date +
+      date.split("-").reverse().join("/") +
       " at: " +
       time;
 
@@ -766,7 +765,7 @@ const rescheduleAppDoc = async (req, res) => {
       "Your appointment with " +
       patient.name +
       " has been rescheduled to be on " +
-      date +
+      date.split("-").reverse().join("/") +
       " at: " +
       time;
     if (patient) {
@@ -786,7 +785,7 @@ const rescheduleAppDoc = async (req, res) => {
           " for " +
           familyMem.name +
           " has been rescheduled upon the Dr request to be on " +
-          date +
+          date.split("-").reverse().join("/") +
           " at: " +
           time;
         parent.notifications.push(notification);
@@ -796,7 +795,7 @@ const rescheduleAppDoc = async (req, res) => {
           "An appointment with " +
           familyMem.name +
           " has been rescheduled to be on " +
-          date +
+          date.split("-").reverse().join("/") +
           " at: " +
           time;
         doctor.notifications.push(notificationDoc);
@@ -809,7 +808,7 @@ const rescheduleAppDoc = async (req, res) => {
           "Your appointment with Dr. " +
           doctor.name +
           " has been rescheduled upon the Dr request to be on " +
-          date +
+          date.split("-").reverse().join("/") +
           " at: " +
           time;
         linkedP.notifications.push(notification);
@@ -822,7 +821,7 @@ const rescheduleAppDoc = async (req, res) => {
       "The appointment with Dr. " +
         doctor.name +
         " has been rescheduled to " +
-        appointment.date +
+        appointment.date.split("-").reverse().join("/") +
         " at " +
         appointment.time,
       "Appointment Rescheduled"
@@ -833,7 +832,7 @@ const rescheduleAppDoc = async (req, res) => {
       "An appointment has been rescheduled with " +
         patient.name +
         " on " +
-        appointment.date +
+        appointment.date.split("-").reverse().join("/") +
         " at " +
         appointment.time,
       "Appointment Rescheduled"

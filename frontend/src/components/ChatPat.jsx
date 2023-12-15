@@ -142,36 +142,25 @@ export default function ChatPat({ who }) {
 
   useEffect(() => {
     fetchData();
-    socketRef.current = io.connect("http://localhost:8000");
-    socketRef.current.on("me", (id) => {
-      setMe(id);
-    });
   }, []);
 
   const callUser = (id) => {
-    console.log(idToCall);
-    socketRef.current = io.connect("http://localhost:8000");
-
     const peer = new Peer({
       initiator: true,
       trickle: false,
       stream: stream,
     });
-
     peer.on("signal", (data) => {
-      // Ensure you're emitting the "callUser" event on the right socket reference
       socketRef.current.emit("callUser", {
-        userToCall: id, // Consider using the 'id' parameter instead of 'idToCall'
+        userToCall: id,
         signalData: data,
         from: me,
         name: name,
       });
     });
-
     peer.on("stream", (stream) => {
       userVideoRef.current.srcObject = stream;
     });
-
     socketRef.current.on("callAccepted", (signal) => {
       setCallAccepted(true);
       peer.signal(signal);
@@ -200,10 +189,28 @@ export default function ChatPat({ who }) {
 
   const leaveCall = () => {
     setCallEnded(true);
-    if (typeof window !== "undefined" && connectionRef.current) {
-      connectionRef.current.destroy();
-    }
+    socketRef.current = io.connect("http://localhost:8000");
+    // Disconnect the socket
+    socketRef.current.disconnect();
+    console.log("111111111111111");
+    // Destroy the connection
+    connectionRef.current.destroy();
+    console.log("22222222222222222");
   };
+
+  useEffect(() => {
+    socketRef.current = io.connect("http://localhost:8000");
+    socketRef.current.on("disconnect", () => {
+      console.log("3333333333333");
+      socketRef.current.broadcast.emit("callEnded");
+      console.log("444444444444");
+    });
+
+    return () => {
+      // Clean up the event listener when the component unmounts
+      socketRef.current.off("disconnect");
+    };
+  }, []); // empty dependency array ensures that this effect runs only once
 
   const setChat = (name) => {
     setChosen(true);
@@ -280,20 +287,16 @@ export default function ChatPat({ who }) {
         .catch((error) => {
           console.error("Error accessing media devices:", error);
         });
-
+      socketRef.current.on("me", (id) => {
+        setMe(id);
+      });
       socketRef.current.on("callUser", (data) => {
         setReceivingCall(true);
         setCaller(data.from);
         setName(data.name);
         setCallerSignal(data.signal);
       });
-
       callUser(idToCall); // Initiating the call
-
-      // Handle callEnded event from the server
-      socketRef.current.on("callEnded", () => {
-        setCallEnded(true); // Set the call ended state appropriately
-      });
     }
   }, [idToCall, calling, myVideoRef]);
 
@@ -302,10 +305,10 @@ export default function ChatPat({ who }) {
       {!isOpen && (
         <Button
           style={buttonStyle}
-          variant="secondary"
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
           onClick={() => setIsOpen(true)}
+          variant="secondary"
         >
           <div style={buttonContentStyle}>
             <FontAwesomeIcon
@@ -335,7 +338,7 @@ export default function ChatPat({ who }) {
         >
           <Navbar
             className="d-flex justify-content-between p-1"
-            style={{ backgroundColor: "#ff6b35 ", width: "100%" }}
+            style={{ backgroundColor: "#ff6b35", width: "100%" }}
           >
             <div style={{ color: "white", marginLeft: "1rem" }}>
               {who === "patient" ? "Your Doctors" : "Your Patients"}
@@ -385,7 +388,7 @@ export default function ChatPat({ who }) {
           >
             <Navbar
               className="d-flex justify-content-between p-1"
-              style={{ backgroundColor: "#ff6b35 ", width: "100%" }}
+              style={{ backgroundColor: "#ff6b35", width: "100%" }}
             >
               <div>
                 {" "}
@@ -461,6 +464,7 @@ export default function ChatPat({ who }) {
                   marginRight: "1rem",
                   padding: "5px",
                   border: "1px solid transparent",
+                  fontSize: "0.98rem",
                 }}
                 value={myMessage}
                 onChange={(e) => setMyMessage(e.target.value)}
@@ -468,7 +472,7 @@ export default function ChatPat({ who }) {
               <FontAwesomeIcon
                 icon={faPaperPlane}
                 style={{
-                  color: "#ff6b35 ",
+                  color: "#ff6b35",
                   marginRight: "1rem",
                   cursor: "pointer",
                 }}
@@ -476,7 +480,7 @@ export default function ChatPat({ who }) {
               />
             </div>
           </Container>
-          <Modal show={calling}>
+          <Modal show={calling} style={{ maxWidth: "90%" }}>
             <Modal.Header>
               <Modal.Title>{chosenName.split("-")[0]}'s Room</Modal.Title>
             </Modal.Header>
@@ -493,7 +497,7 @@ export default function ChatPat({ who }) {
                   <div
                     style={{
                       fontWeight: "bold",
-                      color: "#05afb9 ",
+                      color: "#ff6b35 ",
                       cursor: "pointer",
                     }}
                     onClick={() => sendMessage()}
@@ -503,7 +507,7 @@ export default function ChatPat({ who }) {
                       icon={faAnglesRight}
                       style={{
                         opacity: 1,
-                        color: "#05afb9 ",
+                        color: "#ff6b35 ",
                         fontSize: "15px",
                         transition: "transform 0.3s ease-in-out",
                         marginLeft: "0.3rem",

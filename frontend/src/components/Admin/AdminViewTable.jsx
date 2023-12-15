@@ -56,11 +56,8 @@ export default function AdminViewTable({ onAdmins, onDocs, api }) {
     setShowAddNewAdmin(!showAddNewAdmin);
   };
 
-  const addBtnText = showAddNewAdmin ? "Close Form" : "Add new Adminstrator";
-  const btnStyle = {
-    backgroundcolor: `${showAddNewAdmin ? "#ff6b35" : "#05afb9"} !important`, //leh msh shaghala?
-    marginBottom: "20px",
-  };
+  const addBtnText = showAddNewAdmin ? "Close form" : "Add new adminstrator";
+
   const iconStyle = {
     opacity: 1,
     color: "#f0f0f0",
@@ -131,7 +128,11 @@ export default function AdminViewTable({ onAdmins, onDocs, api }) {
         />
       </div>
       {onAdmins && (
-        <Button style={btnStyle} id="newAdminForm" onClick={toggleAddNewAdmin}>
+        <Button
+          style={{ marginLeft: "51.5rem", marginBottom: "1rem" }}
+          id="newAdminForm"
+          onClick={toggleAddNewAdmin}
+        >
           {addBtnText}
           {showAddNewAdmin ? (
             <FontAwesomeIcon icon={faXmark} style={iconStyle} />
@@ -141,9 +142,12 @@ export default function AdminViewTable({ onAdmins, onDocs, api }) {
         </Button>
       )}
 
-      {showAddNewAdmin && (
-        <AddNewAdmin fetchData={fetchData} closeForm={toggleAddNewAdmin} />
-      )}
+      <div style={{ marginLeft: "52rem" }}>
+        {showAddNewAdmin && (
+          <AddNewAdmin fetchData={fetchData} closeForm={toggleAddNewAdmin} />
+        )}
+      </div>
+
       <Table striped bordered hover variant="light" style={{ width: "65rem" }}>
         <thead>
           <tr>
