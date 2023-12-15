@@ -6,6 +6,7 @@ const doctorModel = require("../Models/Doctor.js");
 const chatModel = require("../Models/Chat.js");
 const appointmentModel = require("../Models/Appointment.js");
 const bcrypt = require("bcrypt");
+const pharmacistModel = require("../Models/Pharmacist.js");
 
 const addPotentialDoctor = async (req, res) => {
   const { username } = req.body;
@@ -160,18 +161,27 @@ const viewChat = async (req, res) => {
 
 const viewChats = async (req, res) => {
   const userID = req.user.id;
-  let isDoctor = true;
+  let isDoctor = false;
+  let isPharmacist = false;
+
   try {
-    // Check if the user is a doctor or a patient
-    const patient = await patientModel.findById(userID);
-    if (patient) {
-      isDoctor = false;
+    // Check if the user is a doctor
+    const doctor = await doctorModel.findById(userID);
+    if (doctor) {
+      isDoctor = true;
+    } else {
+      // Check if the user is a pharmacist
+      const pharmacist = await pharmacistModel.findById(userID);
+      if (pharmacist) {
+        isPharmacist = true;
+      }
     }
+
     // Extract names from the populated data
     let chatNames = [];
 
     if (isDoctor) {
-      const doctor = await doctorModel.findById(userID);
+      // User is a doctor, get all patients
       const patients = doctor.patients;
       for (const patient of patients) {
         const currPatient = await patientModel.findById(patient);
@@ -179,7 +189,19 @@ const viewChats = async (req, res) => {
           chatNames.push(currPatient.name + "-" + currPatient._id);
         }
       }
+    } else if (isPharmacist) {
+      // User is a pharmacist, get all patients and all doctors
+      const allPatients = await patientModel.find();
+      for (const currPatient of allPatients) {
+        chatNames.push(currPatient.name + "-" + currPatient._id);
+      }
+
+      const allDoctors = await doctorModel.find();
+      for (const doc of allDoctors) {
+        chatNames.push("Dr. " + doc.name + "-" + doc._id);
+      }
     } else {
+      // User is neither a doctor nor a pharmacist
       const appointments = await appointmentModel.find({ patientID: userID });
       for (const appointment of appointments) {
         const doctorID = appointment.doctorID;
@@ -197,6 +219,7 @@ const viewChats = async (req, res) => {
   }
 };
 
+
 const sendMessage = async (req, res) => {
   const recipientID = req.body.recipientID;
   const message = req.body.message;
@@ -209,41 +232,84 @@ const sendMessage = async (req, res) => {
     hour12: false,
   });
 
-  let isDoctor = true;
+  let senderTitle;
+  let isDoctor = false;
+  let isPharmacist = false;
+
+  let isDoctor2 = false;
+  let isPharmacist2 = false;
+
+  let patient;
+  let doctor;
+  let pharmacist;
+
   try {
-    // Check if the user is a doctor or a patient
-    const patient = await patientModel.findById(userID);
+    // Check if the user is a patient
+    patient = await patientModel.findById(userID);
     if (patient) {
       isDoctor = false;
+      isPharmacist = false;
+      senderTitle = "patient";
+    } else {
+      // Check if the user is a doctor
+      doctor = await doctorModel.findById(userID);
+      if (doctor) {
+        isDoctor = true;
+        isPharmacist = false;
+        senderTitle = "doctor";
+      } else {
+        // Check if the user is a pharmacist
+        pharmacist = await pharmacistModel.findById(userID);
+        if (pharmacist) {
+          isDoctor = false;
+          isPharmacist = true;
+          senderTitle = "pharmacist";
+        }
+      }
     }
 
-    // Determine the user field (doctorID or patientID) based on the user type
-    const userID2 = isDoctor ? recipientID : userID;
-    const recipientID2 = isDoctor ? userID : recipientID;
-    const sender = isDoctor ? "doctor" : "patient";
-    const existingChat = await chatModel.findOne({
-      patientID: userID2,
-      doctorID: recipientID2,
-    });
-    if (!existingChat) {
-      if (isDoctor) {
-        const newChat = await chatModel.create({
-          patientID: recipientID,
-          doctorID: userID,
-          messages: [[sender, currDate, currTime, message]],
-        });
-        await newChat.save();
-      } else {
-        const newChat = await chatModel.create({
-          patientID: userID,
-          doctorID: recipientID,
-          messages: [[sender, currDate, currTime, message]],
-        });
-        await newChat.save();
+    // Check if the recipient is a doctor
+    doctor = await doctorModel.findById(recipientID);
+    if (doctor) {
+      isDoctor2 = true;
+      isPharmacist2 = false;
+    } else {
+      // Check if the recipient is a pharmacist
+      pharmacist = await pharmacistModel.findById(recipientID);
+      if (pharmacist) {
+        isDoctor2 = false;
+        isPharmacist2 = true;
       }
+    }
+
+    // Check if there is an existing chat
+    const existingChat = await chatModel.findOne({
+      $or: [
+        { patientID: recipientID, doctorID: userID },
+        { patientID: userID, doctorID: recipientID },
+        { patientID: recipientID, pharmacistID: userID },
+        { patientID: userID, pharmacistID: recipientID },
+        { doctorID: recipientID, pharmacistID: userID },
+        { doctorID: userID, pharmacistID: recipientID },
+      ],
+    });
+
+    if (!existingChat) {
+      // Create a new chat
+      const newChatData = {
+        patientID: isDoctor2 ? null : (isPharmacist2 ? null : recipientID),
+        doctorID: isDoctor2 ? (isPharmacist2 ? null : userID) : null,
+        pharmacistID: isPharmacist2 ? (isDoctor2 ? null : userID) : null,
+        messages: [[senderTitle, currDate, currTime, message]],
+      };
+
+      const newChat = await chatModel.create(newChatData);
+      await newChat.save();
+
       return res.status(200).json(newChat);
     } else {
-      existingChat.messages.push([sender, currDate, currTime, message]);
+      // Add message to the existing chat
+      existingChat.messages.push([senderTitle, currDate, currTime, message]);
       await existingChat.save();
 
       return res.status(200).json(existingChat);
@@ -252,6 +318,12 @@ const sendMessage = async (req, res) => {
     return res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
+
+
+
+
+
 
 const addChat = async (req, res) => {
   const newChat = await chatModel.create({

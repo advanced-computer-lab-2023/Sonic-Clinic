@@ -9,11 +9,15 @@ const chatSchema = new Schema(
     },
     patientID: {
       type: String,
-      required: true,
+      required: false,
     },
     doctorID: {
       type: String,
-      required: true,
+      required: false,
+    },
+    pharmacistID: {
+      type: String,
+      required: false,
     },
   },
   { timestamps: true }
