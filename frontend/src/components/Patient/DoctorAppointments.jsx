@@ -103,10 +103,6 @@ const DoctorAppointments = ({ onBookAppointment }) => {
 
   const handleBookAppointment = async () => {
     try {
-      if (!description) {
-        setError("Please enter a description");
-        return;
-      }
       dispatch(
         setForFam({
           forFam: selectedFamilyMemberId,
@@ -131,7 +127,7 @@ const DoctorAppointments = ({ onBookAppointment }) => {
           famID: selectedFamilyMemberId,
           doctorID: doctorID,
           date: selectedAppointment.split(" ")[0],
-          description: description,
+          description: "description",
           time: selectedAppointment.split(" ")[1],
         });
       }
@@ -140,7 +136,7 @@ const DoctorAppointments = ({ onBookAppointment }) => {
         famID: selectedFamilyMemberId,
         doctorID: doctorID,
         date: selectedAppointment.split(" ")[0],
-        description: description,
+        description: "description",
         time: selectedAppointment.split(" ")[1],
       };
 

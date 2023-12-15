@@ -96,10 +96,8 @@ function ShowAppointments() {
         return faCheckDouble; // Grey for Completed
       case "cancelled":
         return faCancel; // Orange for Cancelled
-      case "rescheduled":
-        return faPause; // Light Blue for Rescheduled
       default:
-        return faPause; // Default color
+        return faCheck; // Default color
     }
   };
 
@@ -112,10 +110,8 @@ function ShowAppointments() {
         return "#adb5bd "; // Grey for Completed
       case "cancelled":
         return "#ff6b35 "; // Orange for Cancelled
-      case "rescheduled":
-        return "#c4e6e6  "; // Light Blue for Rescheduled
       default:
-        return "#ff6b35"; // Default color
+        return "#05afb9"; // Default color
     }
   };
 

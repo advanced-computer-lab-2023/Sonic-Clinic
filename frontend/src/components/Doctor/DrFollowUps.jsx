@@ -28,8 +28,6 @@ function DrFollowUps() {
         setLoading(null);
         setResponseData(response.data);
         setAppointments(responseData);
-      } else {
-        console.log("Server error");
       }
       setLoading(false);
     } catch (error) {
@@ -77,7 +75,7 @@ function DrFollowUps() {
   const handleSearch = () => {
     setAppointments(
       responseData.filter((app) =>
-        app.patient.name.toLowerCase().includes(searchTerm.toLowerCase())
+        app.patientName.toLowerCase().includes(searchTerm.toLowerCase())
       )
     );
   };
@@ -101,7 +99,7 @@ function DrFollowUps() {
       <div
         className="d-flex justify-content-center align-items-center flex-row"
         style={{
-          width: "60rem",
+          width: "50rem",
           marginBottom: "2rem",
         }}
       >
@@ -130,179 +128,182 @@ function DrFollowUps() {
           />
         </Button>
       </div>
-      {appointments.length === 0 && !loading && (
-        <div style={{ textAlign: "center", marginTop: "20px" }} className="msg">
+      {appointments.length === 0 && (
+        <div
+          style={{
+            textAlign: "center",
+            marginTop: "20px",
+            width: "20rem",
+            justifySelf: "center",
+          }}
+          className="msg"
+        >
           No follow up requests
         </div>
       )}
-      {!loading &&
-        appointments?.map((appointment) => {
-          // Parse the date string into a Date object
-          const appointmentDate = new Date(appointment.date);
-          // Format the date as "dd/mm/yyyy"
-          const formattedDate = `${appointmentDate
-            .getDate()
-            .toString()
-            .padStart(2, "0")}/${(appointmentDate.getMonth() + 1)
-            .toString()
-            .padStart(2, "0")}/${appointmentDate.getFullYear()}`;
-          const hours = appointmentDate.getHours();
-          const minutes = appointmentDate.getMinutes();
-          // Format the time as HH:MM (24-hour format)
-          const formattedTime = `${hours.toString().padStart(2, "0")}:${minutes
-            .toString()
-            .padStart(2, "0")}`;
-          return (
-            <div
-              key={appointment._id}
-              className="text-decoration-none"
-              // to={`/appointment/${appointment.appointmentId}`}
-            >
-              <Card
-                style={{
-                  cursor: "pointer",
-                  borderRadius: "10px",
-                  boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-                  transition: "transform 0.3s",
-                  marginBottom: "2rem",
-                  height: "10rem",
-                }}
+      <div className="d-flex justify-content-center align-items-center">
+        {!loading &&
+          appointments?.map((appointment) => {
+            // Parse the date string into a Date object
+            const appointmentDate = new Date(appointment.date);
+            // Format the date as "dd/mm/yyyy"
+            const formattedDate = `${appointmentDate
+              .getDate()
+              .toString()
+              .padStart(2, "0")}/${(appointmentDate.getMonth() + 1)
+              .toString()
+              .padStart(2, "0")}/${appointmentDate.getFullYear()}`;
+            const hours = appointmentDate.getHours();
+            const minutes = appointmentDate.getMinutes();
+            // Format the time as HH:MM (24-hour format)
+            const formattedTime = `${hours
+              .toString()
+              .padStart(2, "0")}:${minutes.toString().padStart(2, "0")}`;
+            return (
+              <div
+                key={appointment._id}
+                className="text-decoration-none "
+                // to={`/appointment/${appointment.appointmentId}`}
               >
-                <Row>
-                  <Col lg={1}>
-                    <div
-                      style={{
-                        display: "flex",
-                        flexDirection: "column", // Vertical arrangement
-                        justifyContent: "center",
-                        alignItems: "center",
-                        backgroundColor: "#adb5bd ",
-                        borderRadius: "10px 0 0 10px",
-                        height: "10rem",
-                        width: "2.5rem",
-                      }}
-                    ></div>
-                  </Col>
-                  <Col lg={4}>
-                    <Card.Body className="p-4">
-                      <Card.Title
+                <Card
+                  style={{
+                    cursor: "pointer",
+                    borderRadius: "10px",
+                    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                    transition: "transform 0.3s",
+                    marginBottom: "2rem",
+                    height: "10rem",
+                    width: "50rem",
+                  }}
+                >
+                  <Row>
+                    <Col lg={1}>
+                      <div
+                        style={{
+                          display: "flex",
+                          flexDirection: "column", // Vertical arrangement
+                          justifyContent: "center",
+                          alignItems: "center",
+                          backgroundColor: "#adb5bd ",
+                          borderRadius: "10px 0 0 10px",
+                          height: "10rem",
+                          width: "2.5rem",
+                        }}
+                      ></div>
+                    </Col>
+                    <Col lg={4}>
+                      <Card.Body className="p-4">
+                        <Card.Title
+                          style={{
+                            marginTop: "2.3rem",
+                            fontSize: "1.5rem",
+                            fontWeight: "bold",
+                            color: "#212529",
+                            marginBottom: "1rem",
+                          }}
+                        >
+                          {appointment.patientName}
+                        </Card.Title>
+                      </Card.Body>
+                    </Col>
+                    <Col lg={4}>
+                      <Card.Body className="p-4">
+                        <Card.Text>
+                          <div
+                            className="show-more-date"
+                            style={{
+                              marginTop: "1.5rem",
+                              marginBottom: "1rem",
+                              fontSize: "1.1rem",
+                            }}
+                          >
+                            <FontAwesomeIcon
+                              icon={faCalendar}
+                              style={{
+                                marginRight: "0.5rem",
+                                fontSize: "1.1rem",
+                              }}
+                            />
+                            {formattedDate}
+                          </div>
+                          <div
+                            className="show-more-time"
+                            style={{ marginBottom: "1rem", fontSize: "1.1rem" }}
+                          >
+                            <FontAwesomeIcon
+                              icon={faClock}
+                              style={{
+                                marginRight: "0.5rem",
+                                fontSize: "1.1rem",
+                              }}
+                            />
+                            {appointment.time}
+                          </div>
+                        </Card.Text>
+                      </Card.Body>
+                    </Col>
+                    <Col lg={2}>
+                      <div
                         style={{
                           marginTop: "2.3rem",
-                          fontSize: "1.5rem",
-                          fontWeight: "bold",
-                          color: "#212529",
-                          marginBottom: "1rem",
+                          marginLeft: "1rem",
                         }}
                       >
-                        {appointment.patientName}
-                      </Card.Title>
-                      <Card.Text>
-                        <div
-                          style={{
-                            marginBottom: "1rem",
-                            fontSize: "1rem",
-                          }}
+                        <Modal show={acceptModal}>
+                          <Modal.Body>
+                            {appointment.patient?.name}'s follow up request has
+                            been accepted
+                          </Modal.Body>
+                          <Modal.Footer>
+                            <Button
+                              variant="secondary"
+                              onClick={() => setAcceptModal(false)}
+                            >
+                              Close
+                            </Button>
+                          </Modal.Footer>
+                        </Modal>
+                        <Modal show={revokeModal}>
+                          <Modal.Body>
+                            Are you sure you want to revoke this follow up
+                            request?
+                            {error1 && <div className="error">{error1}</div>}
+                          </Modal.Body>
+                          <Modal.Footer className="d-flex align-items-center justify-content-center">
+                            <Button
+                              variant="secondary"
+                              onClick={() => revokeApp(appointment._id)}
+                            >
+                              Yes
+                            </Button>
+                            <Button
+                              variant="primary"
+                              onClick={() => setRevokeModal(false)}
+                            >
+                              No
+                            </Button>
+                          </Modal.Footer>
+                        </Modal>
+                        <Button
+                          style={{ marginBottom: "1rem" }}
+                          onClick={() => acceptApp(appointment._id)}
                         >
-                          {appointment.description}
-                        </div>
-                      </Card.Text>
-                    </Card.Body>
-                  </Col>
-                  <Col lg={4}>
-                    <Card.Body className="p-4">
-                      <Card.Text>
-                        <div
-                          className="show-more-date"
-                          style={{
-                            marginTop: "1.5rem",
-                            marginBottom: "1rem",
-                            fontSize: "1.1rem",
-                          }}
+                          Accept
+                        </Button>
+                        <Button
+                          variant="secondary"
+                          onClick={() => setRevokeModal(true)}
                         >
-                          <FontAwesomeIcon
-                            icon={faCalendar}
-                            style={{
-                              marginRight: "0.5rem",
-                              fontSize: "1.1rem",
-                            }}
-                          />
-                          {formattedDate}
-                        </div>
-                        <div
-                          className="show-more-time"
-                          style={{ marginBottom: "1rem", fontSize: "1.1rem" }}
-                        >
-                          <FontAwesomeIcon
-                            icon={faClock}
-                            style={{
-                              marginRight: "0.5rem",
-                              fontSize: "1.1rem",
-                            }}
-                          />
-                          {appointment.time}
-                        </div>
-                      </Card.Text>
-                    </Card.Body>
-                  </Col>
-                  <Col lg={2}>
-                    <div
-                      className="d-flex flex-row justify-content-space-between"
-                      style={{ marginTop: "2.3rem", marginLeft: "1rem" }}
-                    >
-                      <Modal show={acceptModal}>
-                        <Modal.Body>
-                          {appointment.patient?.name}'s follow up request has
-                          been accepted
-                        </Modal.Body>
-                        <Modal.Footer>
-                          <Button
-                            variant="secondary"
-                            onClick={() => setAcceptModal(false)}
-                          >
-                            Close
-                          </Button>
-                        </Modal.Footer>
-                      </Modal>
-                      <Modal show={revokeModal}>
-                        <Modal.Body>
-                          Are you sure you want to revoke this follow up
-                          request?
-                          {error1 && <div className="error">{error1}</div>}
-                        </Modal.Body>
-                        <Modal.Footer className="d-flex align-items-center justify-content-center">
-                          <Button
-                            variant="secondary"
-                            onClick={() => revokeApp(appointment._id)}
-                          >
-                            Yes
-                          </Button>
-                          <Button
-                            variant="primary"
-                            onClick={() => setRevokeModal(false)}
-                          >
-                            No
-                          </Button>
-                        </Modal.Footer>
-                      </Modal>
-                      <Button
-                        style={{ marginRight: "1rem" }}
-                        onClick={() => acceptApp(appointment._id)}
-                      >
-                        Accept
-                      </Button>
-                      <Button
-                        variant="secondary"
-                        onClick={() => setRevokeModal(true)}
-                      >
-                        Revoke
-                      </Button>
-                    </div>
-                  </Col>
-                </Row>
-              </Card>
-            </div>
-          );
-        })}
+                          Revoke
+                        </Button>
+                      </div>
+                    </Col>
+                  </Row>
+                </Card>
+              </div>
+            );
+          })}
+      </div>
     </div>
   );
 }

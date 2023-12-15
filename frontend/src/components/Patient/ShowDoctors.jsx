@@ -108,7 +108,7 @@ function ShowDoctors({ patients, responseData, setPatients, loading, error1 }) {
                         }}
                         className="d-flex align-items-center justify-content-end"
                       >
-                        ${doctor.sessionPrice} / Session
+                        ${doctor.sessionPrice.toFixed(2)} / Session
                       </div>
                     </Card.Text>
                   </Card.Body>

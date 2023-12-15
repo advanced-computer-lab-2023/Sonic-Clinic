@@ -308,6 +308,7 @@ export default function ChatPat({ who }) {
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
           onClick={() => setIsOpen(true)}
+          variant="secondary"
         >
           <div style={buttonContentStyle}>
             <FontAwesomeIcon
@@ -337,7 +338,7 @@ export default function ChatPat({ who }) {
         >
           <Navbar
             className="d-flex justify-content-between p-1"
-            style={{ backgroundColor: "#05afb9", width: "100%" }}
+            style={{ backgroundColor: "#ff6b35", width: "100%" }}
           >
             <div style={{ color: "white", marginLeft: "1rem" }}>
               {who === "patient" ? "Your Doctors" : "Your Patients"}
@@ -496,7 +497,7 @@ export default function ChatPat({ who }) {
                   <div
                     style={{
                       fontWeight: "bold",
-                      color: "#05afb9 ",
+                      color: "#ff6b35 ",
                       cursor: "pointer",
                     }}
                     onClick={() => sendMessage()}
@@ -506,7 +507,7 @@ export default function ChatPat({ who }) {
                       icon={faAnglesRight}
                       style={{
                         opacity: 1,
-                        color: "#05afb9 ",
+                        color: "#ff6b35 ",
                         fontSize: "15px",
                         transition: "transform 0.3s ease-in-out",
                         marginLeft: "0.3rem",
