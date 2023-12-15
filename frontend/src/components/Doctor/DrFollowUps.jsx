@@ -27,7 +27,7 @@ function DrFollowUps() {
       if (response.status === 200) {
         setLoading(null);
         setResponseData(response.data);
-        setAppointments(responseData);
+        setAppointments(response.data);
       }
       setLoading(false);
     } catch (error) {
@@ -132,9 +132,9 @@ function DrFollowUps() {
         <div
           style={{
             textAlign: "center",
-            marginTop: "20px",
+            marginTop: "2rem",
             width: "20rem",
-            justifySelf: "center",
+            marginLeft: "15rem",
           }}
           className="msg"
         >
