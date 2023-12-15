@@ -167,7 +167,7 @@ function GuestBurgerMenu() {
           <a
             id="profile"
             className="menu-item"
-            href="/login"
+            href="/"
             onClick={closeMenu}
             style={{
               color: "var(--gray-600, #6C757D)",

@@ -5,7 +5,7 @@ const PasswordChangedForm = () => {
   const navigate = useNavigate();
 
   const handleClick = () => {
-    navigate("/login");
+    navigate("/");
   };
 
   return (
