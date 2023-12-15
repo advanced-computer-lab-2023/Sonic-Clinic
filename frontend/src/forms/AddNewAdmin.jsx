@@ -117,74 +117,64 @@ export default function AddNewAdmin({ fetchData, closeForm }) {
     <div className="d-flex flex-column justify-content-center align-items-center">
       <Form
         onSubmit={handleSubmit}
-        className="d-flex justify-content-center align-items-center"
+        className="d-flex justify-content-center align-items-center flex-column"
         style={{ width: "48rem", marginBottom: "2rem" }}
       >
-        <Col lg={5}>
-          {" "}
-          <Form.Control
-            style={{
-              width: "15rem",
-              marginRight: "0.5rem",
-            }}
-            type="text"
-            name="username"
-            placeholder="Enter username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            required
-          />
-        </Col>
-        <Col lg={5}>
-          <Form.Control
-            style={{
-              width: "15rem",
-              marginRight: "0.5rem",
-              marginBottom: "1rem",
-            }}
-            type="text"
-            name="name"
-            placeholder="Enter name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
-          />
-          <Form.Control
-            style={{ width: "15rem", marginRight: "0.5rem" }}
-            type="email"
-            name="email"
-            placeholder="Enter Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-        </Col>
-
-        <Col lg={5}>
-          <Form.Control
-            style={{
-              width: "15rem",
-              marginRight: "0.5rem",
-              marginBottom: "1rem",
-            }}
-            type="password"
-            name="pass"
-            placeholder="Enter password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-          <Form.Control
-            style={{ width: "15rem", marginRight: "0.5rem" }}
-            type="password"
-            name="confirmPass"
-            placeholder="Confirm Password"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            required
-          />
-        </Col>
-
+        {" "}
+        <Form.Control
+          style={{
+            width: "15rem",
+            marginBottom: "1rem",
+          }}
+          type="text"
+          name="username"
+          placeholder="Enter username"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          required
+        />
+        <Form.Control
+          style={{
+            width: "15rem",
+            marginBottom: "1rem",
+          }}
+          type="text"
+          name="name"
+          placeholder="Enter name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          required
+        />
+        <Form.Control
+          style={{ width: "15rem", marginBottom: "1rem" }}
+          type="email"
+          name="email"
+          placeholder="Enter Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
+        <Form.Control
+          style={{
+            width: "15rem",
+            marginBottom: "1rem",
+          }}
+          type="password"
+          name="pass"
+          placeholder="Enter password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        />
+        <Form.Control
+          style={{ width: "15rem", marginBottom: "1rem" }}
+          type="password"
+          name="confirmPass"
+          placeholder="Confirm Password"
+          value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
+          required
+        />
         <Button type="submit" style={{ width: "8rem" }}>
           Create
         </Button>

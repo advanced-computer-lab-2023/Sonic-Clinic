@@ -58,10 +58,8 @@ function DrShowAppointments({ fetchData, appointments, loading }) {
         return "#adb5bd "; // Grey for Completed
       case "cancelled":
         return "#ff6b35 "; // Orange for Cancelled
-      case "rescheduled":
-        return "#c4e6e6  "; // Light Blue for Rescheduled
       default:
-        return "#ff6b35"; // Default color
+        return "#05afb9"; // Default color
     }
   };
 
@@ -74,10 +72,8 @@ function DrShowAppointments({ fetchData, appointments, loading }) {
         return faCheckDouble; // Grey for Completed
       case "cancelled":
         return faCancel; // Orange for Cancelled
-      case "rescheduled":
-        return faPause; // Light Blue for Rescheduled
       default:
-        return faPause; // Default color
+        return faCheck; // Default color
     }
   };
 
@@ -226,7 +222,11 @@ function DrShowAppointments({ fetchData, appointments, loading }) {
                           marginBottom: "1rem",
                         }}
                       >
-                        {appointment.patient?.name}
+                        {appointment.patient
+                          ? appointment.patient.name
+                          : appointment.familyMember
+                          ? appointment.familyMember[0].name
+                          : appointment._id}
                       </Card.Title>
                     </Card.Body>
                   </Col>
@@ -273,8 +273,7 @@ function DrShowAppointments({ fetchData, appointments, loading }) {
                         marginLeft: "1rem",
                       }}
                     >
-                      {(appointment.status === "upcoming" ||
-                        appointment.status === "rescheduled") && (
+                      {appointment.status === "Upcoming" && (
                         <>
                           {" "}
                           <Button

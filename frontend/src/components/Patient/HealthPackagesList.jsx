@@ -117,6 +117,68 @@ function HealthPackagesList({ refreshFlag }) {
             No health package history
           </div>
         )}
+        {NeededData && NeededData[0] && (
+          <Card key={`outer_bla`} className="mb-4">
+            <Card.Body>
+              <div
+                style={{
+                  color: "#099BA0",
+                  fontSize: "1.7rem",
+                  fontWeight: "600",
+                  marginBottom: "10px",
+                }}
+              >
+                {NeededData[0].name || "Name not available"}
+              </div>
+              <Row>
+                <Col md={8}>
+                  <div style={{ fontSize: "1.05rem" }}>
+                    {" "}
+                    <p>
+                      <strong>Package:</strong>{" "}
+                      {NeededData[0].package.type.split(" ")[0]}
+                    </p>
+                    <p>
+                      <strong>Package Status:</strong>{" "}
+                      {NeededData[0].package.status}
+                    </p>
+                    {NeededData[0].package.status === "Subscribed" ? (
+                      <div>
+                        {" "}
+                        <p>
+                          <strong>Price:</strong>$ {NeededData[0].package.price}
+                        </p>
+                        <p>
+                          <strong>Renewal Date:</strong>{" "}
+                          {NeededData[0].package.renewalDate}
+                        </p>
+                      </div>
+                    ) : (
+                      <p>
+                        <strong>End Date:</strong>{" "}
+                        {NeededData[0].package.endDate}
+                      </p>
+                    )}
+                  </div>
+                </Col>
+                <Col
+                  md={4}
+                  className="d-flex align-items-end justify-content-end"
+                >
+                  {NeededData[0].package.status === "Subscribed" && (
+                    <Button
+                      variant="secondary"
+                      style={{ marginBottom: "5.5rem" }}
+                      onClick={() => cancelPackage(NeededData[0]._id)}
+                    >
+                      Cancel Package
+                    </Button>
+                  )}
+                </Col>
+              </Row>
+            </Card.Body>
+          </Card>
+        )}
         {NeededData &&
           NeededData.every((member) => member.length > 0) &&
           NeededData.map((member, index) => (
@@ -235,7 +297,7 @@ function HealthPackagesList({ refreshFlag }) {
                       marginBottom: "10px",
                     }}
                   >
-                    {member?.name || "Name not available"}
+                    {member.name || "Name not available"}
                   </div>
                   <Row>
                     <Col md={8}>
