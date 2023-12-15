@@ -268,15 +268,20 @@ const addFamilyMember = async (req, res) => {
     const relationToPatient = req.body.relationToPatient;
 
     // Check if the relation is husband or wife
-    if (relationToPatient.toLowerCase() === 'husband' || relationToPatient.toLowerCase() === 'wife') {
+    if (
+      relationToPatient.toLowerCase() === "husband" ||
+      relationToPatient.toLowerCase() === "wife"
+    ) {
       // Check if the patient already has a family member with a husband/wife relation
       const existingHusbandOrWife = await familyMemberModel.findOne({
         patientID: patient.id,
-        'relationToPatient': { $in: ['husband', 'wife'] }
+        relationToPatient: { $in: ["husband", "wife"] },
       });
 
       if (existingHusbandOrWife) {
-        return res.status(400).send({ error: "Patient already has a husband/wife in the family." });
+        return res
+          .status(400)
+          .send({ error: "Patient already has a husband/wife in the family." });
       }
     }
 
@@ -304,7 +309,6 @@ const addFamilyMember = async (req, res) => {
   }
 };
 
-
 const addFamilyMemberExisting = async (req, res) => {
   const email = req.body.email;
   const relationToPatient = req.body.relationToPatient;
@@ -324,15 +328,20 @@ const addFamilyMemberExisting = async (req, res) => {
     }
 
     // Check if the relation is husband or wife
-    if (relationToPatient.toLowerCase() === 'husband' || relationToPatient.toLowerCase() === 'wife') {
+    if (
+      relationToPatient.toLowerCase() === "husband" ||
+      relationToPatient.toLowerCase() === "wife"
+    ) {
       // Check if the patient already has a family member with a husband/wife relation
       const existingHusbandOrWife = await familyMemberModel.findOne({
         patientID: patient.id,
-        'relationToPatient': { $in: ['husband', 'wife'] }
+        relationToPatient: { $in: ["husband", "wife"] },
       });
 
       if (existingHusbandOrWife) {
-        return res.status(400).send({ error: "Patient already has a husband/wife in the family." });
+        return res
+          .status(400)
+          .send({ error: "Patient already has a husband/wife in the family." });
       }
     }
 
@@ -1379,6 +1388,12 @@ const addAppointmentForMyselfOrFam = async (req, res) => {
         " has been reserved",
       "Appointment Reserved"
     );
+    const sessionPrice = await calculateSessionPrice(
+      doctor.hourlyRate,
+      patient.package
+    );
+    doctor.wallet += sessionPrice;
+    await doctor.save();
 
     res
       .status(201)
@@ -1549,7 +1564,7 @@ const payAppointmentWallet = async (req, res) => {
         const parent = await patientModel.findById(req.user.id);
         notificationPatient =
           "An appointment with Dr. " +
-          docName +
+          doctor.name +
           " for " +
           familyName +
           " has been scheduled on " +

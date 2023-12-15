@@ -256,9 +256,18 @@ const addPrescription = async (req, res) => {
 };
 const viewDocApp = async (req, res) => {
   try {
-    const appointments = await appointmentModel
-      .find({ doctorID: req.user.id })
-      .populate("patient");
+    let patient;
+    const appointments = await appointmentModel.find({ doctorID: req.user.id });
+    for (const app of appointments) {
+      patient = await patientModel.findById(app.patientID);
+      if (patient) {
+        await app.populate("patient");
+        console.log(app);
+      } else {
+        await app.populate("familyMember");
+        console.log(app);
+      }
+    }
     res.status(200).json(appointments);
   } catch (error) {
     res.status(400).send({ error: error.message });

@@ -51,6 +51,11 @@ appointmentSchema.virtual("doctor", {
   localField: "doctorID",
   foreignField: "_id",
 });
+appointmentSchema.virtual("familyMember", {
+  ref: "FamilyMember",
+  localField: "patientID",
+  foreignField: "_id",
+});
 
 appointmentSchema.set("toObject", { virtuals: true });
 appointmentSchema.set("toJSON", { virtuals: true });
