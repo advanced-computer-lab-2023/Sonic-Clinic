@@ -474,35 +474,22 @@ function ShowPrescriptions() {
         <Modal.Footer>
           <>
             <div className="d-flex align-items-center justify-content-between w-100">
-              <div className="d-flex align-items-center justify-content-center">
-                <Button
-                  onClick={handleDownloadPrescription}
-                  style={{ marginTop: "10px", marginLeft: "10px" }}
-                >
-                  Download PDF
-                </Button>
+              <div>
+                {" "}
                 {selectedViewPrescription &&
                   selectedViewPrescription.status !== "Filled" && (
                     <div className="d-flex align-items-center justify-content-center">
                       <Button
                         // Add the logic to handle payment here
                         onClick={() => handleShowPay()}
-                        style={{ marginTop: "10px", marginLeft: "10px" }}
                       >
                         Pay for Prescription
                       </Button>
                     </div>
                   )}
               </div>
-              <div className="d-flex align-items-center justify-content-center">
-                <Button
-                  variant="secondary"
-                  onClick={handleCloseModal}
-                  style={{ marginTop: "10px", marginLeft: "10px" }}
-                >
-                  Close
-                </Button>
-              </div>
+
+              <Button onClick={handleDownloadPrescription}>Download PDF</Button>
             </div>
           </>
         </Modal.Footer>
