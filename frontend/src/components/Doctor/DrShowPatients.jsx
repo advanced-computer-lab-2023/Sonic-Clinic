@@ -943,7 +943,11 @@ function DrShowPatients({
         </Modal.Footer>
       </Modal>
 
-      <Modal show={showViewSelectedPrescription} onHide={handleCloseModal}>
+      <Modal
+        show={showViewSelectedPrescription}
+        onHide={handleCloseModal}
+        style={{ fontSize: "1.05rem" }}
+      >
         <Modal.Header closeButton>
           <Modal.Title>Prescription Details</Modal.Title>
         </Modal.Header>
@@ -960,53 +964,42 @@ function DrShowPatients({
               {isEditMode ? (
                 <div>
                   {editedPrescription.medicine.map((med, index) => (
-                    <Card key={index} className="mb-3">
-                      <Card.Header
-                        className="text-white"
-                        style={{ backgroundColor: "#05afb9 " }}
+                    <Card
+                      key={index}
+                      className="mb-3"
+                      style={{ height: "3.5rem" }}
+                    >
+                      <Card.Body
+                        style={{
+                          position: "relative",
+                          backgroundColor: "#f0f0f0",
+                          height: "3rem",
+                        }}
+                        className="d-flex flex-row justify-content-between"
                       >
-                        <div className="d-flex justify-content-between align-items-center">
-                          <div>
-                            <strong>Name:</strong> {med[0]}
-                          </div>
-                        </div>
-                      </Card.Header>
-                      <Card.Body style={{ position: "relative" }}>
+                        <strong>{med[0]}</strong>
                         <div
-                          className="d-flex"
-                          style={{
-                            justifyContent: "space-between",
-                            alignItems: "flex-end",
-                          }}
+                          className="d-flex "
+                          style={{ marginTop: "-0.4rem" }}
                         >
-                          <div style={{ flex: 1 }}>
-                            <FormControl
-                              type="text"
-                              value={med[2]}
-                              onChange={(e) =>
-                                handleEditDosageChange(med[0], e.target.value)
-                              }
-                              style={{ width: "80%" }} // Make the FormControl take all available space
-                            />
-                          </div>
-                          <div
+                          <FormControl
+                            type="text"
+                            value={med[2]}
+                            onChange={(e) =>
+                              handleEditDosageChange(med[0], e.target.value)
+                            }
+                            style={{ width: "10rem", height: "2.3rem" }} // Make the FormControl take all available space
+                          />
+                          <FontAwesomeIcon
+                            icon={faTrashAlt}
+                            onClick={() => handleDeleteMedicine(med[0])}
                             style={{
-                              position: "absolute",
-                              bottom: "0",
-                              right: "0",
-                              marginBottom: "0.5rem",
-                              marginRight: "0.5rem",
+                              cursor: "pointer",
+                              color: "#ff6b35",
+                              marginLeft: "2rem",
+                              marginTop: "0.6rem",
                             }}
-                          >
-                            <FontAwesomeIcon
-                              icon={faTrashAlt}
-                              onClick={() => handleDeleteMedicine(med[0])}
-                              style={{
-                                cursor: "pointer",
-                                color: "#ff6b35",
-                              }}
-                            />
-                          </div>
+                          />
                         </div>
                       </Card.Body>
                     </Card>
@@ -1080,22 +1073,26 @@ function DrShowPatients({
                   ) : (
                     <div>
                       {selectedViewPrescription.medicine.map((med, index) => (
-                        <Card key={index} className="mb-3">
-                          <Card.Header
-                            className="text-white"
-                            style={{ backgroundColor: "#05afb9 " }}
+                        <Card
+                          key={index}
+                          className="mb-3"
+                          style={{ marginTop: "0.5rem", height: "3.5rem" }}
+                        >
+                          <Card.Body
+                            style={{
+                              backgroundColor: "#f0f0f0",
+                              height: "3rem",
+                            }}
+                            className="d-flex justify-content-between align-items-center"
                           >
-                            <div className="d-flex justify-content-between align-items-center">
-                              <div>
-                                <strong>Name:</strong> {med[0]}
-                              </div>
-                            </div>
-                          </Card.Header>
-                          <Card.Body>
-                            <div className="d-flex justify-content-between align-items-center"></div>
-                            <div>
-                              <strong>Dosage:</strong> {med[2]}
-                            </div>
+                            <strong>{med[0]}</strong>
+                            <strong>
+                              Dosage:
+                              <span style={{ fontWeight: "normal" }}>
+                                {" "}
+                                {med[2]}
+                              </span>{" "}
+                            </strong>
                           </Card.Body>
                         </Card>
                       ))}

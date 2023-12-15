@@ -440,22 +440,26 @@ function ShowPrescriptions() {
                 ) : (
                   <div>
                     {selectedViewPrescription.medicine.map((med, index) => (
-                      <Card key={index} className="mb-3">
-                        <Card.Header
-                          className="text-white"
-                          style={{ backgroundColor: "#05afb9 " }}
+                      <Card
+                        key={index}
+                        className="mb-3"
+                        style={{ marginTop: "0.5rem", height: "3.5rem" }}
+                      >
+                        <Card.Body
+                          style={{
+                            backgroundColor: "#f0f0f0",
+                            height: "3rem",
+                          }}
+                          className="d-flex justify-content-between align-items-center"
                         >
-                          <div className="d-flex justify-content-between align-items-center">
-                            <div>
-                              <strong>Name:</strong> {med[0]}
-                            </div>
-                          </div>
-                        </Card.Header>
-                        <Card.Body>
-                          <div className="d-flex justify-content-between align-items-center"></div>
-                          <div>
-                            <strong>Dosage:</strong> {med[2]}
-                          </div>
+                          <strong>{med[0]}</strong>
+                          <strong>
+                            Dosage:
+                            <span style={{ fontWeight: "normal" }}>
+                              {" "}
+                              {med[2]}
+                            </span>{" "}
+                          </strong>
                         </Card.Body>
                       </Card>
                     ))}
