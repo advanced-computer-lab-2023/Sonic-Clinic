@@ -230,7 +230,7 @@ const sendMessage = async (req, res) => {
         const newChat = await chatModel.create({
           patientID: recipientID,
           doctorID: userID,
-          messages: [["patient", currDate, currTime, message]],
+          messages: [[sender, currDate, currTime, message]],
         });
         await newChat.save();
       } else {

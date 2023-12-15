@@ -1270,7 +1270,7 @@ const addAppointmentForMyselfOrFam = async (req, res) => {
           "An appointment with Dr. " +
           docName +
           " has been scheduled on " +
-          date +
+          date.split("-").reverse().join("/") +
           " at : " +
           time;
         linkedP.notifications.push(notificationPatient);
@@ -1280,7 +1280,7 @@ const addAppointmentForMyselfOrFam = async (req, res) => {
           "An appointment with " +
           linkedPName +
           " has been scheduled on " +
-          date +
+          date.split("-").reverse().join("/") +
           " at : " +
           time;
         doctor.notifications.push(notificationDoc);
@@ -1295,7 +1295,7 @@ const addAppointmentForMyselfOrFam = async (req, res) => {
           " for " +
           familyName +
           " has been scheduled on " +
-          date +
+          date.split("-").reverse().join("/") +
           " at : " +
           time;
         parent.notifications.push(notificationPatient);
@@ -1306,7 +1306,7 @@ const addAppointmentForMyselfOrFam = async (req, res) => {
           "An appointment with " +
           familyName +
           " has been scheduled on " +
-          date +
+          date.split("-").reverse().join("/") +
           " at : " +
           time;
         doctor.notifications.push(notificationDoc);
@@ -1320,7 +1320,7 @@ const addAppointmentForMyselfOrFam = async (req, res) => {
         "An appointment with Dr. " +
         docName +
         " has been scheduled on " +
-        date +
+        date.split("-").reverse().join("/") +
         " at : " +
         time;
       patient.notifications.push(notificationPatient);
@@ -1331,7 +1331,7 @@ const addAppointmentForMyselfOrFam = async (req, res) => {
         "An appointment with " +
         pName +
         " has been scheduled on " +
-        date +
+        date.split("-").reverse().join("/") +
         " at : " +
         time;
       doctor.notifications.push(notificationDoc);
@@ -1370,7 +1370,7 @@ const addAppointmentForMyselfOrFam = async (req, res) => {
       "An appointment with " +
         patient.name +
         " on " +
-        appointment.date +
+        appointment.date.split("-").reverse().join("/") +
         " at " +
         appointment.time +
         " has been reserved",
@@ -1382,7 +1382,7 @@ const addAppointmentForMyselfOrFam = async (req, res) => {
       "An appointment with Dr. " +
         doctor.name +
         " on " +
-        appointment.date +
+        appointment.date.split("-").reverse().join("/") +
         " at " +
         appointment.time +
         " has been reserved",
@@ -1532,9 +1532,7 @@ const payAppointmentWallet = async (req, res) => {
     if (famID) {
       const family1 = await familyMemberModel.findById(famID);
       const familyName = family1.name;
-      console.log("1");
       if (family1.patientRef) {
-        console.log("2");
         patientID = family1.patientRef;
         const linkedP = await patientModel.findById(patientID);
         const linkedPName = linkedP.name;
@@ -1542,7 +1540,7 @@ const payAppointmentWallet = async (req, res) => {
           "An appointment with Dr. " +
           docName +
           " has been scheduled on " +
-          date +
+          date.split("-").reverse().join("/") +
           " at : " +
           time;
         linkedP.notifications.push(notificationPatient);
@@ -1552,7 +1550,7 @@ const payAppointmentWallet = async (req, res) => {
           "An appointment with " +
           linkedPName +
           " has been scheduled on " +
-          date +
+          date.split("-").reverse().join("/") +
           " at : " +
           time;
         doctor.notifications.push(notificationDoc);
@@ -1568,7 +1566,7 @@ const payAppointmentWallet = async (req, res) => {
           " for " +
           familyName +
           " has been scheduled on " +
-          date +
+          date.split("-").reverse().join("/") +
           " at : " +
           time;
         parent.notifications.push(notificationPatient);
@@ -1579,7 +1577,7 @@ const payAppointmentWallet = async (req, res) => {
           "An appointment with " +
           familyName +
           " has been scheduled on " +
-          date +
+          date.split("-").reverse().join("/") +
           " at : " +
           time;
         doctor.notifications.push(notificationDoc);
@@ -1593,7 +1591,7 @@ const payAppointmentWallet = async (req, res) => {
         "An appointment with Dr. " +
         doctor.name +
         " has been scheduled on " +
-        date +
+        date.split("-").reverse().join("/") +
         " at : " +
         time;
       patient.notifications.push(notificationPatient);
@@ -1604,7 +1602,7 @@ const payAppointmentWallet = async (req, res) => {
         "An appointment with " +
         pName +
         " has been scheduled on " +
-        date +
+        date.split("-").reverse().join("/") +
         " at : " +
         time;
       doctor.notifications.push(notificationDoc);
@@ -1858,7 +1856,7 @@ const cancelAppointmentPatient = async (req, res) => {
       "The appointment with " +
         patient.name +
         " on " +
-        appointment.date +
+        appointment.date.split("-").reverse().join("/") +
         " at " +
         appointment.time +
         " has been cancelled",
@@ -1869,7 +1867,7 @@ const cancelAppointmentPatient = async (req, res) => {
       "The appointment with Dr. " +
         doctor.name +
         " on " +
-        appointment.date +
+        appointment.date.split("-").reverse().join("/") +
         " at " +
         appointment.time +
         " has been cancelled",
@@ -2003,7 +2001,7 @@ const rescheduleAppForMyselfOrFam = async (req, res) => {
         "The appointment with Dr. " +
         doctor.name +
         " has been rescheduled to be on " +
-        date +
+        date.split("-").reverse().join("/") +
         " at : " +
         time;
       patient.notifications.push(notification);
@@ -2013,7 +2011,7 @@ const rescheduleAppForMyselfOrFam = async (req, res) => {
         "An appointment with " +
         patient.name +
         " has been rescheduled to be on " +
-        date +
+        date.split("-").reverse().join("/") +
         " at: " +
         time;
       doctor.notifications.push(notificationDoc);
@@ -2029,7 +2027,7 @@ const rescheduleAppForMyselfOrFam = async (req, res) => {
           " for " +
           familyMem.name +
           " has been rescheduled to be on " +
-          date +
+          date.split("-").reverse().join("/") +
           " at: " +
           time;
         parent.notifications.push(notification);
@@ -2039,7 +2037,7 @@ const rescheduleAppForMyselfOrFam = async (req, res) => {
           "An appointment with " +
           familyMem.name +
           " has been rescheduled to be on " +
-          date +
+          date.split("-").reverse().join("/") +
           " at: " +
           time;
         doctor.notifications.push(notificationDoc);
@@ -2052,7 +2050,7 @@ const rescheduleAppForMyselfOrFam = async (req, res) => {
           "Your appointment with Dr. " +
           doctor.name +
           " has been rescheduled to be on " +
-          date +
+          date.split("-").reverse().join("/") +
           " at: " +
           time;
         linkedP.notifications.push(notification);
