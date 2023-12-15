@@ -58,6 +58,7 @@ const patientSchema = new Schema(
     gender: {
       type: String,
       required: true,
+      enum: ["Male", "Female"],
     },
     mobileNumber: {
       type: String,
@@ -110,6 +111,14 @@ const patientSchema = new Schema(
     prescreptions: {
       type: [Object],
       required: false,
+    },
+    emergencyRelation: {
+      type: String,
+      required: false,
+    },
+    addresses: {
+      type: [String], // Assuming an array of strings for active ingredients
+      default: [],
     },
   },
   { timestamps: true }
