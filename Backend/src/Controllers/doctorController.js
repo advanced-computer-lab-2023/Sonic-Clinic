@@ -8,6 +8,7 @@ const bcrypt = require("bcrypt");
 const prescriptionModel = require("../Models/Prescription.js");
 const followUpModel = require("../Models/FollowUp.js");
 const medicineModel = require("../Models/Medicine.js");
+const packagesModel = require("../Models/Packages.js");
 
 const searchPatientByName = async (req, res) => {
   const { name } = req.query;
@@ -262,10 +263,10 @@ const viewDocApp = async (req, res) => {
       patient = await patientModel.findById(app.patientID);
       if (patient) {
         await app.populate("patient");
-        console.log(app);
+        // console.log(app);
       } else {
         await app.populate("familyMember");
-        console.log(app);
+        // console.log(app);
       }
     }
     res.status(200).json(appointments);
@@ -498,20 +499,26 @@ const viewPrescriptionsDoc = async (req, res) => {
 
 const calculateSessionPrice = async (hourlyRate, patientPackage) => {
   try {
-    if (patientPackage === "  ") {
+    if (!patientPackage || patientPackage.trim() === "") {
       return hourlyRate;
     }
-    const packageInfo = await packagesModel.findById(patientPackage);
-    if (!packageInfo) {
-      return hourlyRate;
-    } else {
-      const sessionPrice =
-        hourlyRate * 1.1 * (1 - packageInfo.sessionDiscount * 0.01);
 
-      return sessionPrice;
+    const packageInfo = await packagesModel.findById(patientPackage);
+
+    if (!packageInfo) {
+      console.error("Package information not found for ID:", patientPackage);
+      return hourlyRate;
     }
+
+    const sessionPrice =
+      hourlyRate * 1.1 * (1 - packageInfo.sessionDiscount * 0.01);
+
+    console.log("Session price calculated:", sessionPrice);
+
+    return sessionPrice;
   } catch (error) {
-    throw error;
+    console.error("Error calculating session price:", error);
+    throw error; // You may choose to handle the error differently based on your needs
   }
 };
 
@@ -550,6 +557,7 @@ const cancelAppointmentDoc = async (req, res) => {
     }
     appointment.status = "Cancelled";
     await appointment.save();
+
     const sessionPrice = await calculateSessionPrice(
       doctor.hourlyRate,
       package
@@ -572,7 +580,7 @@ const cancelAppointmentDoc = async (req, res) => {
         " has been cancelled",
       "Appointment Cancelled"
     );
-
+    console.log("4");
     console.log("mail");
     notificationByMail(
       doctor.email,
@@ -584,6 +592,7 @@ const cancelAppointmentDoc = async (req, res) => {
         appointment.time,
       "Appointment Cancelled"
     );
+    console.log("5");
     const id = appointment.patientID;
     console.log(appointment.patientID);
     patient = await patientModel.findById(id);
