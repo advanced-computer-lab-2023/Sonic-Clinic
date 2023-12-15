@@ -865,9 +865,11 @@ function DrShowPatients({
               : "Add Prescription"}
           </Modal.Title>
         </Modal.Header>
-        <Modal.Body>
+        <Modal.Body style={{ fontSize: "1.05rem" }}>
           <div>
-            <p>Medicine: </p>
+            <div style={{ fontWeight: "bold", marginBottom: "0rem" }}>
+              Medicine:{" "}
+            </div>
             <Dropdown>
               <Dropdown.Toggle
                 variant="primary"
@@ -896,7 +898,9 @@ function DrShowPatients({
             </Dropdown>
           </div>
           <div className="mt-3">
-            <label htmlFor="dosage">Dosage:</label>
+            <label htmlFor="dosage" style={{ fontWeight: "bold" }}>
+              Dosage:
+            </label>
             <input
               type="text"
               id="dosage"
@@ -908,20 +912,25 @@ function DrShowPatients({
           </div>
           <div className="d-flex justify-content-center">
             <Button
-              variant="success"
+              variant="primary"
               onClick={handleAddButtonClick}
               className="mt-4 w-50"
             >
               Add Medicine
             </Button>
           </div>
-        </Modal.Body>
-
-        <Modal.Footer>
           <div className="w-100">
             {prescription.length > 0 && (
-              <div className="mb-3">
-                <p>Prescription Items:</p>
+              <div className="mb-1">
+                <div
+                  style={{
+                    fontWeight: "bold",
+                    marginBottom: "0.3rem",
+                    marginTop: "0.7rem",
+                  }}
+                >
+                  Prescription Items:
+                </div>
                 <ul>
                   {prescription.map((item, index) => (
                     <li key={index}>
@@ -932,14 +941,14 @@ function DrShowPatients({
               </div>
             )}
           </div>
+        </Modal.Body>
+
+        <Modal.Footer>
           {prescription.length > 0 && (
             <Button variant="primary" onClick={handleSubmitPrescription}>
               Submit Prescription
             </Button>
           )}
-          <Button variant="secondary" onClick={handleClose}>
-            Close
-          </Button>
         </Modal.Footer>
       </Modal>
 
@@ -1125,13 +1134,6 @@ function DrShowPatients({
                     Cancel Edit
                   </Button>
                 </div>
-                <Button
-                  variant="secondary"
-                  onClick={handleCloseModal}
-                  style={{ marginTop: "10px", marginLeft: "10px" }}
-                >
-                  Close
-                </Button>
               </div>
             </>
           ) : (
@@ -1143,25 +1145,14 @@ function DrShowPatients({
                       <Button
                         variant="secondary"
                         onClick={() => handleEditClick()}
-                        style={{ marginTop: "5px" }}
                       >
                         Edit Prescription
                       </Button>
                     )}
                 </div>
                 <div className="d-flex align-items-center justify-content-center">
-                  <Button
-                    onClick={handleDownloadPrescription}
-                    style={{ marginTop: "10px", marginLeft: "10px" }}
-                  >
+                  <Button onClick={handleDownloadPrescription}>
                     Download PDF
-                  </Button>
-                  <Button
-                    variant="secondary"
-                    onClick={handleCloseModal}
-                    style={{ marginTop: "10px", marginLeft: "10px" }}
-                  >
-                    Close
                   </Button>
                 </div>
               </div>
