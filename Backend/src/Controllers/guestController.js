@@ -217,7 +217,6 @@ const viewChats = async (req, res) => {
         }
       }
       const allPharmacists = await Pharmacist.find();
-      console.log(allPharmacists);
       if (allPharmacists) {
         for (const pharmacist of allPharmacists) {
           chatNames.push(

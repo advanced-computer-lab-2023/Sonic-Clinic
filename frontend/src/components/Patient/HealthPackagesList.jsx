@@ -117,7 +117,7 @@ function HealthPackagesList({ refreshFlag }) {
             No health package history
           </div>
         )}
-        {NeededData && NeededData[0] && (
+        {NeededData && NeededData[0] && !Array.isArray(NeededData[0]) && (
           <Card key={`outer_bla`} className="mb-4">
             <Card.Body>
               <div

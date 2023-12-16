@@ -657,6 +657,7 @@ const filterDoctorsAfterSearch = async (req, res) => {
 const viewAllAppointmentsPatient = async (req, res) => {
   try {
     const patientId = req.user.id;
+    let familyMember;
 
     // Fetch the patient's family members
     const patient = await patientModel.findById(patientId);
@@ -672,6 +673,14 @@ const viewAllAppointmentsPatient = async (req, res) => {
 
     if (!appointments || appointments.length === 0) {
       return res.status(404).json({ message: "No appointments found." });
+    }
+    for (const app of appointments) {
+      familyMember = await familyMemberModel.findById(app.patientID);
+      if (familyMember) {
+        await app.populate("familyMember");
+      } else {
+        await app.populate("patient");
+      }
     }
 
     res.status(200).json(appointments);
