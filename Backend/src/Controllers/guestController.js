@@ -343,13 +343,49 @@ const sendMessage = async (req, res) => {
 
     if (!existingChat) {
       // Create a new chat
+      let pNew=null;
+    let phNew=null;
+    let docNew=null;
+    if(isDoctor){
+      docNew=userID;
+    }
+    if(isDoctor2){
+      docNew=recipientID;
+    }
+    if(isPharmacist){
+      phNew=userID;
+    }
+    if(isPharmacist2){
+      phNew=recipientID;
+    }
+    if(!isDoctor && !isPharmacist){
+      pNew=userID;
+    }
+    if(!isDoctor2 && !isPharmacist2){
+      pNew=recipientID;
+    }
+    if(!isDoctor && isPharmacist2){
+      pNew=userID;
+    }
+    if(!isPharmacist && isDoctor2){
+      pNew=userID;
+    }
+    if(!isDoctor2 && isPharmacist){
+      pNew=recipientID;
+    }
+    if(isDoctor && !isPharmacist2){
+      pNew=recipientID;
+    }
+
+
+      // Create a new chat
       const newChatData = {
-        patientID: isDoctor2 ? null : isPharmacist2 ? null : (isPatient ? userID : recipientID),
-        doctorID: isDoctor2 ? (isPharmacist2 ? null : (isDoctor ? userID : recipientID)) : (isDoctor ? userID : recipientID),
-        pharmacistID: isPharmacist2 ? (isDoctor2 ? null : (isPharmacist ? userID : recipientID)) : null,
+        patientID: pNew,
+        doctorID: docNew,
+        pharmacistID: phNew,
         messages: [[senderTitle, currDate, currTime, message]],
       };
-      
+    
       
 
       const newChat = await chatModel.create(newChatData);
