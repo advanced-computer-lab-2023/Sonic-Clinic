@@ -7,6 +7,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBell } from "@fortawesome/free-solid-svg-icons";
 import NotificationsPanel from "../NotificationsPanel";
 import { Button, Col, Row } from "react-bootstrap";
+import { Link } from "react-router-dom";
 
 const AppNavbar = (props) => {
   const { hamburgerMenu } = props;
@@ -61,6 +62,21 @@ const AppNavbar = (props) => {
             <Navbar.Collapse id="responsive-navbar-nav">
               {hamburgerMenu}
             </Navbar.Collapse>
+            {who === "patient" && (
+              <a
+                className="d-flex"
+                style={{
+                  color: "#05afb9",
+                  fontSize: "1.15rem",
+                  marginLeft: "5rem",
+                }}
+                href="http://localhost:3001/"
+                target="_blank" // Add this attribute to open in a new tab
+                rel="noopener noreferrer" // Add this for security
+              >
+                Visit Pharmacy
+              </a>
+            )}
           </div>
 
           <div style={{ flex: 1, textAlign: "center" }}>
@@ -73,7 +89,7 @@ const AppNavbar = (props) => {
                 fontWeight: "700",
               }}
             >
-              eHealth Clinic
+              el7a2ny Clinic
             </div>
           </div>
 

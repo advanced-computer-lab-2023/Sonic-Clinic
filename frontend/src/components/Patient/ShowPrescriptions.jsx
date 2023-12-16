@@ -159,6 +159,11 @@ function ShowPrescriptions() {
   const handlePaymentMethodChange = (e) => {
     setPaymentMethod(e.target.value);
   };
+  const handleClosePayModal = () => {
+    setShowPaymentModal(false);
+    setPaymentStatus("paying");
+    setPaymentMethod("wallet");
+  };
 
   const [responseUrl, setResponseUrl] = useState([]);
   const wallet = useSelector((state) => state.patientLogin.wallet);
@@ -527,22 +532,27 @@ function ShowPrescriptions() {
                     ) : (
                       <div>
                         {selectedViewPrescription.medicine.map((med, index) => (
-                          <Card key={index} className="mb-2">
-                            <Card.Header
-                              className="text-white"
-                              style={{ backgroundColor: "#05afb9" }}
+                          <Card
+                            key={index}
+                            className="mb-3"
+                            style={{ marginTop: "0.5rem", height: "3.5rem" }}
+                          >
+                            <Card.Body
+                              style={{
+                                backgroundColor: "#f0f0f0",
+                                height: "3rem",
+                              }}
+                              className="d-flex justify-content-between align-items-center"
                             >
-                              <div className="d-flex justify-content-between align-items-center">
-                                <div>
-                                  <strong>Name:</strong> {med[0]}
-                                </div>
-                                {/* Display the price */}
-                                <div>
-                                  <strong>Price:</strong> $
+                              <strong>{med[0]}</strong>
+                              <strong>
+                                Dosage:
+                                <span style={{ fontWeight: "normal" }}>
+                                  {" "}
                                   {parseFloat(med[1]).toFixed(2)}
-                                </div>
-                              </div>
-                            </Card.Header>
+                                </span>{" "}
+                              </strong>
+                            </Card.Body>
                           </Card>
                         ))}
                         {/* Display the total amount */}
@@ -584,10 +594,7 @@ function ShowPrescriptions() {
         </Modal.Body>
         <Modal.Footer>
           {paymentStatus === "success" ? (
-            <Button
-              variant="primary"
-              onClick={() => setShowPaymentModal(false)}
-            >
+            <Button variant="primary" onClick={() => handleClosePayModal()}>
               Close
             </Button>
           ) : (

@@ -14,8 +14,8 @@ function AddFamilyMemberForm({ onRefresh, toggleForm }) {
     name: "",
     nationalId: "",
     age: "",
-    gender: "Male",
-    relation: "Husband",
+    gender: "",
+    relation: "",
   });
   const dispatch = useDispatch();
 
@@ -27,14 +27,43 @@ function AddFamilyMemberForm({ onRefresh, toggleForm }) {
         ...formData,
         [name]: value,
       });
-    } else {
-      // For the Dropdown, manually set the name
+    } else if (e === "Male" || e === "Female") {
+      // Assuming 'e' represents the selected value from the Gender Dropdown
       setFormData({
         ...formData,
-        relation: e, // Assuming 'e' is the selected value from the Dropdown
+        gender: e,
+      });
+    } else if (e === "Husband" || e === "Wife" || e === "Child") {
+      // Assuming 'e' represents the selected value from the Relation Dropdown
+      setFormData({
+        ...formData,
+        relation: e,
       });
     }
   };
+
+  const genderRelationOptions = {
+    Male: ["Husband", "Child"],
+    Female: ["Wife", "Child"],
+  };
+  const handleGenderChange = (selectedGender) => {
+    // Update the gender in the form data
+    setFormData({
+      ...formData,
+      gender: selectedGender,
+      // Set the relation to the first option of the selected gender
+      relation: genderRelationOptions[selectedGender][0] || "",
+    });
+  };
+
+  const handleRelationChange = (selectedRelation) => {
+    // Update the relation in the form data
+    setFormData({
+      ...formData,
+      relation: selectedRelation,
+    });
+  };
+
   const handleClick = async (e) => {
     e.preventDefault();
     setError(null);
@@ -181,9 +210,12 @@ function AddFamilyMemberForm({ onRefresh, toggleForm }) {
           />
         </Form.Group>
 
-        <Form.Group controlId="relation">
+        <Form.Group controlId="gender">
           <Form.Label>Gender</Form.Label>
-          <Dropdown onSelect={handleChange} style={{ marginBottom: "0.5rem" }}>
+          <Dropdown
+            onSelect={handleGenderChange}
+            style={{ marginBottom: "0.5rem" }}
+          >
             <Dropdown.Toggle
               className="custom-dropdown-toggle"
               id="dropdown-relation"
@@ -200,7 +232,10 @@ function AddFamilyMemberForm({ onRefresh, toggleForm }) {
 
         <Form.Group controlId="relation">
           <Form.Label>Relation</Form.Label>
-          <Dropdown onSelect={handleChange} style={{ marginBottom: "0.5rem" }}>
+          <Dropdown
+            onSelect={handleRelationChange}
+            style={{ marginBottom: "0.5rem" }}
+          >
             <Dropdown.Toggle
               className="custom-dropdown-toggle"
               id="dropdown-relation"
@@ -209,9 +244,12 @@ function AddFamilyMemberForm({ onRefresh, toggleForm }) {
             </Dropdown.Toggle>
 
             <Dropdown.Menu className="w-100">
-              <Dropdown.Item eventKey="Husband">Husband</Dropdown.Item>
-              <Dropdown.Item eventKey="Wife">Wife</Dropdown.Item>
-              <Dropdown.Item eventKey="Child">Child</Dropdown.Item>
+              {genderRelationOptions[formData.gender] &&
+                genderRelationOptions[formData.gender].map((option) => (
+                  <Dropdown.Item key={option} eventKey={option}>
+                    {option}
+                  </Dropdown.Item>
+                ))}
             </Dropdown.Menu>
           </Dropdown>
         </Form.Group>
