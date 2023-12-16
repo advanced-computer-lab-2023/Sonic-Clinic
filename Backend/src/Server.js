@@ -11,6 +11,7 @@ const stripe = require("stripe")(
   "sk_test_51O9lZ0IQTS4vUIMWJeAJ5Ds71jNbeQFj6v8mO7leS2cDIJuLy1fwNzoiXPKZV5KdoMpfzocfJ6hBusxPIjbGeveF00RTnmVYCX"
 );
 const http = require("http");
+
 //const Grid = require('gridfs-stream');
 //const GridFS = Grid(mongoose.connection.db, mongoose.mongo);
 
@@ -131,6 +132,7 @@ const {
   viewChats,
   sendMessage,
   addChat,
+  getPharmacists,
 } = require("./Controllers/guestController");
 
 ////////////////////////////////authorizationController///////////////////////////////////////////
@@ -262,6 +264,7 @@ app.post("/changePasswordForAdmin", requireAuth, changePasswordForAdmin);
 app.post("/acceptPotientialDoc", acceptPotientialDoc);
 app.post("/addPatient", addPatient);
 app.post("/addPotentialDoctor", addPotentialDoctor);
+app.get("/getPharmacists", getPharmacists);
 //doctor
 app.get("/acceptContract", requireAuth, acceptContract);
 app.post("/addPrescription", requireAuth, addPrescription);

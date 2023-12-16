@@ -6,7 +6,7 @@ const doctorModel = require("../Models/Doctor.js");
 const chatModel = require("../Models/Chat.js");
 const appointmentModel = require("../Models/Appointment.js");
 const bcrypt = require("bcrypt");
-const pharmacistModel = require("../Models/Pharmacist.js");
+const Pharmacist = require("../Models/Pharmacist");
 
 const addPotentialDoctor = async (req, res) => {
   const { username } = req.body;
@@ -132,22 +132,51 @@ const acceptPotientialDoc = async (req, res) => {
 const viewChat = async (req, res) => {
   const userID = req.user.id;
   const recipientID = req.body._id;
-  let isDoctor = true;
+  let isDoctor = false;
+  let isPharmacist = false;
+
   try {
-    // Check if the user is a doctor or a patient
-    const patient = await patientModel.findById(userID);
-    if (patient) {
-      isDoctor = false;
+    // Check if the user is a doctor
+    const doctor = await doctorModel.findById(userID);
+    if (doctor) {
+      isDoctor = true;
+    } else {
+      // Check if the user is a pharmacist
+      const pharmacist = await Pharmacist.findById(userID);
+      if (pharmacist) {
+        isPharmacist = true;
+      }
     }
 
-    // Determine the user field (doctorID or patientID) based on the user type
-    const userID2 = isDoctor ? recipientID : userID;
-    const recipientID2 = isDoctor ? userID : recipientID;
+    // Determine the user field (doctorID, patientID, or pharmacistID) based on the user type
+    let userID2, recipientID2;
+
+    if (isDoctor) {
+      userID2 = recipientID;
+      recipientID2 = userID;
+    } else if (isPharmacist) {
+      userID2 = recipientID;
+      recipientID2 = userID;
+    } else {
+      const patient = await patientModel.findById(userID);
+      if (patient) {
+        userID2 = recipientID;
+        recipientID2 = userID;
+      } else {
+        // The user is neither a doctor nor a pharmacist, so handle the case accordingly
+        return res.status(404).json("Invalid user type");
+      }
+    }
+
+
     const chat = await chatModel.findOne({
-      patientID: userID2,
-      doctorID: recipientID2,
+      $or: [
+        { patientID: userID2, doctorID: recipientID2 },
+        { patientID: recipientID2, doctorID: userID2 },
+        // Add conditions for pharmacist chat if needed
+      ],
     });
-    console.log("patient " + userID2 + " doc " + recipientID2);
+
 
     if (!chat) {
       return res.status(404).json("No messages");
@@ -158,6 +187,7 @@ const viewChat = async (req, res) => {
     return res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
 
 const viewChats = async (req, res) => {
   const userID = req.user.id;
@@ -171,7 +201,7 @@ const viewChats = async (req, res) => {
       isDoctor = true;
     } else {
       // Check if the user is a pharmacist
-      const pharmacist = await pharmacistModel.findById(userID);
+      const pharmacist = await Pharmacist.findById(userID);
       if (pharmacist) {
         isPharmacist = true;
       }
@@ -187,6 +217,13 @@ const viewChats = async (req, res) => {
         const currPatient = await patientModel.findById(patient);
         if (currPatient) {
           chatNames.push(currPatient.name + "-" + currPatient._id);
+        }
+      }
+      const allPharmacists = await Pharmacist.find();
+      console.log(allPharmacists);
+      if(allPharmacists){
+        for (const pharmacist of allPharmacists) {
+          chatNames.push("Pharmacist " + pharmacist.name + "-" + pharmacist._id);
         }
       }
     } else if (isPharmacist) {
@@ -210,6 +247,13 @@ const viewChats = async (req, res) => {
           chatNames.push("Dr. " + doc.name + "-" + doc._id);
         }
       }
+      const allPharmacists = await Pharmacist.find();
+      console.log(allPharmacists);
+      if(allPharmacists){
+      for (const pharmacist of allPharmacists) {
+        chatNames.push("Pharmacist " + pharmacist.name + "-" + pharmacist._id);
+      }
+    }
     }
 
     chatNames = Array.from(new Set(chatNames));
@@ -259,7 +303,7 @@ const sendMessage = async (req, res) => {
         senderTitle = "doctor";
       } else {
         // Check if the user is a pharmacist
-        pharmacist = await pharmacistModel.findById(userID);
+        pharmacist = await Pharmacist.findById(userID);
         if (pharmacist) {
           isDoctor = false;
           isPharmacist = true;
@@ -275,7 +319,7 @@ const sendMessage = async (req, res) => {
       isPharmacist2 = false;
     } else {
       // Check if the recipient is a pharmacist
-      pharmacist = await pharmacistModel.findById(recipientID);
+      pharmacist = await Pharmacist.findById(recipientID);
       if (pharmacist) {
         isDoctor2 = false;
         isPharmacist2 = true;
@@ -334,6 +378,16 @@ const addChat = async (req, res) => {
   return res.status(200).json(newChat);
 };
 
+const getPharmacists = async (req, res) => {
+  try {
+    const pharmacists = await Pharmacist.find({ state: "Active" });
+
+    res.status(200).json(pharmacists);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 module.exports = {
   addPotentialDoctor,
   addPatient,
@@ -342,4 +396,5 @@ module.exports = {
   viewChats,
   sendMessage,
   addChat,
+  getPharmacists,
 };
