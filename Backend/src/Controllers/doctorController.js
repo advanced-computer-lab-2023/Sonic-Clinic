@@ -657,8 +657,10 @@ const viewFollowUpsReq = async (req, res) => {
 
 const acceptFollowUp = async (req, res) => {
   try {
-    const followUpId = req.body;
+    const followUpId = req.body._id;
     const followUp = await followUpModel.findById(followUpId);
+    console.log(followUp + "Followww");
+    const doctor = await doctorModel.findById(req.user.id);
     const appointment = await appointmentModel.create({
       date: followUp.date,
       description: followUp.description,
@@ -668,18 +670,15 @@ const acceptFollowUp = async (req, res) => {
       time: followUp.time,
     });
 
+    console.log(followUp.date + "datttteee");
     const followUpIndex = doctor.followUps.findIndex((followUp) =>
       followUp._id.equals(followUpId)
     );
-    if (followUpIndex !== -1) {
+    if (followUpIndex != -1) {
       doctor.followUps.splice(followUpIndex, 1);
       await doctor.save();
     } else {
       res.status(401).json("follow Up not found for this doctor");
-    }
-    const deleted = await followUpModel.findByIdAndDelete(followUpId);
-    if (!deleted) {
-      res.status(401).json("no followUp found");
     }
 
     const doctorAvailableSlots = doctor.availableSlots;
@@ -707,6 +706,7 @@ const acceptFollowUp = async (req, res) => {
     });
 
     await doctor.save();
+    await followUpModel.findByIdAndDelete(followUpId);
 
     res.status(200).json(appointment);
   } catch (error) {
@@ -716,7 +716,8 @@ const acceptFollowUp = async (req, res) => {
 
 const rejectFollowUp = async (req, res) => {
   try {
-    const followUpId = req.body;
+    const followUpId = req.body._id;
+    const doctor = await doctorModel.findById(req.user.id);
     const followUpIndex = doctor.followUps.findIndex((followUp) =>
       followUp._id.equals(followUpId)
     );
