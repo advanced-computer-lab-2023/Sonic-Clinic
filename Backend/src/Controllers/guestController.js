@@ -220,17 +220,23 @@ const viewChats = async (req, res) => {
       for (const patient of patients) {
         const currPatient = await patientModel.findById(patient);
         if (currPatient) {
+          const chat = await chatModel.findOne({ patientID: currPatient._id , doctorID: userID });
+           if(chat){
+            chatNames.push(currPatient.name + "-" + currPatient._id+"-"+chat.flag);
+           }
+           else{
           chatNames.push(currPatient.name + "-" + currPatient._id);
+           }
         }
       }
-      const allPharmacists = await Pharmacist.find();
-      if (allPharmacists) {
-        for (const pharmacist of allPharmacists) {
-          chatNames.push(
-            "Pharmacist " + pharmacist.name + "-" + pharmacist._id
-          );
-        }
-      }
+      // const allPharmacists = await Pharmacist.find();
+      // if (allPharmacists) {
+      //   for (const pharmacist of allPharmacists) {
+      //     chatNames.push(
+      //       "Pharmacist " + pharmacist.name + "-" + pharmacist._id
+      //     );
+      //   }
+      // }
     } else if (isPharmacist) {
       // User is a pharmacist, get all patients and all doctors
       const allPatients = await patientModel.find();
@@ -249,8 +255,16 @@ const viewChats = async (req, res) => {
         const doctorID = appointment.doctorID;
         const doc = await doctorModel.findById(doctorID);
         if (doc) {
+          const chat = await chatModel.findOne({ patientID: userID, doctorID: doctorID });
+           if(chat){
+             chatNames.push("Dr. " + doc.name + "-" + doc._id+"-"+ chat.flag);
+           }
+           else{
           chatNames.push("Dr. " + doc.name + "-" + doc._id);
+           }
         }
+
+        
       }
       const allPharmacists = await Pharmacist.find();
       console.log(allPharmacists);
