@@ -338,6 +338,238 @@ We applied a set of coding conventions to maintain consistency and readability a
 Before submitting a pull request, please ensure that your code sticks to these conventions. Consistent coding practices enhance collaboration and make the codebase more maintainable.
 
 
+
+## Code Examples
+
+## Backend (node js)
+
+### Sending Automatic Emails 
+
+Below is an example Node.js function using the Nodemailer library to send automatic emails. This function can be employed for many purposes, such as sending OTPs for forgotten passwords and notifications.
+
+```javascript
+const nodemailer = require("nodemailer");
+
+// Configure your email service details
+const emailService = "[your email service]";
+const emailUser = "[your email]";
+const emailPassword = "[your email password]";
+
+// Create a Nodemailer transporter
+const transporter = nodemailer.createTransport({
+  service: emailService,
+  auth: {
+    user: emailUser,
+    pass: emailPassword,
+  },
+});
+
+const notificationByMail = async (email, message, title) => {
+  const mailOptions = {
+    from: emailUser,
+    to: email, // email of the recipient
+    subject: title,
+    text: message,
+  };
+
+  transporter.sendMail(mailOptions, (error, info) => {
+    return;
+  });
+};
+
+```
+
+### Converting Text to PDF and Downloading Prescription
+
+The following Node.js function demonstrates how to convert text to a PDF file, which can be utilized for downloading prescriptions. This function is particularly used in generating PDF documents of prescriptions.
+
+```javascript
+const downloadPrescriptions = async (req, res) => {
+  try {
+    // Extract Prescription ID from the request query
+    const PrescriptionId = req.query.id;
+    
+    // Retrieve prescription details from the database
+    const prescription = await prescriptionsModel.findById(PrescriptionId);
+
+    // Check if the prescription exists
+    if (!prescription) {
+      return res.status(404).json({ error: "Prescription not found" });
+    }
+
+    // Encode the filename to handle special characters
+    const sanitizedFilename = encodeURIComponent(`${PrescriptionId}_Prescription`);
+    
+    // Generate PDF buffer using a helper function (e.g., generatePdfBuffer)
+    const buffer = await generatePdfBuffer(prescription);
+
+    // Set response headers for PDF download
+    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader(
+      "Content-Disposition",
+      `attachment; filename="${sanitizedFilename}.pdf"`
+    );
+    
+    // Send the PDF buffer as the response
+    res.end(buffer);
+  } catch (error) {
+    // Handle errors and send an appropriate response
+    console.error(error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+```
+
+### Searching by Name
+
+The following Node.js function demonstrates how to search for patients by name. 
+
+```javascript
+const searchPatientByName = async (req, res) => {
+  // Extract the 'name' parameter from the request query
+  const { name } = req.query;
+
+  try {
+    // Create a regular expression to match partial names (case insensitive)
+    const nameRegex = new RegExp(name, "i");
+
+    // Find patients where the name matches partially
+    const patients = await patientModel.find({ name: { $regex: nameRegex } });
+
+    // Check if any patients are found
+    if (patients.length === 0) {
+      return res.status(404).json({ message: "No patients found." });
+    }
+
+    // Send the list of matching patients as a response
+    res.status(200).json({ patients });
+  } catch (error) {
+    // Handle errors and send an appropriate response
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+
+```
+
+## Frontend (React)
+
+### Patient Sign-Up Page
+
+```jsx
+import React from 'react';
+import AppNavbarGuest from './AppNavbarGuest';
+import PatientSignupForm from './PatientSignupForm';
+import { Container, Card, Image } from 'react-bootstrap'; // Import necessary Bootstrap components
+
+const PatientSignupPage = () => {
+  return (
+    <div>
+      <AppNavbarGuest flag={false} />
+      <Container fluid className="bg-light pt-3 mt-2">
+        <Container className="bg-white px-5 py-4 d-flex align-items-center justify-content-center">
+          <div className="d-flex w-100 align-items-center">
+            <div className="col-12 col-lg-7">
+              {/* Include your PatientSignupForm component */}
+              <PatientSignupForm />
+            </div>
+            <div className="col-lg-5">
+              <Card style={{ height: "700px" }}>
+                <div style={{ overflow: "hidden", height: "100%" }}>
+                  {/* Include your image component, assuming 'family' is an imported image */}
+                  <Image
+                    src={family}
+                    alt="Family"
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                    }}
+                  />
+                </div>
+              </Card>
+            </div>
+          </div>
+        </Container>
+      </Container>
+    </div>
+  );
+};
+
+export default PatientSignupPage;
+ 
+ ```
+
+### Login Page
+
+```jsx
+import React from 'react';
+import AppNavbarGuest from './AppNavbarGuest';
+import LoginForm from './LoginForm';
+import RegPhoto from './RegPhoto';
+import { Container } from 'react-bootstrap'; // Import necessary Bootstrap components
+
+const LoginPage = () => {
+  return (
+    <div>
+      <AppNavbarGuest flag={false} />
+      <Container fluid className="bg-light pt-3 mt-2">
+        <Container className="bg-white px-5 py-4 d-flex align-items-center justify-content-center">
+          <div className="d-flex w-100 align-items-center">
+            <div className="col-lg-5 order-lg-2 d-none d-lg-block">
+              {/* Include your RegPhoto component */}
+              <RegPhoto />
+            </div>
+            <div className="col-12 col-lg-7 order-lg-1">
+              {/* Include your LoginForm component */}
+              <LoginForm />
+            </div>
+          </div>
+        </Container>
+      </Container>
+    </div>
+  );
+};
+
+export default LoginPage;
+
+ ```
+
+### Health Packages
+
+```jsx
+import React from 'react';
+import AppNavbar from './AppNavbar';
+import HamburgerMenu from './HamburgerMenu';
+import { Container, Row } from 'react-bootstrap'; // Import necessary Bootstrap components
+import HealthPackageCard from './HealthPackageCard';
+import ChatPat from './ChatPat';
+
+const YourComponentName = () => {
+  return (
+    <div>
+      <AppNavbar hamburgerMenu={<HamburgerMenu />} />
+      <Container fluid className="bg-light pt-3 mt-2">
+        <Container className="bg-white px-5 py-4 d-flex align-items-center justify-content-center">
+          <Row className="w-100">
+            <div>
+              {/* Include your HealthPackageCard component */}
+              <HealthPackageCard />
+            </div>
+          </Row>
+        </Container>
+      </Container>
+      {/* Include your ChatPat component with props */}
+      <ChatPat who="patient" />
+    </div>
+  );
+};
+
+export default YourComponentName;
+
+```
+
+
 ## Contribute
 
 We welcome and appreciate contributions from the community! If you'd like to contribute to the development of El7a2ny, please follow these guidelines:
