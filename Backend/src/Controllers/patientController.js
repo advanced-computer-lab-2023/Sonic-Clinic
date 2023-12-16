@@ -14,6 +14,8 @@ const stripe = require("stripe")(
 const administratorModel = require("../Models/Adminstrator.js");
 const followUpModel = require("../Models/FollowUp.js");
 const medicineModel = require("../Models/Medicine.js");
+const Order = require("../Models/Order.js");
+const Pharmacist = require("../Models/Pharmacist.js");
 
 const doctorDetails = async (req, res) => {
   const { name } = req.body;
@@ -2347,6 +2349,7 @@ const payPrescriptionWallet = async (req, res) => {
 
     prescription.status = "Filled";
     await prescription.save();
+    createOrderFromPrescription(prescription, "Wallet");
     await patient.save();
 
     return res.status(200).json(patient);
@@ -2375,6 +2378,9 @@ const handlePrescreptionStripe = async (req, res) => {
         await patient.save();
       }
     }
+
+    await patient.save();
+    createOrderFromPrescription(prescription, "Card");
     return res.status(200).json(prescription);
   } catch (error) {
     console.error("Error:", error);
@@ -2382,6 +2388,88 @@ const handlePrescreptionStripe = async (req, res) => {
   }
 };
 
+const notifyPharmacistsOutOfStock = async (medicine) => {
+  try {
+    const pharmacists = await ph.find();
+    const mailOptions = {
+      from: emailUser,
+      to: pharmacists.map((pharmacist) => pharmacist.email).join(","),
+      subject: "Medicine out of stock",
+      text: `Please note that ${medicine} medicine is out of stock.`,
+    };
+
+    pharmacists.map((pharmacist) => {
+      pharmacist.notifications.push(
+        `Please note that ${medicine} medicine is out of stock.`
+      );
+      pharmacist.newNotification = true;
+      pharmacist.save();
+    });
+
+    await transporter.sendMail(mailOptions);
+    console.log("Email sent");
+  } catch (error) {
+    console.log(error.message);
+  }
+};
+const createOrderFromPrescription = async (prescription, paymentMethod) => {
+  try {
+    let items = [];
+
+    let medicineArr = prescription.medicine;
+    let total = 0;
+    const date = new Date();
+
+    for (let i = 0; i < medicineArr.length; i++) {
+      let medicine = await medicineModel.findOne({ name: medicineArr[i][0] });
+      let item = {
+        medicine: medicine._id,
+        name: medicine.name,
+        price: medicine.price,
+        quantity: 1,
+      };
+      items.push(item);
+      total += medicine.price;
+      medicine.sales += 1;
+      medicine.quantity -= 1;
+      medicine.salesData.push({
+        quantity: item.quantity,
+        date: date,
+      });
+      await medicine.save();
+
+      if (medicine.quantity == 0) {
+        //notify pharmacist that medicine is out of stock
+        notifyPharmacistsOutOfStock(medicine.name);
+      }
+    }
+
+    const count = await Order.countDocuments({
+      patient: prescription.patientID,
+    });
+    const orderNumber = count + 1;
+
+    //get delivery address
+    const patient = await patientModel.findById(prescription.patientID);
+    let address = "6 Ave, villa 3";
+    if (patient.addresses.length > 0) address = patient.addresses[0];
+
+    const orderData = {
+      number: orderNumber,
+      date: date,
+      items: items,
+      totalPrice: total + 50,
+      status: "Pending",
+      patient: prescription.patientID,
+      address: address,
+      paymentMethod: paymentMethod,
+    };
+    const order = await Order.create(orderData);
+    //await order.save();
+  } catch (error) {
+    throw new Error("Failed to create the order : " + error.message);
+  }
+};
 module.exports = {
   selectPrescription,
   viewFamilyMembers,
