@@ -184,6 +184,9 @@ const viewChat = async (req, res) => {
       return res.status(404).json("No messages");
     }
 
+    chat.flag=false;
+    await chat.save();
+
     return res.status(200).json({ chat });
   } catch (error) {
     return res.status(500).json({ error: "Internal Server Error" });
@@ -384,6 +387,7 @@ const sendMessage = async (req, res) => {
         doctorID: docNew,
         pharmacistID: phNew,
         messages: [[senderTitle, currDate, currTime, message]],
+        flag:true,
       };
     
       
@@ -395,7 +399,11 @@ const sendMessage = async (req, res) => {
     } else {
       // Add message to the existing chat
       existingChat.messages.push([senderTitle, currDate, currTime, message]);
+      
       await existingChat.save();
+
+      existingChat.flag=true;
+    await existingChat.save();
 
       return res.status(200).json(existingChat);
     }
