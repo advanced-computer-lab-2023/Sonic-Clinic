@@ -338,6 +338,87 @@ We applied a set of coding conventions to maintain consistency and readability a
 Before submitting a pull request, please ensure that your code sticks to these conventions. Consistent coding practices enhance collaboration and make the codebase more maintainable.
 
 
+
+## Code Examples
+### Sending Automatic Emails with Node.js
+
+Below is an example Node.js function using the Nodemailer library to send automatic emails. This function can be employed for many purposes, such as sending OTPs for forgotten passwords and notifications.
+
+```javascript
+const nodemailer = require("nodemailer");
+
+// Configure your email service details
+const emailService = "[your email service]";
+const emailUser = "[your email]";
+const emailPassword = "[your email password]";
+
+// Create a Nodemailer transporter
+const transporter = nodemailer.createTransport({
+  service: emailService,
+  auth: {
+    user: emailUser,
+    pass: emailPassword,
+  },
+});
+
+const notificationByMail = async (email, message, title) => {
+  const mailOptions = {
+    from: emailUser,
+    to: email, // email of the recipient
+    subject: title,
+    text: message,
+  };
+
+  transporter.sendMail(mailOptions, (error, info) => {
+    return;
+  });
+};
+
+```
+
+### Converting Text to PDF and Downloading Prescription
+
+The following Node.js function demonstrates how to convert text to a PDF file, which can be utilized for downloading prescriptions. This function is particularly used in generating PDF documents of prescriptions.
+
+```javascript
+const downloadPrescriptions = async (req, res) => {
+  try {
+    // Extract Prescription ID from the request query
+    const PrescriptionId = req.query.id;
+    
+    // Retrieve prescription details from the database
+    const prescription = await prescriptionsModel.findById(PrescriptionId);
+
+    // Check if the prescription exists
+    if (!prescription) {
+      return res.status(404).json({ error: "Prescription not found" });
+    }
+
+    // Encode the filename to handle special characters
+    const sanitizedFilename = encodeURIComponent(`${PrescriptionId}_Prescription`);
+    
+    // Generate PDF buffer using a helper function (e.g., generatePdfBuffer)
+    const buffer = await generatePdfBuffer(prescription);
+
+    // Set response headers for PDF download
+    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader(
+      "Content-Disposition",
+      `attachment; filename="${sanitizedFilename}.pdf"`
+    );
+    
+    // Send the PDF buffer as the response
+    res.end(buffer);
+  } catch (error) {
+    // Handle errors and send an appropriate response
+    console.error(error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+```
+
+
 ## Contribute
 
 We welcome and appreciate contributions from the community! If you'd like to contribute to the development of El7a2ny, please follow these guidelines:
