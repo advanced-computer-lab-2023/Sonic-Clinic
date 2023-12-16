@@ -118,7 +118,10 @@ function HealthPackagesList({ refreshFlag }) {
           </div>
         )}
         {NeededData && NeededData[0] && !Array.isArray(NeededData[0]) && (
-          <Card key={`outer_bla`} className="mb-4">
+          <Card
+            key={`outer_bla`}
+            style={{ padding: "1rem", marginBottom: "1rem" }}
+          >
             <Card.Body>
               <div
                 style={{
@@ -132,34 +135,68 @@ function HealthPackagesList({ refreshFlag }) {
               </div>
               <Row>
                 <Col md={8}>
-                  <div style={{ fontSize: "1.05rem" }}>
-                    {" "}
-                    <p>
-                      <strong>Package:</strong>{" "}
-                      {NeededData[0].package.type.split(" ")[0]}
-                    </p>
-                    <p>
-                      <strong>Package Status:</strong>{" "}
-                      {NeededData[0].package.status}
-                    </p>
-                    {NeededData[0].package.status === "Subscribed" ? (
-                      <div>
-                        {" "}
+                  {Array.isArray(NeededData[0].package) ? (
+                    NeededData[0].package.map((packagee, packageIndex) => (
+                      <div
+                        key={`innerPackage_${packageIndex}`}
+                        style={{ fontSize: "1.05rem" }}
+                      >
                         <p>
-                          <strong>Price:</strong>$ {NeededData[0].package.price}
+                          <strong>Package:</strong>{" "}
+                          {packagee.type?.split(" ")[0]}
                         </p>
                         <p>
-                          <strong>Renewal Date:</strong>{" "}
-                          {NeededData[0].package.renewalDate}
+                          <strong>Package Status:</strong> {packagee.status}
                         </p>
+                        {packagee.status === "Subscribed" ? (
+                          <>
+                            {" "}
+                            <p>
+                              <strong>Price:</strong>$ {packagee.price}
+                            </p>
+                            <p>
+                              <strong>Renewal Date:</strong>{" "}
+                              {packagee.renewalDate}
+                            </p>
+                          </>
+                        ) : (
+                          <p style={{ fontSize: "1.05rem" }}>
+                            <strong>End Date:</strong> {packagee.endDate}
+                          </p>
+                        )}
                       </div>
-                    ) : (
+                    ))
+                  ) : (
+                    <div style={{ fontSize: "1.05rem" }}>
+                      {" "}
                       <p>
-                        <strong>End Date:</strong>{" "}
-                        {NeededData[0].package.endDate}
+                        <strong>Package:</strong>{" "}
+                        {NeededData[0].package.type?.split(" ")[0]}
                       </p>
-                    )}
-                  </div>
+                      <p>
+                        <strong>Package Status:</strong>{" "}
+                        {NeededData[0].package.status}
+                      </p>
+                      {NeededData[0].package.status === "Subscribed" ? (
+                        <div>
+                          {" "}
+                          <p>
+                            <strong>Price:</strong>${" "}
+                            {NeededData[0].package.price}
+                          </p>
+                          <p>
+                            <strong>Renewal Date:</strong>{" "}
+                            {NeededData[0].package.renewalDate}
+                          </p>
+                        </div>
+                      ) : (
+                        <p>
+                          <strong>End Date:</strong>{" "}
+                          {NeededData[0].package.endDate}
+                        </p>
+                      )}
+                    </div>
+                  )}
                 </Col>
                 <Col
                   md={4}
@@ -180,9 +217,14 @@ function HealthPackagesList({ refreshFlag }) {
           </Card>
         )}
         {NeededData &&
-          NeededData.every((member) => member.length > 0) &&
-          NeededData.map((member, index) => (
-            <Card key={`outer_${index}`} className="mb-4">
+          NeededData.every(
+            (member, index) => index === 0 || member.length > 0
+          ) &&
+          NeededData.slice(1).map((member, index) => (
+            <Card
+              key={`outer_${index}`}
+              style={{ padding: "1rem", marginBottom: "1rem" }}
+            >
               {Array.isArray(member) ? (
                 <Card.Body key={`outer_${index}`}>
                   <div
@@ -209,7 +251,7 @@ function HealthPackagesList({ refreshFlag }) {
                                   >
                                     <p>
                                       <strong>Package:</strong>{" "}
-                                      {packagee.type.split(" ")[0]}
+                                      {packagee.type?.split(" ")[0]}
                                     </p>
                                     <p>
                                       <strong>Package Status:</strong>{" "}
@@ -240,7 +282,7 @@ function HealthPackagesList({ refreshFlag }) {
                               <div style={{ fontSize: "1.05rem" }}>
                                 <p>
                                   <strong>Package:</strong>{" "}
-                                  {innerMember.package.type.split(" ")[0]}
+                                  {innerMember.package.type?.split(" ")[0]}
                                 </p>
                                 <p>
                                   <strong>Package Status:</strong>{" "}
@@ -309,7 +351,7 @@ function HealthPackagesList({ refreshFlag }) {
                           >
                             <p>
                               <strong>Package:</strong>{" "}
-                              {packagee.type.split(" ")[0]}
+                              {packagee.type?.split(" ")[0]}
                             </p>
                             <p>
                               <strong>Package Status:</strong> {packagee.status}
