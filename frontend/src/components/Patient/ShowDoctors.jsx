@@ -44,7 +44,11 @@ function ShowDoctors({ patients, responseData, setPatients, loading, error1 }) {
         </div>
       )}
       {error1 && <div style={{ color: "red" }}>{error1}</div>}
-      {!loading &&
+      {!loading && patients.length === 0 ? (
+        <div className="msg d-flex justify-content-center align-items-center w-100 ">
+          No Doctors Found
+        </div>
+      ) : (
         patients?.map((doctor, index) => (
           <a
             onClick={() => handleCard(doctor, index + 1)}
@@ -116,7 +120,8 @@ function ShowDoctors({ patients, responseData, setPatients, loading, error1 }) {
               </Row>
             </Card>
           </a>
-        ))}
+        ))
+      )}
     </div>
   );
 }
