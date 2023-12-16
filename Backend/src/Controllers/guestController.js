@@ -233,6 +233,27 @@ const viewChats = async (req, res) => {
           }
         }
       }
+      const allPharmacists = await Pharmacist.find();
+      if (allPharmacists) {
+        for (const pharmacist of allPharmacists) {
+          const chat = await chatModel.findOne({
+            pharmacist: currPatient._id,
+            doctorID: userID,
+          });
+          if (chat) {
+            chatNames.push(
+              "Pharmacist " +
+                pharmacist.name +
+                "-" +
+                pharmacist._id +
+                "-" +
+                chat.flag
+            );
+          } else {
+            chatNames.push(currPatient.name + "-" + currPatient._id);
+          }
+        }
+      }
       // const allPharmacists = await Pharmacist.find();
       // if (allPharmacists) {
       //   for (const pharmacist of allPharmacists) {
@@ -264,21 +285,22 @@ const viewChats = async (req, res) => {
             doctorID: doctorID,
           });
           if (chat) {
+            console.log(chat._id + " " + chat.flag);
             chatNames.push("Dr. " + doc.name + "-" + doc._id + "-" + chat.flag);
           } else {
             chatNames.push("Dr. " + doc.name + "-" + doc._id);
           }
         }
       }
-      const allPharmacists = await Pharmacist.find();
-      console.log(allPharmacists);
-      if (allPharmacists) {
-        for (const pharmacist of allPharmacists) {
-          chatNames.push(
-            "Pharmacist " + pharmacist.name + "-" + pharmacist._id
-          );
-        }
-      }
+      // const allPharmacists = await Pharmacist.find();
+      // console.log(allPharmacists);
+      // if (allPharmacists) {
+      //   for (const pharmacist of allPharmacists) {
+      //     chatNames.push(
+      //       "Pharmacist " + pharmacist.name + "-" + pharmacist._id
+      //     );
+      //   }
+      // }
     }
 
     chatNames = Array.from(new Set(chatNames));
@@ -419,6 +441,7 @@ const sendMessage = async (req, res) => {
 
       existingChat.flag = true;
       await existingChat.save();
+      console.log(existingChat._id + " " + existingChat.flag);
 
       return res.status(200).json(existingChat);
     }
