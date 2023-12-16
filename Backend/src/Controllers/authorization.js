@@ -11,9 +11,9 @@ const packagesModel = require("../Models/Packages.js");
 const familyMemberModel = require("../Models/FamilyMember.js");
 const appointmentModel = require("../Models/Appointment.js");
 
-const emailService = "youstina2307@outlook.com"; // e.g., 'gmail'
-const emailUser = "youstina2307@outlook.com";
-const emailPassword = "23july2002";
+const emailService = "sarahhtawfik@outlook.com";
+const emailUser = "sarahhtawfik@outlook.com";
+const emailPassword = "Sarsoura2001";
 
 const transporter = nodemailer.createTransport({
   service: emailService,

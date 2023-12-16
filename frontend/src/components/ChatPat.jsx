@@ -62,7 +62,7 @@ export default function ChatPat({ who }) {
     color: "white",
     overflow: "hidden",
     transition: "width 0.3s ease-in-out", // Smooth transition for width change
-    width: isHovered ? "13.3rem" : "3rem", // Change width on hover
+    width: isHovered ? (who === "patient" ? "13.5rem" : "5rem") : "3rem", // Change width on hover
   };
 
   const containerStyle = {
@@ -321,9 +321,7 @@ export default function ChatPat({ who }) {
                 whiteSpace: "nowrap",
               }}
             >
-              {who === "patient"
-                ? "Chat with your doctor"
-                : "Chat with associates"}
+              {who === "patient" ? "Chat with your doctor" : "Chat"}
             </span>
           </div>
         </Button>
@@ -388,7 +386,7 @@ export default function ChatPat({ who }) {
               className="d-flex justify-content-between p-1"
               style={{ backgroundColor: "#ff6b35", width: "100%" }}
             >
-              <div>
+              <div style={{ fontSize: "1rem" }}>
                 {" "}
                 <FontAwesomeIcon
                   icon={faArrowLeft}

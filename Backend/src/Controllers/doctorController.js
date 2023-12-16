@@ -562,34 +562,10 @@ const cancelAppointmentDoc = async (req, res) => {
     patient.wallet += sessionPrice;
     await patient.save();
 
-    notificationByMail(
-      patient.email,
-      "The appointment with Dr. " +
-        doctor.name +
-        " on " +
-        appointment.date.split("-").reverse().join("/") +
-        " at " +
-        appointment.time +
-        " has been cancelled",
-      "Appointment Cancelled"
-    );
-    console.log("4");
-    console.log("mail");
-    notificationByMail(
-      doctor.email,
-      "An appointment has been cancelled with " +
-        patient.name +
-        " on " +
-        appointment.date.split("-").reverse().join("/") +
-        " at " +
-        appointment.time,
-      "Appointment Cancelled"
-    );
     const id = appointment.patientID;
     console.log(appointment.patientID);
     patient = await patientModel.findById(id);
     if (patient) {
-      console.log("patient");
       notification =
         "The appointment with Dr. " +
         doctor.name +
@@ -597,11 +573,21 @@ const cancelAppointmentDoc = async (req, res) => {
       patient.notifications.push(notification);
       patient.newNotifications = true;
       await patient.save();
+      await notificationByMail(
+        patient.email,
+        notification,
+        "Appointment Cancelled"
+      );
       notificationDoc =
         "An appointment with " + patient.name + " has been cancelled";
       doctor.notifications.push(notificationDoc);
       doctor.newNotifications = true;
       await doctor.save();
+      await notificationByMail(
+        doctor.email,
+        notificationDoc,
+        "Appointment Cancelled"
+      );
     } else {
       const familyMem = await familyMemberModel.findById(appointment.patientID);
       if (familyMem) {
@@ -615,11 +601,21 @@ const cancelAppointmentDoc = async (req, res) => {
         parent.notifications.push(notification);
         parent.newNotifications = true;
         await parent.save();
+        await notificationByMail(
+          parent.email,
+          notification,
+          "Appointment Cancelled"
+        );
         notificationDoc =
           "An appointment with " + familyMem.name + " has been cancelled";
         doctor.notifications.push(notificationDoc);
         doctor.newNotifications = true;
         await doctor.save();
+        await notificationByMail(
+          doctor.email,
+          notificationDoc,
+          "Appointment Cancelled"
+        );
       }
       if (familyMem && familyMem.patientRef) {
         const linkedP = await patientModel.findById(familyMem.patientRef);
@@ -630,6 +626,11 @@ const cancelAppointmentDoc = async (req, res) => {
         linkedP.notifications.push(notification);
         linkedP.newNotifications = true;
         await linkedP.save();
+        await notificationByMail(
+          linkedP.email,
+          notification,
+          "Appointment Cancelled"
+        );
       }
     }
 
@@ -756,7 +757,6 @@ const rescheduleAppDoc = async (req, res) => {
     const patientId = appointment.patientID;
     const patient = await patientModel.findById(patientId);
     if (patient) {
-      console.log("hena");
       notificationDoc =
         "Your appointment with " +
         patient.name +
@@ -767,9 +767,20 @@ const rescheduleAppDoc = async (req, res) => {
       patient.notifications.push(notification);
       patient.newNotifications = true;
       await patient.save();
+      await notificationByMail(
+        patient.email,
+        notification,
+        "Appointment Rescheduled"
+      );
+
       doctor.notifications.push(notificationDoc);
       doctor.newNotifications = true;
       await doctor.save();
+      await notificationByMail(
+        doctor.email,
+        notificationDoc,
+        "Appointment Rescheduled"
+      );
     } else {
       const familyMem = await familyMemberModel.findById(appointment.patientID);
       if (familyMem) {
@@ -786,6 +797,11 @@ const rescheduleAppDoc = async (req, res) => {
         parent.notifications.push(notification);
         parent.newNotifications = true;
         await parent.save();
+        await notificationByMail(
+          parent.email,
+          notification,
+          "Appointment Rescheduled"
+        );
         notificationDoc =
           "An appointment with " +
           familyMem.name +
@@ -796,6 +812,11 @@ const rescheduleAppDoc = async (req, res) => {
         doctor.notifications.push(notificationDoc);
         doctor.newNotifications = true;
         await doctor.save();
+        await notificationByMail(
+          doctor.email,
+          notificationDoc,
+          "Appointment Rescheduled"
+        );
       }
 
       if (familyMem && familyMem.patientRef) {
@@ -811,31 +832,13 @@ const rescheduleAppDoc = async (req, res) => {
         linkedP.notifications.push(notification);
         linkedP.newNotifications = true;
         await linkedP.save();
+        await notificationByMail(
+          linkedP.email,
+          notification,
+          "Appointment Rescheduled"
+        );
       }
     }
-
-    // notificationByMail(
-    //   patient.email,
-    //   "The appointment with Dr. " +
-    //     doctor.name +
-    //     " has been rescheduled to " +
-    //     appointment.date.split("-").reverse().join("/") +
-    //     " at " +
-    //     appointment.time,
-    //   "Appointment Rescheduled"
-    // );
-    // console.log("after notifications1");
-
-    // notificationByMail(
-    //   doctor.email,
-    //   "An appointment has been rescheduled with " +
-    //     patient.name +
-    //     " on " +
-    //     appointment.date.split("-").reverse().join("/") +
-    //     " at " +
-    //     appointment.time,
-    //   "Appointment Rescheduled"
-    // );
 
     const doctorAvailableSlots = doctor.availableSlots;
 
@@ -898,27 +901,33 @@ const notificationFlag = async (req, res) => {
   }
 };
 const nodemailer = require("nodemailer");
-const emailService = "youstina2307@outlook.com";
-const emailUser = "youstina2307@outlook.com";
-const emailPassword = "23july2002";
+const emailService = "sarahhtawfik@outlook.com";
+const emailUser = "sarahhtawfik@outlook.com";
+const emailPassword = "Sarsoura2001";
 const transporter = nodemailer.createTransport({
-  service: emailService,
+  service: "outlook",
   auth: {
     user: emailUser,
     pass: emailPassword,
   },
 });
 const notificationByMail = async (email, message, title) => {
-  const mailOptions = {
-    from: emailUser,
-    to: email,
-    subject: title,
-    text: message,
-  };
+  try {
+    const mailOptions = {
+      from: emailUser,
+      to: email,
+      subject: title,
+      text: message,
+    };
 
-  transporter.sendMail(mailOptions, (error, info) => {
-    return;
-  });
+    const info = await transporter.sendMail(mailOptions);
+    console.log("Email sent successfully:", info.response);
+  } catch (error) {
+    console.error("Error sending email:", error);
+  }
+
+  // Introduce a delay between emails (adjust the duration as needed)
+  await new Promise((resolve) => setTimeout(resolve, 3000));
 };
 const viewMedicines = async (req, res) => {
   try {
