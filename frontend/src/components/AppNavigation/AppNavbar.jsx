@@ -106,7 +106,7 @@ const AppNavbar = (props) => {
                 style={{ color: "#adb5bd  ", marginRight: "0.5rem" }}
                 icon={faSuitcaseMedical}
               />
-              el7a2ny Clinic
+              El7a2ny Clinic
             </div>
           </div>
 

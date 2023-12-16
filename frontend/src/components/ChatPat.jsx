@@ -19,6 +19,7 @@ import {
   Navbar,
   Modal,
   FormControl,
+  Form,
 } from "react-bootstrap";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import axios from "axios";
@@ -33,6 +34,8 @@ export default function ChatPat({ who }) {
   const [chosenName, setChosenName] = useState("");
   const [myMessage, setMyMessage] = useState("");
   const [myContacts, setMyContacts] = useState([]);
+  const [filteredContacts, setFilteredContacts] = useState([]); // State for filtered contacts
+  const [searchTerm, setSearchTerm] = useState("");
   const [chatData, setChatData] = useState([]);
 
   ////////////////////////////video
@@ -77,6 +80,7 @@ export default function ChatPat({ who }) {
     transition: "0.3s ease-in-out", // Smooth transition for width change
     width: "20rem",
     padding: "0rem",
+    height: "30rem",
     maxHeight: "30rem",
   };
 
@@ -139,6 +143,14 @@ export default function ChatPat({ who }) {
 
   const buttonTextPosition = isHovered ? "0" : "-100%";
   const buttonTextOpacity = isHovered ? 1 : 0;
+
+  const handleSearch = (term) => {
+    setSearchTerm(term);
+    const filtered = myContacts.filter((name) =>
+      name.toLowerCase().includes(term.toLowerCase())
+    );
+    setFilteredContacts(filtered);
+  };
 
   useEffect(() => {
     fetchData();
@@ -349,13 +361,22 @@ export default function ChatPat({ who }) {
               <FontAwesomeIcon icon={faTimes} style={{ color: "white" }} />
             </Button>
           </Navbar>
-
+          <Form>
+            <Form.Group controlId="searchContacts">
+              <Form.Control
+                type="text"
+                value={searchTerm}
+                onChange={(e) => handleSearch(e.target.value)}
+                placeholder="Search contacts"
+              />
+            </Form.Group>
+          </Form>
           <ListGroup
             as="ol"
             className="flex-grow-1"
             style={{ overflowY: "auto" }}
           >
-            {myContacts.map((name, index) => (
+            {(searchTerm ? filteredContacts : myContacts).map((name, index) => (
               <ListGroup.Item
                 key={index}
                 as="li"
@@ -404,26 +425,25 @@ export default function ChatPat({ who }) {
                 />
                 {chosenName.split("-")[0]}
               </div>
-              <div>
-                <FontAwesomeIcon
-                  icon={faVideo}
-                  onClick={() => setVideoChat()}
-                  style={{ cursor: "pointer" }}
-                />
-                <Button
-                  variant="link"
-                  onClick={() => {
-                    setChosen(false);
-                    setCalling(false);
-                  }}
-                  style={{ color: "white", alignSelf: "flex-end" }}
-                >
+              {!chosenName.toLowerCase().includes("pharmacist") && (
+                <div>
                   <FontAwesomeIcon
-                    icon={faTimes}
-                    style={{ cursor: "pointer" }}
+                    icon={faVideo}
+                    onClick={() => setVideoChat()}
+                    style={{ cursor: "pointer", marginLeft: "9rem" }}
                   />
-                </Button>
-              </div>
+                </div>
+              )}
+              <Button
+                variant="link"
+                onClick={() => {
+                  setChosen(false);
+                  setCalling(false);
+                }}
+                style={{ color: "white", alignSelf: "flex-end" }}
+              >
+                <FontAwesomeIcon icon={faTimes} style={{ cursor: "pointer" }} />
+              </Button>
             </Navbar>
 
             <div

@@ -347,7 +347,7 @@ function ShowPrescriptions() {
                     <Card.Title
                       style={{
                         marginTop: "2rem",
-                        fontSize: "1.5rem",
+                        fontSize: "1.4rem",
                         fontWeight: "bold",
                         color: "#212529",
                       }}
