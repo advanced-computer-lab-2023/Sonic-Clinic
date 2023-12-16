@@ -4,7 +4,10 @@ import Container from "react-bootstrap/Container";
 import Navbar from "react-bootstrap/Navbar";
 import logo from "../../Assets/ClinicLogo.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBell } from "@fortawesome/free-solid-svg-icons";
+import {
+  faSuitcaseMedical,
+  faStaffSnake,
+} from "@fortawesome/free-solid-svg-icons";
 import NotificationsPanel from "../NotificationsPanel";
 import { Button, NavLink } from "react-bootstrap";
 import { Link } from "react-router-dom";
@@ -45,19 +48,47 @@ const AppNavbarGuest = ({ flag }) => {
     <div>
       <Navbar className="bg-white" sticky="top" style={{ height: "5rem" }}>
         <Container fluid className="px-5">
+          <a
+            className="d-flex"
+            style={{
+              color: "#ff6b35",
+              fontSize: "1.15rem",
+              width: "10rem",
+            }}
+            href="http://localhost:3001/"
+            target="_blank" // Add this attribute to open in a new tab
+            rel="noopener noreferrer" // Add this for security
+          >
+            Visit Pharmacy
+            <FontAwesomeIcon
+              style={{
+                color: "#ff6b35",
+                marginLeft: "0.5rem",
+                marginTop: "0.3rem",
+              }}
+              icon={faStaffSnake}
+            />
+          </a>
           <div
             className="d-flex flex-direction-row justify-space-between col-5"
             style={{ gap: "20px" }}
           ></div>
-          {/* <div><img src="./ClinicLogo.jpg" alt="Clinic Logo" /></div>  */}
+
           <div
             className="col-5"
             style={{
-              color: "#ff6b35",
-              fontSize: "3rem",
+              color: "#adb5bd  ",
+              fontSize: "2.3rem",
               fontWeight: "700",
+              fontFamily: "'Bebas Neue', sans-serif",
+              position: "absolute",
+              marginLeft: "40rem",
             }}
           >
+            <FontAwesomeIcon
+              style={{ color: "#adb5bd  ", marginRight: "0.5rem" }}
+              icon={faSuitcaseMedical}
+            />
             el7a2ny Clinic
           </div>
           <div

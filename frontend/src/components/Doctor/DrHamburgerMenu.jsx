@@ -129,8 +129,8 @@ function DrHamburgerMenu() {
               style={{
                 color: "#404040",
                 fontSize: "1.2rem",
-                fontStyle: "normal",
-                fontWeight: 400,
+                fontFamily: "'Bebas Neue', sans-serif",
+                fontWeight: 700,
                 lineHeight: "0.75rem",
                 marginLeft: "1rem",
               }}

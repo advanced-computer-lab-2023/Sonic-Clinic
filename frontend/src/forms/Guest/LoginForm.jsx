@@ -205,7 +205,16 @@ const LoginForm = () => {
 
   return (
     <div className="col-9 form-container">
-      <div className="form-title">Welcome Back!</div>
+      <div
+        className="form-title"
+        style={{
+          fontFamily: "'Bebas Neue', sans-serif",
+          fontWeight: 600,
+          fontSize: "2rem",
+        }}
+      >
+        Welcome Back!
+      </div>
       <Modal show={showAcceptModal} onHide={() => setShowAcceptModal(false)}>
         <Modal.Header>
           <Modal.Title>Employment Contract</Modal.Title>
@@ -231,12 +240,14 @@ const LoginForm = () => {
       </Modal>
       <Form className="rounded-3" onSubmit={handleSubmit}>
         <FormInput
+          style={{ fontSize: "0.9rem" }}
           name="Username"
           type="text"
           placeholder="john.doe"
           onChange={(e) => setUsername(e.target.value)}
         />
         <FormPassword
+          style={{ fontSize: "0.9rem" }}
           name="Password"
           type="password"
           placeholder="**************"
