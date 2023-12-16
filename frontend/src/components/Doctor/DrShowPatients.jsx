@@ -629,7 +629,7 @@ function DrShowPatients({
           </Spinner>
         </div>
       )}
-      {(!isLoading || !loading) &&
+      {!loading &&
         (patients.length === 0 ? (
           <div className="msg d-flex justify-content-center align-items-center  ">
             No Available Patients
@@ -694,7 +694,13 @@ function DrShowPatients({
                           </Modal.Footer>
                         </Modal>
 
-                        {upcomingApp && <div>Has an upcoming appointment</div>}
+                        {upcomingApp && (
+                          <div
+                            style={{ marginBottom: "1rem", color: "#ff6b35 " }}
+                          >
+                            Has an upcoming appointment
+                          </div>
+                        )}
                         <div className="patient-info">
                           <p>
                             Date of birth:{" "}
