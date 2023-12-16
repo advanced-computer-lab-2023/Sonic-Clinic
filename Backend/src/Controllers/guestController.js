@@ -6,7 +6,7 @@ const doctorModel = require("../Models/Doctor.js");
 const chatModel = require("../Models/Chat.js");
 const appointmentModel = require("../Models/Appointment.js");
 const bcrypt = require("bcrypt");
-const Pharmacist = require("../Models/Pharmacist");
+const Pharmacist = require("../Models/Pharmacist.js");
 
 const addPotentialDoctor = async (req, res) => {
   const { username } = req.body;
@@ -168,7 +168,6 @@ const viewChat = async (req, res) => {
       }
     }
 
-
     const chat = await chatModel.findOne({
       $or: [
         { patientID: userID2, doctorID: recipientID2 },
@@ -176,7 +175,6 @@ const viewChat = async (req, res) => {
         // Add conditions for pharmacist chat if needed
       ],
     });
-
 
     if (!chat) {
       return res.status(404).json("No messages");
@@ -187,7 +185,6 @@ const viewChat = async (req, res) => {
     return res.status(500).json({ error: "Internal Server Error" });
   }
 };
-
 
 const viewChats = async (req, res) => {
   const userID = req.user.id;
@@ -221,9 +218,11 @@ const viewChats = async (req, res) => {
       }
       const allPharmacists = await Pharmacist.find();
       console.log(allPharmacists);
-      if(allPharmacists){
+      if (allPharmacists) {
         for (const pharmacist of allPharmacists) {
-          chatNames.push("Pharmacist " + pharmacist.name + "-" + pharmacist._id);
+          chatNames.push(
+            "Pharmacist " + pharmacist.name + "-" + pharmacist._id
+          );
         }
       }
     } else if (isPharmacist) {
@@ -249,11 +248,13 @@ const viewChats = async (req, res) => {
       }
       const allPharmacists = await Pharmacist.find();
       console.log(allPharmacists);
-      if(allPharmacists){
-      for (const pharmacist of allPharmacists) {
-        chatNames.push("Pharmacist " + pharmacist.name + "-" + pharmacist._id);
+      if (allPharmacists) {
+        for (const pharmacist of allPharmacists) {
+          chatNames.push(
+            "Pharmacist " + pharmacist.name + "-" + pharmacist._id
+          );
+        }
       }
-    }
     }
 
     chatNames = Array.from(new Set(chatNames));
@@ -262,7 +263,6 @@ const viewChats = async (req, res) => {
     return res.status(500).json({ error: "Internal Server Error" });
   }
 };
-
 
 const sendMessage = async (req, res) => {
   const recipientID = req.body.recipientID;
@@ -341,7 +341,7 @@ const sendMessage = async (req, res) => {
     if (!existingChat) {
       // Create a new chat
       const newChatData = {
-        patientID: isDoctor2 ? null : (isPharmacist2 ? null : recipientID),
+        patientID: isDoctor2 ? null : isPharmacist2 ? null : recipientID,
         doctorID: isDoctor2 ? (isPharmacist2 ? null : userID) : null,
         pharmacistID: isPharmacist2 ? (isDoctor2 ? null : userID) : null,
         messages: [[senderTitle, currDate, currTime, message]],
@@ -362,12 +362,6 @@ const sendMessage = async (req, res) => {
     return res.status(500).json({ error: "Internal Server Error" });
   }
 };
-
-
-
-
-
-
 
 const addChat = async (req, res) => {
   const newChat = await chatModel.create({

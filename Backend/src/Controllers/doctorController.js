@@ -747,7 +747,7 @@ const rescheduleAppDoc = async (req, res) => {
     const appointment = await appointmentModel.findById(appId);
     appointment.date = date;
     appointment.time = time;
-    appointment.status = "Rescheduled";
+    appointment.status = "Upcoming";
     await appointment.save();
     const doctor = await doctorModel.findById(req.user.id);
     const docName = doctor.name;
@@ -851,16 +851,14 @@ const rescheduleAppDoc = async (req, res) => {
       }
     }
 
-
-    
     // If the date is available, remove it from the doctor's available slots
-    if(isAvailableSlot){
-    doctor.availableSlots = doctorAvailableSlots.filter((slot) => {
-      return slot !== slot2;
-    });
+    if (isAvailableSlot) {
+      doctor.availableSlots = doctorAvailableSlots.filter((slot) => {
+        return slot !== slot2;
+      });
 
-    await doctor.save();
-  }
+      await doctor.save();
+    }
 
     res.status(200).json(appointment);
   } catch (error) {
