@@ -762,14 +762,15 @@ const rescheduleAppDoc = async (req, res) => {
 
     const patientId = appointment.patientID;
     const patient = await patientModel.findById(patientId);
-    notificationDoc =
-      "Your appointment with " +
-      patient.name +
-      " has been rescheduled to be on " +
-      date.split("-").reverse().join("/") +
-      " at: " +
-      time;
     if (patient) {
+      console.log("hena");
+      notificationDoc =
+        "Your appointment with " +
+        patient.name +
+        " has been rescheduled to be on " +
+        date.split("-").reverse().join("/") +
+        " at: " +
+        time;
       patient.notifications.push(notification);
       patient.newNotifications = true;
       await patient.save();
@@ -779,7 +780,7 @@ const rescheduleAppDoc = async (req, res) => {
     } else {
       const familyMem = await familyMemberModel.findById(appointment.patientID);
       if (familyMem) {
-        const parent = await patientModel.findById(req.user.id);
+        const parent = await patientModel.findById(familyMem.patientID);
         notification =
           "The appointment with Dr. " +
           doctor.name +
@@ -803,7 +804,9 @@ const rescheduleAppDoc = async (req, res) => {
         doctor.newNotifications = true;
         await doctor.save();
       }
+
       if (familyMem && familyMem.patientRef) {
+        console.log("family mem ref");
         const linkedP = await patientModel.findById(familyMem.patientRef);
         notification =
           "Your appointment with Dr. " +
@@ -817,27 +820,29 @@ const rescheduleAppDoc = async (req, res) => {
         await linkedP.save();
       }
     }
-    notificationByMail(
-      patient.email,
-      "The appointment with Dr. " +
-        doctor.name +
-        " has been rescheduled to " +
-        appointment.date.split("-").reverse().join("/") +
-        " at " +
-        appointment.time,
-      "Appointment Rescheduled"
-    );
 
-    notificationByMail(
-      doctor.email,
-      "An appointment has been rescheduled with " +
-        patient.name +
-        " on " +
-        appointment.date.split("-").reverse().join("/") +
-        " at " +
-        appointment.time,
-      "Appointment Rescheduled"
-    );
+    // notificationByMail(
+    //   patient.email,
+    //   "The appointment with Dr. " +
+    //     doctor.name +
+    //     " has been rescheduled to " +
+    //     appointment.date.split("-").reverse().join("/") +
+    //     " at " +
+    //     appointment.time,
+    //   "Appointment Rescheduled"
+    // );
+    // console.log("after notifications1");
+
+    // notificationByMail(
+    //   doctor.email,
+    //   "An appointment has been rescheduled with " +
+    //     patient.name +
+    //     " on " +
+    //     appointment.date.split("-").reverse().join("/") +
+    //     " at " +
+    //     appointment.time,
+    //   "Appointment Rescheduled"
+    // );
 
     const doctorAvailableSlots = doctor.availableSlots;
 
