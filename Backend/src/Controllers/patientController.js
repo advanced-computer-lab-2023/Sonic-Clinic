@@ -715,17 +715,17 @@ const filterDoctorsAfterSearchDocName = async (req, res) => {
     const filteredDoctors = doctors.filter((doctor) =>
       doctor.availableSlots?.some((slot) => {
         if (!slot) {
-          return false; // If availableSlots is null or undefined, return false
+          return false;
         }
+        console.log(slot);
         const [slotDate, slotTime] = slot.split(" ");
         return (
-          slotDate === date &&
-          slotTime === time &&
-          (!specialty || doctor.specialty.toString() === specialty.toString())
+          slotDate == date &&
+          slotTime == time &&
+          (!specialty || doctor.specialty.toString() == specialty.toString())
         );
       })
     );
-    // Filter doctors based on available slots
 
     if (filteredDoctors.length === 0 || !filteredDoctors) {
       return res.status(404).json({ message: "No available doctors found." });
@@ -1285,6 +1285,17 @@ const addAppointmentForMyselfOrFam = async (req, res) => {
         linkedP.notifications.push(notificationPatient);
         linkedP.newNotifications = true;
         await linkedP.save();
+        await notificationByMail(
+          linkedP.email,
+          "An appointment with Dr. " +
+            doctor.name +
+            " on " +
+            date.split("-").reverse().join("/") +
+            " at " +
+            time +
+            " has been reserved",
+          "Appointment Reserved"
+        );
         notificationDoc =
           "An appointment with " +
           linkedPName +
@@ -1295,6 +1306,17 @@ const addAppointmentForMyselfOrFam = async (req, res) => {
         doctor.notifications.push(notificationDoc);
         doctor.newNotifications = true;
         await doctor.save();
+        await notificationByMail(
+          doctor.email,
+          "An appointment with " +
+            linkedPName +
+            " on " +
+            date.split("-").reverse().join("/") +
+            " at " +
+            time +
+            " has been reserved",
+          "New Appointment"
+        );
       } else {
         patientID = famID;
         const parent = await patientModel.findById(req.user.id);
@@ -1310,6 +1332,17 @@ const addAppointmentForMyselfOrFam = async (req, res) => {
         parent.notifications.push(notificationPatient);
         parent.newNotifications = true;
         await parent.save();
+        await notificationByMail(
+          parent.email,
+          "An appointment with Dr. " +
+            doctor.name +
+            " on " +
+            date.split("-").reverse().join("/") +
+            " at " +
+            time +
+            " has been reserved",
+          "Appointment Reserved"
+        );
 
         notificationDoc =
           "An appointment with " +
@@ -1321,6 +1354,17 @@ const addAppointmentForMyselfOrFam = async (req, res) => {
         doctor.notifications.push(notificationDoc);
         doctor.newNotifications = true;
         await doctor.save();
+        await notificationByMail(
+          doctor.email,
+          "An appointment with " +
+            familyName +
+            " on " +
+            date.split("-").reverse().join("/") +
+            " at " +
+            time +
+            " has been reserved",
+          "New Appointment"
+        );
       }
     } else {
       const patient = await patientModel.findById(req.user.id);
@@ -1335,6 +1379,17 @@ const addAppointmentForMyselfOrFam = async (req, res) => {
       patient.notifications.push(notificationPatient);
       patient.newNotifications = true;
       await patient.save();
+      await notificationByMail(
+        patient.email,
+        "An appointment with Dr. " +
+          doctor.name +
+          " on " +
+          date.split("-").reverse().join("/") +
+          " at " +
+          time +
+          " has been reserved",
+        "Appointment Reserved"
+      );
 
       notificationDoc =
         "An appointment with " +
@@ -1346,6 +1401,17 @@ const addAppointmentForMyselfOrFam = async (req, res) => {
       doctor.notifications.push(notificationDoc);
       doctor.newNotifications = true;
       await doctor.save();
+      await notificationByMail(
+        doctor.email,
+        "An appointment with " +
+          pName +
+          " on " +
+          date.split("-").reverse().join("/") +
+          " at " +
+          time +
+          " has been reserved",
+        "New Appointment"
+      );
     }
     const status = "Upcoming";
 
@@ -1373,30 +1439,6 @@ const addAppointmentForMyselfOrFam = async (req, res) => {
       }
     }
     await doctor.save();
-
-    notificationByMail(
-      doctor.email,
-      "An appointment with " +
-        patient.name +
-        " on " +
-        appointment.date.split("-").reverse().join("/") +
-        " at " +
-        appointment.time +
-        " has been reserved",
-      "New Appointment"
-    );
-
-    notificationByMail(
-      patient.email,
-      "An appointment with Dr. " +
-        doctor.name +
-        " on " +
-        appointment.date.split("-").reverse().join("/") +
-        " at " +
-        appointment.time +
-        " has been reserved",
-      "Appointment Reserved"
-    );
     const sessionPrice = await calculateSessionPrice(
       doctor.hourlyRate,
       patient.package
@@ -1555,6 +1597,17 @@ const payAppointmentWallet = async (req, res) => {
         linkedP.notifications.push(notificationPatient);
         linkedP.newNotifications = true;
         await linkedP.save();
+        await notificationByMail(
+          linkedP.email,
+          "An appointment with Dr. " +
+            doctor.name +
+            " on " +
+            date.split("-").reverse().join("/") +
+            " at " +
+            time +
+            " has been reserved",
+          "Appointment Reserved"
+        );
         notificationDoc =
           "An appointment with " +
           linkedPName +
@@ -1565,8 +1618,18 @@ const payAppointmentWallet = async (req, res) => {
         doctor.notifications.push(notificationDoc);
         doctor.newNotifications = true;
         await doctor.save();
+        await notificationByMail(
+          doctor.email,
+          "An appointment with " +
+            linkedPName +
+            " on " +
+            date.split("-").reverse().join("/") +
+            " at " +
+            time +
+            " has been reserved",
+          "New Appointment"
+        );
       } else {
-        console.log("3");
         patientID = famID;
         const parent = await patientModel.findById(req.user.id);
         notificationPatient =
@@ -1581,6 +1644,17 @@ const payAppointmentWallet = async (req, res) => {
         parent.notifications.push(notificationPatient);
         parent.newNotifications = true;
         await parent.save();
+        await notificationByMail(
+          parent.email,
+          "An appointment with Dr. " +
+            doctor.name +
+            " on " +
+            date.split("-").reverse().join("/") +
+            " at " +
+            time +
+            " has been reserved",
+          "Appointment Reserved"
+        );
 
         notificationDoc =
           "An appointment with " +
@@ -1592,6 +1666,18 @@ const payAppointmentWallet = async (req, res) => {
         doctor.notifications.push(notificationDoc);
         doctor.newNotifications = true;
         await doctor.save();
+        /////////////mail
+        await notificationByMail(
+          doctor.email,
+          "An appointment with " +
+            familyName +
+            " on " +
+            date.split("-").reverse().join("/") +
+            " at " +
+            time +
+            " has been reserved",
+          "New Appointment"
+        );
       }
     } else {
       const patient = await patientModel.findById(req.user.id);
@@ -1607,6 +1693,18 @@ const payAppointmentWallet = async (req, res) => {
       patient.newNotifications = true;
       await patient.save();
 
+      await notificationByMail(
+        patient.email,
+        "An appointment with Dr. " +
+          doctor.name +
+          " on " +
+          date.split("-").reverse().join("/") +
+          " at " +
+          time +
+          " has been reserved",
+        "Appointment Reserved"
+      );
+
       notificationDoc =
         "An appointment with " +
         pName +
@@ -1617,6 +1715,18 @@ const payAppointmentWallet = async (req, res) => {
       doctor.notifications.push(notificationDoc);
       doctor.newNotifications = true;
       await doctor.save();
+
+      await notificationByMail(
+        doctor.email,
+        "An appointment with " +
+          pName +
+          " on " +
+          date.split("-").reverse().join("/") +
+          " at " +
+          time +
+          " has been reserved",
+        "New Appointment"
+      );
     }
     const status = "Upcoming";
     const appointment = await appointmentModel.create({
@@ -1860,29 +1970,6 @@ const cancelAppointmentPatient = async (req, res) => {
     appointment.status = "Cancelled";
     await appointment.save();
 
-    notificationByMail(
-      doctor.email,
-      "The appointment with " +
-        patient.name +
-        " on " +
-        appointment.date.split("-").reverse().join("/") +
-        " at " +
-        appointment.time +
-        " has been cancelled",
-      "Appointment Cancelled"
-    );
-    notificationByMail(
-      patient.email,
-      "The appointment with Dr. " +
-        doctor.name +
-        " on " +
-        appointment.date.split("-").reverse().join("/") +
-        " at " +
-        appointment.time +
-        " has been cancelled",
-      "Appointment Cancelled"
-    );
-
     const id = appointment.patientID;
     patient = await patientModel.findById(id);
     if (patient) {
@@ -1891,11 +1978,21 @@ const cancelAppointmentPatient = async (req, res) => {
       patient.notifications.push(notification);
       patient.newNotifications = true;
       await patient.save();
+      await notificationByMail(
+        patient.email,
+        notification,
+        "Appointment Cancelled"
+      );
       notificationDoc =
         "The appointment with " + patient.name + " has been cancelled";
       doctor.notifications.push(notificationDoc);
       doctor.newNotifications = true;
       await doctor.save();
+      await notificationByMail(
+        doctor.email,
+        notificationDoc,
+        "Appointment Cancelled"
+      );
     } else {
       const familyMem = await familyMemberModel.findById(appointment.patientID);
       if (familyMem) {
@@ -1909,11 +2006,21 @@ const cancelAppointmentPatient = async (req, res) => {
         parent.notifications.push(notification);
         parent.newNotifications = true;
         await parent.save();
+        await notificationByMail(
+          parent.email,
+          notification,
+          "Appointment Cancelled"
+        );
         notificationDoc =
           "An appointment with " + familyMem.name + " has been cancelled";
         doctor.notifications.push(notificationDoc);
         doctor.newNotifications = true;
         await doctor.save();
+        await notificationByMail(
+          doctor.email,
+          notificationDoc,
+          "Appointment Cancelled"
+        );
       }
       if (familyMem && familyMem.patientRef) {
         const linkedP = await patientModel.findById(familyMem.patientRef);
@@ -1922,6 +2029,11 @@ const cancelAppointmentPatient = async (req, res) => {
         linkedP.notifications.push(notification);
         linkedP.newNotifications = true;
         await linkedP.save();
+        await notificationByMail(
+          linkedP.email,
+          notification,
+          "Appointment Cancelled"
+        );
       }
     }
     res.status(200).json(appointment);
@@ -1980,28 +2092,6 @@ const rescheduleAppForMyselfOrFam = async (req, res) => {
     await appointment.save();
     patient = await patientModel.findById(req.body.id);
 
-    // notificationByMail(
-    //   doctor.email,
-    //   "The appointment with " +
-    //     patient.name +
-    //     " has been rescheduled to " +
-    //     appointment.date +
-    //     " at " +
-    //     appointment.time,
-    //   "Appointment Rescheduled"
-    // );
-
-    // notificationByMail(
-    //   patient.email,
-    //   "The appointment with Dr. " +
-    //     doctor.name +
-    //     " has been rescheduled to " +
-    //     appointment.date +
-    //     " at " +
-    //     appointment.time,
-    //   "Appointment Rescheduled"
-    // );
-
     const id = appointment.patientID;
     patient = await patientModel.findById(id);
 
@@ -2016,6 +2106,17 @@ const rescheduleAppForMyselfOrFam = async (req, res) => {
       patient.notifications.push(notification);
       patient.newNotifications = true;
       await patient.save();
+      await notificationByMail(
+        patient.email,
+        "An appointment with Dr. " +
+          doctor.name +
+          " has been rescheduled to be on " +
+          date.split("-").reverse().join("/") +
+          " at : " +
+          time,
+        "Appointment Rescheduled"
+      );
+
       notificationDoc =
         "An appointment with " +
         patient.name +
@@ -2026,6 +2127,16 @@ const rescheduleAppForMyselfOrFam = async (req, res) => {
       doctor.notifications.push(notificationDoc);
       doctor.newNotifications = true;
       await doctor.save();
+      await notificationByMail(
+        doctor.email,
+        "An appointment with " +
+          patient.name +
+          " has been rescheduled to be on " +
+          date.split("-").reverse().join("/") +
+          " at: " +
+          time,
+        "Appointment Rescheduled"
+      );
     } else {
       const familyMem = await familyMemberModel.findById(appointment.patientID);
       if (familyMem) {
@@ -2042,6 +2153,19 @@ const rescheduleAppForMyselfOrFam = async (req, res) => {
         parent.notifications.push(notification);
         parent.newNotifications = true;
         await parent.save();
+        await notificationByMail(
+          parent.email,
+          "The appointment with Dr. " +
+            doctor.name +
+            " for " +
+            familyMem.name +
+            " has been rescheduled to be on " +
+            date.split("-").reverse().join("/") +
+            " at: " +
+            time,
+          "Appointment Rescheduled"
+        );
+
         notificationDoc =
           "An appointment with " +
           familyMem.name +
@@ -2052,6 +2176,11 @@ const rescheduleAppForMyselfOrFam = async (req, res) => {
         doctor.notifications.push(notificationDoc);
         doctor.newNotifications = true;
         await doctor.save();
+        await notificationByMail(
+          doctor.email,
+          notificationDoc,
+          "Appointment Rescheduled"
+        );
       }
       if (familyMem && familyMem.patientRef) {
         const linkedP = await patientModel.findById(familyMem.patientRef);
@@ -2065,6 +2194,11 @@ const rescheduleAppForMyselfOrFam = async (req, res) => {
         linkedP.notifications.push(notification);
         linkedP.newNotifications = true;
         await linkedP.save();
+        await notificationByMail(
+          linkedP.email,
+          notification,
+          "Appointment Rescheduled"
+        );
       }
     }
 
@@ -2101,27 +2235,33 @@ const rescheduleAppForMyselfOrFam = async (req, res) => {
 };
 
 const nodemailer = require("nodemailer");
-const emailService = "youstina2307@outlook.com";
-const emailUser = "youstina2307@outlook.com";
-const emailPassword = "23july2002";
+const emailService = "sarahhtawfik@outlook.com";
+const emailUser = "sarahhtawfik@outlook.com";
+const emailPassword = "Sarsoura2001";
 const transporter = nodemailer.createTransport({
-  service: emailService,
+  service: "outlook",
   auth: {
     user: emailUser,
     pass: emailPassword,
   },
 });
 const notificationByMail = async (email, message, title) => {
-  const mailOptions = {
-    from: emailUser,
-    to: email,
-    subject: title,
-    text: message,
-  };
+  try {
+    const mailOptions = {
+      from: emailUser,
+      to: email,
+      subject: title,
+      text: message,
+    };
 
-  transporter.sendMail(mailOptions, (error, info) => {
-    return;
-  });
+    const info = await transporter.sendMail(mailOptions);
+    console.log("Email sent successfully:", info.response);
+  } catch (error) {
+    console.error("Error sending email:", error);
+  }
+
+  // Introduce a delay between emails (adjust the duration as needed)
+  await new Promise((resolve) => setTimeout(resolve, 3000));
 };
 
 const calculatePrescriptionPrice = async (prescription) => {

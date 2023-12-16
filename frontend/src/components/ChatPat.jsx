@@ -146,7 +146,7 @@ export default function ChatPat({ who }) {
   }, []);
 
   useEffect(() => {
-    socketRef.current = io.connect("http://localhost:8000");
+    socketRef.current = io.connect("http://localhost:8001");
     navigator.mediaDevices
       .getUserMedia({ video: true, audio: true })
       .then((stream) => {
@@ -231,7 +231,7 @@ export default function ChatPat({ who }) {
     // connectionRef.current.destroy();
   };
 
-  // socketRef.current = io.connect("http://localhost:8000");
+  // socketRef.current = io.connect("http://localhost:8001");
 
   // socketRef.current.on("callEnded", () => {
   //   setCallEnded(true);
