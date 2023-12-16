@@ -29,7 +29,7 @@ function DrProfileBox() {
   };
 
   const inputStyle = {
-    width: "18rem",
+    width: "15rem",
     padding: "8px",
     borderRadius: "8px",
     border: "1px solid  #dee2e6 ",
