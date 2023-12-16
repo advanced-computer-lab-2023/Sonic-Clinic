@@ -21,7 +21,7 @@ const chatSchema = new Schema(
     },
     flag: {
       type: Boolean,
-      default: false, // Set the default value to false
+    //  default: false, // Set the default value to false
       required: false,
     },
   },
