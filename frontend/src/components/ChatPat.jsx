@@ -142,7 +142,32 @@ export default function ChatPat({ who }) {
 
   useEffect(() => {
     fetchData();
+    setCallEnded(false);
   }, []);
+
+  useEffect(() => {
+    socketRef.current = io.connect("http://localhost:8000");
+    navigator.mediaDevices
+      .getUserMedia({ video: true, audio: true })
+      .then((stream) => {
+        setStream(stream);
+        if (myVideoRef.current) {
+          myVideoRef.current.srcObject = stream;
+        }
+      })
+      .catch((error) => {
+        console.error("Error accessing media devices:", error);
+      });
+    socketRef.current.on("me", (id) => {
+      setMe(id);
+    });
+    socketRef.current.on("callUser", (data) => {
+      setReceivingCall(true);
+      setCaller(data.from);
+      setName(data.name);
+      setCallerSignal(data.signal);
+    });
+  }, [calling, myVideoRef.current]);
 
   const callUser = (id) => {
     const peer = new Peer({
@@ -188,29 +213,29 @@ export default function ChatPat({ who }) {
   };
 
   const leaveCall = () => {
-    setCallEnded(true);
-    socketRef.current = io.connect("http://localhost:8000");
-    // Disconnect the socket
-    socketRef.current.disconnect();
-    console.log("111111111111111");
     // Destroy the connection
-    connectionRef.current.destroy();
-    console.log("22222222222222222");
+    // connectionRef.current.destroy();
+    disconnect2();
   };
 
-  useEffect(() => {
-    socketRef.current = io.connect("http://localhost:8000");
-    socketRef.current.on("disconnect", () => {
-      console.log("3333333333333");
-      socketRef.current.broadcast.emit("callEnded");
-      console.log("444444444444");
+  const disconnect2 = () => {
+    socketRef.current.emit("disconnectMe", {
+      to: idToCall,
     });
 
-    return () => {
-      // Clean up the event listener when the component unmounts
-      socketRef.current.off("disconnect");
-    };
-  }, []); // empty dependency array ensures that this effect runs only once
+    socketRef.current.on("callEnded", () => {
+      window.location.reload();
+    });
+
+    setIdToCall("");
+    // connectionRef.current.destroy();
+  };
+
+  // socketRef.current = io.connect("http://localhost:8000");
+
+  // socketRef.current.on("callEnded", () => {
+  //   setCallEnded(true);
+  // });
 
   const setChat = (name) => {
     setChosen(true);
@@ -272,33 +297,6 @@ export default function ChatPat({ who }) {
       }
     }
   };
-
-  useEffect(() => {
-    socketRef.current = io.connect("http://localhost:8000");
-    if (idToCall !== "" && calling) {
-      navigator.mediaDevices
-        .getUserMedia({ video: true, audio: true })
-        .then((stream) => {
-          setStream(stream);
-          if (myVideoRef.current) {
-            myVideoRef.current.srcObject = stream;
-          }
-        })
-        .catch((error) => {
-          console.error("Error accessing media devices:", error);
-        });
-      socketRef.current.on("me", (id) => {
-        setMe(id);
-      });
-      socketRef.current.on("callUser", (data) => {
-        setReceivingCall(true);
-        setCaller(data.from);
-        setName(data.name);
-        setCallerSignal(data.signal);
-      });
-      callUser(idToCall); // Initiating the call
-    }
-  }, [idToCall, calling, myVideoRef]);
 
   return (
     <div>

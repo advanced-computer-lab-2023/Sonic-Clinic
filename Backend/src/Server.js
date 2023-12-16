@@ -199,38 +199,35 @@ app.get("/logout", logout);
 //const storage = multer.memoryStorage();
 //const upload = multer({ storage: storage });
 // Modify your server-side code
-if (typeof window === "undefined") {
-  // This code will only run on the server side
-  const io = require("socket.io")(server, {
-    cors: {
-      origin: "http://localhost:3000",
-      methods: ["GET", "POST"],
-    },
+
+// This code will only run on the server side
+const io = require("socket.io")(server, {
+  cors: {
+    origin: "http://localhost:3000",
+    methods: ["GET", "POST"],
+  },
+});
+
+io.on("connection", (socket) => {
+  socket.emit("me", socket.id);
+
+  socket.on("disconnectMe", (data) => {
+    socket.emit("callEnded");
+    // socket.to(data.to).emit("callEnded");
   });
 
-  io.on("connection", (socket) => {
-    console.log("socket id :", socket.id);
-    socket.emit("me", socket.id);
-
-    socket.on("disconnect", () => {
-      console.log("3333333333333");
-      socket.broadcast.emit("callEnded");
-      console.log("444444444444");
-    });
-
-    socket.on("callUser", (data) => {
-      io.to(data.userToCall).emit("callUser", {
-        signal: data.signalData,
-        from: data.from,
-        name: data.name,
-      });
-    });
-
-    socket.on("answerCall", (data) => {
-      io.to(data.to).emit("callAccepted", data.signal);
+  socket.on("callUser", (data) => {
+    io.to(data.userToCall).emit("callUser", {
+      signal: data.signalData,
+      from: data.from,
+      name: data.name,
     });
   });
-}
+
+  socket.on("answerCall", (data) => {
+    io.to(data.to).emit("callAccepted", data.signal);
+  });
+});
 
 // Connect to MongoDB using Mongoose
 mongoose
