@@ -546,10 +546,10 @@ function ShowPrescriptions() {
                             >
                               <strong>{med[0]}</strong>
                               <strong>
-                                Dosage:
+                                Price:
                                 <span style={{ fontWeight: "normal" }}>
                                   {" "}
-                                  {parseFloat(med[1]).toFixed(2)}
+                                  ${parseFloat(med[1]).toFixed(2)}
                                 </span>{" "}
                               </strong>
                             </Card.Body>

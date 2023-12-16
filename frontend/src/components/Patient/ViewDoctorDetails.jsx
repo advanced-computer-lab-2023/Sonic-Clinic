@@ -67,7 +67,7 @@ function ViewDoctorDetails() {
                 <span style={{ color: "#099BA0", fontWeight: "bold" }}>
                   Rate/Session:
                 </span>{" "}
-                ${doctor.hourlyRate}
+                ${doctor.hourlyRate.toFixed(2)}
               </div>
             </ListGroup.Item>
           </ListGroup>

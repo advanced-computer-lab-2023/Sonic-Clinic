@@ -715,17 +715,17 @@ const filterDoctorsAfterSearchDocName = async (req, res) => {
     const filteredDoctors = doctors.filter((doctor) =>
       doctor.availableSlots?.some((slot) => {
         if (!slot) {
-          return false; // If availableSlots is null or undefined, return false
+          return false;
         }
+        console.log(slot);
         const [slotDate, slotTime] = slot.split(" ");
         return (
-          slotDate === date &&
-          slotTime === time &&
-          (!specialty || doctor.specialty.toString() === specialty.toString())
+          slotDate == date &&
+          slotTime == time &&
+          (!specialty || doctor.specialty.toString() == specialty.toString())
         );
       })
     );
-    // Filter doctors based on available slots
 
     if (filteredDoctors.length === 0 || !filteredDoctors) {
       return res.status(404).json({ message: "No available doctors found." });

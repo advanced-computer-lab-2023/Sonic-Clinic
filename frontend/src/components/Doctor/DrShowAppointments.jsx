@@ -170,155 +170,161 @@ function DrShowAppointments({ fetchData, appointments, loading }) {
         <div style={{ textAlign: "center", marginTop: "20px" }}>{error1}</div>
       )}
       {!loading &&
-        filteredAppointments.map((appointment) => {
-          // Parse the date string into a Date object
-          const appointmentDate = new Date(appointment.date);
-          // Format the date as "dd/mm/yyyy"
-          const formattedDate = `${appointmentDate
-            .getDate()
-            .toString()
-            .padStart(2, "0")}/${(appointmentDate.getMonth() + 1)
-            .toString()
-            .padStart(2, "0")}/${appointmentDate.getFullYear()}`;
-          const hours = appointmentDate.getHours();
-          const minutes = appointmentDate.getMinutes();
-          // Format the time as HH:MM (24-hour format)
-          const formattedTime = `${hours.toString().padStart(2, "0")}:${minutes
-            .toString()
-            .padStart(2, "0")}`;
+        (filteredAppointments.length === 0 ? (
+          <div className="msg d-flex justify-content-center align-items-center  ">
+            No Booked Slots
+          </div>
+        ) : (
+          filteredAppointments.map((appointment) => {
+            // Parse the date string into a Date object
+            const appointmentDate = new Date(appointment.date);
+            // Format the date as "dd/mm/yyyy"
+            const formattedDate = `${appointmentDate
+              .getDate()
+              .toString()
+              .padStart(2, "0")}/${(appointmentDate.getMonth() + 1)
+              .toString()
+              .padStart(2, "0")}/${appointmentDate.getFullYear()}`;
+            const hours = appointmentDate.getHours();
+            const minutes = appointmentDate.getMinutes();
+            // Format the time as HH:MM (24-hour format)
+            const formattedTime = `${hours
+              .toString()
+              .padStart(2, "0")}:${minutes.toString().padStart(2, "0")}`;
 
-          return (
-            <Link
-              key={appointment._id}
-              className="text-decoration-none"
-              // to={`/appointment/${appointment.appointmentId}`}
-            >
-              <Card
-                style={{
-                  cursor: "pointer",
-                  borderRadius: "10px",
-                  boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-                  transition: "transform 0.3s",
-                  marginBottom: "2rem",
-                  marginRight: "2rem",
-                  height: "10rem",
-                }}
+            return (
+              <Link
+                key={appointment._id}
+                className="text-decoration-none"
+                // to={`/appointment/${appointment.appointmentId}`}
               >
-                <Row>
-                  <Col lg={1}>
-                    <div
-                      style={{
-                        display: "flex",
-                        flexDirection: "column", // Vertical arrangement
-                        justifyContent: "center",
-                        alignItems: "center",
-                        backgroundColor: getStatusColor(appointment.status),
-                        borderRadius: "10px 0 0 10px",
-                        height: "10rem",
-                      }}
-                    >
-                      <FontAwesomeIcon
-                        icon={getStatusIcon(appointment.status)}
+                <Card
+                  style={{
+                    cursor: "pointer",
+                    borderRadius: "10px",
+                    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                    transition: "transform 0.3s",
+                    marginBottom: "2rem",
+                    marginRight: "2rem",
+                    height: "10rem",
+                  }}
+                >
+                  <Row>
+                    <Col lg={1}>
+                      <div
                         style={{
-                          fontSize: "1.5em",
-                          color: "white",
-                        }}
-                      />
-                    </div>
-                  </Col>
-                  <Col lg={4}>
-                    <Card.Body className="p-4">
-                      <Card.Title
-                        style={{
-                          marginTop: "2.3rem",
-                          fontSize: "1.5rem",
-                          fontWeight: "bold",
-                          color: "#212529",
-                          marginBottom: "1rem",
+                          display: "flex",
+                          flexDirection: "column", // Vertical arrangement
+                          justifyContent: "center",
+                          alignItems: "center",
+                          backgroundColor: getStatusColor(appointment.status),
+                          borderRadius: "10px 0 0 10px",
+                          height: "10rem",
                         }}
                       >
-                        {appointment.patient
-                          ? appointment.patient.name
-                          : appointment.familyMember
-                          ? appointment.familyMember[0].name
-                          : appointment._id}
-                      </Card.Title>
-                    </Card.Body>
-                  </Col>
-                  <Col lg={4}>
-                    <Card.Body className="p-4">
-                      <Card.Text>
-                        <div
-                          className="show-more-date"
+                        <FontAwesomeIcon
+                          icon={getStatusIcon(appointment.status)}
                           style={{
-                            marginTop: "1.5rem",
+                            fontSize: "1.5em",
+                            color: "white",
+                          }}
+                        />
+                      </div>
+                    </Col>
+                    <Col lg={4}>
+                      <Card.Body className="p-4">
+                        <Card.Title
+                          style={{
+                            marginTop: "2.3rem",
+                            fontSize: "1.5rem",
+                            fontWeight: "bold",
+                            color: "#212529",
                             marginBottom: "1rem",
-                            fontSize: "1.1rem",
                           }}
                         >
-                          <FontAwesomeIcon
-                            icon={faCalendar}
+                          {appointment.patient
+                            ? appointment.patient.name
+                            : appointment.familyMember
+                            ? appointment.familyMember[0].name
+                            : appointment._id}
+                        </Card.Title>
+                      </Card.Body>
+                    </Col>
+                    <Col lg={4}>
+                      <Card.Body className="p-4">
+                        <Card.Text>
+                          <div
+                            className="show-more-date"
                             style={{
-                              marginRight: "0.5rem",
-                              fontSize: "1.1rem",
-                            }}
-                          />
-                          {formattedDate}
-                        </div>
-                        <div
-                          className="show-more-time"
-                          style={{ marginBottom: "1rem", fontSize: "1.1rem" }}
-                        >
-                          <FontAwesomeIcon
-                            icon={faClock}
-                            style={{
-                              marginRight: "0.5rem",
-                              fontSize: "1.1rem",
-                            }}
-                          />
-                          {appointment.time}
-                        </div>
-                      </Card.Text>
-                    </Card.Body>
-                  </Col>
-                  <Col lg={2}>
-                    <div
-                      style={{
-                        marginTop: "2.3rem",
-                        marginLeft: "1rem",
-                      }}
-                    >
-                      {appointment.status === "Upcoming" && (
-                        <>
-                          {" "}
-                          <Button
-                            style={{
+                              marginTop: "1.5rem",
                               marginBottom: "1rem",
-                              width: "7rem",
-                            }}
-                            onClick={() => handleRescheduleClick(appointment)}
-                          >
-                            Reschedule
-                          </Button>
-                          <Button
-                            variant="secondary"
-                            style={{ width: "7rem" }}
-                            onClick={() => {
-                              handleCancelClick(appointment);
-                              setError(null);
+                              fontSize: "1.1rem",
                             }}
                           >
-                            Cancel
-                          </Button>
-                        </>
-                      )}
-                    </div>
-                  </Col>
-                </Row>
-              </Card>
-            </Link>
-          );
-        })}
+                            <FontAwesomeIcon
+                              icon={faCalendar}
+                              style={{
+                                marginRight: "0.5rem",
+                                fontSize: "1.1rem",
+                              }}
+                            />
+                            {formattedDate}
+                          </div>
+                          <div
+                            className="show-more-time"
+                            style={{ marginBottom: "1rem", fontSize: "1.1rem" }}
+                          >
+                            <FontAwesomeIcon
+                              icon={faClock}
+                              style={{
+                                marginRight: "0.5rem",
+                                fontSize: "1.1rem",
+                              }}
+                            />
+                            {appointment.time}
+                          </div>
+                        </Card.Text>
+                      </Card.Body>
+                    </Col>
+                    <Col lg={2}>
+                      <div
+                        style={{
+                          marginTop: "2.3rem",
+                          marginLeft: "1rem",
+                        }}
+                      >
+                        {appointment.status === "Upcoming" && (
+                          <>
+                            {" "}
+                            <Button
+                              style={{
+                                marginBottom: "1rem",
+                                width: "7rem",
+                              }}
+                              onClick={() => handleRescheduleClick(appointment)}
+                            >
+                              Reschedule
+                            </Button>
+                            <Button
+                              variant="secondary"
+                              style={{ width: "7rem" }}
+                              onClick={() => {
+                                handleCancelClick(appointment);
+                                setError(null);
+                              }}
+                            >
+                              Cancel
+                            </Button>
+                          </>
+                        )}
+                      </div>
+                    </Col>
+                  </Row>
+                </Card>
+              </Link>
+            );
+          })
+        ))}
       <Modal show={cancelModal}>
         <Modal.Body>
           Are you sure you want to cancel this appointment?
@@ -339,11 +345,17 @@ function DrShowAppointments({ fetchData, appointments, loading }) {
       <Modal show={rescheduleModal}>
         <Modal.Header>
           <Modal.Title>
-            {appointment && appointment.patient
-              ? `Reschedule ${appointment?.patient.name}'s Appointment`
-              : appointment?.familyMember
-              ? `Reschedule ${appointment?.familyMember[0].name}'s Appointment`
-              : " "}
+            {appointment && (
+              <div>
+                {appointment.patient
+                  ? `Reschedule ${appointment.patient.name}'s Appointment`
+                  : appointment.familyMember
+                  ? `Reschedule ${
+                      appointment.familyMember[0]?.name || "N/A"
+                    }'s Appointment`
+                  : " "}
+              </div>
+            )}
           </Modal.Title>
         </Modal.Header>
         <Modal.Body style={{ margin: "1rem" }}>
