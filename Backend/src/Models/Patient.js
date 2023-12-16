@@ -114,6 +114,7 @@ const patientSchema = new Schema(
     },
     emergencyRelation: {
       type: String,
+      default: "parent",
       required: false,
     },
     addresses: {
