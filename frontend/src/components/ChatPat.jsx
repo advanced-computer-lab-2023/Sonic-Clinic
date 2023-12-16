@@ -10,6 +10,7 @@ import {
   faPhoneSlash,
   faCopy,
   faAnglesRight,
+  faCircleDot,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -20,6 +21,7 @@ import {
   Modal,
   FormControl,
   Form,
+  Col,
 } from "react-bootstrap";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import axios from "axios";
@@ -381,15 +383,27 @@ export default function ChatPat({ who }) {
                 key={index}
                 as="li"
                 className="d-flex justify-content-between align-items-start"
-                style={{ cursor: "pointer" }}
+                style={{ cursor: "pointer", fontSize: "1.05rem" }}
                 onClick={() => {
                   setChat(name);
                   setIdToCall(name.split("-")[1]);
                 }}
               >
-                <div className="d-flex flex-column">
-                  <div>{name.split("-")[0]}</div>
-                </div>
+                <Col lg={11}>{name.split("-")[0]}</Col>
+
+                <Col lg={1}>
+                  {name.toLowerCase().includes("true") && (
+                    <FontAwesomeIcon
+                      icon={faCircleDot}
+                      style={{
+                        // marginRight: "0.5rem",
+                        fontSize: "0.7rem",
+                        marginTop: "0.45rem",
+                        color: "#099BA0",
+                      }}
+                    />
+                  )}
+                </Col>
               </ListGroup.Item>
             ))}
           </ListGroup>
@@ -425,25 +439,31 @@ export default function ChatPat({ who }) {
                 />
                 {chosenName.split("-")[0]}
               </div>
-              {!chosenName.toLowerCase().includes("pharmacist") && (
-                <div>
+              <div className="d-flex flex-row">
+                {" "}
+                {!chosenName.toLowerCase().includes("pharmacist") && (
+                  <div className="d-flex" style={{ alignSelf: "flex-end" }}>
+                    <FontAwesomeIcon
+                      icon={faVideo}
+                      onClick={() => setVideoChat()}
+                      style={{ cursor: "pointer", marginBottom: "0.65rem" }}
+                    />
+                  </div>
+                )}
+                <Button
+                  variant="link"
+                  onClick={() => {
+                    setChosen(false);
+                    setCalling(false);
+                  }}
+                  style={{ color: "white", alignSelf: "flex-end" }}
+                >
                   <FontAwesomeIcon
-                    icon={faVideo}
-                    onClick={() => setVideoChat()}
-                    style={{ cursor: "pointer", marginLeft: "9rem" }}
+                    icon={faTimes}
+                    style={{ cursor: "pointer" }}
                   />
-                </div>
-              )}
-              <Button
-                variant="link"
-                onClick={() => {
-                  setChosen(false);
-                  setCalling(false);
-                }}
-                style={{ color: "white", alignSelf: "flex-end" }}
-              >
-                <FontAwesomeIcon icon={faTimes} style={{ cursor: "pointer" }} />
-              </Button>
+                </Button>
+              </div>
             </Navbar>
 
             <div
