@@ -49,7 +49,7 @@ function GuestMainImg() {
                 lineHeight: "100%",
               }}
             >
-              Welcome to eHealth Clinic!
+              Welcome to el7a2ny Clinic!
             </Card.Text>
           </animated.div>
         </Card>

@@ -58,7 +58,7 @@ const AppNavbarGuest = ({ flag }) => {
               fontWeight: "700",
             }}
           >
-            eHealth Clinic
+            el7a2ny Clinic
           </div>
           <div
             style={{
