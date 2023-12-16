@@ -32,23 +32,16 @@ const searchPatientByName = async (req, res) => {
 
 const filterPatientsByAppointments = async (req, res) => {
   try {
-    const doctor = await doctorModel.findOne(req.user.id);
-    console.log(doctor);
+    const doctor = await doctorModel.findById(req.user.id);
     if (!doctor) {
       return res.status(401).json({ error: "Doctor not authenticated" });
     }
-
-    const today = new Date();
     const doctorAppointments = await appointmentModel.find({
       doctorID: doctor._id,
     });
-
     const upcomingAppointments = [];
     for (const appointment of doctorAppointments) {
-      const appointmentDate = new Date(appointment.date);
-      console.log(appointmentDate);
-      console.log(today);
-      if (appointmentDate > new Date(today)) {
+      if (appointment.status == "Upcoming") {
         upcomingAppointments.push(appointment);
       }
     }
@@ -56,9 +49,9 @@ const filterPatientsByAppointments = async (req, res) => {
     const patientIDs = upcomingAppointments.map(
       (appointment) => appointment.patientID
     );
-
-    // Fetch patient information for the extracted IDs
-    const patients = await patientModel.find({ _id: { $in: patientIDs } });
+    const patientsNoFam = await patientModel.find({ _id: { $in: patientIDs } });
+    const fam = await familyMemberModel.find({ _id: { $in: patientIDs } });
+    const patients = patientsNoFam.concat(fam);
 
     res.status(200).json({ patients });
   } catch (error) {
