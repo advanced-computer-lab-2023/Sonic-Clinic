@@ -62,7 +62,7 @@ export default function ChatPat({ who }) {
     color: "white",
     overflow: "hidden",
     transition: "width 0.3s ease-in-out", // Smooth transition for width change
-    width: isHovered ? (who === "patient" ? "13.5rem" : "5rem") : "3rem", // Change width on hover
+    width: isHovered ? "5rem" : "3rem", // Change width on hover
   };
 
   const containerStyle = {
@@ -321,7 +321,7 @@ export default function ChatPat({ who }) {
                 whiteSpace: "nowrap",
               }}
             >
-              {who === "patient" ? "Chat with your doctor" : "Chat"}
+              Chat
             </span>
           </div>
         </Button>
