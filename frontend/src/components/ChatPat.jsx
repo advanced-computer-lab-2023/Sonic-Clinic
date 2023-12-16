@@ -323,7 +323,7 @@ export default function ChatPat({ who }) {
             >
               {who === "patient"
                 ? "Chat with your doctor"
-                : "Chat with your patient"}
+                : "Chat with associates"}
             </span>
           </div>
         </Button>
@@ -339,7 +339,7 @@ export default function ChatPat({ who }) {
             style={{ backgroundColor: "#ff6b35", width: "100%" }}
           >
             <div style={{ color: "white", marginLeft: "1rem" }}>
-              {who === "patient" ? "Your Doctors" : "Your Patients"}
+              {who === "patient" ? "Your Doctors" : "Your Contacts"}
             </div>
             <Button
               variant="link"

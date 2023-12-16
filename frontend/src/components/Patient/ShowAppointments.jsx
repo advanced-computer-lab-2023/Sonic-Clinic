@@ -38,6 +38,7 @@ function ShowAppointments() {
   const [confirmModal, setConfirmModal] = useState(false);
   const [confirmFollowModal, setConfirmFollowModal] = useState(false);
   const [cancelModal, setCancelModal] = useState(false);
+  const [appointment, setAppointment] = useState(null);
   const filterDate = useSelector((state) => state.filterAppointments.date);
   const filterStatus = useSelector((state) => state.filterAppointments.status);
   const dispatch = useDispatch();
@@ -191,6 +192,27 @@ function ShowAppointments() {
     }
   };
 
+  const handleRescheduleClick = (selectedAppointment) => {
+    // Save the selected appointment in state
+    setAppointment(selectedAppointment);
+
+    // Show the reschedule modal
+    setRescheduleModal(true);
+  };
+
+  const handleCancelClick = (selectedAppointment) => {
+    setAppointment(selectedAppointment);
+
+    // Show the reschedule modal
+    setCancelModal(true);
+  };
+
+  const handleFollowUpClick = (selectedAppointment) => {
+    setAppointment(selectedAppointment);
+
+    // Show the reschedule modal
+    setFollowUpModal(true);
+  };
   const reverseAppointments = [...filteredAppointments].reverse();
 
   return (
@@ -280,20 +302,24 @@ function ShowAppointments() {
                           fontSize: "1.5rem",
                           fontWeight: "bold",
                           color: "#212529",
-                          marginBottom: "1rem",
+                          marginBottom: "0.2rem",
                         }}
                       >
                         Dr {appointment.doctor[0]?.name}
                       </Card.Title>
                       <div
                         style={{
-                          marginBottom: "1rem",
+                          marginBottom: "0.3rem",
                           fontSize: "1.2rem",
                           color: "#099BA0 ",
                         }}
                       >
                         {appointment.doctor[0]?.specialty}
                       </div>
+
+                      {appointment.familyMember && (
+                        <div>for {appointment.familyMember[0]?.name}</div>
+                      )}
                     </Card.Body>
                   </Col>
                   <Col lg={4}>
@@ -347,125 +373,19 @@ function ShowAppointments() {
                               width: "7rem",
                             }}
                             onClick={() => {
-                              setRescheduleModal(true);
+                              handleRescheduleClick(appointment);
                               fetchAvailableSlots(appointment.doctor[0]?._id);
                             }}
                           >
                             Reschedule
                           </Button>
-                          <Modal show={rescheduleModal}>
-                            <Modal.Header>
-                              <Modal.Title>
-                                Reschedule Appointment with Dr.{" "}
-                                {appointment.doctor[0]?.name}
-                              </Modal.Title>
-                            </Modal.Header>
-                            <Modal.Body style={{ margin: "1rem" }}>
-                              <div
-                                style={{
-                                  color: "#099BA0 ",
-                                  fontSize: "1.1rem",
-                                  fontStyle: "normal",
-                                  fontWeight: 500,
-                                  lineHeight: "100%",
-                                  marginBottom: "1rem",
-                                }}
-                              >
-                                Available Slots
-                              </div>
-                              <Dropdown>
-                                <Dropdown.Toggle
-                                  className="custom-dropdown-toggle"
-                                  id="dropdown-basic"
-                                >
-                                  {rescheduleSlot === null
-                                    ? "Select available slot "
-                                    : rescheduleSlot}
-                                </Dropdown.Toggle>
-
-                                <Dropdown.Menu style={{ width: "100%" }}>
-                                  {rescheduleSlots.map((slot, index) => (
-                                    <Dropdown.Item
-                                      key={index}
-                                      onClick={() => setRescheduleSlot(slot)}
-                                    >
-                                      {slot
-                                        .split(" ")[0]
-                                        .split("-")
-                                        .reverse()
-                                        .join("/")}{" "}
-                                      at {slot.split(" ")[1]}
-                                    </Dropdown.Item>
-                                  ))}
-                                </Dropdown.Menu>
-                              </Dropdown>
-                              {modalError && (
-                                <div className="error">{modalError}</div>
-                              )}
-                            </Modal.Body>
-                            <Modal.Footer>
-                              <Button
-                                variant="primary"
-                                onClick={() => {
-                                  rescheduleApp(appointment._id);
-                                }}
-                                disabled={rescheduleSlot == null}
-                              >
-                                Save
-                              </Button>
-                              <Button
-                                variant="secondary"
-                                onClick={() => {
-                                  setRescheduleModal(false);
-                                  setRescheduleSlot(null);
-                                }}
-                              >
-                                Cancel
-                              </Button>
-                            </Modal.Footer>
-                          </Modal>
-                          <Modal show={confirmModal}>
-                            <Modal.Body>
-                              The appointment has been rescheduled
-                            </Modal.Body>
-                            <Modal.Footer>
-                              <Button
-                                variant="secondary"
-                                onClick={() => setConfirmModal(false)}
-                              >
-                                Close
-                              </Button>
-                            </Modal.Footer>
-                          </Modal>
                           <Button
                             variant="secondary"
                             style={{ width: "7rem" }}
-                            onClick={() => setCancelModal(true)}
+                            onClick={() => handleCancelClick(appointment)}
                           >
                             Cancel
                           </Button>
-                          <Modal show={cancelModal}>
-                            <Modal.Body>
-                              Are you sure you want to cancel this appointment?
-                              {modalError && (
-                                <div className="error">{modalError}</div>
-                              )}
-                            </Modal.Body>
-                            <Modal.Footer className="d-flex align-items-center justify-content-center">
-                              <Button
-                                variant="secondary"
-                                onClick={() => cancelApp(appointment._id)}
-                              >
-                                Yes
-                              </Button>
-                              <Button
-                                variant="primary"
-                                onClick={() => setCancelModal(false)}
-                              >
-                                No
-                              </Button>
-                            </Modal.Footer>
-                          </Modal>
                         </div>
                       )}
                       {appointment.status == "Completed" && (
@@ -476,99 +396,12 @@ function ShowAppointments() {
                               width: "7rem",
                             }}
                             onClick={() => {
-                              setFollowUpModal(true);
+                              handleFollowUpClick(appointment);
                               fetchAvailableSlots(appointment.doctor[0]?._id);
                             }}
                           >
                             Follow Up
                           </Button>
-                          <Modal show={followUpModal}>
-                            <Modal.Header>
-                              <Modal.Title>
-                                Schedule a follow up with Dr.{" "}
-                                {appointment.doctor[0]?.name}
-                              </Modal.Title>
-                            </Modal.Header>
-                            <Modal.Body style={{ margin: "1rem" }}>
-                              <div
-                                style={{
-                                  color: "#099BA0 ",
-                                  fontSize: "1.1rem",
-                                  fontStyle: "normal",
-                                  fontWeight: 500,
-                                  lineHeight: "100%",
-                                  marginBottom: "1rem",
-                                }}
-                              >
-                                Available Slots
-                              </div>
-                              <Dropdown>
-                                <Dropdown.Toggle
-                                  className="custom-dropdown-toggle"
-                                  id="dropdown-basic"
-                                >
-                                  {followUpSlot === null
-                                    ? "Select available slot "
-                                    : followUpSlot}
-                                </Dropdown.Toggle>
-
-                                <Dropdown.Menu style={{ width: "100%" }}>
-                                  {rescheduleSlots.map((slot, index) => (
-                                    <Dropdown.Item
-                                      key={index}
-                                      onClick={() => setFollowUpSlot(slot)}
-                                    >
-                                      {slot
-                                        .split(" ")[0]
-                                        .split("-")
-                                        .reverse()
-                                        .join("/")}{" "}
-                                      at {slot.split(" ")[1]}
-                                    </Dropdown.Item>
-                                  ))}
-                                </Dropdown.Menu>
-                              </Dropdown>
-                              {modalError && (
-                                <div className="error">{modalError}</div>
-                              )}
-                            </Modal.Body>
-                            <Modal.Footer>
-                              <Button
-                                variant="primary"
-                                onClick={() => {
-                                  if (followUpSlot !== null) {
-                                    followUpApp(appointment._id);
-                                  }
-                                }}
-                                disabled={followUpSlot === null}
-                              >
-                                Save
-                              </Button>
-                              <Button
-                                variant="secondary"
-                                onClick={() => {
-                                  setFollowUpModal(false);
-                                  setFollowUpSlot(null);
-                                }}
-                              >
-                                Cancel
-                              </Button>
-                            </Modal.Footer>
-                          </Modal>
-                          <Modal show={confirmFollowModal}>
-                            <Modal.Body>
-                              A follow up request has been sent, wait for
-                              confirmation via email.
-                            </Modal.Body>
-                            <Modal.Footer>
-                              <Button
-                                variant="secondary"
-                                onClick={() => setConfirmFollowModal(false)}
-                              >
-                                Close
-                              </Button>
-                            </Modal.Footer>
-                          </Modal>
                         </>
                       )}
                     </div>
@@ -578,6 +411,172 @@ function ShowAppointments() {
             </Link>
           );
         })}
+      <Modal show={cancelModal}>
+        <Modal.Body>
+          Are you sure you want to cancel this appointment?
+          {modalError && <div className="error">{modalError}</div>}
+        </Modal.Body>
+        <Modal.Footer className="d-flex align-items-center justify-content-center">
+          <Button
+            variant="secondary"
+            onClick={() => cancelApp(appointment._id)}
+          >
+            Yes
+          </Button>
+          <Button variant="primary" onClick={() => setCancelModal(false)}>
+            No
+          </Button>
+        </Modal.Footer>
+      </Modal>
+      <Modal show={rescheduleModal}>
+        <Modal.Header>
+          <Modal.Title>
+            Reschedule Appointment with Dr. {appointment.doctor[0]?.name}
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body style={{ margin: "1rem" }}>
+          <div
+            style={{
+              color: "#099BA0 ",
+              fontSize: "1.1rem",
+              fontStyle: "normal",
+              fontWeight: 500,
+              lineHeight: "100%",
+              marginBottom: "1rem",
+            }}
+          >
+            Available Slots
+          </div>
+          <Dropdown>
+            <Dropdown.Toggle
+              className="custom-dropdown-toggle"
+              id="dropdown-basic"
+            >
+              {rescheduleSlot === null
+                ? "Select available slot "
+                : rescheduleSlot}
+            </Dropdown.Toggle>
+
+            <Dropdown.Menu style={{ width: "100%" }}>
+              {rescheduleSlots.map((slot, index) => (
+                <Dropdown.Item
+                  key={index}
+                  onClick={() => setRescheduleSlot(slot)}
+                >
+                  {slot.split(" ")[0].split("-").reverse().join("/")} at{" "}
+                  {slot.split(" ")[1]}
+                </Dropdown.Item>
+              ))}
+            </Dropdown.Menu>
+          </Dropdown>
+          {modalError && <div className="error">{modalError}</div>}
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            variant="primary"
+            onClick={() => {
+              rescheduleApp(appointment._id);
+            }}
+            disabled={rescheduleSlot == null}
+          >
+            Save
+          </Button>
+          <Button
+            variant="secondary"
+            onClick={() => {
+              setRescheduleModal(false);
+              setRescheduleSlot(null);
+            }}
+          >
+            Cancel
+          </Button>
+        </Modal.Footer>
+      </Modal>
+      <Modal show={confirmModal}>
+        <Modal.Body>The appointment has been rescheduled</Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setConfirmModal(false)}>
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
+      <Modal show={followUpModal}>
+        <Modal.Header>
+          <Modal.Title>
+            Schedule a follow up with Dr. {appointment.doctor[0]?.name}
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body style={{ margin: "1rem" }}>
+          <div
+            style={{
+              color: "#099BA0 ",
+              fontSize: "1.1rem",
+              fontStyle: "normal",
+              fontWeight: 500,
+              lineHeight: "100%",
+              marginBottom: "1rem",
+            }}
+          >
+            Available Slots
+          </div>
+          <Dropdown>
+            <Dropdown.Toggle
+              className="custom-dropdown-toggle"
+              id="dropdown-basic"
+            >
+              {followUpSlot === null ? "Select available slot " : followUpSlot}
+            </Dropdown.Toggle>
+
+            <Dropdown.Menu style={{ width: "100%" }}>
+              {rescheduleSlots.map((slot, index) => (
+                <Dropdown.Item
+                  key={index}
+                  onClick={() => setFollowUpSlot(slot)}
+                >
+                  {slot.split(" ")[0].split("-").reverse().join("/")} at{" "}
+                  {slot.split(" ")[1]}
+                </Dropdown.Item>
+              ))}
+            </Dropdown.Menu>
+          </Dropdown>
+          {modalError && <div className="error">{modalError}</div>}
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            variant="primary"
+            onClick={() => {
+              if (followUpSlot !== null) {
+                followUpApp(appointment._id);
+              }
+            }}
+            disabled={followUpSlot === null}
+          >
+            Save
+          </Button>
+          <Button
+            variant="secondary"
+            onClick={() => {
+              setFollowUpModal(false);
+              setFollowUpSlot(null);
+            }}
+          >
+            Cancel
+          </Button>
+        </Modal.Footer>
+      </Modal>
+      <Modal show={confirmFollowModal}>
+        <Modal.Body>
+          A follow up request has been sent, wait for confirmation via email.
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            variant="secondary"
+            onClick={() => setConfirmFollowModal(false)}
+          >
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 }

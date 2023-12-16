@@ -143,6 +143,13 @@ function DrShowAppointments({ fetchData, appointments, loading }) {
     setRescheduleModal(true);
   };
 
+  const handleCancelClick = (selectedAppointment) => {
+    setAppointment(selectedAppointment);
+
+    // Show the reschedule modal
+    setCancelModal(true);
+  };
+
   return (
     <div>
       {loading && (
@@ -297,32 +304,12 @@ function DrShowAppointments({ fetchData, appointments, loading }) {
                             variant="secondary"
                             style={{ width: "7rem" }}
                             onClick={() => {
-                              setCancelModal(true);
+                              handleCancelClick(appointment);
                               setError(null);
                             }}
                           >
                             Cancel
                           </Button>
-                          <Modal show={cancelModal}>
-                            <Modal.Body>
-                              Are you sure you want to cancel this appointment?
-                              {error1 && <div className="error">{error1}</div>}
-                            </Modal.Body>
-                            <Modal.Footer className="d-flex align-items-center justify-content-center">
-                              <Button
-                                variant="secondary"
-                                onClick={() => cancelApp(appointment._id)}
-                              >
-                                Yes
-                              </Button>
-                              <Button
-                                variant="primary"
-                                onClick={() => setCancelModal(false)}
-                              >
-                                No
-                              </Button>
-                            </Modal.Footer>
-                          </Modal>
                         </>
                       )}
                     </div>
@@ -332,12 +319,31 @@ function DrShowAppointments({ fetchData, appointments, loading }) {
             </Link>
           );
         })}
+      <Modal show={cancelModal}>
+        <Modal.Body>
+          Are you sure you want to cancel this appointment?
+          {error1 && <div className="error">{error1}</div>}
+        </Modal.Body>
+        <Modal.Footer className="d-flex align-items-center justify-content-center">
+          <Button
+            variant="secondary"
+            onClick={() => cancelApp(appointment._id)}
+          >
+            Yes
+          </Button>
+          <Button variant="primary" onClick={() => setCancelModal(false)}>
+            No
+          </Button>
+        </Modal.Footer>
+      </Modal>
       <Modal show={rescheduleModal}>
         <Modal.Header>
           <Modal.Title>
             {appointment && appointment.patient
               ? `Reschedule ${appointment.patient.name}'s Appointment`
-              : "Reschedule Appointment"}
+              : appointment.familyMember
+              ? `Reschedule ${appointment.familyMember[0].name}'s Appointment`
+              : " "}
           </Modal.Title>
         </Modal.Header>
         <Modal.Body style={{ margin: "1rem" }}>
