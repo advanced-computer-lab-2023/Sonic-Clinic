@@ -4,7 +4,12 @@ import "./DoctorFilter.css";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { setFilterData, setSearchData } from "../../state/Patient/SearchDoctor";
-function DoctorFilter({ patients, responseData, setPatients }) {
+function DoctorFilter({
+  patients,
+  responseData,
+  setPatients,
+  setResponseData,
+}) {
   const Specialties = [
     { title: "Cardiology", id: "1", selected: false },
     { title: "Orthopedics", id: "2", selected: false },
@@ -86,6 +91,7 @@ function DoctorFilter({ patients, responseData, setPatients }) {
   const dispatch = useDispatch();
 
   const handleSearch = async () => {
+    console.log("PRESS");
     dispatch(
       setFilterData({
         specialty: selectedSpecialty,
@@ -112,11 +118,50 @@ function DoctorFilter({ patients, responseData, setPatients }) {
         //fix error messages
         if (error.response && error.response.status === 409) {
           setError("Error occured");
+        } else if (error.response && error.response.status === 404) {
+          setPatients([]);
+          console.log("EMPTYYYYYYYYY");
         } else {
           setError(
             "An error occurred while adding admin. Please try again later"
           );
         }
+      }
+    } else {
+      try {
+        const response = await axios.post("/getDOctorsWithSessionPrice");
+        if (response.status === 200) {
+          setResponseData(response.data.allDoctors);
+          const NeededData = response.data.allDoctors;
+          const filteredDoctors = NeededData.filter((doctor) => {
+            const name = doctor.name ? doctor.name.toLowerCase() : "";
+            const speciality = doctor.specialty
+              ? doctor.specialty.toLowerCase()
+              : "";
+
+            return (
+              (searchDataName === "" ||
+                name.includes(searchDataName.toLowerCase())) &&
+              (searchDataSpec === "" ||
+                speciality.includes(searchDataSpec.toLowerCase()))
+            );
+          });
+
+          // Update the patients state with filtered doctors
+          setPatients(filteredDoctors);
+        } else {
+          console.log("Server error");
+        }
+        // setLoading(false);
+      } catch (error) {
+        if (error.response && error.response.status === 404) {
+          setError("No doctors found.");
+        } else if (error.response && error.response.status === 500) {
+          setError("Server Error");
+        } else {
+          setError("An error occurred. Please try again later.");
+        }
+        // setLoading(false);
       }
     }
   };
