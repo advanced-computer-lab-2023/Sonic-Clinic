@@ -77,6 +77,7 @@ function PatientViewDoctors() {
                 patients={patients}
                 responseData={responseData}
                 setPatients={setPatients}
+                setResponseData={setResponseData}
               />
             </div>
             <div className="col-7">
