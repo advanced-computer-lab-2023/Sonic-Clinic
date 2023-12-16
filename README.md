@@ -335,6 +335,8 @@ We applied a set of coding conventions to maintain consistency and readability a
 
 - **Comments:** Include comments where necessary to explain complex code sections or to provide context. Follow a consistent comment style.
 
+- The code style is enforced using eslint and prettier. The code style is enforced using pre-commit hooks and pre-commit github action.
+
 Before submitting a pull request, please ensure that your code sticks to these conventions. Consistent coding practices enhance collaboration and make the codebase more maintainable.
 
 
