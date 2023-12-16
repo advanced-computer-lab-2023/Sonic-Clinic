@@ -132,6 +132,7 @@ const acceptPotientialDoc = async (req, res) => {
 const viewChat = async (req, res) => {
   const userID = req.user.id;
   const recipientID = req.body._id;
+
   let isDoctor = false;
   let isPharmacist = false;
 
@@ -172,7 +173,10 @@ const viewChat = async (req, res) => {
       $or: [
         { patientID: userID2, doctorID: recipientID2 },
         { patientID: recipientID2, doctorID: userID2 },
-        // Add conditions for pharmacist chat if needed
+        { pharmacistID: recipientID2, doctorID: userID2 },
+        { doctorID: recipientID2, pharmacistID: userID2 },
+        { patientID: recipientID2, pharmacistID: userID2 },
+        { pharmacistID: recipientID2, patientID: userID2 },
       ],
     });
 
@@ -340,11 +344,13 @@ const sendMessage = async (req, res) => {
     if (!existingChat) {
       // Create a new chat
       const newChatData = {
-        patientID: isDoctor2 ? null : isPharmacist2 ? null : recipientID,
-        doctorID: isDoctor2 ? (isPharmacist2 ? null : userID) : null,
-        pharmacistID: isPharmacist2 ? (isDoctor2 ? null : userID) : null,
+        patientID: isDoctor2 ? null : isPharmacist2 ? null : (isPatient ? userID : recipientID),
+        doctorID: isDoctor2 ? (isPharmacist2 ? null : (isDoctor ? userID : recipientID)) : (isDoctor ? userID : recipientID),
+        pharmacistID: isPharmacist2 ? (isDoctor2 ? null : (isPharmacist ? userID : recipientID)) : null,
         messages: [[senderTitle, currDate, currTime, message]],
       };
+      
+      
 
       const newChat = await chatModel.create(newChatData);
       await newChat.save();
@@ -361,6 +367,7 @@ const sendMessage = async (req, res) => {
     return res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
 
 const addChat = async (req, res) => {
   const newChat = await chatModel.create({

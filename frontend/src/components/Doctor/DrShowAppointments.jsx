@@ -340,9 +340,9 @@ function DrShowAppointments({ fetchData, appointments, loading }) {
         <Modal.Header>
           <Modal.Title>
             {appointment && appointment.patient
-              ? `Reschedule ${appointment.patient.name}'s Appointment`
-              : appointment.familyMember
-              ? `Reschedule ${appointment.familyMember[0].name}'s Appointment`
+              ? `Reschedule ${appointment?.patient.name}'s Appointment`
+              : appointment?.familyMember
+              ? `Reschedule ${appointment?.familyMember[0].name}'s Appointment`
               : " "}
           </Modal.Title>
         </Modal.Header>
