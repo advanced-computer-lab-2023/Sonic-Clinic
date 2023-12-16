@@ -572,6 +572,45 @@ export default YourComponentName;
 ```
 
 
+
+## Status Build
+
+### Current Issues
+
+1. *Long Loading Time:*
+   - Users may experience extended loading times during certain interactions. We are actively working to optimize performance and enhance the overall user experience.
+
+2. *Code Structure Enhancement:*
+   - The code structure is functional but could benefit from further enhancement for better readability, maintainability, and scalability. We appreciate your patience as we strive to improve the codebase.
+
+3. *Platform Linking:*
+   - The linkage between platforms needs refinement. Our team acknowledges the importance of seamless integration, and we are committed to enhancing the connection between different components for a smoother user experience.
+
+4. *Chat Construction Using Arrays:*
+   - The construction of chats currently relies on arrays, which may impact efficiency. We are exploring alternative approaches to optimize chat construction and ensure real-time communication.
+
+5. *Appointment Management:*
+   - Users have reported an issue where the "Add Appointment" feature works only once. Additionally, family members face challenges in rescheduling or canceling appointments without logging out and logging back in. We are actively investigating and addressing this limitation to provide a more seamless appointment management experience. Family members who are already users can reschedule and cancel appointments from their own accounts, rather than relying on the parent's account.
+
+6. *Cannot Add Consecutive Appointments:*
+   - Users currently cannot add two consecutive appointments in a row.,they need to go to another page then return and book another.We understand the importance of this feature and are working to address this limitation to allow for more flexible scheduling.
+
+7. *Video Chat Termination:*
+   - Video chats may not terminate instantly and, in some cases, close only from one side, necessitating a page reload for proper termination. We are actively working to resolve this issue to ensure smooth and prompt termination of video calls.
+
+8. *Appointment Processing Delay for Email Sending:*
+   - Adding, rescheduling, and canceling appointments may experience processing delays before emails are sent. We are addressing this delay to expedite the email notification process for improved user experience.
+
+### Next Steps
+
+Our development team is actively working on addressing the identified issues and implementing improvements. We appreciate your understanding and patience as we strive to make the necessary enhancements to deliver a more robust and user-friendly application.
+
+### How You Can Contribute
+
+Your feedback is crucial in shaping the future of our project. If you encounter any issues not mentioned here or have suggestions for improvement, please feel free to open an issue on our GitHub repository or reach out to our support team.
+
+
+
 ## Contribute
 
 We welcome and appreciate contributions from the community! If you'd like to contribute to the development of El7a2ny, please follow these guidelines:
