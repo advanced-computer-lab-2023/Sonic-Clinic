@@ -431,7 +431,7 @@ function ShowAppointments() {
       <Modal show={rescheduleModal}>
         <Modal.Header>
           <Modal.Title>
-            Reschedule Appointment with Dr. {appointment?.doctor[0]?.name}
+            Reschedule Appointment with Dr.{appointment?.doctor[0]?.name}
           </Modal.Title>
         </Modal.Header>
         <Modal.Body style={{ margin: "1rem" }}>

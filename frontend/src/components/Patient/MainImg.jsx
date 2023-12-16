@@ -43,14 +43,14 @@ function MainImg() {
               style={{
                 color: "#05AFB9",
                 textAlign: "center",
-                fontFamily: "fantasy",
-                fontSize: "7rem",
+                fontFamily: "'Bebas Neue', sans-serif",
+                fontSize: "6rem",
                 fontStyle: "normal",
-                fontWeight: 400,
+                fontWeight: 700,
                 lineHeight: "120%",
               }}
             >
-              Hello {name}
+              Hello {name.split(" ").length > 1 ? name.split(" ")[0] : name}!
             </Card.Text>
           </animated.div>
         </Card>

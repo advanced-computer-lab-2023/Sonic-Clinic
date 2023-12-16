@@ -247,8 +247,16 @@ const PatientSignupForm = () => {
 
   return (
     <div className="col-9 form-container">
-      <div className="form-title">Hello!</div>
-      <div className="form-title">SignUp to Get Started</div>
+      <div
+        className="form-title"
+        style={{
+          fontFamily: "'Bebas Neue', sans-serif",
+          fontWeight: 600,
+          fontSize: "2rem",
+        }}
+      >
+        Sign up to get started!
+      </div>
       <form className="rounded-3" onSubmit={handleSubmit}>
         <div className="col">
           <div className="form-group">

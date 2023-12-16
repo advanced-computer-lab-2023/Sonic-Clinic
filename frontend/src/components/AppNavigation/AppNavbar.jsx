@@ -4,7 +4,11 @@ import Container from "react-bootstrap/Container";
 import Navbar from "react-bootstrap/Navbar";
 import logo from "../../Assets/ClinicLogo.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBell } from "@fortawesome/free-solid-svg-icons";
+import {
+  faBell,
+  faSuitcaseMedical,
+  faStaffSnake,
+} from "@fortawesome/free-solid-svg-icons";
 import NotificationsPanel from "../NotificationsPanel";
 import { Button, Col, Row } from "react-bootstrap";
 import { Link } from "react-router-dom";
@@ -66,7 +70,7 @@ const AppNavbar = (props) => {
               <a
                 className="d-flex"
                 style={{
-                  color: "#05afb9",
+                  color: "#ff6b35",
                   fontSize: "1.15rem",
                   marginLeft: "5rem",
                 }}
@@ -75,6 +79,14 @@ const AppNavbar = (props) => {
                 rel="noopener noreferrer" // Add this for security
               >
                 Visit Pharmacy
+                <FontAwesomeIcon
+                  style={{
+                    color: "#ff6b35",
+                    marginLeft: "0.5rem",
+                    marginTop: "0.3rem",
+                  }}
+                  icon={faStaffSnake}
+                />
               </a>
             )}
           </div>
@@ -84,11 +96,16 @@ const AppNavbar = (props) => {
             {/* Center section */}
             <div
               style={{
-                color: "#ff6b35",
-                fontSize: "3rem",
+                color: "#adb5bd  ",
+                fontSize: "2.3rem",
                 fontWeight: "700",
+                fontFamily: "'Bebas Neue', sans-serif",
               }}
             >
+              <FontAwesomeIcon
+                style={{ color: "#adb5bd  ", marginRight: "0.5rem" }}
+                icon={faSuitcaseMedical}
+              />
               el7a2ny Clinic
             </div>
           </div>

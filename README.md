@@ -189,6 +189,7 @@ Follow these steps to navigate and use Sonic-Clinic effectively:
 
 - Upon successful login, you'll be directed to your personalized dashboard.
 - Navigate through the menu on the top left of the screen to access different features.
+- While navigating, click on the blue square arrow to go back 
 
 ### 3. Profile Management
 
@@ -239,9 +240,44 @@ Follow these steps to navigate and use Sonic-Clinic effectively:
 
 ### 3. Profile
 
-- Access the "My profile" section
+- Access the "My profile" section in the menu
 - You can click on 'change your password'to update your password and you can view your employment contract pdf.
 
+### Admin:
+### 1. Profile
+
+- Access the "My profile" section in the menu to view your personal details
+- You can click on 'change your password' to update your password
+
+### 2. Patient
+
+- Access the "Patients" section in the menu to view all patients (full name, email and username)
+- Use the search bar to search for a patient by name
+- You can remove a patient by clicking on the red bin
+
+### 3. Doctors
+
+- Access the "Docots" section in the menu to view all registered doctors (full name, email, username and affiliation)
+- Use the search bar to search for a doctor by name
+- You can remove a doctor by clicking on the red bin
+
+- Click on the requests to view new doctors that are requesting to join the platform
+- Click on any doctor to view all his details 
+- click on the green tick or the red cross to accept or reject the request of a doctor
+
+### 4. Admins
+
+- Access the "Admins" section in the menu to view all Admins (full name, email and username)
+- Use the search bar to search for an admin by name
+- Click on Add new administrator blue button, enter the required fields and click on create to add a new admin (click on close form if you change your mind)
+- You can delete an admin by clicking on the red bin
+
+### 5. Health Packages
+
+- Access the "Health Packages" section in the menu to view all Health Packages
+- Click on the right and left arrows to scroll through the packages
+- Click to the top right blue pen, enter details and click on save to edit a health package
+- Click on the blue plus sign to add a new health package (click on the minus sign if you change your mind)
 
 
 ## Screenshots of the System

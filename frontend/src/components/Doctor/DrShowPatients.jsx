@@ -630,210 +630,103 @@ function DrShowPatients({
         </div>
       )}
       {(!isLoading || !loading) &&
-        patients.map((patient, index) => (
-          <Card className="mb-4 mx-3 bg-white" key={patient.username}>
-            <Card.Header
-              className="d-flex align-items-center justify-content-between"
-              onClick={() => toggleExpand(index, patient._id)}
-              style={{ cursor: "pointer" }}
-            >
-              <span>{patient.name}</span>
-              <FontAwesomeIcon
-                icon={expandedPatient === index ? faChevronUp : faChevronDown}
-              />
-            </Card.Header>
-            {expandedPatient === index && (
-              <Card.Body>
-                <Row>
-                  <Col lg={12}>
-                    <Card.Text>
-                      <Button
-                        style={{ marginBottom: "1rem" }}
-                        onClick={() =>
-                          followUpModal
-                            ? scheduleFollowUp(patient._id)
-                            : setFollowUpModal(true)
-                        }
-                      >
-                        {followUpModal ? "Save" : "Schedule Follow-up"}
-                      </Button>
-                      {followUpModal && (
-                        <div>
-                          <Form.Group style={{ marginBottom: "1rem" }}>
-                            <Form.Control
-                              type="datetime-local"
-                              // value={followUpDateTime}
-                              onChange={(e) =>
-                                setFollowUpDateTime(e.target.value)
-                              }
-                              min={getCurrentDateTime()}
-                            />
-                          </Form.Group>
-                        </div>
-                      )}
-                      <Modal show={confirmModal}>
-                        <Modal.Header>
-                          <Modal.Title>Appointment Confirmed</Modal.Title>
-                        </Modal.Header>
-                        <Modal.Body>
-                          An appointment with {patient.name} has been scheduled
-                        </Modal.Body>
-                        <Modal.Footer>
-                          <Button
-                            variant="secondary"
-                            onClick={() => setConfirmModal(false)}
-                          >
-                            Close
-                          </Button>
-                        </Modal.Footer>
-                      </Modal>
-
-                      {upcomingApp && <div>Has an upcoming appointment</div>}
-                      <div className="patient-info">
-                        <p>
-                          Date of birth:{" "}
-                          {formatDateOfBirth(patient.dateOfBirth)}
-                        </p>
-                        <p>Gender: {patient.gender}</p>
-                        <p style={{ fontWeight: "bold" }}>Medical History:</p>
-                        {existingFiles && existingFiles.length > 0 ? (
-                          <ListGroup>
-                            {existingFiles.map((file, index) => (
-                              <ListGroup.Item key={index}>
-                                <a
-                                  onClick={() =>
-                                    viewMedicalRecord(file.filename)
-                                  }
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  style={{
-                                    color: "#212529",
-                                    textDecoration: "underline",
-                                    cursor: "pointer",
-                                  }}
-                                >
-                                  {file.filename}
-                                </a>
-                              </ListGroup.Item>
-                            ))}
-                          </ListGroup>
-                        ) : (
-                          <div>No previous history found</div>
-                        )}
-
-                        <label
-                          style={{
-                            marginTop: "1rem",
-                            cursor: "pointer",
-                            color: "#099BA0",
-                            textDecoration: "underline",
-                            marginBottom: "1rem",
-                          }}
-                          onClick={() => setUploadVisible(!uploadVisible)}
-                          htmlFor="weee"
+        (patients.length === 0 ? (
+          <div className="msg d-flex justify-content-center align-items-center  ">
+            No Available Patients
+          </div>
+        ) : (
+          patients.map((patient, index) => (
+            <Card className="mb-4 mx-3 bg-white" key={patient.username}>
+              <Card.Header
+                className="d-flex align-items-center justify-content-between"
+                onClick={() => toggleExpand(index, patient._id)}
+                style={{ cursor: "pointer" }}
+              >
+                <span>{patient.name}</span>
+                <FontAwesomeIcon
+                  icon={expandedPatient === index ? faChevronUp : faChevronDown}
+                />
+              </Card.Header>
+              {expandedPatient === index && (
+                <Card.Body>
+                  <Row>
+                    <Col lg={12}>
+                      <Card.Text>
+                        <Button
+                          style={{ marginBottom: "1rem" }}
+                          onClick={() =>
+                            followUpModal
+                              ? scheduleFollowUp(patient._id)
+                              : setFollowUpModal(true)
+                          }
                         >
-                          Upload Health Records
-                        </label>
-                        <div>
-                          <input
-                            type="file"
-                            accept=".pdf, .jpeg, .jpg, .png"
-                            multiple
-                            onChange={handleFileUpload}
-                            style={{ display: "none" }}
-                            id="weee"
-                          />
+                          {followUpModal ? "Save" : "Schedule Follow-up"}
+                        </Button>
+                        {followUpModal && (
+                          <div>
+                            <Form.Group style={{ marginBottom: "1rem" }}>
+                              <Form.Control
+                                type="datetime-local"
+                                // value={followUpDateTime}
+                                onChange={(e) =>
+                                  setFollowUpDateTime(e.target.value)
+                                }
+                                min={getCurrentDateTime()}
+                              />
+                            </Form.Group>
+                          </div>
+                        )}
+                        <Modal show={confirmModal}>
+                          <Modal.Header>
+                            <Modal.Title>Appointment Confirmed</Modal.Title>
+                          </Modal.Header>
+                          <Modal.Body>
+                            An appointment with {patient.name} has been
+                            scheduled
+                          </Modal.Body>
+                          <Modal.Footer>
+                            <Button
+                              variant="secondary"
+                              onClick={() => setConfirmModal(false)}
+                            >
+                              Close
+                            </Button>
+                          </Modal.Footer>
+                        </Modal>
 
-                          {uploadedFiles.length > 0 && (
-                            <div>
-                              <ul
-                                style={{
-                                  marginBottom: "1rem",
-                                }}
-                              >
-                                {uploadedFiles.map((file, index) => (
-                                  <li key={index}>
+                        {upcomingApp && <div>Has an upcoming appointment</div>}
+                        <div className="patient-info">
+                          <p>
+                            Date of birth:{" "}
+                            {formatDateOfBirth(patient.dateOfBirth)}
+                          </p>
+                          <p>Gender: {patient.gender}</p>
+                          <p style={{ fontWeight: "bold" }}>Medical History:</p>
+                          {existingFiles && existingFiles.length > 0 ? (
+                            <ListGroup>
+                              {existingFiles.map((file, index) => (
+                                <ListGroup.Item key={index}>
+                                  <a
+                                    onClick={() =>
+                                      viewMedicalRecord(file.filename)
+                                    }
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    style={{
+                                      color: "#212529",
+                                      textDecoration: "underline",
+                                      cursor: "pointer",
+                                    }}
+                                  >
                                     {file.filename}
-                                    <FontAwesomeIcon
-                                      icon={faX}
-                                      style={{
-                                        opacity: 1,
-                                        color: "red",
-                                        fontSize: "15px",
-                                        marginLeft: "2rem",
-                                        cursor: "pointer",
-                                      }}
-                                      onClick={() => handleRemoveFile(index)}
-                                    />
-                                  </li>
-                                ))}
-                              </ul>
-                              <div
-                                style={{
-                                  marginLeft: "6rem",
-                                  cursor: "pointer",
-                                  color: "#05afb9 ",
-                                  fontWeight: "bold",
-                                }}
-                                onClick={() => addFiles(patient._id)}
-                              >
-                                Confirm Add
-                              </div>
-                            </div>
-                          )}
-                          <p style={{ fontWeight: "bold" }}>Prescriptions:</p>
-                          {existingPrescriptions &&
-                          existingPrescriptions.length > 0 ? (
-                            <ListGroup className="d-flex w-100">
-                              {existingPrescriptions.map(
-                                (prescription, index) => (
-                                  <Card className="d-flex w-100 p-2 mb-3">
-                                    <div className="d-flex justify-content-between w-100">
-                                      <div>
-                                        <span style={{ color: "#ff6b35" }}>
-                                          Prescription {index + 1}
-                                        </span>
-                                      </div>
-                                      <span style={{ color: "black" }}>
-                                        {prescription.date
-                                          .split("-")
-                                          .reverse()
-                                          .join("/")}
-                                      </span>
-                                      <div className="d-flex align-items-center">
-                                        <Link
-                                          style={{
-                                            fontSize: "1rem",
-                                            color: "#ff6b35",
-                                            textDecoration: "none",
-                                          }}
-                                          onClick={() =>
-                                            handleViewMoreClick(prescription)
-                                          }
-                                        >
-                                          View Details
-                                          <FontAwesomeIcon
-                                            icon={faAnglesRight}
-                                            style={{
-                                              fontSize: "0.8rem",
-                                              marginLeft: "0.5rem",
-                                              transition:
-                                                "transform 0.3s ease-in-out",
-
-                                              animation:
-                                                "arrowAnimation2 1.5s infinite alternate ease-in-out",
-                                            }}
-                                          />
-                                        </Link>
-                                      </div>
-                                    </div>
-                                  </Card>
-                                )
-                              )}
+                                  </a>
+                                </ListGroup.Item>
+                              ))}
                             </ListGroup>
                           ) : (
-                            <div>No previous prescriptions found</div>
+                            <div>No previous history found</div>
                           )}
+
                           <label
                             style={{
                               marginTop: "1rem",
@@ -842,20 +735,134 @@ function DrShowPatients({
                               textDecoration: "underline",
                               marginBottom: "1rem",
                             }}
-                            onClick={() => {
-                              handleShowPrescriptionModal(patient);
-                            }}
+                            onClick={() => setUploadVisible(!uploadVisible)}
+                            htmlFor="weee"
                           >
-                            Add New Prescription
+                            Upload Health Records
                           </label>
+                          <div>
+                            <input
+                              type="file"
+                              accept=".pdf, .jpeg, .jpg, .png"
+                              multiple
+                              onChange={handleFileUpload}
+                              style={{ display: "none" }}
+                              id="weee"
+                            />
+
+                            {uploadedFiles.length > 0 && (
+                              <div>
+                                <ul
+                                  style={{
+                                    marginBottom: "1rem",
+                                  }}
+                                >
+                                  {uploadedFiles.map((file, index) => (
+                                    <li key={index}>
+                                      {file.filename}
+                                      <FontAwesomeIcon
+                                        icon={faX}
+                                        style={{
+                                          opacity: 1,
+                                          color: "red",
+                                          fontSize: "15px",
+                                          marginLeft: "2rem",
+                                          cursor: "pointer",
+                                        }}
+                                        onClick={() => handleRemoveFile(index)}
+                                      />
+                                    </li>
+                                  ))}
+                                </ul>
+                                <div
+                                  style={{
+                                    marginLeft: "6rem",
+                                    cursor: "pointer",
+                                    color: "#05afb9 ",
+                                    fontWeight: "bold",
+                                  }}
+                                  onClick={() => addFiles(patient._id)}
+                                >
+                                  Confirm Add
+                                </div>
+                              </div>
+                            )}
+                            <p style={{ fontWeight: "bold" }}>Prescriptions:</p>
+                            {existingPrescriptions &&
+                            existingPrescriptions.length > 0 ? (
+                              <ListGroup className="d-flex w-100">
+                                {existingPrescriptions.map(
+                                  (prescription, index) => (
+                                    <Card className="d-flex w-100 p-2 mb-3">
+                                      <div className="d-flex justify-content-between w-100">
+                                        <div>
+                                          <span style={{ color: "#ff6b35" }}>
+                                            Prescription {index + 1}
+                                          </span>
+                                        </div>
+                                        <span style={{ color: "black" }}>
+                                          {prescription.date
+                                            .split("-")
+                                            .reverse()
+                                            .join("/")}
+                                        </span>
+                                        <div className="d-flex align-items-center">
+                                          <Link
+                                            style={{
+                                              fontSize: "1rem",
+                                              color: "#ff6b35",
+                                              textDecoration: "none",
+                                            }}
+                                            onClick={() =>
+                                              handleViewMoreClick(prescription)
+                                            }
+                                          >
+                                            View Details
+                                            <FontAwesomeIcon
+                                              icon={faAnglesRight}
+                                              style={{
+                                                fontSize: "0.8rem",
+                                                marginLeft: "0.5rem",
+                                                transition:
+                                                  "transform 0.3s ease-in-out",
+
+                                                animation:
+                                                  "arrowAnimation2 1.5s infinite alternate ease-in-out",
+                                              }}
+                                            />
+                                          </Link>
+                                        </div>
+                                      </div>
+                                    </Card>
+                                  )
+                                )}
+                              </ListGroup>
+                            ) : (
+                              <div>No previous prescriptions found</div>
+                            )}
+                            <label
+                              style={{
+                                marginTop: "1rem",
+                                cursor: "pointer",
+                                color: "#099BA0",
+                                textDecoration: "underline",
+                                marginBottom: "1rem",
+                              }}
+                              onClick={() => {
+                                handleShowPrescriptionModal(patient);
+                              }}
+                            >
+                              Add New Prescription
+                            </label>
+                          </div>
                         </div>
-                      </div>
-                    </Card.Text>
-                  </Col>
-                </Row>
-              </Card.Body>
-            )}
-          </Card>
+                      </Card.Text>
+                    </Col>
+                  </Row>
+                </Card.Body>
+              )}
+            </Card>
+          ))
         ))}
       <Modal show={prescriptionVisible} onHide={handleClose}>
         <Modal.Header closeButton>

@@ -6,7 +6,7 @@ import { useSpring, animated } from "react-spring";
 import { useState } from "react";
 
 function DrMainImg() {
-  const name = useSelector((state) => state.doctorLogin.name).split(" ")[0];
+  const name = useSelector((state) => state.doctorLogin.name);
   const [ourDoctorsVisible, setOurDoctorsVisible] = useState(false);
   const ourDoctorsSpring = useSpring({
     opacity: ourDoctorsVisible ? 1 : 0,
@@ -44,14 +44,14 @@ function DrMainImg() {
               style={{
                 color: "#05AFB9",
                 textAlign: "center",
-                fontFamily: "fantasy",
-                fontSize: "7rem",
+                fontFamily: "'Bebas Neue', sans-serif",
+                fontSize: "6rem",
                 fontStyle: "normal",
-                fontWeight: 400,
+                fontWeight: 700,
                 lineHeight: "120%",
               }}
             >
-              Hello {name}
+              Hello Dr. {name.split(" ").length > 1 ? name.split(" ")[0] : name}
             </Card.Text>
           </animated.div>
         </Card>
