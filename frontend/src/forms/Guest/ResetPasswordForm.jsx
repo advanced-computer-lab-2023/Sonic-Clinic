@@ -97,7 +97,16 @@ const ResetPasswordForm = () => {
 
   return (
     <div className="col-9 form-container">
-      <h1 className="form-title">Create New Password</h1>
+      <div
+        className="form-title"
+        style={{
+          fontFamily: "'Bebas Neue', sans-serif",
+          fontWeight: 600,
+          fontSize: "2rem",
+        }}
+      >
+        Create New Password
+      </div>
       <h6 className="description" style={{ fontSize: "14px", color: "gray" }}>
         Your new password must be unique from those previously used.
       </h6>
