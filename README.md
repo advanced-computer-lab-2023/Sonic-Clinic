@@ -47,7 +47,6 @@ The motivation behind El7a2ny is to enhance the healthcare experience using tech
 
 - **Profile Management:**
   - Change password securely.
-  - Update personal information.
   
 - **Upload and Access Documents:**
   - Upload and manage medical records securely.
@@ -67,7 +66,7 @@ The motivation behind El7a2ny is to enhance the healthcare experience using tech
   - Add available slots for patients to reserve appointments.
 
 - **Prescriptions:**
-  - Add prescriptions with medicines and instructions.
+  - Add prescriptions with medicines and respective dosages.
   - View and update prescriptions.
   - Manage medicines within prescriptions.
 
@@ -77,16 +76,17 @@ The motivation behind El7a2ny is to enhance the healthcare experience using tech
 
 - **Upload and Access Documents:**
   - View patient medical history.
+  - Upload medical files for patients.
 
 ### Administrator Features
 
 - **Manage Users:**
-  - Add, remove, or update administrators, doctors, and patients.
-  - View doctors applications, accept or reject them.
+  - Add or remove administrators, doctors, and patients.
+  - View doctors applications; accept or reject them.
 
 - **View Data:**
-  - View all doctors, patients, admins, and appointments.
-  - View and manage health packages.
+  - View all doctors, patients, and admins.
+  - View, manage, and delete health packages.
 
 
 ### Guest Features
@@ -104,8 +104,8 @@ The motivation behind El7a2ny is to enhance the healthcare experience using tech
   - Manage notification settings.
 
 - **Chat Functionality:**
+  - View contacts.
   - View individual chats and send messages.
-  - Add new chats.
 
 - **Video Chat Functionality:**
   - Users can do video calls.
@@ -118,7 +118,7 @@ The motivation behind El7a2ny is to enhance the healthcare experience using tech
   - Logout securely.
 
 - **Password Management:**
-  - Implement password change functionality securely with OTP verification for patients, doctors, and administrators.
+  - Implement password forget functionality securely with OTP verification for patients, doctors, and administrators.
 
 
 
@@ -189,17 +189,18 @@ Follow these steps to navigate and use Sonic-Clinic effectively:
 
 - Upon successful login, you'll be directed to your personalized dashboard.
 - Navigate through the menu on the top left of the screen to access different features.
-- While navigating, click on the blue square arrow to go back 
+- While navigating, the menu on the top left contains all routes to take you back. 
 
 ### 3. Profile Management
 
-- Update your personal information under the "My Profile" section in the menu.
-- Change your password securely to by entering your email to recieve an OTP which you will need to enter to be able to type your new password.
+- View and update your personal information under the "My Profile" section in the menu.
+- Change your password securely by confirming your old password then choosing a new strong one.
 
 ### 4. Chatting
 
 - Click on the orange chat icon on the bottom right corner to use the Chat functionality.
 - View, create and respond to individual chat messages.
+- In a chat, click on the video icon to initiate a video call.
 
 ### 5. Log Out
 
@@ -207,13 +208,14 @@ Follow these steps to navigate and use Sonic-Clinic effectively:
 
 ### 6. Notifications
 
-- Click on the blue bell icon on the bottom right corner to view your notifications.
+- Click on the blue bell icon on the top right corner to view your notifications.
 
 ### Patient:
 ### 1. View Doctors and Manage Appointments
 
-- Click on "View All Doctors" in the Home Page, filter doctos by speciality, date and time and click on apply or you can search for a doctor by his name. to create a new appointment choose the desired doctor and book a slot.
-- To view, reschedule (follow-ups), cancel and filter appointments: Click on the "My Appointments" section in the menu
+- Click on "View All Doctors" in the Home Page, filter doctos by speciality, date and time and click on apply or you can search for a doctor by his name.
+- To book aa appointment, select your desired doctor and choose from his/her list of free available slots.
+- To view, reschedule, request follow up, cancel or filter your appointments: Click on the "My Appointments" section in the menu
 
 ### 2. Manage Prescriptions
 
@@ -223,31 +225,35 @@ Follow these steps to navigate and use Sonic-Clinic effectively:
 ### 3. Profile
 
 - Access the "My profile" section
-- You can click on 'change your password' to update your password, view and add family members, upload and edit helath records and explore and subscribe to available health packages
+- You can click on 'change your password' to update your password.
+- View and add family members, either new users or existing users.
+- Upload and view your helath records.
+- Explore and subscribe to available health packages and view all your subscription history.
 
 ### Doctor:
 ### 1. Manage Appointments
 
 - Access "My Appointments" in the menu to view and filter booked appointments by date and time.
-- Access "Free slots" inside the "My Appointments" section to add free appointments slots that patients can book.
-- Access "Follow-up requests" inside the "My Appointments" section to search and accept or reject follow-ups.
+- Access "Free slots" inside the "My Appointments" section to add free appointment slots that patients can book.
+- Access "Follow-up requests" inside the "My Appointments" section to search and accept or reject follow up requests from patients.
 
 ### 2. Manage Patients
 
 - Access the "My Patient" section in the menu to view and filter your patients by appointment status.
 - You can search for a patient by his/her name
-- Click on a desired patient to see his detailed information, schedule a follow-up for an old appointment, upload his health records, add, view, update and delete prescriptions.
+- Click on a desired patient to see his detailed information, schedule a follow-up for an old appointment, upload his/her health records, add, view, update and delete prescriptions.
 
 ### 3. Profile
 
 - Access the "My profile" section in the menu
 - You can click on 'change your password'to update your password and you can view your employment contract pdf.
+- You can click on the pen icon to update some personal information.
 
 ### Admin:
 ### 1. Profile
 
-- Access the "My profile" section in the menu to view your personal details
-- You can click on 'change your password' to update your password
+- Access the "My profile" section in the menu to view your personal details.
+- You can click on 'change your password' to update your password.
 
 ### 2. Patient
 
@@ -326,8 +332,6 @@ We applied a set of coding conventions to maintain consistency and readability a
 - **JavaScript/Node.js:** We follow the [Airbnb JavaScript Style Guide](https://github.com/airbnb/javascript) for JavaScript and Node.js projects.
 
 - **React:** For React components and applications, we follow the [Airbnb React/JSX Style Guide](https://github.com/airbnb/javascript/tree/master/react).
-
-- **CSS:** Our stylesheets adhere to the [BEM (Block, Element, Modifier) methodology](http://getbem.com/) for maintainability and clarity.
 
 - **Naming Conventions:** Descriptive and meaningful variable and function names are encouraged. Please avoid abbreviations when clarity is sacrificed.
 
