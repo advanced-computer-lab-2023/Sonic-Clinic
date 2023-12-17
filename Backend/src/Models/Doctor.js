@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const Appointment = require("./Appointment");
 const Schema = mongoose.Schema;
 const bcrypt = require("bcrypt");
+const FollowUp = require("./FollowUp");
 
 const fileSchema = new Schema({
   filename: {
@@ -55,7 +56,7 @@ const doctorSchema = new Schema(
       required: true,
     },
     patients: {
-      type:[String],
+      type: [String],
       required: false,
     },
     specialty: {
@@ -78,7 +79,19 @@ const doctorSchema = new Schema(
       type: Boolean,
       required: false,
     },
-    documents: [fileSchema],
+    followUps: {
+      type: [Object],
+      required: false,
+    },
+    // documents: [fileSchema],
+    notifications: {
+      type: [String],
+      required: false,
+    },
+    newNotifications: {
+      type: Boolean,
+      required: false,
+    },
   },
   { timestamps: true }
 );
@@ -92,31 +105,31 @@ doctorSchema.virtual("appointment", {
 doctorSchema.set("toObject", { virtuals: true });
 doctorSchema.set("toJSON", { virtuals: true });
 
+doctorSchema.virtual("followUp", {
+  ref: "FollowUp",
+  localField: "_id",
+  foreignField: "doctorID",
+});
+
+doctorSchema.set("toObject", { virtuals: true });
+doctorSchema.set("toJSON", { virtuals: true });
+
 doctorSchema.methods.getAppointments = async function () {
   try {
-    // Use async/await with Appointment.find to retrieve appointments for the current doctor
     const appointments = await Appointment.find({ doctorID: this._id });
-    // Add the appointments to the doctor document
     this.appointments = appointments;
   } catch (error) {
     throw error;
   }
 };
-
-doctorSchema.pre("save", async function (next) {
-  const salt = await bcrypt.genSalt();
-  this.password = await bcrypt.hash(this.password, salt);
-  next();
-});
-
-// doctorSchema.virtual("patient", {
-//   ref: "Patient",
-//   localField: "patients",
-//   foreignField: "_id",
-// });
-
-// doctorSchema.set("toObject", { virtuals: true });
-// doctorSchema.set("toJSON", { virtuals: true });
+doctorSchema.methods.getFollowUps = async function () {
+  try {
+    const followUps = await FollowUp.find({ doctorID: this._id });
+    this.followUps = followUps;
+  } catch (error) {
+    throw error;
+  }
+};
 
 const Doctor = mongoose.model("Doctor", doctorSchema);
 module.exports = Doctor;

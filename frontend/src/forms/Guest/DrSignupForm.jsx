@@ -5,10 +5,11 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import FormPassword from "../FormPassword";
 import FormInput from "../FormInput";
-import { Form } from "react-bootstrap";
+import { Dropdown, Form, Spinner } from "react-bootstrap";
 
 const DrSignupForm = () => {
   const [name, setName] = useState("");
+  const [loading, setLoading] = useState(false);
   const [birthdate, setBirthdate] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -22,6 +23,7 @@ const DrSignupForm = () => {
   const [medicalLicense, setMedicalLicense] = useState(null);
   const [medicalDegree, setMedicalDegree] = useState(null);
   const [error1, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -142,6 +144,7 @@ const DrSignupForm = () => {
       return;
     } else {
       try {
+        setLoading(true);
         const response = await axios.post("/addPotentialDoctor", {
           username: username,
           name: name,
@@ -155,30 +158,154 @@ const DrSignupForm = () => {
         });
 
         if (response.status === 201) {
+          setLoading(false);
+          setName("");
+          setBirthdate("");
+          setEmail("");
+          setPassword("");
+          setConfirmPassword("");
+          setUsername("");
+          setRate("");
+          setAffiliation("");
+          setEducation("");
+          setSpeciality("");
+          setdoctorID(null);
+          setMedicalLicense(null);
+          setMedicalDegree(null);
+          setSuccess("Your application will be reviewed");
+          setError(null);
           try {
             const formData = new FormData();
-
-            if (medicalDegree) {
-              const formattedMedicalDegree = formatFileForUpload(medicalDegree);
-              const blob = new Blob([formattedMedicalDegree.buffer.data], { type: formattedMedicalDegree.mimetype });
-              formData.append("files", blob, formattedMedicalDegree);
-            }
-
-            // Format and append medicalLicense file
             if (medicalLicense) {
-              const formattedMedicalLicense =
-                formatFileForUpload(medicalLicense);
-                const blob = new Blob([formattedMedicalLicense.buffer.data], { type: formattedMedicalLicense.mimetype });
-              formData.append("files", blob, formattedMedicalLicense);
-            }
+              console.log("MEDICAL LICENSE", medicalLicense);
 
+              try {
+                // Read the file data as a Uint8Array
+                const fileArrayBuffer = await medicalLicense.arrayBuffer();
+                const fileUint8Array = new Uint8Array(fileArrayBuffer);
+
+                // Format the file
+                const formattedFile = {
+                  filename: medicalLicense.name,
+                  mimetype: medicalLicense.type,
+                  buffer: {
+                    type: "Buffer",
+                    data: Array.from(fileUint8Array),
+                  },
+                };
+
+                console.log(`Processed file: ${medicalLicense.name}`);
+
+                // Check if any errors occurred during processing
+                if (!formattedFile) {
+                  console.error("Error processing file:", medicalLicense.name);
+                  return;
+                }
+
+                const blob = new Blob([formattedFile.buffer.data], {
+                  type: formattedFile.mimetype,
+                });
+
+                formData.append("files", blob, formattedFile.filename);
+
+                console.log(
+                  "formData after processing medicalLicense:",
+                  formData
+                );
+              } catch (error) {
+                console.error(
+                  "Error processing file:",
+                  medicalLicense.name,
+                  error
+                );
+              }
+            }
+            // Format and append medicalLicense file
+            if (medicalDegree) {
+              try {
+                // Read the file data as a Uint8Array
+                const fileArrayBuffer = await medicalDegree.arrayBuffer();
+                const fileUint8Array = new Uint8Array(fileArrayBuffer);
+
+                // Format the file
+                const formattedFile = {
+                  filename: medicalDegree.name,
+                  mimetype: medicalDegree.type,
+                  buffer: {
+                    type: "Buffer",
+                    data: Array.from(fileUint8Array),
+                  },
+                };
+
+                console.log(`Processed file: ${medicalDegree.name}`);
+
+                // Check if any errors occurred during processing
+                if (!formattedFile) {
+                  console.error("Error processing file:", medicalDegree.name);
+                  return;
+                }
+
+                const blob = new Blob([formattedFile.buffer.data], {
+                  type: formattedFile.mimetype,
+                });
+
+                formData.append("files", blob, formattedFile.filename);
+
+                console.log(
+                  "formData after processing medicalLicense:",
+                  formData
+                );
+              } catch (error) {
+                console.error(
+                  "Error processing file:",
+                  medicalDegree.name,
+                  error
+                );
+              }
+            }
             // Format and append doctorID file
             if (doctorID) {
-              const formattedDoctorID = formatFileForUpload(doctorID);
-              const blob = new Blob([formattedDoctorID.buffer.data], { type: formattedDoctorID.mimetype });
-              formData.append("files",blob, formattedDoctorID);
-            }
+              try {
+                // Read the file data as a Uint8Array
+                const fileArrayBuffer = await doctorID.arrayBuffer();
+                const fileUint8Array = new Uint8Array(fileArrayBuffer);
 
+                // Format the file
+                const formattedFile = {
+                  filename: doctorID.name,
+                  mimetype: doctorID.type,
+                  buffer: {
+                    type: "Buffer",
+                    data: Array.from(fileUint8Array),
+                  },
+                };
+
+                console.log(`Processed file: ${doctorID.name}`);
+
+                // Check if any errors occurred during processing
+                if (!formattedFile) {
+                  console.error("Error processing file:", doctorID.name);
+                  return;
+                }
+
+                const blob = new Blob([formattedFile.buffer.data], {
+                  type: formattedFile.mimetype,
+                });
+
+                formData.append("files", blob, formattedFile.filename);
+
+                console.log(
+                  "formData after processing medicalLicense:",
+                  formData
+                );
+              } catch (error) {
+                console.error(
+                  "Error processing file:",
+                  medicalDegree.name,
+                  error
+                );
+              }
+            }
             const response2 = await axios.post(
               `/uploadFilesForPotentialDoctor?username=${username}`,
               formData,
@@ -189,41 +316,57 @@ const DrSignupForm = () => {
               }
             );
             if (response2.status === 200) {
-              setError("Your application will be reviewed");
-
+              setLoading(false);
+              setName("");
+              setBirthdate("");
+              setEmail("");
+              setPassword("");
+              setConfirmPassword("");
+              setUsername("");
+              setRate("");
+              setAffiliation("");
+              setEducation("");
+              setSpeciality("");
+              setdoctorID(null);
+              setMedicalLicense(null);
+              setMedicalDegree(null);
+              setSuccess("Your application will be reviewed");
+              setError(null);
             }
           } catch (error) {}
         } else {
           setError("Signup failed");
+          setLoading(false);
         }
       } catch (error) {
-        console.error("Error:", error);
-
         if (error.response && error.response.status === 409) {
           setError("Username taken!");
+          setLoading(false);
         } else if (error.response && error.response.status !== 200) {
           setError("Signup failed");
+          setLoading(false);
         } else {
           setError(
             "An error occurred while signing up. Please try again later."
           );
+          setLoading(false);
         }
       }
     }
   };
 
-  const formatFileForUpload = (file) => ({
-    filename: file.name,
-      mimetype: file.type,
-      buffer: {
-        type: "Buffer",
-        data: Array.from(new Uint8Array(file)),
-      },
-  });
-
   return (
     <div className="col-9 form-container">
-      <div className="form-title">Submit a Request to Get Started</div>
+      <div
+        className="form-title"
+        style={{
+          fontFamily: "'Bebas Neue', sans-serif",
+          fontWeight: 600,
+          fontSize: "1.71rem",
+        }}
+      >
+        Submit a request to get started!
+      </div>
       <form className="rounded-3" onSubmit={handleSubmit}>
         <div className="col">
           <div className="form-group">
@@ -242,6 +385,7 @@ const DrSignupForm = () => {
               name="Birth date"
               type="date"
               onChange={(e) => setBirthdate(e.target.value)}
+              value={birthdate}
             />
           </div>
           <div className="col">
@@ -249,6 +393,7 @@ const DrSignupForm = () => {
               name="Username"
               placeholder="ElinaJohn1"
               type="text"
+              value={username}
               onChange={(e) => setUsername(e.target.value)}
             />
           </div>
@@ -259,6 +404,7 @@ const DrSignupForm = () => {
               name="Hourly Rate"
               type="number"
               placeholder="50"
+              value={rate}
               onChange={(e) => setRate(e.target.value)}
             />
           </div>
@@ -267,6 +413,7 @@ const DrSignupForm = () => {
               name="Affiliation"
               placeholder="ZZZ Hospital"
               type="text"
+              value={affiliation}
               onChange={(e) => setAffiliation(e.target.value)}
             />
           </div>
@@ -277,6 +424,7 @@ const DrSignupForm = () => {
               name="Educational Background"
               type="text"
               placeholder="MBA"
+              value={education}
               onChange={(e) => setEducation(e.target.value)}
             />
           </div>
@@ -296,17 +444,31 @@ const DrSignupForm = () => {
               >
                 Specialty
               </Form.Label>
-              <Form.Control
-                as="select"
-                value={speciality}
-                onChange={(e) => setSpeciality(e.target.value)}
+
+              <Dropdown
+                onSelect={(selectedValue) => setSpeciality(selectedValue)}
               >
-                <option value="Cardiology">Cardiology</option>
-                <option value="Orthopedics">Orthopedics</option>
-                <option value="Oncology">Oncology</option>
-                <option value="Neurology">Neurology</option>
-                <option value="Pediatrics">Pediatrics</option>
-              </Form.Control>
+                <Dropdown.Toggle
+                  id="dropdown-basic"
+                  className="custom-dropdown-toggle"
+                >
+                  {speciality === "" ? "Select Speciality" : speciality}
+                </Dropdown.Toggle>
+
+                <Dropdown.Menu style={{ width: "100%" }}>
+                  <Dropdown.Item eventKey="Cardiology">
+                    Cardiology
+                  </Dropdown.Item>
+                  <Dropdown.Item eventKey="Orthopedics">
+                    Orthopedics
+                  </Dropdown.Item>
+                  <Dropdown.Item eventKey="Oncology">Oncology</Dropdown.Item>
+                  <Dropdown.Item eventKey="Neurology">Neurology</Dropdown.Item>
+                  <Dropdown.Item eventKey="Pediatrics">
+                    Pediatrics
+                  </Dropdown.Item>
+                </Dropdown.Menu>
+              </Dropdown>
             </Form.Group>
           </div>
           <div className="col">
@@ -328,6 +490,7 @@ const DrSignupForm = () => {
             <input
               type="file"
               accept=".pdf"
+              // value={medicalLicense}
               onChange={(e) => setMedicalLicense(e.target.files[0])}
               style={{
                 color: "#05afb9",
@@ -356,6 +519,7 @@ const DrSignupForm = () => {
             <input
               type="file"
               accept=".pdf"
+              // value={medicalDegree}
               onChange={(e) => setMedicalDegree(e.target.files[0])}
               style={{
                 color: "#05afb9",
@@ -383,6 +547,7 @@ const DrSignupForm = () => {
             <input
               type="file"
               accept=".pdf"
+              // value={doctorID}
               onChange={(e) => setdoctorID(e.target.files[0])}
               style={{
                 color: "#05afb9",
@@ -397,6 +562,7 @@ const DrSignupForm = () => {
           name="Email"
           type="email"
           placeholder="john.doe@ibm.com"
+          value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
         <FormPassword
@@ -404,12 +570,14 @@ const DrSignupForm = () => {
           name="Password"
           type="password"
           placeholder="**************"
+          value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
         <FormPassword
           name="Confirm Password"
           type="password"
           placeholder="**************"
+          value={confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)}
         />
 
@@ -417,20 +585,26 @@ const DrSignupForm = () => {
           id="nextbtn"
           className="w-100 btn-sm custom-button"
           onClick={handleClick}
+          disabled={loading} // Disable the button when loading
         >
-          Next
+          {loading ? (
+            <Spinner animation="border" size="sm" role="status" />
+          ) : (
+            "Next"
+          )}
         </button>
         <div className="form-comment" style={{ cursor: "default" }}>
           Have an account?{" "}
           <div
             className="text-decoration-none link-decoration"
             style={{ cursor: "pointer" }}
-            onClick={() => navigate("/login")}
+            onClick={() => navigate("/")}
           >
             Login
           </div>
         </div>
         {error1 && <div className="error">{error1}</div>}
+        {success && <div className="msg">{success}</div>}
       </form>
     </div>
   );

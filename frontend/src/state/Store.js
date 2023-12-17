@@ -1,7 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { combineReducers } from "redux";
-import loginPatientReducer from "./loginPatientReducer";
-import doctorIdReducer from "./doctorIdReducer";
 import {
   persistReducer,
   FLUSH,
@@ -12,6 +10,8 @@ import {
   REGISTER,
 } from "redux-persist";
 import storage from "redux-persist/lib/storage";
+import loginPatientReducer from "./loginPatientReducer";
+import doctorIdReducer from "./doctorIdReducer";
 import loginDoctorReducer from "./loginDoctorReducer";
 import loginAdminReducer from "./loginAdminReducer";
 import SearchDoctor from "./Patient/SearchDoctor";
@@ -21,6 +21,7 @@ import filterPrescriptions from "./Patient/filterPrescriptions";
 import filterDrAppointments from "./Doctor/filterDrAppointments";
 import prescriptionIdReducer from "./prescriptionIdReducer";
 import forgotEmail from "./forgotEmail";
+import notifications from "./notifications";
 
 const persistConfig = {
   key: "root",
@@ -40,6 +41,7 @@ const rootReducer = combineReducers({
   filterPrescriptions: filterPrescriptions,
   filterDrAppointments: filterDrAppointments,
   forgotEmail: forgotEmail,
+  newNotifications: notifications,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

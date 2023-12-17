@@ -42,6 +42,7 @@ function FamilyMembersList({ refreshFlag }) {
           fontWeight: "600",
           color: "#212529",
           lineHeight: "1.5",
+          marginBottom: "1rem",
         }}
       >
         Family Members
@@ -53,15 +54,15 @@ function FamilyMembersList({ refreshFlag }) {
               <div
                 style={{
                   color: "#099BA0  ",
-                  fontSize: "30px",
+                  fontSize: "1.7rem",
                   fontWeight: "600",
                   marginBottom: "10px",
                 }}
               >
                 {member.name}
               </div>
-              <Row>
-                <Col md={4}>
+              <Row style={{ fontSize: "1.05rem" }}>
+                <Col md={3}>
                   <p>
                     <strong>Gender:</strong> {member.gender}
                   </p>
@@ -69,7 +70,7 @@ function FamilyMembersList({ refreshFlag }) {
                     <strong>Age:</strong> {member.age}
                   </p>
                 </Col>
-                <Col md={4}>
+                <Col md={5}>
                   <p>
                     <strong>National ID:</strong> {member.nationalID}
                   </p>

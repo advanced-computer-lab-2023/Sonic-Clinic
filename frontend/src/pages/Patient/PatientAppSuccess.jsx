@@ -15,25 +15,28 @@ function PatientAppSuccess() {
   const famID = useSelector((state) => state.patientLogin.forFam);
   const [message, setMessage] = useState("");
 
-  useEffect(async () => {
-    try {
-      const response = await axios.post(`/addAppointmentForMyselfOrFam`, {
-        famID: famID,
-        doctorID: app.doctorID,
-        date: app.date,
-        description: app.description,
-        time: app.time,
-      });
-      if (response.status === 200) {
-        setMessage("You have successfully booked the appointment");
-        dispatch(removeNewApp());
-        dispatch(removeForFam());
-      } else {
-        setMessage(response.data.message);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.post(`/addAppointmentForMyselfOrFam`, {
+          famID: famID,
+          doctorID: app.doctorID,
+          date: app.date,
+          description: app.description,
+          time: app.time,
+        });
+        if (response.status === 200) {
+          setMessage("You have successfully booked the appointment");
+          dispatch(removeNewApp());
+          dispatch(removeForFam());
+        } else {
+          setMessage(response.data.message);
+        }
+      } catch (error) {
+        setMessage(error);
       }
-    } catch (error) {
-      setMessage(error);
-    }
+    };
+    fetchData();
   }, []);
 
   return (

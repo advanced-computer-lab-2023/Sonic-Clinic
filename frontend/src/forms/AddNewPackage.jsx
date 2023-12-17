@@ -12,13 +12,14 @@ export default function AddNewPackage({ fetchData }) {
   const [success, setSuccess] = useState(false);
 
   const inputStyle = {
-    fontSize: "15px",
+    fontSize: "0.9rem",
     height: "30px",
     borderRadius: "3px",
   };
   const titleStyle = {
     fontWeight: "bold",
     color: "#ADB5BD ",
+    fontSize: "1rem",
   };
 
   const handleSubmit = async (e) => {
@@ -122,7 +123,7 @@ export default function AddNewPackage({ fetchData }) {
             id="packFee"
             style={inputStyle}
             type="number"
-            placeholder="....LE"
+            placeholder="$...."
             name="fee"
             onChange={(e) => setPrice(e.target.value)}
           />
@@ -161,45 +162,13 @@ export default function AddNewPackage({ fetchData }) {
           />
         </Form.Group>
         <Form.Group className="p-2">
-          <Button style={{ width: "100%", fontSize: "15px" }} type="submit">
+          <Button style={{ width: "100%", fontSize: "1rem" }} type="submit">
             Add Package
           </Button>
         </Form.Group>
       </Form>
-      {error && (
-        <div
-          className="d-flex justify-content-center"
-          style={{
-            marginTop: "0.5rem",
-            marginBottom: "0.5rem",
-            fontSize: "0.85rem",
-            backgroundColor: "#f44336", // Red background color
-            color: "white", // White text color
-            padding: "10px", // Padding around the message
-            borderRadius: "5px", // Rounded corners
-            boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.2)", // Box shadow for a subtle effect
-          }}
-        >
-          {error}
-        </div>
-      )}
-      {success && (
-        <div
-          className="d-flex justify-content-center"
-          style={{
-            marginTop: "0.5rem",
-            marginBottom: "0.5rem",
-            fontSize: "0.85rem",
-            backgroundColor: "#099BA0 ",
-            color: "white", // White text color
-            padding: "10px", // Padding around the message
-            borderRadius: "5px", // Rounded corners
-            boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.2)", // Box shadow for a subtle effect
-          }}
-        >
-          Package added successfully!
-        </div>
-      )}
+      {error && <div className="error">{error}</div>}
+      {success && <div className="msg">Package added successfully!</div>}
     </>
   );
 }

@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { Container, Row } from "react-bootstrap";
 import AppNavbar from "../../components/AppNavigation/AppNavbar";
 import HamburgerMenu from "../../components/Patient/HamburgerMenu";
-
 import ViewPrescriptionDetails from "../../components/Patient/ViewPrescriptionDetails";
+import ChatPat from "../../components/ChatPat";
 
 function PatientOnePrescription() {
   return (
@@ -18,6 +18,7 @@ function PatientOnePrescription() {
           </Row>
         </Container>
       </Container>
+      <ChatPat who="patient" />
     </div>
   );
 }

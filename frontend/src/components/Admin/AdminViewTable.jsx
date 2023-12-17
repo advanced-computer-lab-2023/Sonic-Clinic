@@ -6,7 +6,7 @@ import { Button, Modal, Form } from "react-bootstrap";
 import AddNewAdmin from "../../forms/AddNewAdmin";
 import axios from "axios";
 
-export default function AdminViewTable({ onAdmins, api }) {
+export default function AdminViewTable({ onAdmins, onDocs, api }) {
   const [loading, setLoading] = useState(true);
   const [responseData, setResponseData] = useState([]);
   const [username, setUsername] = useState("");
@@ -47,7 +47,7 @@ export default function AdminViewTable({ onAdmins, api }) {
   const users = responseData;
   console.log(users);
   const filteredUsers = users.filter((user) =>
-    user.username.toLowerCase().includes(searchTerm.toLowerCase())
+    user.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   useEffect(() => {}, [username]);
@@ -56,11 +56,8 @@ export default function AdminViewTable({ onAdmins, api }) {
     setShowAddNewAdmin(!showAddNewAdmin);
   };
 
-  const addBtnText = showAddNewAdmin ? "Close Form" : "Add new Adminstrator";
-  const btnStyle = {
-    backgroundcolor: `${showAddNewAdmin ? "#ff6b35" : "#05afb9"} !important`, //leh msh shaghala?
-    marginBottom: "20px",
-  };
+  const addBtnText = showAddNewAdmin ? "Close form" : "Add new adminstrator";
+
   const iconStyle = {
     opacity: 1,
     color: "#f0f0f0",
@@ -106,10 +103,10 @@ export default function AdminViewTable({ onAdmins, api }) {
       <Modal show={showModal} onHide={handleClose}>
         <Modal.Body>Are you sure you want to delete this user?</Modal.Body>
         <Modal.Footer className="d-flex align-items-center justify-content-center">
-          <Button variant="danger" onClick={actuallyDelete}>
+          <Button variant="secondary" onClick={actuallyDelete}>
             Yes
           </Button>
-          <Button variant="success" onClick={handleClose}>
+          <Button variant="primary" onClick={handleClose}>
             No
           </Button>
         </Modal.Footer>
@@ -119,19 +116,23 @@ export default function AdminViewTable({ onAdmins, api }) {
         style={{
           display: "flex",
           flexDirection: "row",
-          width: "1000px",
+          width: "65rem",
           marginBottom: "1rem",
         }}
       >
         <Form.Control
           type="Text"
-          placeholder="Search Username"
+          placeholder="Search by name"
           style={{ height: "2.5rem" }}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
       </div>
       {onAdmins && (
-        <Button style={btnStyle} id="newAdminForm" onClick={toggleAddNewAdmin}>
+        <Button
+          style={{ marginLeft: "51.5rem", marginBottom: "1rem" }}
+          id="newAdminForm"
+          onClick={toggleAddNewAdmin}
+        >
           {addBtnText}
           {showAddNewAdmin ? (
             <FontAwesomeIcon icon={faXmark} style={iconStyle} />
@@ -141,14 +142,19 @@ export default function AdminViewTable({ onAdmins, api }) {
         </Button>
       )}
 
-      {showAddNewAdmin && (
-        <AddNewAdmin fetchData={fetchData} closeForm={toggleAddNewAdmin} />
-      )}
-      <Table striped bordered hover variant="light" style={{ width: "1000px" }}>
+      <div style={{ marginLeft: "52rem" }}>
+        {showAddNewAdmin && (
+          <AddNewAdmin fetchData={fetchData} closeForm={toggleAddNewAdmin} />
+        )}
+      </div>
+
+      <Table striped bordered hover variant="light" style={{ width: "65rem" }}>
         <thead>
           <tr>
-            {!onAdmins && <th style={{ color: "#099BA0" }}>Full Name</th>}
+            <th style={{ color: "#099BA0" }}>Full Name</th>
             <th style={{ color: "#099BA0" }}>Username</th>
+            <th style={{ color: "#099BA0" }}>Email</th>
+            {onDocs && <th style={{ color: "#099BA0" }}>Affiliation</th>}
             <th></th>
           </tr>
         </thead>
@@ -156,8 +162,10 @@ export default function AdminViewTable({ onAdmins, api }) {
           {users &&
             filteredUsers.map((user) => (
               <tr key={user._id}>
-                {!onAdmins && <td>{user.name}</td>}
+                <td>{user.name}</td>
                 <td>{user.username} </td>
+                <td>{user.email}</td>
+                {onDocs && <td>{user.affiliation}</td>}
                 <td>
                   <FontAwesomeIcon
                     icon={faTrashCan}

@@ -1,7 +1,6 @@
 import React, { useState } from "react";
-import doctorImg from "../../Assets/Patient/Doctor.jpg";
 import ChangePass from "../../forms/ChangePass";
-import { Button } from "react-bootstrap";
+import { Button, Col } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPenToSquare } from "@fortawesome/free-solid-svg-icons";
 import { useSelector } from "react-redux";
@@ -17,6 +16,8 @@ function DrProfileBox() {
     backgroundColor: "#ffffff",
     textAlign: "center",
     marginLeft: "10rem",
+    border: "1px solid #ccc",
+    borderRadius: "0.3rem",
   };
 
   const profileImageStyle = {
@@ -28,18 +29,23 @@ function DrProfileBox() {
   };
 
   const inputStyle = {
-    width: "18rem",
+    width: "15rem",
     padding: "8px",
     borderRadius: "8px",
     border: "1px solid  #dee2e6 ",
+  };
+
+  const change = {
+    textDecoration: "underline",
+    cursor: "pointer",
   };
 
   const inputLabel = {
     width: "12rem",
     marginRight: "0.5rem",
     fontWeight: "bold",
-    color: "#adb5bd ",
-    fontSize: "1rem",
+    color: "#05afb9  ",
+    fontSize: "1.05rem",
     textAlign: "left",
   };
 
@@ -60,8 +66,8 @@ function DrProfileBox() {
   });
 
   const [isEditing, setIsEditing] = useState(false);
+  const [showChangePass, setShowChangePass] = useState(false);
   const [error, setError] = useState(null);
-  const _id = useSelector((state) => state.doctorLogin.userId);
   const dispatch = useDispatch();
 
   const handleInputChange = (e, field) => {
@@ -73,6 +79,10 @@ function DrProfileBox() {
 
   const handleEditClick = () => {
     setIsEditing(!isEditing);
+  };
+
+  const toggleChangePass = () => {
+    setShowChangePass(!showChangePass);
   };
 
   const handleSaveChanges = async () => {
@@ -141,7 +151,7 @@ function DrProfileBox() {
       <h2 style={{ marginBottom: "1rem" }}>
         <strong>Dr. {profileData.name}</strong>
       </h2>
-      <h2 style={{ marginBottom: "2rem", fontSize: "20px", color: "#05afb9 " }}>
+      <h2 style={{ marginBottom: "2rem", fontSize: "20px", color: "#adb5bd" }}>
         <strong>{profileData.speciality}</strong>
       </h2>
       <div className="d-flex flex-column align-items-start">
@@ -152,13 +162,19 @@ function DrProfileBox() {
 
         <p class="d-flex flex-row">
           <div style={inputLabel}>Password:</div>
-          {isEditing ? (
-            <div>
+          <Col>
+            <span>
+              <label
+                style={change}
+                onClick={toggleChangePass} // Add your click handler here
+              >
+                {showChangePass ? "close" : "change password"}
+              </label>
+            </span>
+            {showChangePass && (
               <ChangePass patient={false} api="/changePasswordForDoctor" />
-            </div>
-          ) : (
-            <span>********</span>
-          )}
+            )}
+          </Col>
         </p>
         <p class="d-flex flex-row">
           <div style={inputLabel}>Email: </div>
@@ -196,7 +212,7 @@ function DrProfileBox() {
               style={inputStyle}
             />
           ) : (
-            <span>{profileData.hourlyRate} LE/hr</span>
+            <span>$ {profileData.hourlyRate}</span>
           )}
         </p>
       </div>

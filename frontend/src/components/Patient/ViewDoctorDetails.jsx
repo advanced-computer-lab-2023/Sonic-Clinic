@@ -7,10 +7,9 @@ function ViewDoctorDetails() {
   const doctor = useSelector((state) => state.selectedDoctorData);
 
   const listItemStyle = {
-    fontSize: "1rem",
+    fontSize: "1.1rem",
     marginBottom: "0.7rem",
     verticalAlign: "top",
-    fontWeight: "600",
   };
 
   const photoStyle = {
@@ -35,10 +34,11 @@ function ViewDoctorDetails() {
           <div
             className="d-flex justify-content-start align-items-center"
             style={{
-              fontSize: "2.5rem",
+              fontSize: "2rem",
               fontWeight: "600",
               color: "#212529",
               lineHeight: "1.5",
+              marginLeft: "1rem",
             }}
           >
             Dr. {doctor.name}
@@ -46,22 +46,28 @@ function ViewDoctorDetails() {
           <ListGroup variant="flush">
             <ListGroup.Item>
               <div style={listItemStyle}>
-                <span style={{ color: "#099BA0" }}>Specialty:</span>{" "}
+                <span style={{ color: "#099BA0", fontWeight: "bold" }}>
+                  Specialty:
+                </span>{" "}
                 {doctor.speciality}
               </div>
               <div style={listItemStyle}>
-                <span style={{ color: "#099BA0" }}>
+                <span style={{ color: "#099BA0", fontWeight: "bold" }}>
                   Educational Background:
                 </span>{" "}
                 {doctor.educationalBackground}
               </div>
               <div style={listItemStyle}>
-                <span style={{ color: "#099BA0" }}>Affiliation:</span>{" "}
+                <span style={{ color: "#099BA0", fontWeight: "bold" }}>
+                  Affiliation:
+                </span>{" "}
                 {doctor.affiliation}
               </div>
               <div style={listItemStyle}>
-                <span style={{ color: "#099BA0" }}>Rate/Session:</span> $
-                {doctor.hourlyRate}
+                <span style={{ color: "#099BA0", fontWeight: "bold" }}>
+                  Rate/Session:
+                </span>{" "}
+                ${doctor.hourlyRate.toFixed(2)}
               </div>
             </ListGroup.Item>
           </ListGroup>

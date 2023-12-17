@@ -50,39 +50,19 @@ export default function AdminPackageCarousel() {
 
   return (
     <div
-      className="d-flex align-items-center justify-content-center flex-row"
-      style={{ width: "100%", marginTop: "3rem" }}
+      className="d-flex align-items-center justify-content-center flex-column"
+      style={{ width: "100%", marginTop: "2rem" }}
     >
-      <Carousel
-        className="d-flex align-items-center carousel-dark"
-        style={{ height: "550px", width: "500px", marginBottom: "5px" }}
-      >
-        {packages.map((packagee, index) => (
-          <Carousel.Item
-            key={index}
-            className="align-items-center"
-            style={{ marginLeft: "21%" }}
-          >
-            <AdminPackageCard
-              id={packagee._id}
-              packageName={packagee.type}
-              fee={packagee.price}
-              docDiscount={packagee.sessionDiscount}
-              pharmacyDiscount={packagee.medicineDiscount}
-              famDiscount={packagee.packageDiscountFM}
-              fetchData={fetchData}
-            />
-          </Carousel.Item>
-        ))}
-      </Carousel>
-      <div
-        className="d-flex align-items-center justify-content-center flex-column"
-        style={{ marginLeft: "50px" }}
-      >
+      <div className="d-flex align-items-center justify-content-center flex-column">
         <Button
-          style={{ width: "50px", marginBottom: "20px" }}
           id="newAdminForm"
           onClick={toggleAddPackage}
+          style={{
+            marginBottom: "2rem",
+            position: "absolute",
+            top: 220,
+            right: 210,
+          }}
         >
           {showAddPackage ? (
             <FontAwesomeIcon icon={faMinus} style={iconStyle} />
@@ -90,8 +70,38 @@ export default function AdminPackageCarousel() {
             <FontAwesomeIcon icon={faPlus} style={iconStyle} />
           )}
         </Button>
-        {showAddPackage && <AddNewPackage fetchData={fetchData} />}
+        <div
+          style={{
+            marginBottom: "2rem",
+            position: "absolute",
+            top: 300,
+            right: 210,
+          }}
+        >
+          {showAddPackage && <AddNewPackage fetchData={fetchData} />}
+        </div>
       </div>
+
+      <Carousel
+        className="d-flex align-items-center justify-content-center carousel-dark"
+        style={{ height: "36rem", width: "55rem", marginRight: "8rem" }}
+      >
+        {packages.map((packagee, index) => (
+          <Carousel.Item key={index}>
+            <div className="d-flex align-items-center justify-content-center">
+              <AdminPackageCard
+                id={packagee._id}
+                packageName={packagee.type}
+                fee={packagee.price}
+                docDiscount={packagee.sessionDiscount}
+                pharmacyDiscount={packagee.medicineDiscount}
+                famDiscount={packagee.packageDiscountFM}
+                fetchData={fetchData}
+              />
+            </div>
+          </Carousel.Item>
+        ))}
+      </Carousel>
     </div>
   );
 }

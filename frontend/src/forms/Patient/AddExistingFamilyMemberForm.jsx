@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useState } from "react";
-import { Form, Button, Col } from "react-bootstrap";
+import { Form, Button, Col, Dropdown } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { addFamilyMemberState } from "../../state/loginPatientReducer";
 
@@ -12,15 +12,24 @@ function AddExistingFamilyMemberForm({ onRefresh, toggleForm }) {
   const [formData, setFormData] = useState({
     email: "",
     number: "",
-    relation: "",
+    relation: "Husband",
   });
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
+    // Check if e.target is available (for regular form elements)
+    if (e.target) {
+      const { name, value } = e.target;
+      setFormData({
+        ...formData,
+        [name]: value,
+      });
+    } else {
+      // For the Dropdown, manually set the name
+      setFormData({
+        ...formData,
+        relation: e, // Assuming 'e' is the selected value from the Dropdown
+      });
+    }
   };
   const dispatch = useDispatch();
   const handleClick = async (e) => {
@@ -35,62 +44,56 @@ function AddExistingFamilyMemberForm({ onRefresh, toggleForm }) {
       isLoading(false);
       return;
     }
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const englishOnlyRegex = /^[\x00-\x7F]*$/;
-    if (!emailRegex.test(formData.email)) {
-      setError("Invalid email format.");
-      isLoading(false);
-      return;
-    }
-    if (!englishOnlyRegex.test(formData.email)) {
-      setError("Email must be in English only.");
-      isLoading(false);
-      return;
-    }
-    if (formData.email.length > 320) {
-      setError("Email exceeds maximum character limit (320).");
-      isLoading(false);
-      return;
-    }
-    if (/[^\x00-\x7F]/.test(formData.email)) {
-      setError("Email cannot contain emojis or special characters.");
-      isLoading(false);
-      return;
-    }
-    if (/\s/.test(formData.email)) {
-      setError("Email cannot contain spaces.");
-      isLoading(false);
-      return;
-    } else {
-      try {
-        const response = await axios.post("/addFamilyMemberExisting", {
-          email: formData.email,
-          phoneNumber: formData.number,
-          relationToPatient: formData.relation,
-        });
-        if (response.status === 200) {
-          isLoading(false);
-          onRefresh();
-          dispatch(
-            addFamilyMemberState({
-              family: [response.data._id, response.data.name],
-            })
-          );
-        } else {
-          setError("Server Error");
-          isLoading(false);
-        }
-      } catch (error) {
-        if (error.response && error.response.status === 404) {
-          console.log(error.response);
-          setError(error.response.data.error);
-        } else {
-          setError(
-            "An error occurred while adding the family member. Please try again later."
-          );
-        }
+    // const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    // const englishOnlyRegex = /^[\x00-\x7F]*$/;
+    // if (!emailRegex.test(formData.email)) {
+    //   setError("Invalid email format.");
+    //   isLoading(false);
+    //   return;
+    // }
+    // if (!englishOnlyRegex.test(formData.email)) {
+    //   setError("Email must be in English only.");
+    //   isLoading(false);
+    //   return;
+    // }
+    // if (formData.email.length > 320) {
+    //   setError("Email exceeds maximum character limit (320).");
+    //   isLoading(false);
+    //   return;
+    // }
+    // if (/[^\x00-\x7F]/.test(formData.email)) {
+    //   setError("Email cannot contain emojis or special characters.");
+    //   isLoading(false);
+    //   return;
+    // }
+    // if (/\s/.test(formData.email)) {
+    //   setError("Email cannot contain spaces.");
+    //   isLoading(false);
+    //   return;
+    // } else {
+    try {
+      const response = await axios.post("/addFamilyMemberExisting", {
+        email: formData.email,
+        phoneNumber: formData.number,
+        relationToPatient: formData.relation,
+      });
+      if (response.status === 200) {
         isLoading(false);
+        onRefresh();
+        setFormData({
+          email: "",
+          number: "",
+          relation: "Husband",
+        });
+        dispatch(
+          addFamilyMemberState({
+            family: [response.data._id, response.data.name],
+          })
+        );
       }
+    } catch (error) {
+      setError(error.response.data.error);
+      isLoading(false);
     }
   };
 
@@ -117,6 +120,7 @@ function AddExistingFamilyMemberForm({ onRefresh, toggleForm }) {
             value={formData.email}
             placeholder="JohnDoe@gmail.com"
             onChange={handleChange}
+            style={{ marginBottom: "0.5rem" }}
           />
         </Form.Group>
 
@@ -128,22 +132,27 @@ function AddExistingFamilyMemberForm({ onRefresh, toggleForm }) {
             placeholder="0506404491"
             value={formData.number}
             onChange={handleChange}
+            style={{ marginBottom: "0.5rem" }}
           />
         </Form.Group>
         <Form.Group controlId="relation">
           <Form.Label>Relation</Form.Label>
-          <Form.Control
-            as="select"
-            name="relation"
-            value={formData.relation}
-            onChange={handleChange}
-            required
-          >
-            <option>Husband</option>
-            <option>Wife</option>
-            <option>Child</option>
-          </Form.Control>
+          <Dropdown onSelect={handleChange} style={{ marginBottom: "0.5rem" }}>
+            <Dropdown.Toggle
+              className="custom-dropdown-toggle"
+              id="dropdown-relation"
+            >
+              {formData.relation || "Select Relation"}
+            </Dropdown.Toggle>
+
+            <Dropdown.Menu className="w-100">
+              <Dropdown.Item eventKey="Husband">Husband</Dropdown.Item>
+              <Dropdown.Item eventKey="Wife">Wife</Dropdown.Item>
+              <Dropdown.Item eventKey="Child">Child</Dropdown.Item>
+            </Dropdown.Menu>
+          </Dropdown>
         </Form.Group>
+
         <Button
           variant="primary"
           type="submit"
@@ -154,15 +163,15 @@ function AddExistingFamilyMemberForm({ onRefresh, toggleForm }) {
         </Button>
         <div
           className="form-comment align-items-center justify-content-center d-flex"
-          style={{ cursor: "default" }}
+          style={{ cursor: "default", marginLeft: "14.5rem" }}
         >
-          Family Member is a{" "}
+          Family member is a{" "}
           <div
             className="text-decoration-none  link-decoration "
             style={{ cursor: "pointer", fontWeight: "600" }}
             onClick={toggleForm}
           >
-            New User?
+            new user?
           </div>
         </div>
       </Form>

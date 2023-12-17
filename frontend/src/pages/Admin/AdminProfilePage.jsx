@@ -7,21 +7,24 @@ import ChangePass from "../../forms/ChangePass";
 
 function AdminProfilePage() {
   const [activeKey, setActiveKey] = useState("first");
-  const [refreshFlag, setRefreshFlag] = useState(false);
   const [showChangePass, setShowChangePass] = useState(false);
   const user = useSelector((state) => state.adminLogin);
 
   const listItemStyle = {
-    fontSize: "1rem", // Font size for all information
+    fontSize: "1.05rem", // Font size for all information
     marginBottom: "0.7rem", // Margin bottom for all information
     verticalAlign: "top", // Align items at the top of each column
-    fontWeight: "600", // Bold font weight for information title
   };
 
   const labelStyle = {
     cursor: "pointer",
     fontWeight: "lighter",
-    textDecoration: showChangePass ? "underline" : "none",
+    color: "inherit",
+  };
+  const passStyle = {
+    cursor: "pointer",
+    fontWeight: "lighter",
+    textDecoration: "underline",
     color: "inherit",
   };
 
@@ -81,6 +84,7 @@ function AdminProfilePage() {
                               fontWeight: "600",
                               color: "#212529",
                               lineHeight: "1.5",
+                              marginBottom: "1rem",
                             }}
                           >
                             Personal Information
@@ -88,21 +92,55 @@ function AdminProfilePage() {
                           <ListGroup>
                             <ListGroup.Item>
                               <div style={listItemStyle}>
-                                <span style={{ color: "#099BA0" }}>
+                                <span
+                                  style={{
+                                    color: "#099BA0",
+                                    fontWeight: "bold",
+                                  }}
+                                >
                                   Username:
                                 </span>{" "}
                                 {user.userName}
                               </div>
                               <div style={listItemStyle}>
-                                <span style={{ color: "#099BA0" }}>
+                                <span
+                                  style={{
+                                    color: "#099BA0",
+                                    fontWeight: "bold",
+                                  }}
+                                >
+                                  Full name:
+                                </span>{" "}
+                                {user.name}
+                              </div>
+                              <div style={listItemStyle}>
+                                <span
+                                  style={{
+                                    color: "#099BA0",
+                                    fontWeight: "bold",
+                                  }}
+                                >
+                                  Email:
+                                </span>{" "}
+                                {user.email}
+                              </div>
+                              <div style={listItemStyle}>
+                                <span
+                                  style={{
+                                    color: "#099BA0",
+                                    fontWeight: "bold",
+                                  }}
+                                >
                                   Password:
                                 </span>{" "}
                                 <span>
                                   <label
-                                    style={labelStyle}
+                                    style={passStyle}
                                     onClick={toggleChangePass} // Add your click handler here
                                   >
-                                    {showChangePass ? "close" : "********"}
+                                    {showChangePass
+                                      ? "close"
+                                      : "change password"}
                                   </label>
                                 </span>
                                 {showChangePass && (

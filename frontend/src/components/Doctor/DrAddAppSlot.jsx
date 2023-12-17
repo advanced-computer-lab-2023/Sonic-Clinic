@@ -12,6 +12,7 @@ function DrAddAppSlot() {
   const [loading, setLoading] = useState(true);
   const [responseData, setResponseData] = useState([]);
   const [error1, setError] = useState(null);
+  const [msg, setMsg] = useState(null);
 
   useEffect(() => {
     fetchData();
@@ -23,13 +24,15 @@ function DrAddAppSlot() {
 
       if (response.status === 200) {
         setResponseData(response.data.availableSlots);
+        setMsg(null);
       } else {
         console.log("Server error");
       }
       setLoading(false);
     } catch (error) {
       if (error.response && error.response.status === 404) {
-        setError("No Appointments found.");
+        setMsg("No available appointment slots found.");
+        setError(null);
       } else {
         setError("Server Error");
       }
@@ -74,6 +77,19 @@ function DrAddAppSlot() {
     }
   };
 
+  const getCurrentDate = () => {
+    const currentDate = new Date();
+    const year = currentDate.getFullYear();
+    let month = (currentDate.getMonth() + 1).toString();
+    let day = currentDate.getDate().toString();
+
+    // Ensure the month and day have two digits
+    month = month.length === 1 ? "0" + month : month;
+    day = day.length === 1 ? "0" + day : day;
+
+    return `${year}-${month}-${day}`;
+  };
+
   const eventStyleGetter = (event, start, end, isSelected) => {
     const eventStyle = {
       backgroundColor: "#05afb9  ", // Background color
@@ -106,7 +122,7 @@ function DrAddAppSlot() {
   return (
     <div className="d-flex, column-flex">
       <div
-        className="d-flex flex-row"
+        className="d-flex flex-row justify-content-between"
         style={{ marginBottom: "2rem", marginLeft: "5rem" }}
       >
         <div
@@ -126,6 +142,7 @@ function DrAddAppSlot() {
           value={selectedDate}
           onChange={(e) => setSelectedDate(e.target.value)}
           style={{ marginRight: "2rem" }}
+          min={getCurrentDate()}
         />
         <div
           style={{
@@ -153,36 +170,41 @@ function DrAddAppSlot() {
           </Button>
         </Container>
       </div>
-      {error1 && <div className="error">{error1}</div>}
-
-      <div>
-        <style>{`
+      <div className="d-flex flex-column align-items-center justify-content-center">
+        <div style={{ width: "20rem" }}>
+          {error1 && <div className="error">{error1}</div>}
+          {msg && <div className="msg">{msg}</div>}
+        </div>
+        <div>
+          <style>{`
           .rbc-toolbar-label {
             color: #ff6b35  ;
             font-weight: bold;
             font-size: 2rem;
+            margin-left: 30rem;
           }
           .events-container {
             overflow-y: auto; /* Enable vertical scrolling */
           }
         `}</style>
 
-        <Calendar
-          localizer={localizer}
-          events={availableSlots}
-          startAccessor="start"
-          endAccessor="end"
-          views={["month"]}
-          defaultDate={new Date()}
-          style={{ height: 1000, width: 1000, marginLeft: "1.5rem" }}
-          eventPropGetter={eventStyleGetter} // Apply event styling
-          // titleAccessor="time"
-          components={{
-            eventWrapper: ({ children }) => (
-              <div className="events-container">{children}</div>
-            ),
-          }}
-        />
+          <Calendar
+            localizer={localizer}
+            events={availableSlots}
+            startAccessor="start"
+            endAccessor="end"
+            views={["month"]}
+            defaultDate={new Date()}
+            style={{ height: 1000, width: 1000, marginLeft: "1.5rem" }}
+            eventPropGetter={eventStyleGetter} // Apply event styling
+            // titleAccessor="time"
+            components={{
+              eventWrapper: ({ children }) => (
+                <div className="events-container">{children}</div>
+              ),
+            }}
+          />
+        </div>
       </div>
     </div>
   );

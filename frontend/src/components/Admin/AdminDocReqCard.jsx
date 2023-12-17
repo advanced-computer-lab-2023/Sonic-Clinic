@@ -7,6 +7,7 @@ import AdminDocReqDetails from "./AdminDocReqDetails";
 
 export default function AdminDocReqCard({
   docName,
+  docId,
   docSpecialty,
   docEmail,
   docRate,
@@ -16,7 +17,12 @@ export default function AdminDocReqCard({
   fetchData,
   docUsername,
   docDocuments,
+  loading,
+  clearExpanded,
 }) {
+  const formattedDateOfBirth = new Date(docBirthDate).toLocaleDateString(
+    "en-GB"
+  );
   return (
     <Container style={{ width: "1000px", padding: "0px" }}>
       <Accordion defaultactiveKey={1} className="acc mt-4">
@@ -41,13 +47,16 @@ export default function AdminDocReqCard({
           <AccordionBody>
             <AdminDocReqDetails
               docEmail={docEmail}
-              docBirthDate={docBirthDate}
+              docId={docId}
+              docBirthDate={formattedDateOfBirth}
               docRate={docRate}
               docAffiliation={docAffiliation}
               docEducation={docEducation}
               fetchData={fetchData}
               docUsername={docUsername}
               docDocuments={docDocuments}
+              loading={loading}
+              clearExpanded={clearExpanded}
             />
           </AccordionBody>
         </Accordion.Item>

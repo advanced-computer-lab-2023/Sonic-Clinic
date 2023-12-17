@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useState } from "react";
-import { Form, Button, Col } from "react-bootstrap";
+import { Form, Button, Col, Dropdown } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { addFamilyMemberState } from "../state/loginPatientReducer";
 
@@ -14,18 +14,56 @@ function AddFamilyMemberForm({ onRefresh, toggleForm }) {
     name: "",
     nationalId: "",
     age: "",
-    gender: "Male",
+    gender: "",
     relation: "",
   });
   const dispatch = useDispatch();
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
+    // Check if e.target is available (for regular form elements)
+    if (e.target) {
+      const { name, value } = e.target;
+      setFormData({
+        ...formData,
+        [name]: value,
+      });
+    } else if (e === "Male" || e === "Female") {
+      // Assuming 'e' represents the selected value from the Gender Dropdown
+      setFormData({
+        ...formData,
+        gender: e,
+      });
+    } else if (e === "Husband" || e === "Wife" || e === "Child") {
+      // Assuming 'e' represents the selected value from the Relation Dropdown
+      setFormData({
+        ...formData,
+        relation: e,
+      });
+    }
+  };
+
+  const genderRelationOptions = {
+    Male: ["Husband", "Child"],
+    Female: ["Wife", "Child"],
+  };
+  const handleGenderChange = (selectedGender) => {
+    // Update the gender in the form data
     setFormData({
       ...formData,
-      [name]: value,
+      gender: selectedGender,
+      // Set the relation to the first option of the selected gender
+      relation: genderRelationOptions[selectedGender][0] || "",
     });
   };
+
+  const handleRelationChange = (selectedRelation) => {
+    // Update the relation in the form data
+    setFormData({
+      ...formData,
+      relation: selectedRelation,
+    });
+  };
+
   const handleClick = async (e) => {
     e.preventDefault();
     setError(null);
@@ -94,28 +132,21 @@ function AddFamilyMemberForm({ onRefresh, toggleForm }) {
         if (response.status === 200) {
           isLoading(false);
           onRefresh();
+          setFormData({
+            name: "",
+            nationalId: "",
+            age: "",
+            gender: "Male",
+            relation: "Husband",
+          });
           dispatch(
             addFamilyMemberState({
               family: [response.data._id, response.data.name],
             })
           );
-        } else {
-          setError("Signup failed");
-          isLoading(false);
         }
       } catch (error) {
-        console.error("Error:", error);
-
-        if (error.response && error.response.status === 409) {
-          setError("Username taken!");
-        } else if (error.response && error.response.status !== 200) {
-          setError("Signup failed");
-        } else {
-          setError(
-            "An error occurred while signing up. Please try again later."
-          );
-        }
-
+        setError(error.response.data.error);
         isLoading(false);
       }
     }
@@ -147,6 +178,7 @@ function AddFamilyMemberForm({ onRefresh, toggleForm }) {
             placeholder="John Doe"
             onChange={handleChange}
             required
+            style={{ marginBottom: "0.5rem" }}
           />
         </Form.Group>
 
@@ -161,6 +193,7 @@ function AddFamilyMemberForm({ onRefresh, toggleForm }) {
             maxLength="16"
             minLength="16"
             required
+            style={{ marginBottom: "0.5rem" }}
           />
         </Form.Group>
 
@@ -173,36 +206,52 @@ function AddFamilyMemberForm({ onRefresh, toggleForm }) {
             value={formData.age}
             onChange={handleChange}
             required
+            style={{ marginBottom: "0.5rem" }}
           />
         </Form.Group>
 
         <Form.Group controlId="gender">
           <Form.Label>Gender</Form.Label>
-          <Form.Control
-            as="select"
-            name="gender"
-            value={formData.gender}
-            onChange={handleChange}
-            required
+          <Dropdown
+            onSelect={handleGenderChange}
+            style={{ marginBottom: "0.5rem" }}
           >
-            <option>Male</option>
-            <option>Female</option>
-          </Form.Control>
+            <Dropdown.Toggle
+              className="custom-dropdown-toggle"
+              id="dropdown-relation"
+            >
+              {formData.gender || "Select Gender"}
+            </Dropdown.Toggle>
+
+            <Dropdown.Menu className="w-100">
+              <Dropdown.Item eventKey="Male">Male</Dropdown.Item>
+              <Dropdown.Item eventKey="Female">Female</Dropdown.Item>
+            </Dropdown.Menu>
+          </Dropdown>
         </Form.Group>
 
         <Form.Group controlId="relation">
           <Form.Label>Relation</Form.Label>
-          <Form.Control
-            as="select"
-            name="relation"
-            value={formData.relation}
-            onChange={handleChange}
-            required
+          <Dropdown
+            onSelect={handleRelationChange}
+            style={{ marginBottom: "0.5rem" }}
           >
-            <option>Husband</option>
-            <option>Wife</option>
-            <option>Child</option>
-          </Form.Control>
+            <Dropdown.Toggle
+              className="custom-dropdown-toggle"
+              id="dropdown-relation"
+            >
+              {formData.relation || "Select Relation"}
+            </Dropdown.Toggle>
+
+            <Dropdown.Menu className="w-100">
+              {genderRelationOptions[formData.gender] &&
+                genderRelationOptions[formData.gender].map((option) => (
+                  <Dropdown.Item key={option} eventKey={option}>
+                    {option}
+                  </Dropdown.Item>
+                ))}
+            </Dropdown.Menu>
+          </Dropdown>
         </Form.Group>
 
         <Button
@@ -213,14 +262,17 @@ function AddFamilyMemberForm({ onRefresh, toggleForm }) {
         >
           Add Family Member
         </Button>
-        <div className="form-comment" style={{ cursor: "default" }}>
-          Family Member{" "}
+        <div
+          className="form-comment"
+          style={{ cursor: "default", marginLeft: "14.5rem" }}
+        >
+          Family member is{" "}
           <div
             className="text-decoration-none  link-decoration "
             style={{ cursor: "pointer", fontWeight: "600" }}
             onClick={toggleForm}
           >
-            Already a User?
+            already a user?
           </div>
         </div>
       </Form>

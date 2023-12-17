@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import DrShowAppointments from "../../components/Doctor/DrShowAppointments";
 import DrAppointmentFilter from "../../components/Doctor/DrAppointmentFilter";
-import DrAddAppSlot from "../../components/Doctor/DrAddAppSlot";
 import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
 

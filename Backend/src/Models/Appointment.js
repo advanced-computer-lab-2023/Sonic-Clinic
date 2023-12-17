@@ -28,6 +28,10 @@ const appointmentSchema = new Schema(
       type: String,
       required: true,
     },
+    parentID: {
+      type: String,
+      required: false,
+    },
   },
   { timestamps: true }
 );
@@ -45,6 +49,11 @@ appointmentSchema.set("toJSON", { virtuals: true });
 appointmentSchema.virtual("doctor", {
   ref: "Doctor",
   localField: "doctorID",
+  foreignField: "_id",
+});
+appointmentSchema.virtual("familyMember", {
+  ref: "FamilyMember",
+  localField: "patientID",
   foreignField: "_id",
 });
 

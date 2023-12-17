@@ -58,6 +58,7 @@ const patientSchema = new Schema(
     gender: {
       type: String,
       required: true,
+      enum: ["Male", "Female"],
     },
     mobileNumber: {
       type: String,
@@ -88,9 +89,38 @@ const patientSchema = new Schema(
       type: Number,
       required: true,
     },
+    canceledHealthPackage: {
+      type: [String],
+      required: false,
+    },
+    unsubscribedHealthPackage: {
+      type: [String],
+      required: false,
+    },
 
     familyMembers: [[String, String]],
     medicalHistory: [fileSchema],
+    notifications: {
+      type: [String],
+      required: false,
+    },
+    newNotifications: {
+      type: Boolean,
+      required: false,
+    },
+    prescreptions: {
+      type: [Object],
+      required: false,
+    },
+    emergencyRelation: {
+      type: String,
+      default: "parent",
+      required: false,
+    },
+    addresses: {
+      type: [String], // Assuming an array of strings for active ingredients
+      default: [],
+    },
   },
   { timestamps: true }
 );
@@ -109,11 +139,11 @@ patientSchema.virtual("packagesPatient", {
   foreignField: "_id",
 });
 
-patientSchema.pre("save", async function (next) {
-  const salt = await bcrypt.genSalt();
-  this.password = await bcrypt.hash(this.password, salt);
-  next();
-});
+// patientSchema.pre("save", async function (next) {
+//   const salt = await bcrypt.genSalt();
+//   this.password = await bcrypt.hash(this.password, salt);
+//   next();
+// });
 
 const Patient = mongoose.model("Patient", patientSchema);
 module.exports = Patient;

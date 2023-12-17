@@ -7,6 +7,7 @@ import ProfileTabs from "../../components/Patient/ProfileTabs";
 import { useDispatch } from "react-redux";
 import { useEffect } from "react";
 import { deleteSearchData } from "../../state/Patient/SearchDoctor";
+import ChatPat from "../../components/ChatPat";
 
 function PatientProfile() {
   const dispatch = useDispatch();
@@ -25,6 +26,7 @@ function PatientProfile() {
           </Row>
         </Container>
       </Container>
+      <ChatPat who="patient" />
     </div>
   );
 }

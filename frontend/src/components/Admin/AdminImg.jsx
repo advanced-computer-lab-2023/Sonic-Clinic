@@ -1,12 +1,12 @@
 import { Card, Image } from "react-bootstrap";
-import mainImg from "../../Assets/Admin/AdminHome.jpg";
+import mainImg from "../../Assets/Admin/adminHome1.png";
 import { useSelector } from "react-redux";
 import { Waypoint } from "react-waypoint";
 import { useSpring, animated } from "react-spring";
 import { useState } from "react";
 
 function AdminImg() {
-  const name = useSelector((state) => state.adminLogin.userName);
+  const name = useSelector((state) => state.adminLogin.name);
   const [ourDoctorsVisible, setOurDoctorsVisible] = useState(false);
   const ourDoctorsSpring = useSpring({
     opacity: ourDoctorsVisible ? 1 : 0,
@@ -42,17 +42,20 @@ function AdminImg() {
           <animated.div style={ourDoctorsSpring} className="d-flex flex-row">
             <Card.Text
               style={{
-                color: "#05AFB9",
+                color: "#099BA0 ",
                 textAlign: "center",
-                fontFamily: "fantasy",
-                fontSize: "7rem",
+                fontFamily: "'Bebas Neue', sans-serif",
+                fontSize: "6rem",
                 fontStyle: "normal",
-                fontWeight: 400,
+                fontWeight: 700,
                 lineHeight: "120%",
                 transform: "translateY(200px)",
+                background:
+                  "radial-gradient(circle, rgba(128, 128, 128, 0.5), rgba(128, 128, 128, 0.1))",
+                borderRadius: "1rem",
               }}
             >
-              Hello {name}
+              Hello {name.split(" ").length > 1 ? name.split(" ")[0] : name}
             </Card.Text>
           </animated.div>
         </Card>

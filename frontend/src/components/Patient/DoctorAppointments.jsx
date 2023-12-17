@@ -1,5 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { Card, Button, Container, Modal, Form, Spinner } from "react-bootstrap";
+import {
+  Card,
+  Button,
+  Container,
+  Modal,
+  Form,
+  Spinner,
+  Dropdown,
+} from "react-bootstrap";
 import { Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
@@ -8,11 +16,18 @@ import "swiper/css/pagination";
 import "swiper/css/scrollbar";
 import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCalendar, faClock } from "@fortawesome/free-solid-svg-icons";
+import {
+  faCalendarAlt,
+  faAnglesLeft,
+  faAnglesRight,
+  faClock,
+  faLocationDot,
+} from "@fortawesome/free-solid-svg-icons";
 import { useSelector, useDispatch } from "react-redux";
 import { updatePatientWallet } from "../../state/loginPatientReducer";
 import { setForFam } from "../../state/loginPatientReducer";
 import { setNewApp } from "../../state/loginPatientReducer";
+import { setNewNotifications } from "../../state/notifications";
 
 const DoctorAppointments = ({ onBookAppointment }) => {
   const [loading, setLoading] = useState(true);
@@ -24,12 +39,21 @@ const DoctorAppointments = ({ onBookAppointment }) => {
   const [bookingName, setBookingName] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("wallet");
   const [selectedAppointment, setSelectedAppointment] = useState(null);
-  const [description, setDescription] = useState("");
+  const [description, setDescription] = useState("hi");
   const [selectedFamilyMember, setSelectedFamilyMember] = useState("");
   const [selectedFamilyMemberId, setSelectedFamilyMemberId] = useState("");
   const doctorRate = useSelector(
     (state) => state.selectedDoctorData.hourlyRate
   );
+  const getDisplayText = () => {
+    if (selectedFamilyMemberId === "myself") {
+      return "Myself";
+    }
+    const selectedMember = familyMembers.find(
+      (member) => member[0] === selectedFamilyMemberId
+    );
+    return selectedMember ? selectedMember[1] : "Select Member";
+  };
   const doctorID = useSelector((state) => state.selectedDoctorData.id);
   const doctorLoc = useSelector(
     (state) => state.selectedDoctorData.affiliation
@@ -44,15 +68,28 @@ const DoctorAppointments = ({ onBookAppointment }) => {
     setError(null);
     setTimeout(() => {
       setBookingStatus("booking"); // Reset the status after a short delay
-    }, 200); // Adjust the delay as needed
+    }, 200);
     setBookingName("");
     setPaymentMethod("wallet");
     setDescription("");
     setSelectedAppointment(null);
   };
-  const handleFamilyMemberChange = (e) => {
-    const selectedId = e.target.value;
+  const [selectedDisplayText, setSelectedDisplayText] =
+    useState("Select Member");
+  const handleFamilyMemberChange = (selectedId) => {
+    console.log("Selected ID: " + selectedId);
     setSelectedFamilyMemberId(selectedId === "myself" ? "" : selectedId);
+
+    if (selectedId === "myself") {
+      setSelectedDisplayText("Myself");
+    } else {
+      const selectedMember = familyMembers.find(
+        (member) => member[0] === selectedId
+      );
+      setSelectedDisplayText(
+        selectedMember ? selectedMember[1] : "Select Member"
+      );
+    }
   };
 
   const handleBookClick = (appointment) => {
@@ -90,7 +127,7 @@ const DoctorAppointments = ({ onBookAppointment }) => {
           famID: selectedFamilyMemberId,
           doctorID: doctorID,
           date: selectedAppointment.split(" ")[0],
-          description: description,
+          description: "description",
           time: selectedAppointment.split(" ")[1],
         });
       }
@@ -99,7 +136,7 @@ const DoctorAppointments = ({ onBookAppointment }) => {
         famID: selectedFamilyMemberId,
         doctorID: doctorID,
         date: selectedAppointment.split(" ")[0],
-        description: description,
+        description: "description",
         time: selectedAppointment.split(" ")[1],
       };
 
@@ -107,16 +144,18 @@ const DoctorAppointments = ({ onBookAppointment }) => {
         if (paymentMethod === "creditCard") {
           setResponseUrl(response.data.url);
           if (response.data.url) {
+            window.location.href = response.data.url;
             dispatch(
               setNewApp({
                 newApp: newAppointment,
               })
             );
-            window.location.href = response.data.url;
           }
         } else {
+          fetchData();
           setBookingStatus("success");
           setError(null);
+          dispatch(setNewNotifications(true));
           dispatch(
             updatePatientWallet({
               wallet: wallet - doctorRate,
@@ -178,13 +217,21 @@ const DoctorAppointments = ({ onBookAppointment }) => {
       )}
 
       {!loading && (
-        <Container style={{ marginTop: "2rem" }}>
-          <div className="justify-content-between d-flex">
-            <h3 className="carousel-title" style={{ fontSize: "1.75rem" }}>
+        <Container
+          style={{
+            marginTop: "2rem",
+            marginBottom: "2rem",
+          }}
+        >
+          <div className="justify-content-between d-flex px-5">
+            <h3
+              className="carousel-title"
+              style={{ fontSize: "1.75rem", fontWeight: "500" }}
+            >
               Available Appointments
             </h3>
           </div>
-          <p className="carousel-description">
+          <p className="carousel-description px-5">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="16"
@@ -208,84 +255,142 @@ const DoctorAppointments = ({ onBookAppointment }) => {
                 />
               </g>
               <defs>
-                <clipPath id="clip0_2849_11118">
+                <clipPath id="clip0_2849_11118" style={{ marginRight: "5rem" }}>
                   <rect width="16" height="16" fill="white" />
                 </clipPath>
               </defs>
             </svg>
-            Book your desired appointment
+            <span style={{ marginLeft: "0.2rem" }}>
+              {" "}
+              Book your desired appointment
+            </span>
           </p>
-          <Swiper
-            slidesPerView={2.5}
-            spaceBetween={10}
-            modules={[Pagination]}
-            className="mySwiper custom-swipper"
-          >
-            {neededData &&
-              neededData.map((appointment) => (
-                <SwiperSlide>
-                  {/* <a onClick={() => handleCard(appointment)}> */}
-                  <Card
-                    style={{
-                      borderRadius: "0.625rem",
-                      border:
-                        " 1px solid var(--components-card-border, rgba(0, 0, 0, 0.17))",
-                      background: " var(--gray-white, #FFF)",
-                      minHeight: "7rem",
-                      cursor: "pointer",
-                    }}
-                    className="d-flex align-items-start justify-content-start"
-                  >
-                    <Card.Body className="p-2 w-100">
-                      <Card.Title className="carousel-sub-card-title">
-                        {doctorLoc}
-                      </Card.Title>
-                      <Card.Text className="carousel-sub-card-description">
-                        <div
-                          style={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                            alignItems: "center",
-                          }}
-                        >
-                          <div>
+          {neededData.length === 0 && (
+            <div
+              className="msg d-flex justify-content-center align-items-center w-50 "
+              style={{ marginLeft: "20rem", marginTop: "5rem" }}
+            >
+              No Available Slots
+            </div>
+          )}
+
+          <div className="d-flex align-items-center justify-content-center">
+            {neededData && neededData.length > 0 && (
+              <FontAwesomeIcon
+                icon={faAnglesLeft}
+                style={{
+                  fontSize: "1.5rem",
+                  marginRight: "1rem",
+                  color: "#adb5bd",
+                  transition: "transform 0.3s ease-in-out",
+                  animation:
+                    "arrowAnimation2 1s infinite alternate ease-in-out",
+                }}
+              />
+            )}
+            <Swiper
+              slidesPerView={2.5}
+              spaceBetween={10}
+              modules={[Pagination]}
+              className="mySwiper custom-swipper w-100"
+            >
+              {neededData &&
+                neededData.map((appointment) => (
+                  <SwiperSlide style={{ height: "11rem" }}>
+                    <Card
+                      style={{
+                        borderRadius: "0.625rem",
+                        border:
+                          "1px solid var(--components-card-border, rgba(0, 0, 0, 0.17))",
+                        background: "var(--gray-white, #FFF)",
+                        minHeight: "100%",
+                        cursor: "pointer",
+                      }}
+                      className="d-flex align-items-start justify-content-start"
+                    >
+                      <Card.Body className="p-2 w-100">
+                        <Card.Title className="carousel-sub-card-title">
+                          <FontAwesomeIcon
+                            icon={faLocationDot}
+                            style={{
+                              marginRight: "0.5rem",
+                            }}
+                          />
+                          {doctorLoc}
+                        </Card.Title>
+                        <Card.Text className="carousel-sub-card-description">
+                          <div
+                            style={{
+                              display: "flex",
+                              justifyContent: "space-between",
+                              alignItems: "center",
+                            }}
+                          >
                             <div>
-                              <FontAwesomeIcon
-                                icon={faCalendar}
+                              <div
                                 style={{
-                                  marginRight: "0.5rem",
-                                  fontSize: "1rem",
+                                  display: "flex",
+                                  alignItems: "center",
+                                  fontSize: "1.1rem",
+                                  marginBottom: "0.3rem",
                                 }}
-                              />
-                              {appointment.split(" ")[0]}
-                            </div>
-                            <div>
-                              <FontAwesomeIcon
-                                icon={faClock}
-                                style={{
-                                  marginRight: "0.5rem",
-                                  fontSize: "1rem",
-                                }}
-                              />
-                              {appointment.split(" ")[1]}
+                              >
+                                <FontAwesomeIcon
+                                  icon={faCalendarAlt}
+                                  style={{
+                                    marginRight: "0.5rem",
+                                  }}
+                                />
+                                {appointment
+                                  .split(" ")[0]
+                                  .split("-")
+                                  .reverse()
+                                  .join("/")}
+                              </div>
+
+                              <div>
+                                <FontAwesomeIcon
+                                  icon={faClock}
+                                  style={{
+                                    marginRight: "0.5rem",
+                                    fontSize: "1.1rem",
+                                  }}
+                                />
+                                <span style={{ fontSize: "1.1rem" }}>
+                                  {appointment.split(" ")[1]}
+                                </span>
+                              </div>
                             </div>
                           </div>
-                        </div>
-                        <div className="d-flex align-items-center justify-content-center">
-                          <Button
-                            className="btn-primary mt-4 w-50"
-                            onClick={() => handleBookClick(appointment)}
-                          >
-                            Book
-                          </Button>
-                        </div>
-                      </Card.Text>
-                    </Card.Body>
-                  </Card>
-                  {/* </a> */}
-                </SwiperSlide>
-              ))}
-          </Swiper>
+                          <div className="d-flex align-items-center justify-content-center">
+                            <Button
+                              className="btn-secondary mt-4 w-50"
+                              onClick={() => handleBookClick(appointment)}
+                            >
+                              Book
+                            </Button>
+                          </div>
+                        </Card.Text>
+                      </Card.Body>
+                    </Card>
+                    {/* </a> */}
+                  </SwiperSlide>
+                ))}
+            </Swiper>
+            {neededData && neededData.length > 0 && (
+              <FontAwesomeIcon
+                icon={faAnglesRight}
+                style={{
+                  fontSize: "1.5rem",
+                  marginLeft: "1rem",
+                  color: "#adb5bd",
+                  transition: "transform 0.3s ease-in-out",
+                  animation:
+                    "arrowAnimation2 1s infinite alternate ease-in-out",
+                }}
+              />
+            )}
+          </div>
         </Container>
       )}
       <Modal show={showModal} onHide={handleClose}>
@@ -307,30 +412,24 @@ const DoctorAppointments = ({ onBookAppointment }) => {
               <Form>
                 <Form.Group controlId="bookingName">
                   <Form.Label>Booking Name</Form.Label>
-                  <Form.Control
-                    as="select"
-                    value={selectedFamilyMemberId}
-                    onChange={handleFamilyMemberChange}
-                    defaultValue="myself" // Set "Myself" as the default value
-                  >
-                    <option value="myself" key="myself">
-                      Myself
-                    </option>{" "}
-                    {familyMembers.map((member) => (
-                      <option key={member[0]} value={member[0]}>
-                        {member[1]}
-                      </option>
-                    ))}
-                  </Form.Control>
+                  <Dropdown onSelect={handleFamilyMemberChange}>
+                    <Dropdown.Toggle
+                      className="custom-dropdown-toggle"
+                      id="dropdown-booking-name"
+                    >
+                      {selectedDisplayText}
+                    </Dropdown.Toggle>
+                    <Dropdown.Menu className="w-100">
+                      <Dropdown.Item eventKey="myself">Myself</Dropdown.Item>
+                      {familyMembers.map((member) => (
+                        <Dropdown.Item key={member[0]} eventKey={member[0]}>
+                          {member[1]}
+                        </Dropdown.Item>
+                      ))}
+                    </Dropdown.Menu>
+                  </Dropdown>
                 </Form.Group>
-                <Form.Group controlId="bookingDes">
-                  <Form.Label>Description</Form.Label>
-                  <Form.Control
-                    as="input"
-                    onChange={(e) => setDescription(e.target.value)}
-                    placeholder="Brief appointment description"
-                  ></Form.Control>
-                </Form.Group>
+
                 <Form.Group>
                   <Form.Label>Payment Method</Form.Label>
                   <Form.Check
@@ -356,7 +455,7 @@ const DoctorAppointments = ({ onBookAppointment }) => {
         </Modal.Body>
         <Modal.Footer>
           {bookingStatus === "success" ? (
-            <Button variant="success" onClick={handleClose}>
+            <Button variant="primary" onClick={handleClose}>
               Close
             </Button>
           ) : (
@@ -371,13 +470,13 @@ const DoctorAppointments = ({ onBookAppointment }) => {
               </div>
               <div className="d-flex">
                 <Button
-                  variant="success"
+                  variant="primary"
                   style={{ marginRight: "0.5rem" }}
                   onClick={handleBookAppointment}
                 >
                   Book
                 </Button>
-                <Button variant="danger" onClick={handleClose}>
+                <Button variant="secondary" onClick={handleClose}>
                   Cancel
                 </Button>
               </div>

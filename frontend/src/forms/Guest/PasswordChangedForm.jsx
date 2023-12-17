@@ -5,12 +5,21 @@ const PasswordChangedForm = () => {
   const navigate = useNavigate();
 
   const handleClick = () => {
-    navigate("/login");
+    navigate("/");
   };
 
   return (
     <div className="col-9 form-container">
-      <h1 className="PasswordChangedtitle">Password Changed!</h1>
+      <div
+        className="form-title"
+        style={{
+          fontFamily: "'Bebas Neue', sans-serif",
+          fontWeight: 600,
+          fontSize: "2rem",
+        }}
+      >
+        Password Changed!
+      </div>
       <div className="Description">
         <div className="changedPasswordDescription">
           <h6 style={{ fontSize: "14px", color: "gray", marginBottom: "3rem" }}>

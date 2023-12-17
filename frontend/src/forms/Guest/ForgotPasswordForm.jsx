@@ -66,7 +66,16 @@ const ForgotPasswordForm = () => {
 
   return (
     <div className="col-9 form-container">
-      <h1 className="form-title">Forgot Password!</h1>
+      <div
+        className="form-title"
+        style={{
+          fontFamily: "'Bebas Neue', sans-serif",
+          fontWeight: 600,
+          fontSize: "2rem",
+        }}
+      >
+        Forgot Password
+      </div>
       <h6 className="description" style={{ fontSize: "14px", color: "gray" }}>
         Don't worry! It occurs. Please enter the email address linked with your
         account.

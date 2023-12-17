@@ -1,12 +1,12 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const prescriptionSchema = new Schema(
   {
     medicine: {
-      type: Array,
+      type: [[String, String, String]],
       required: true,
-      unique:[true,'This medicine is already created'],
+      //  unique: [true, "This medicine is already created"],
     },
     doctorID: {
       type: String,
@@ -21,16 +21,20 @@ const prescriptionSchema = new Schema(
       required: true,
     },
     date: {
-      type: Date,
+      type: String,
       required: true,
     },
     doctorName: {
       type: String,
       required: true,
     },
+    submitted: {
+      type: Boolean,
+      required: false,
+    },
   },
   { timestamps: true }
 );
 
-const Prescription = mongoose.model('Prescription', prescriptionSchema);
+const Prescription = mongoose.model("Prescription", prescriptionSchema);
 module.exports = Prescription;

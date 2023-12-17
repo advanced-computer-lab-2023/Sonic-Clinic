@@ -10,6 +10,7 @@ import contract from "../../Assets/EmploymentContract.pdf";
 import { setCredentialsPatient } from "../../state/loginPatientReducer";
 import { setCredentialsAdmin } from "../../state/loginAdminReducer";
 import { setCredentialsDoctor } from "../../state/loginDoctorReducer";
+import { setNewNotifications } from "../../state/notifications";
 
 const LoginForm = () => {
   const navigate = useNavigate();
@@ -39,17 +40,24 @@ const LoginForm = () => {
     }
 
     try {
+      console.log("name: " + username);
+      console.log("pass: " + password);
       const response = await axios.post("/login", {
         username: username,
         password: password,
       });
-      console.log(response.status);
+      console.log("weeeee" + response.status);
 
       if (response.status === 200) {
         const user = response.data.user;
         const type = response.data.message;
-
+        console.log(type);
         if (type === "Patient") {
+          if (user.newNotifications) {
+            dispatch(
+              setNewNotifications({ newNotifications: user.newNotifications })
+            );
+          }
           if (
             user.packagesPatient &&
             user.packagesPatient.length > 0 &&
@@ -100,6 +108,11 @@ const LoginForm = () => {
           navigate("/patient");
         }
         if (type === "Doctor") {
+          if (user.newNotifications) {
+            dispatch(
+              setNewNotifications({ newNotifications: user.newNotifications })
+            );
+          }
           dispatch(
             setCredentialsDoctor({
               password: password,
@@ -129,7 +142,9 @@ const LoginForm = () => {
             setCredentialsAdmin({
               password: password,
               userName: username,
+              email: user.email,
               userId: user._id,
+              name: user.name,
             })
           );
 
@@ -142,10 +157,10 @@ const LoginForm = () => {
         isLoading(false);
       }
     } catch (error) {
-      console.error("Error:", error);
-
+      setError(error);
+      console.error("Login error:", error);
+      console.log("Full error object:", error);
       if (error.response && error.response.status === 401) {
-        console.log("Authentication error");
         setError("Invalid Credentials");
       } else if (error.response && error.response.status === 500) {
         setError("Server Error");
@@ -190,7 +205,16 @@ const LoginForm = () => {
 
   return (
     <div className="col-9 form-container">
-      <div className="form-title">Welcome Back!</div>
+      <div
+        className="form-title"
+        style={{
+          fontFamily: "'Bebas Neue', sans-serif",
+          fontWeight: 600,
+          fontSize: "2rem",
+        }}
+      >
+        Welcome Back!
+      </div>
       <Modal show={showAcceptModal} onHide={() => setShowAcceptModal(false)}>
         <Modal.Header>
           <Modal.Title>Employment Contract</Modal.Title>
@@ -206,22 +230,24 @@ const LoginForm = () => {
           </object>
         </Modal.Body>
         <Modal.Footer className="d-flex align-items-center justify-content-center">
-          <Button variant="success" onClick={loginNewDoctor}>
+          <Button variant="primary" onClick={loginNewDoctor}>
             Accept
           </Button>
-          <Button variant="danger" onClick={rejectContract}>
+          <Button variant="secondary" onClick={rejectContract}>
             Reject
           </Button>
         </Modal.Footer>
       </Modal>
       <Form className="rounded-3" onSubmit={handleSubmit}>
         <FormInput
+          style={{ fontSize: "0.9rem" }}
           name="Username"
           type="text"
           placeholder="john.doe"
           onChange={(e) => setUsername(e.target.value)}
         />
         <FormPassword
+          style={{ fontSize: "0.9rem" }}
           name="Password"
           type="password"
           placeholder="**************"
@@ -244,16 +270,16 @@ const LoginForm = () => {
         >
           Login
         </button>
-        {/* <div className="form-comment" style={{ cursor: "default" }}>
+        <div className="form-comment" style={{ cursor: "default" }}>
           Don't have an account?{" "}
           <div
             className="text-decoration-none  link-decoration "
             style={{ cursor: "pointer" }}
-            onClick={() => navigate("signup")}
+            onClick={() => navigate("patient-signup")}
           >
             Sign Up
           </div>
-        </div> */}
+        </div>
         {error1 && <div className="error">{error1}</div>}
       </Form>
     </div>

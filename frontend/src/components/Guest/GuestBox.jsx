@@ -7,7 +7,7 @@ import { useNavigate } from "react-router";
 function GuestBox() {
   const navigate = useNavigate();
   const handleLogin = () => {
-    navigate("/login");
+    navigate("/");
   };
   const handleDrSignUp = () => {
     navigate("/doctor-signup");

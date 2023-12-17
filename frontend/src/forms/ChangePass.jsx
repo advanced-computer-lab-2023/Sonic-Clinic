@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Form from "react-bootstrap/Form";
-import { Button } from "react-bootstrap";
+import { Button, Modal } from "react-bootstrap";
 import axios from "axios";
 
 export default function ChangePass({ patient, api }) {
@@ -8,6 +8,14 @@ export default function ChangePass({ patient, api }) {
   const [newPass, setNewPass] = useState("");
   const [confirmNewPass, setConfirmNewPass] = useState("");
   const [error, setError] = useState(null);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+
+  const onHide = () => {
+    setOldPass("");
+    setNewPass("");
+    setConfirmNewPass("");
+    setShowSuccessModal(false);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -45,14 +53,17 @@ export default function ChangePass({ patient, api }) {
     }
 
     try {
-      console.log("11");
       const url = api;
       const response = await axios.post(url, {
         currentPassword: oldPass,
         newPassword: newPass,
       });
       if (response.status === 200) {
-        console.log("tmam");
+        setShowSuccessModal(true);
+        setError(null);
+        setOldPass("");
+        setNewPass("");
+        setConfirmNewPass("");
       }
     } catch (error) {
       console.error("Error:", error);
@@ -78,9 +89,10 @@ export default function ChangePass({ patient, api }) {
         <Form.Control
           className="m-3"
           style={formStyle}
-          type="text"
+          type="password"
           name="currPass"
           placeholder="Current Password"
+          value={oldPass}
           onChange={(e) => setOldPass(e.target.value)}
           required
         />
@@ -90,6 +102,7 @@ export default function ChangePass({ patient, api }) {
           type="password"
           name="pass"
           placeholder="New Password"
+          value={newPass}
           onChange={(e) => setNewPass(e.target.value)}
           required
         />
@@ -99,6 +112,7 @@ export default function ChangePass({ patient, api }) {
           type="password"
           name="confirmPass"
           placeholder="Confirm Password"
+          value={confirmNewPass}
           onChange={(e) => setConfirmNewPass(e.target.value)}
           required
         />
@@ -117,6 +131,18 @@ export default function ChangePass({ patient, api }) {
         </label>
       </Form>
       {error && <div className="error">{error}</div>}
+      {showSuccessModal && (
+        <Modal show={true} centered onHide={onHide}>
+          <Modal.Body className="text-center">
+            {`You have successfully changed your password!`}
+          </Modal.Body>
+          <Modal.Footer className="d-flex align-items-center justify-content-center">
+            <Button variant="primary" onClick={onHide}>
+              Close
+            </Button>
+          </Modal.Footer>
+        </Modal>
+      )}
     </div>
   );
 }

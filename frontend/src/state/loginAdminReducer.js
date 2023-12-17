@@ -4,6 +4,8 @@ const initialState = {
   userName: "",
   password: "",
   userId: "",
+  email: "",
+  name: "",
   isLoggedIn: false,
 };
 
@@ -15,12 +17,16 @@ const loginSlice = createSlice({
       state.password = action.payload.password;
       state.userName = action.payload.userName;
       state.userId = action.payload.userId;
+      state.email = action.payload.email;
+      state.name = action.payload.name;
       state.isLoggedIn = action.payload.isLoggedIn;
     },
     logoutAdmin: (state, action) => {
       state.userName = "";
       state.password = "";
       state.userId = "";
+      state.email = "";
+      state.name = "";
       state.isLoggedIn = false;
     },
 

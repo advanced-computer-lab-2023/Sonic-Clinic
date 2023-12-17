@@ -1,6 +1,6 @@
 {
   "name": "frontend",
-  "proxy": "http://localhost:8000",
+  "proxy": "http://localhost:8001",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -22,6 +22,7 @@
     "react-big-calendar": "^1.8.5",
     "react-bootstrap": "^2.9.1",
     "react-burger-menu": "^3.0.9",
+    "react-copy-to-clipboard": "^5.1.0",
     "react-dom": "^18.2.0",
     "react-flicking": "^0.0.3",
     "react-fontawesome": "^1.7.1",
@@ -37,6 +38,9 @@
     "redux": "^4.2.1",
     "redux-devtools-extension": "^2.13.9",
     "redux-persist": "^6.0.0",
+    "simple-peer": "^9.11.1",
+    "socket.io": "^4.7.2",
+    "socket.io-client": "^4.7.2",
     "swiper": "^11.0.3",
     "web-vitals": "^2.1.4"
   },

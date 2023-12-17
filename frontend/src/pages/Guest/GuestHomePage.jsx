@@ -50,6 +50,7 @@ const GuestHomePage = () => {
     dispatch(logoutDoctor());
     dispatch(logoutAdmin());
     dispatch(logoutPatient());
+    logout();
   }, []);
 
   const logout = async () => {

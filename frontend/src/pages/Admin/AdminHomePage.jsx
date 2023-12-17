@@ -24,65 +24,55 @@ export default function AdminHomePage() {
   return (
     <>
       <AppNavbar hamburgerMenu={<AdminBurgerMenu />} />
-      <Container
-        className="bg-white px-5 py-4 d-flex align-items-center justify-content-center"
-        style={{
-          margin: "20px",
-          display: "flex",
-          flexDirection: "column",
-          marginLeft: "100px",
-        }}
-      >
-        <Row className="row-sub-container">
-          <AdminImg />
-        </Row>
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            alignItems: "center",
-            margin: "20px",
-          }}
-        >
-          <Waypoint
-            onEnter={() => setOurDoctorsVisible(true)}
-            onLeave={() => setOurDoctorsVisible(false)}
-          />
-          <animated.div style={ourDoctorsSpring} className="d-flex flex-row">
-            <div className="mr-2">
-              <AdminHomeCard
-                location="/admin/patients-list"
-                cardText="Patients"
-                cardDetails="View/Edit Patients"
-                icon={faHospitalUser}
-              />
-            </div>
+      <Container fluid className="bg-light pt-3 mt-2">
+        <Container className="bg-white px-5 py-4 d-flex align-items-center justify-content-center">
+          <Row className="row-sub-container">
+            <AdminImg />
             <div>
-              <AdminHomeCard
-                location="/admin/doctors-list"
-                cardText="Doctors"
-                cardDetails="View/Edit Doctors"
-                icon={faUserDoctor}
+              <Waypoint
+                onEnter={() => setOurDoctorsVisible(true)}
+                onLeave={() => setOurDoctorsVisible(false)}
               />
+              <animated.div
+                style={ourDoctorsSpring}
+                className="d-flex flex-row align-items-center justify-content-center"
+              >
+                <div className="mr-2">
+                  <AdminHomeCard
+                    location="/admin/patients-list"
+                    cardText="Patients"
+                    cardDetails="View/Edit Patients"
+                    icon={faHospitalUser}
+                  />
+                </div>
+                <div>
+                  <AdminHomeCard
+                    location="/admin/doctors-list"
+                    cardText="Doctors"
+                    cardDetails="View/Edit Doctors"
+                    icon={faUserDoctor}
+                  />
+                </div>
+                <div>
+                  <AdminHomeCard
+                    location="/admin/admins-list"
+                    cardText="Admins"
+                    cardDetails="View/Edit Admins"
+                    icon={faUsers}
+                  />
+                </div>
+                <div>
+                  <AdminHomeCard
+                    location="/admin/packages"
+                    cardText="Health Packages"
+                    cardDetails="View/Edit Health Packages"
+                    icon={faBriefcaseMedical}
+                  />
+                </div>
+              </animated.div>
             </div>
-            <div>
-              <AdminHomeCard
-                location="/admin/admins-list"
-                cardText="Admins"
-                cardDetails="View/Edit Admins"
-                icon={faUsers}
-              />
-            </div>
-            <div>
-              <AdminHomeCard
-                location="/admin/packages"
-                cardText="Health Packages"
-                cardDetails="View/Edit Health Packages"
-                icon={faBriefcaseMedical}
-              />
-            </div>
-          </animated.div>
-        </div>
+          </Row>
+        </Container>
       </Container>
     </>
   );

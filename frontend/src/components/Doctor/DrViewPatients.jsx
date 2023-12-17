@@ -24,6 +24,7 @@ export default function DrViewPatients() {
         setPatients(response.data.patients);
         setResponseData(response.data.patients);
         setLoading(false);
+        console.log("fetched");
       } else {
         console.log("Server error");
         setLoading(false);
@@ -41,7 +42,10 @@ export default function DrViewPatients() {
   return (
     <Container fluid className="bg-light pt-3 mt-2">
       <Container className="bg-white px-5 py-4 d-flex flex-row align-items-center justify-content-center">
-        <div className="col-5">
+        <div
+          className="col-5"
+          style={{ position: "sticky", top: "0", height: "100vh" }}
+        >
           <DrPatientFilter
             patients={patients}
             responseData={responseData}
@@ -49,7 +53,10 @@ export default function DrViewPatients() {
             setUpcomingApp={setUpcomingApp}
           />
         </div>
-        <div className="col-7">
+        <div
+          className="col-7"
+          style={{ position: "sticky", top: "0", height: "100vh" }}
+        >
           <DrShowPatients
             patients={patients}
             responseData={responseData}

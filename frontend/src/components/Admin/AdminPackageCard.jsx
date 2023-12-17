@@ -130,17 +130,18 @@ export default function AdminPackageCard({
           Are you sure you want to delete this health package?
         </Modal.Body>
         <Modal.Footer className="d-flex align-items-center justify-content-center">
-          <Button variant="danger" onClick={actuallyDelete}>
+          <Button variant="secondary" onClick={actuallyDelete}>
             Yes
           </Button>
-          <Button variant="success" onClick={handleClose}>
+          <Button variant="primary" onClick={handleClose}>
             No
           </Button>
         </Modal.Footer>
       </Modal>
       <Card
         style={{
-          width: "300px",
+          height: "33rem",
+          width: "40rem",
           boxShadow: "0px 4px 4px 0px #adb5bd",
           borderRadius: "3px",
           marginBottom: "60px",
@@ -154,7 +155,7 @@ export default function AdminPackageCard({
                 style={{
                   opacity: 1,
                   color: "#099BA0 ",
-                  fontSize: "20px",
+                  fontSize: "1.3rem",
                   cursor: "pointer",
                   marginBottom: "5px",
                 }}
@@ -177,10 +178,9 @@ export default function AdminPackageCard({
                 style={{
                   color: "#ff6b35",
                   fontWeight: "bold",
-                  fontSize: "25px",
-                  marginLeft: "30px",
-                  border: "none",
-                  width: "200px",
+                  fontSize: "1.5rem",
+                  textAlign: "center",
+                  marginTop: "20px",
                 }}
                 value={type}
                 onChange={(e) => setType(e.target.value)}
@@ -192,19 +192,26 @@ export default function AdminPackageCard({
               style={{
                 color: "#ff6b35",
                 fontWeight: "bold",
-                fontSize: "25px",
+                fontSize: "1.5rem",
                 textAlign: "center",
                 marginTop: "20px",
               }}
             >
-              {type}
+              {type} Package
             </Card.Title>
           )}
         </Card.Header>
+
         <ListGroup variant="flush">
           <div id="AnnualFee">
             <ListGroup.Item className="d-flex justify-content-between">
-              <span style={{ fontWeight: "bold", color: "#ADB5BD " }}>
+              <span
+                style={{
+                  fontWeight: "bold",
+                  color: "#ADB5BD ",
+                  fontSize: "1.1rem",
+                }}
+              >
                 Annual Fee
               </span>
               <span
@@ -212,22 +219,24 @@ export default function AdminPackageCard({
                   borderLeft: "1px solid #ccc",
                   paddingLeft: "10px",
                   width: "100px",
+                  fontSize: "1.1rem",
                 }}
               >
                 {isEditing ? (
                   <Form.Control
                     type="text"
                     value={price || ""}
+                    style={{ fontSize: "1.1rem" }}
                     onChange={(e) => setPrice(e.target.value)}
                   />
                 ) : (
-                  <>{price} LE</>
+                  <>$ {price}</>
                 )}
               </span>
             </ListGroup.Item>
             <div
               style={{
-                fontSize: "13px",
+                fontSize: "0.9rem",
                 margin: "5px",
                 marginLeft: "15px",
                 color: "#212529  ",
@@ -238,7 +247,13 @@ export default function AdminPackageCard({
           </div>
           <div id="SessionDiscount">
             <ListGroup.Item className="d-flex justify-content-between">
-              <span style={{ fontWeight: "bold", color: "#ADB5BD " }}>
+              <span
+                style={{
+                  fontWeight: "bold",
+                  color: "#ADB5BD ",
+                  fontSize: "1.1rem",
+                }}
+              >
                 Session Discount
               </span>
               <span
@@ -246,12 +261,14 @@ export default function AdminPackageCard({
                   borderLeft: "1px solid #ccc",
                   paddingLeft: "10px",
                   width: "100px",
+                  fontSize: "1.1rem",
                 }}
               >
                 {isEditing ? (
                   <Form.Control
                     type="text"
                     value={sessionDiscount || ""}
+                    style={{ fontSize: "1rem" }}
                     onChange={(e) => setSessionDiscount(e.target.value)}
                   />
                 ) : (
@@ -261,7 +278,7 @@ export default function AdminPackageCard({
             </ListGroup.Item>
             <div
               style={{
-                fontSize: "13px",
+                fontSize: "0.9rem",
                 margin: "5px",
                 marginLeft: "15px",
                 color: "#212529  ",
@@ -272,7 +289,13 @@ export default function AdminPackageCard({
           </div>
           <div id="MedicineDiscount">
             <ListGroup.Item className="d-flex justify-content-between">
-              <span style={{ fontWeight: "bold", color: "#ADB5BD " }}>
+              <span
+                style={{
+                  fontWeight: "bold",
+                  color: "#ADB5BD ",
+                  fontSize: "1.1rem",
+                }}
+              >
                 Medicine Discount
               </span>
               <span
@@ -280,12 +303,14 @@ export default function AdminPackageCard({
                   borderLeft: "1px solid #ccc",
                   paddingLeft: "10px",
                   width: "100px",
+                  fontSize: "1.1rem",
                 }}
               >
                 {isEditing ? (
                   <Form.Control
                     type="text"
                     value={medicineDiscount || ""}
+                    style={{ fontSize: "1rem" }}
                     onChange={(e) => setMedicineDiscount(e.target.value)}
                   />
                 ) : (
@@ -295,7 +320,7 @@ export default function AdminPackageCard({
             </ListGroup.Item>
             <div
               style={{
-                fontSize: "13px",
+                fontSize: "0.9rem",
                 margin: "5px",
                 marginLeft: "15px",
                 color: "#212529  ",
@@ -306,7 +331,13 @@ export default function AdminPackageCard({
           </div>
           <div id="PackageDiscountFM">
             <ListGroup.Item className="d-flex justify-content-between">
-              <span style={{ fontWeight: "bold", color: "#ADB5BD " }}>
+              <span
+                style={{
+                  fontWeight: "bold",
+                  color: "#ADB5BD ",
+                  fontSize: "1.1rem",
+                }}
+              >
                 Family Discount
               </span>
               <span
@@ -314,12 +345,14 @@ export default function AdminPackageCard({
                   borderLeft: "1px solid #ccc",
                   paddingLeft: "10px",
                   width: "100px",
+                  fontSize: "1.1rem",
                 }}
               >
                 {isEditing ? (
                   <Form.Control
                     type="text"
                     value={packageDiscountFM || ""}
+                    style={{ fontSize: "1rem" }}
                     onChange={(e) => setPackageDiscountFM(e.target.value)}
                   />
                 ) : (
@@ -329,7 +362,7 @@ export default function AdminPackageCard({
             </ListGroup.Item>
             <div
               style={{
-                fontSize: "13px",
+                fontSize: "0.9rem",
                 margin: "5px",
                 marginLeft: "15px",
                 color: "#212529  ",
@@ -362,23 +395,7 @@ export default function AdminPackageCard({
           </Button>
         </Card.Body>
       </Card>
-      {error && (
-        <div
-          className="d-flex justify-content-center"
-          style={{
-            width: "19rem",
-            marginBottom: "0.5rem",
-            fontSize: "0.85rem",
-            backgroundColor: "#f44336", // Red background color
-            color: "white", // White text color
-            padding: "10px", // Padding around the message
-            borderRadius: "5px", // Rounded corners
-            boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.2)", // Box shadow for a subtle effect
-          }}
-        >
-          {error}
-        </div>
-      )}
+      {error && <div className="error">{error}</div>}
     </>
   );
 }

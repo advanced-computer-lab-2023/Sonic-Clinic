@@ -6,7 +6,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useState } from "react";
-import { Card, Form, Button } from "react-bootstrap";
+import { Card, Form, Button, Dropdown } from "react-bootstrap";
 import { useDispatch } from "react-redux";
 import { setSearchData } from "../../state/Patient/SearchDoctor";
 import { useNavigate } from "react-router";
@@ -28,6 +28,9 @@ function SearchCard() {
     // setNameQuery(doctorName);
     // setSpecQuery(doctorSpecialty);
   };
+  const handleSelect = (eventKey) => {
+    setDoctorSpecialty(eventKey === "Select specialty" ? "" : eventKey);
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault(); // Prevent the form from submitting and page refresh
@@ -39,7 +42,7 @@ function SearchCard() {
     <div
       className="d-flex justify-content-center"
       style={{
-        marginTop: "-7rem",
+        marginTop: "-5.7rem",
         marginLeft: "3rem",
         marginRight: "3rem",
         marginBottom: "2rem",
@@ -80,25 +83,30 @@ function SearchCard() {
 
               <Form.Group className="m-2" style={{ flex: 2 }}>
                 <Form.Label>Specialty</Form.Label>
-                <Form.Control
-                  as="select"
-                  style={{ width: "100%", cursor: "pointer" }}
-                  onChange={(e) => {
-                    const selectedSpecialty = e.target.value;
-                    setDoctorSpecialty(
-                      selectedSpecialty === "Select specialty"
-                        ? ""
-                        : selectedSpecialty
-                    );
-                  }}
-                >
-                  <option>Select specialty</option>
-                  <option>Cardiologist</option>
-                  <option>Pediatrician</option>
-                  <option>Dermatologist</option>
-                  <option>Oncologist</option>
-                  <option>Neurologist</option>
-                </Form.Control>
+                <Dropdown onSelect={handleSelect}>
+                  <Dropdown.Toggle
+                    id="dropdown-basic"
+                    className="custom-dropdown-toggle"
+                  >
+                    {doctorSpecialty || "Select Specialty"}
+                  </Dropdown.Toggle>
+
+                  <Dropdown.Menu style={{ width: "100%" }}>
+                    <Dropdown.Item eventKey="Cardiology">
+                      Cardiology
+                    </Dropdown.Item>
+                    <Dropdown.Item eventKey="Pediatrics">
+                      Pediatrics
+                    </Dropdown.Item>
+                    <Dropdown.Item eventKey="Dermatology">
+                      Dermatology
+                    </Dropdown.Item>
+                    <Dropdown.Item eventKey="Oncology">Oncology</Dropdown.Item>
+                    <Dropdown.Item eventKey="Neurology">
+                      Neurology
+                    </Dropdown.Item>
+                  </Dropdown.Menu>
+                </Dropdown>
               </Form.Group>
 
               <Button

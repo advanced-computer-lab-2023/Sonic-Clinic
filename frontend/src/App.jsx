@@ -34,16 +34,14 @@ import PasswordChanged from "./pages/Guest/PasswordChanged";
 
 import PatientPackageSuccess from "./pages/Patient/PatientPackageSuccess";
 import PatientAppSuccess from "./pages/Patient/PatientAppSuccess";
+import PatientFail from "./pages/Patient/PatientFail";
+import PatientPrescriptionSuccess from "./pages/Patient/PatientPrescriptionSuccess";
 
 function App() {
   return (
     <div className="bg-light">
       <Routes>
-        <Route path="/" element={<GuestHomePage />} />
-
-        <Route path="login">
-          <Route index element={<Login />} />
-        </Route>
+        <Route path="/" element={<Login />} />
 
         <Route path="forgot-password">
           <Route path="otp-verification" element={<OTPVerification />} />
@@ -84,7 +82,12 @@ function App() {
             path="health-packages-success"
             element={<PatientPackageSuccess />}
           />
+          <Route
+            path="prescreption-success"
+            element={<PatientPrescriptionSuccess />}
+          />
           <Route path="app-success" element={<PatientAppSuccess />} />
+          <Route path="fail" element={<PatientFail />} />
         </Route>
 
         <Route path="doctor">

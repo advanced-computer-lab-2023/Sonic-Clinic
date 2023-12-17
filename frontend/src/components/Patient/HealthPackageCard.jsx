@@ -354,13 +354,13 @@ export default function HealthPackageCard() {
               </div>
               <div className="d-flex">
                 <Button
-                  variant="success"
+                  variant="primary"
                   style={{ marginRight: "0.5rem" }}
                   onClick={handleBookAppointment}
                 >
                   Book
                 </Button>
-                <Button variant="danger" onClick={handleClose}>
+                <Button variant="secondary" onClick={handleClose}>
                   Cancel
                 </Button>
               </div>

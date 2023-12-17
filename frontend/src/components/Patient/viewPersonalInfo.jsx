@@ -8,10 +8,9 @@ function ViewPersonalInfo() {
   const [showChangePass, setShowChangePass] = useState(false);
 
   const listItemStyle = {
-    fontSize: "1rem", // Font size for all information
-    marginBottom: "0.7rem", // Margin bottom for all information
+    fontSize: "1.05rem", // Font size for all information
+    marginBottom: "0.75rem", // Margin bottom for all information
     verticalAlign: "top", // Align items at the top of each column
-    fontWeight: "600", // Bold font weight for information title
   };
 
   const labelStyle = {
@@ -24,7 +23,6 @@ function ViewPersonalInfo() {
   const toggleChangePass = () => {
     setShowChangePass(!showChangePass);
   };
-  console.log("FFFF", user.packages.split(" ")[0]);
 
   return (
     <div>
@@ -35,6 +33,7 @@ function ViewPersonalInfo() {
           fontWeight: "600",
           color: "#212529",
           lineHeight: "1.5",
+          marginBottom: "1rem",
         }}
       >
         Personal Information
@@ -42,13 +41,19 @@ function ViewPersonalInfo() {
       <ListGroup>
         <ListGroup.Item>
           <div style={listItemStyle}>
-            <span style={{ color: "#099BA0" }}>Name:</span> {user.name}
+            <span style={{ color: "#099BA0", fontWeight: "bold" }}>Name:</span>{" "}
+            {user.name}
           </div>
           <div style={listItemStyle}>
-            <span style={{ color: "#099BA0" }}>Username:</span> {user.userName}
+            <span style={{ color: "#099BA0", fontWeight: "bold" }}>
+              Username:
+            </span>{" "}
+            {user.userName}
           </div>
           <div style={listItemStyle}>
-            <span style={{ color: "#099BA0" }}>Password:</span>{" "}
+            <span style={{ color: "#099BA0", fontWeight: "bold" }}>
+              Password:
+            </span>{" "}
             <span>
               <label
                 style={labelStyle}
@@ -62,22 +67,37 @@ function ViewPersonalInfo() {
             )}
           </div>
           <div style={listItemStyle}>
-            <span style={{ color: "#099BA0" }}>Email:</span> {user.userEmail}
+            <span style={{ color: "#099BA0", fontWeight: "bold" }}>Email:</span>{" "}
+            {user.userEmail}
           </div>
           <div style={listItemStyle}>
-            <span style={{ color: "#099BA0" }}>Phone Number:</span>{" "}
+            <span style={{ color: "#099BA0", fontWeight: "bold" }}>
+              Date of birth:
+            </span>{" "}
+            {user.birthdate.split("T")[0].split("-").reverse().join("/")}
+          </div>
+          <div style={listItemStyle}>
+            <span style={{ color: "#099BA0", fontWeight: "bold" }}>
+              Phone Number:
+            </span>{" "}
             {user.phoneNumber}
           </div>
           <div style={listItemStyle}>
-            <span style={{ color: "#099BA0" }}>Packages:</span>{" "}
+            <span style={{ color: "#099BA0", fontWeight: "bold" }}>
+              Package:
+            </span>{" "}
             {user.packages ? user.packages.split(" ")[0] : "No Packages"}
           </div>
           <div style={listItemStyle}>
-            <span style={{ color: "#099BA0" }}>Emergency Name:</span>{" "}
+            <span style={{ color: "#099BA0", fontWeight: "bold" }}>
+              Emergency Name:
+            </span>{" "}
             {user.emergencyName}
           </div>
           <div style={listItemStyle}>
-            <span style={{ color: "#099BA0" }}>Emergency Number:</span>{" "}
+            <span style={{ color: "#099BA0", fontWeight: "bold" }}>
+              Emergency Number:
+            </span>{" "}
             {user.emergencyNumber}
           </div>
         </ListGroup.Item>

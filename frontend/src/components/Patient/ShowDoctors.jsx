@@ -2,23 +2,12 @@ import React, { useEffect, useState } from "react";
 import { Card, Col, Row, Image, Spinner } from "react-bootstrap";
 import defaultPfp from "../../Assets/Patient/DefaultPfp.png";
 import { useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { setDoctorData } from "../../state/doctorIdReducer";
-import { setSearchData } from "../../state/Patient/SearchDoctor";
-import { setFilterArray } from "../../state/Patient/filteredDoctors";
-import axios from "axios";
 
 function ShowDoctors({ patients, responseData, setPatients, loading, error1 }) {
-  // const [loading, setLoading] = useState(true);
-  // const [responseData, setResponseData] = useState([]);
-  // const [error1, setError] = useState(null);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  // const _id = useSelector((state) => state.patientLogin.userId);
-  // const searchDataName = useSelector((state) => state.searchDoctor.name);
-  // const searchDataSpec = useSelector((state) => state.searchDoctor.specialty);
-  // const searchDataDate = useSelector((state) => state.searchDoctor.date);
-  // const searchDataTime = useSelector((state) => state.searchDoctor.time);
 
   const handleCard = (doctor, index) => {
     dispatch(
@@ -27,7 +16,7 @@ function ShowDoctors({ patients, responseData, setPatients, loading, error1 }) {
         name: doctor.name,
         email: doctor.email,
         dateOfBirth: doctor.dateOfBirth,
-        hourlyRate: doctor.hourlyRate,
+        hourlyRate: doctor.sessionPrice,
         affiliation: doctor.affiliation,
         educationalBackground: doctor.educationalBackground,
         speciality: doctor.specialty,
@@ -55,7 +44,11 @@ function ShowDoctors({ patients, responseData, setPatients, loading, error1 }) {
         </div>
       )}
       {error1 && <div style={{ color: "red" }}>{error1}</div>}
-      {!loading &&
+      {!loading && patients.length === 0 ? (
+        <div className="msg d-flex justify-content-center align-items-center w-100 ">
+          No Doctors Found
+        </div>
+      ) : (
         patients?.map((doctor, index) => (
           <a
             onClick={() => handleCard(doctor, index + 1)}
@@ -119,7 +112,7 @@ function ShowDoctors({ patients, responseData, setPatients, loading, error1 }) {
                         }}
                         className="d-flex align-items-center justify-content-end"
                       >
-                        ${doctor.hourlyRate} / Session
+                        ${doctor.sessionPrice.toFixed(2)} / Session
                       </div>
                     </Card.Text>
                   </Card.Body>
@@ -127,7 +120,8 @@ function ShowDoctors({ patients, responseData, setPatients, loading, error1 }) {
               </Row>
             </Card>
           </a>
-        ))}
+        ))
+      )}
     </div>
   );
 }

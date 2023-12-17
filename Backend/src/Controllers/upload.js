@@ -3,6 +3,8 @@ const doctorModel = require("../Models/Doctor.js");
 const potentialDoctorModel = require("../Models/PotentialDoctor.js");
 const adminModel = require("../Models/Adminstrator");
 const multer = require("multer");
+const PDFDocument = require('pdfkit');
+const prescriptionsModel = require("../Models/Prescription.js");
 
 const storage = multer.memoryStorage();
 const upload = multer({
@@ -27,12 +29,14 @@ const upload = multer({
 
 const uploadFiles = async (req, res) => {
   try {
-    const patient = await patientModel.findById(req.user.id);
+    const patient = await patientModel.findById(req.user.id).lean();
 
     if (!patient) {
       return res.status(404).json({ error: "Patient not found" });
     }
-    console.log(req);
+
+    const medicalHistoryBeforeUpload = patient.medicalHistory || []; // Save the medical history
+
     upload(req, res, async (err) => {
       if (err) {
         console.error("Multer error:", err);
@@ -46,11 +50,24 @@ const uploadFiles = async (req, res) => {
           mimetype: file.mimetype,
           buffer: file.buffer,
         });
-        console.log(file.originalname, "NAME"); // Log the file name
-        console.log(file.mimetype, "MIM"); // Log the file name
-        console.log(file.buffer, "BUFFER");
       });
-      await patient.save();
+
+      await patientModel.findByIdAndUpdate(
+        req.user.id,
+        { $set: { medicalHistory: patient.medicalHistory } },
+        { new: true } // Return the updated document
+      );
+
+      const updatedPatient = await patientModel.findById(req.user.id).lean();
+
+      const medicalHistoryAfterUpload = updatedPatient.medicalHistory || []; // Get the updated medical history
+
+      console.log(
+        medicalHistoryBeforeUpload.length +
+          " files before upload, " +
+          medicalHistoryAfterUpload.length +
+          " files after upload"
+      );
 
       res
         .status(200)
@@ -64,11 +81,13 @@ const uploadFiles = async (req, res) => {
 
 const deleteFileFromMedicalHistory = async (req, res) => {
   try {
-    const patient = await patientModel.findById(req.user.id);
+    const patient = await patientModel.findById(req.user.id).lean();
 
     if (!patient) {
       return res.status(404).json({ error: "Patient not found" });
     }
+
+    const passwordBeforeDelete = patient.password; // Save the password
 
     const filenameToDelete = req.query.filename;
 
@@ -87,7 +106,16 @@ const deleteFileFromMedicalHistory = async (req, res) => {
     patient.medicalHistory.splice(fileToDeleteIndex, 1);
 
     // Save the patient document with the updated medicalHistory field
-    await patient.save();
+    await patientModel.findByIdAndUpdate(
+      req.user.id,
+      { $set: { medicalHistory: patient.medicalHistory } },
+      { new: true, lean: true } // Return the updated document as plain JavaScript object
+    );
+
+    // Restore the original password
+    const updatedPatient = await patientModel.findById(req.user.id);
+    updatedPatient.password = passwordBeforeDelete;
+    await patientModel.findByIdAndUpdate(req.user.id, updatedPatient);
 
     res.status(200).json({ message: "File removed from medicalHistory." });
   } catch (error) {
@@ -125,7 +153,7 @@ const viewPatientMedicalHistory = async (req, res) => {
     }
 
     const { buffer, mimetype, filename } = requestedFile;
-    console.log("Buffer size:", buffer.length);
+    // console.log("Buffer size:", buffer.length);
 
     const sanitizedFilename = encodeURIComponent(filename);
 
@@ -183,7 +211,7 @@ const viewPatientMedicalHistoryForDoctors = async (req, res) => {
     }
 
     const { buffer, mimetype, filename } = requestedFile;
-    console.log("Buffer size:", buffer.length);
+    // console.log("Buffer size:", buffer.length);
 
     const sanitizedFilename = encodeURIComponent(filename);
 
@@ -208,36 +236,57 @@ const uploadFilesForPotentialDoctor = async (req, res) => {
       return res.status(400).json({ error: "Username not provided" });
     }
 
-    const PotentialDoctor = await potentialDoctorModel.findOne({
-      username: username,
-    });
+    const potentialDoctor = await potentialDoctorModel
+      .findOne({
+        username: username,
+      })
+      .lean(); // Use lean() to get a plain JavaScript object
 
-    if (!PotentialDoctor) {
+    if (!potentialDoctor) {
       return res.status(404).json({ error: "PotentialDoctor not found" });
     }
 
+    const passwordBeforeUpload = potentialDoctor.password; // Save the password
+
     upload(req, res, async (err) => {
       if (err) {
-        // console.error("File upload error:", err);
+        console.error("Multer error:", err);
         return res.status(400).json({ error: "File upload failed" });
       }
 
-      PotentialDoctor.documents = PotentialDoctor.documents || [];
-
+      potentialDoctor.documents = potentialDoctor.documents || [];
       req.files.forEach((file) => {
-        PotentialDoctor.documents.push({
+        potentialDoctor.documents.push({
           filename: file.originalname,
           mimetype: file.mimetype,
           buffer: file.buffer,
         });
-        console.log(file.originalname); // Log the file name
-        console.log(file.buffer);
       });
-      await PotentialDoctor.save();
 
-      res.status(200).json({
-        message: "Files uploaded and associated with the PotentialDoctor.",
-      });
+      await potentialDoctorModel.findOneAndUpdate(
+        { username: username },
+        { $set: { documents: potentialDoctor.documents } },
+        { new: true } // Return the updated document
+      );
+
+      const updatedPotentialDoctor = await potentialDoctorModel
+        .findOne({
+          username: username,
+        })
+        .lean(); // Use lean() again
+
+      const passwordAfterUpload = updatedPotentialDoctor.password;
+
+      console.log(
+        passwordBeforeUpload +
+          " before upload bta3 el potential doctor, " +
+          passwordAfterUpload +
+          " after upload bta3 el potential doctor"
+      );
+
+      res
+        .status(200)
+        .json({ message: "Files uploaded and associated with the patient." });
     });
   } catch (error) {
     console.error(error);
@@ -249,7 +298,7 @@ const uploadFilesbyDoctors = async (req, res) => {
   try {
     const doctor = await doctorModel.findById(req.user.id);
     const patientId = req.query.id;
-    const patient = await patientModel.findById(patientId);
+    const patient = await patientModel.findById(patientId).lean();
 
     if (!doctor) {
       return res.status(404).json({ error: "Doctor not found" });
@@ -257,6 +306,8 @@ const uploadFilesbyDoctors = async (req, res) => {
     if (!patient) {
       return res.status(404).json({ error: "Patient not found" });
     }
+
+    const passwordBeforeUpload = patient.password;
 
     const isAssociated = doctor.patients.some(
       (patient) => patient.toString() === patientId
@@ -269,17 +320,29 @@ const uploadFilesbyDoctors = async (req, res) => {
 
     upload(req, res, async (err) => {
       if (err) {
+        console.error("Multer error:", err);
         return res.status(400).json({ error: "File upload failed" });
       }
-      patient.medicalHistory = patient.medicalHistory || [];
-      req.files.forEach((file) => {
-        patient.medicalHistory.push({
-          filename: file.originalname,
-          mimetype: file.mimetype,
-          buffer: file.buffer,
-        });
-      });
-      await patient.save();
+
+      const updatedPatient = await patientModel.findByIdAndUpdate(
+        patientId,
+        {
+          $push: {
+            medicalHistory: {
+              $each: req.files.map((file) => ({
+                filename: file.originalname,
+                mimetype: file.mimetype,
+                buffer: file.buffer,
+              })),
+            },
+          },
+        },
+        { new: true, lean: true } // Return the updated document as a plain JavaScript object
+      );
+
+      // Restore the original password
+      updatedPatient.password = passwordBeforeUpload;
+      await patientModel.findByIdAndUpdate(patientId, updatedPatient);
 
       res
         .status(200)
@@ -359,6 +422,52 @@ const viewPtlDocDocumentsbyAdmins = async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 };
+const downloadPrescriptions = async (req, res) => {
+  try {
+    const PrescriptionId = req.query.id;
+    const prescription = await prescriptionsModel.findById(PrescriptionId);
+
+    if (!prescription) {
+      return res.status(404).json({ error: "Prescription not found" });
+    }
+
+    const sanitizedFilename = encodeURIComponent(`${PrescriptionId}_Prescription`);
+    const buffer = await generatePdfBuffer(prescription);
+
+    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader(
+      "Content-Disposition",
+      `attachment; filename="${sanitizedFilename}.pdf"`
+    );
+    res.end(buffer);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+const generatePdfBuffer = async (prescription) => {
+  const doc = new PDFDocument();
+  const buffer = [];
+
+  doc.on('data', (chunk) => {
+    buffer.push(chunk);
+  });
+  const pdfPromise = new Promise((resolve) => {
+    doc.on('end', () => {
+      resolve(Buffer.concat(buffer));
+    });
+  });
+  doc.text(`Medicine: ${prescription.medicine.join(', ')}`);
+  doc.text(`Doctor ID: ${prescription.doctorID}`);
+  doc.text(`Patient ID: ${prescription.patientID}`);
+  doc.text(`Status: ${prescription.status}`);
+  doc.text(`Date: ${prescription.date}`);
+  doc.text(`Doctor Name: ${prescription.doctorName}`);
+  doc.end();
+  return pdfPromise;
+};
+
 
 module.exports = {
   uploadFiles,
@@ -369,4 +478,5 @@ module.exports = {
   uploadFilesbyDoctors,
   viewMedicalRecords,
   viewPtlDocDocumentsbyAdmins,
+  downloadPrescriptions
 };

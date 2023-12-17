@@ -8,6 +8,7 @@ import DoctorFilter from "../../components/Patient/DoctorFilter";
 import ShowDoctors from "../../components/Patient/ShowDoctors";
 import ViewDoctorsSearch from "../../components/Patient/ViewDoctorsSearch";
 import { deleteSearchData } from "../../state/Patient/SearchDoctor";
+import ChatPat from "../../components/ChatPat";
 
 function PatientViewDoctors() {
   const dispatch = useDispatch();
@@ -67,7 +68,7 @@ function PatientViewDoctors() {
       <AppNavbar hamburgerMenu={<HamburgerMenu />} />
       <Container fluid className="bg-light pt-3 mt-2">
         <Container className="bg-white px-5 py-4 d-flex align-items-center justify-content-center">
-          <Row>
+          <Row style={{ width: "100%" }}>
             <div>
               <ViewDoctorsSearch />
             </div>
@@ -76,6 +77,7 @@ function PatientViewDoctors() {
                 patients={patients}
                 responseData={responseData}
                 setPatients={setPatients}
+                setResponseData={setResponseData}
               />
             </div>
             <div className="col-7">
@@ -90,6 +92,7 @@ function PatientViewDoctors() {
           </Row>
         </Container>
       </Container>
+      <ChatPat who="patient" />
     </div>
   );
 }

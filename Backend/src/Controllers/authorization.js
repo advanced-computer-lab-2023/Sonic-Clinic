@@ -7,10 +7,13 @@ const maxAge = 3 * 24 * 6 * 60;
 const bcrypt = require("bcrypt");
 const nodemailer = require("nodemailer");
 const randomstring = require("randomstring");
+const packagesModel = require("../Models/Packages.js");
+const familyMemberModel = require("../Models/FamilyMember.js");
+const appointmentModel = require("../Models/Appointment.js");
 
-const emailService = "youstina2307@outlook.com"; // e.g., 'gmail'
-const emailUser = "youstina2307@outlook.com";
-const emailPassword = "23july2002";
+const emailService = "sarahhtawfik@outlook.com";
+const emailUser = "sarahhtawfik@outlook.com";
+const emailPassword = "Sarsoura2001";
 
 const transporter = nodemailer.createTransport({
   service: emailService,
@@ -33,46 +36,83 @@ const login = async (req, res) => {
   try {
     const doctor1 = await DoctorModel.findOne({ username });
     patient1 = await patientModel.findOne({ username });
+    const admin1 = await administratorModel.findOne({ username });
 
     if (patient1 && patient1.package !== "  ") {
       patient1 = await patientModel
         .findOne({ username })
         .populate("packagesPatient");
+      const package = await packagesModel.findById(patient1.package);
+      const today = new Date();
+      const renewalDate = new Date(package.renewalDate);
+      if (renewalDate < today) {
+        package.status = "Unsubsrcibed";
+        patient1.unsubscribedHealthPackage.push(patient1.package);
+        patient1.package = "  ";
+        await patient1.save();
+      }
     }
-    console.log(patient1);
-    const admin1 = await administratorModel.findOne({ username });
+
+    if (
+      patient1 &&
+      patient1.familyMembers &&
+      patient1.familyMembers.length > 0
+    ) {
+      const family = patient1.familyMembers;
+      for (famIdArr of family) {
+        const famId = famIdArr[0];
+        const member = await familyMemberModel.findById(famId);
+        if (member.package !== "  ") {
+          const package = await packagesModel.findById(member.package);
+          const today = new Date();
+          const renewalDate = new Date(package.renewalDate);
+          if (renewalDate < today) {
+            package.status = "Unsubsrcibed";
+            member.unsubscribedHealthPackage.push(member.package);
+            member.package = "  ";
+            await member.save();
+          }
+        }
+      }
+    }
 
     if (doctor1) {
-      const auth = bcrypt.compare(password, doctor1.password);
+      const auth = await bcrypt.compare(password, doctor1.password);
       if (auth) {
         const token = createToken(doctor1._id);
         res.cookie("jwt", token, { httpOnly: true, maxAge: maxAge } * 1000);
         return res.status(200).json({ message: "Doctor", user: doctor1 });
+      } else {
+        return res.status(401).json({ message: "Invalid credentials" });
       }
-      throw Error("incorrect password");
     }
 
     if (patient1) {
-      const auth = bcrypt.compare(password, patient1.password);
+      const auth = await bcrypt.compare(password, patient1.password);
       if (auth) {
         const token = createToken(patient1._id);
         res.cookie("jwt", token, { httpOnly: true, maxAge: maxAge } * 1000);
         return res.status(200).json({ message: "Patient", user: patient1 });
+      } else {
+        return res.status(401).json({ message: "Invalid credentials" });
       }
-      throw Error("incorrect password");
     }
 
     if (admin1) {
-      const auth = bcrypt.compare(password, admin1.password);
+      console.log(admin1);
+      const auth = await bcrypt.compare(password, admin1.password);
+      console.log(auth);
       if (auth) {
         const token = createToken(admin1._id);
         res.cookie("jwt", token, { httpOnly: true, maxAge: maxAge } * 1000);
         return res.status(200).json({ message: "Admin", user: admin1 });
+      } else {
+        return res.status(401).json({ message: "Invalid credentials" });
       }
-      throw Error("incorrect password");
     }
-
-    return res.status(401).json({ message: "Invalid credentials" });
+    if (!admin1 && !patient1 && !admin1) {
+      return res.status(401).json({ message: "Invalid credentials" });
+    }
   } catch (error) {
     console.error("Error:", error);
     return res.status(500).json({ message: "Server Error" });
@@ -98,7 +138,8 @@ const requireAuth = async (req, res, next) => {
 };
 
 const logout = async (req, res) => {
-  res.cookie("jwt", "", { maxAge: 1 });
+  res.cookie("jwt", "", { maxAge: 0, httpOnly: true });
+  res.status(200).json({ message: "Logout successful" });
 };
 
 const updateUserInfoInCookie = (req, res, user) => {

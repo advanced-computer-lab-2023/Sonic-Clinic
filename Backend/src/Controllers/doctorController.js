@@ -3,6 +3,12 @@ const { default: mongoose } = require("mongoose");
 const patientModel = require("../Models/Patient.js");
 const PrescriptionModel = require("../Models/Prescription.js");
 const appointmentModel = require("../Models/Appointment.js");
+const familyMemberModel = require("../Models/FamilyMember.js");
+const bcrypt = require("bcrypt");
+const prescriptionModel = require("../Models/Prescription.js");
+const followUpModel = require("../Models/FollowUp.js");
+const medicineModel = require("../Models/Medicine.js");
+const packagesModel = require("../Models/Packages.js");
 
 const searchPatientByName = async (req, res) => {
   const { name } = req.query;
@@ -26,23 +32,16 @@ const searchPatientByName = async (req, res) => {
 
 const filterPatientsByAppointments = async (req, res) => {
   try {
-    const doctor = await doctorModel.findOne(req.user.id);
-    console.log(doctor);
+    const doctor = await doctorModel.findById(req.user.id);
     if (!doctor) {
       return res.status(401).json({ error: "Doctor not authenticated" });
     }
-
-    const today = new Date();
     const doctorAppointments = await appointmentModel.find({
       doctorID: doctor._id,
     });
-
     const upcomingAppointments = [];
     for (const appointment of doctorAppointments) {
-      const appointmentDate = new Date(appointment.date);
-      console.log(appointmentDate);
-      console.log(today);
-      if (appointmentDate > new Date(today)) {
+      if (appointment.status == "Upcoming") {
         upcomingAppointments.push(appointment);
       }
     }
@@ -50,9 +49,9 @@ const filterPatientsByAppointments = async (req, res) => {
     const patientIDs = upcomingAppointments.map(
       (appointment) => appointment.patientID
     );
-
-    // Fetch patient information for the extracted IDs
-    const patients = await patientModel.find({ _id: { $in: patientIDs } });
+    const patientsNoFam = await patientModel.find({ _id: { $in: patientIDs } });
+    const fam = await familyMemberModel.find({ _id: { $in: patientIDs } });
+    const patients = patientsNoFam.concat(fam);
 
     res.status(200).json({ patients });
   } catch (error) {
@@ -115,7 +114,7 @@ const updateDoctorProfile = async (req, res) => {
 };
 
 const viewPatients = async (req, res) => {
-  //const id = req.user.id;
+  // const id = req.user.id;
 
   try {
     const doctor = await doctorModel.findById(req.user.id);
@@ -221,7 +220,28 @@ const selectPatient = async (req, res) => {
 
 const addPrescription = async (req, res) => {
   try {
-    const newPrescription = await PrescriptionModel.create(req.body);
+    // const patientId = req.body.id;
+    const { medicine, patientID } = req.body;
+    const date = new Date();
+    const dateString =
+      date.getFullYear() +
+      "-" +
+      ("0" + (date.getMonth() + 1)).slice(-2) +
+      "-" + // Months are 0-indexed
+      ("0" + date.getDate()).slice(-2); // Add leading zero for single digit dates
+
+    const doctor = await doctorModel.findById(req.user.id);
+    const newPrescription = await PrescriptionModel.create({
+      medicine,
+      doctorID: req.user.id,
+      patientID: patientID,
+      date: dateString,
+      status: "Not filled",
+      doctorName: doctor.name,
+    });
+    const patient = await patientModel.findById(patientID);
+    patient.prescreptions.push(newPrescription);
+    await patient.save();
     console.log("Prescription Created!");
     res.status(200).send(newPrescription);
   } catch (error) {
@@ -230,9 +250,18 @@ const addPrescription = async (req, res) => {
 };
 const viewDocApp = async (req, res) => {
   try {
-    const appointments = await appointmentModel
-      .find({ doctorID: req.user.id })
-      .populate("patient");
+    let patient;
+    const appointments = await appointmentModel.find({ doctorID: req.user.id });
+    for (const app of appointments) {
+      patient = await patientModel.findById(app.patientID);
+      if (patient) {
+        await app.populate("patient");
+        // console.log(app);
+      } else {
+        await app.populate("familyMember");
+        // console.log(app);
+      }
+    }
     res.status(200).json(appointments);
   } catch (error) {
     res.status(400).send({ error: error.message });
@@ -306,12 +335,9 @@ const changePasswordForDoctor = async (req, res) => {
         .status(401)
         .json({ message: "Current password is incorrect." });
     }
-
-    // Hash the new password and update it in the database
     const salt = await bcrypt.genSalt();
-    const hashedPassword = await bcrypt.hash(newPassword, salt);
-
-    doctor.password = hashedPassword;
+    newPasswordHashed = await bcrypt.hash(newPassword, salt);
+    doctor.password = newPasswordHashed;
     await doctor.save();
 
     res.status(200).json({ message: "Password changed successfully." });
@@ -326,6 +352,9 @@ const addAppointmentByPatientID = async (req, res) => {
 
     const { date, description, patientID, status, time } = req.body;
 
+    const patient = await patientModel.findById(patientID);
+    const doctor = await doctorModel.findById(doctorID);
+
     // Create a new appointment with doctorID, patientID, and other details
     const appointment = await appointmentModel.create({
       date,
@@ -335,6 +364,28 @@ const addAppointmentByPatientID = async (req, res) => {
       status,
       time,
     });
+
+    notificationByMail(
+      patient.email,
+      "An appointment has been reserved with Dr. " +
+        doctor.name +
+        " on " +
+        appointment.date +
+        " at " +
+        appointment.time,
+      "New Appointment Reservation"
+    );
+
+    notificationByMail(
+      doctor.email,
+      "An appointment has been reserved with " +
+        patient.name +
+        " on " +
+        appointment.date +
+        " at " +
+        appointment.time,
+      "Appointment Reserved"
+    );
 
     //   const doctor= await doctorModel.findById(req.user.id);
     //   doctor.patients.push(patientID);
@@ -399,6 +450,628 @@ const acceptContract = async (req, res) => {
     return res.status(500).json({ message: "Server Error" });
   }
 };
+const changePasswordForDoctorForget = async (req, res) => {
+  const { email, newPassword } = req.body;
+
+  try {
+    if (!email || !newPassword) {
+      return res
+        .status(400)
+        .json({ message: "Email and newPassword are required." });
+    }
+
+    let doctor = await doctorModel.findOne({ email });
+
+    if (!doctor) {
+      return res.status(404).json({ message: "Email does not exist." });
+    }
+
+    doctor.password = newPassword;
+    await doctor.save();
+
+    res.status(200).json({ message: "Password changed successfully." });
+  } catch (error) {
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+
+const viewPrescriptionsDoc = async (req, res) => {
+  try {
+    const id = req.user.id;
+
+    const prescriptions = await prescriptionModel.find({ doctorID: id });
+
+    if (!prescriptions) {
+      return res.status(404).json({ message: "No prescriptions found." });
+    }
+    res.status(200).json(prescriptions);
+  } catch (error) {
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+
+const calculateSessionPrice = async (hourlyRate, patientPackage) => {
+  try {
+    if (!patientPackage || patientPackage.trim() === "") {
+      return hourlyRate;
+    }
+
+    const packageInfo = await packagesModel.findById(patientPackage);
+
+    if (!packageInfo) {
+      console.error("Package information not found for ID:", patientPackage);
+      return hourlyRate;
+    }
+
+    const sessionPrice =
+      hourlyRate * 1.1 * (1 - packageInfo.sessionDiscount * 0.01);
+
+    console.log("Session price calculated:", sessionPrice);
+
+    return sessionPrice;
+  } catch (error) {
+    console.error("Error calculating session price:", error);
+    throw error; // You may choose to handle the error differently based on your needs
+  }
+};
+
+const cancelAppointmentDoc = async (req, res) => {
+  try {
+    let notificationDoc;
+    let notification;
+    let patient;
+    const doctor = await doctorModel.findById(req.user.id);
+    const appId = req.body.id;
+    const appointment = await appointmentModel.findById(appId);
+    if (!appointment) {
+      return res.status(404).json({ message: "No appointment found." });
+    }
+    patient = await patientModel.findById(appointment.patientID);
+    const date = appointment.date;
+    const time = appointment.time;
+    const dateTimeString = `${date}T${time}:00.000Z`;
+    console.log(dateTimeString);
+    const inputDate = new Date(dateTimeString);
+    const currentDate = new Date();
+    const timeDifference = inputDate - currentDate;
+    const hoursDifference = timeDifference / (1000 * 60 * 60);
+    if (hoursDifference < 24) {
+      return res.status(401).json({
+        message: "Appointment is in less than 24 hours",
+      });
+    }
+
+    let package;
+    if (patient) {
+      package = patient.package;
+    } else {
+      const famMem = await familyMemberModel.findById(appointment.patientID);
+      package = famMem.package;
+    }
+    appointment.status = "Cancelled";
+    await appointment.save();
+
+    const sessionPrice = await calculateSessionPrice(
+      doctor.hourlyRate,
+      package
+    );
+
+    doctor.wallet -= sessionPrice;
+    await doctor.save();
+
+    patient.wallet += sessionPrice;
+    await patient.save();
+
+    const id = appointment.patientID;
+    console.log(appointment.patientID);
+    patient = await patientModel.findById(id);
+    if (patient) {
+      notification =
+        "The appointment with Dr. " +
+        doctor.name +
+        " has been cancelled upon the Dr request";
+      patient.notifications.push(notification);
+      patient.newNotifications = true;
+      await patient.save();
+      await notificationByMail(
+        patient.email,
+        notification,
+        "Appointment Cancelled"
+      );
+      notificationDoc =
+        "An appointment with " + patient.name + " has been cancelled";
+      doctor.notifications.push(notificationDoc);
+      doctor.newNotifications = true;
+      await doctor.save();
+      await notificationByMail(
+        doctor.email,
+        notificationDoc,
+        "Appointment Cancelled"
+      );
+    } else {
+      const familyMem = await familyMemberModel.findById(appointment.patientID);
+      if (familyMem) {
+        const parent = await patientModel.findById(req.user.id);
+        notification =
+          "The appointment with Dr. " +
+          doctor.name +
+          " for " +
+          familyMem.name +
+          " has been cancelled upon the Dr request ";
+        parent.notifications.push(notification);
+        parent.newNotifications = true;
+        await parent.save();
+        await notificationByMail(
+          parent.email,
+          notification,
+          "Appointment Cancelled"
+        );
+        notificationDoc =
+          "An appointment with " + familyMem.name + " has been cancelled";
+        doctor.notifications.push(notificationDoc);
+        doctor.newNotifications = true;
+        await doctor.save();
+        await notificationByMail(
+          doctor.email,
+          notificationDoc,
+          "Appointment Cancelled"
+        );
+      }
+      if (familyMem && familyMem.patientRef) {
+        const linkedP = await patientModel.findById(familyMem.patientRef);
+        notification =
+          "Your appointment with Dr. " +
+          doctor.name +
+          " has been cancelled upon the Dr request";
+        linkedP.notifications.push(notification);
+        linkedP.newNotifications = true;
+        await linkedP.save();
+        await notificationByMail(
+          linkedP.email,
+          notification,
+          "Appointment Cancelled"
+        );
+      }
+    }
+
+    res.status(200).json(appointment);
+  } catch (error) {
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+const viewFollowUpsReq = async (req, res) => {
+  try {
+    const id = req.user.id;
+    const followUps = await followUpModel.find({ doctorID: id });
+    res.status(200).json(followUps);
+  } catch (error) {
+    res.status(400).send({ error: error.message });
+  }
+};
+
+const acceptFollowUp = async (req, res) => {
+  try {
+    const followUpId = req.body._id;
+    const followUp = await followUpModel.findById(followUpId);
+    console.log(followUp + "Followww");
+    const doctor = await doctorModel.findById(req.user.id);
+    const appointment = await appointmentModel.create({
+      date: followUp.date,
+      description: followUp.description,
+      patientID: followUp.patientID,
+      doctorID: followUp.doctorID,
+      status: followUp.status,
+      time: followUp.time,
+    });
+
+    console.log(followUp.date + "datttteee");
+    const followUpIndex = doctor.followUps.findIndex((followUp) =>
+      followUp._id.equals(followUpId)
+    );
+    if (followUpIndex != -1) {
+      doctor.followUps.splice(followUpIndex, 1);
+      await doctor.save();
+    } else {
+      res.status(401).json("follow Up not found for this doctor");
+    }
+
+    const doctorAvailableSlots = doctor.availableSlots;
+
+    let isAvailableSlot = false;
+    let slot2;
+    for (const slot of doctorAvailableSlots) {
+      const [dateS, timeS] = slot.split(" ");
+      if (dateS === followUp.date && timeS === followUp.time) {
+        slot2 = slot;
+        isAvailableSlot = true;
+        break;
+      }
+    }
+
+    if (!isAvailableSlot) {
+      return res
+        .status(400)
+        .json({ message: "Appointment date is not available." });
+    }
+
+    // If the date is available, remove it from the doctor's available slots
+    doctor.availableSlots = doctorAvailableSlots.filter((slot) => {
+      return slot !== slot2;
+    });
+
+    await doctor.save();
+    await followUpModel.findByIdAndDelete(followUpId);
+
+    res.status(200).json(appointment);
+  } catch (error) {
+    res.status(400).send({ error: error.message });
+  }
+};
+
+const rejectFollowUp = async (req, res) => {
+  try {
+    const followUpId = req.body._id;
+    const doctor = await doctorModel.findById(req.user.id);
+    const followUpIndex = doctor.followUps.findIndex((followUp) =>
+      followUp._id.equals(followUpId)
+    );
+    if (followUpIndex !== -1) {
+      doctor.followUps.splice(followUpIndex, 1);
+      await doctor.save();
+    } else {
+      res.status(401).json("follow Up not found for this doctor");
+    }
+    const deleted = await followUpModel.findByIdAndDelete(followUpId);
+    if (!deleted) {
+      res.status(401).json("no followUp found");
+    }
+
+    res.status(200).json(deleted);
+  } catch (error) {
+    res.status(400).send({ error: error.message });
+  }
+};
+
+const rescheduleAppDoc = async (req, res) => {
+  try {
+    const appId = req.body.id;
+    const date = req.body.date;
+    const time = req.body.time;
+    let notification;
+    let notificationDoc;
+    const appointment = await appointmentModel.findById(appId);
+    appointment.date = date;
+    appointment.time = time;
+    appointment.status = "Upcoming";
+    await appointment.save();
+    const doctor = await doctorModel.findById(req.user.id);
+    const docName = doctor.name;
+    notification =
+      "Your appointment with Dr. " +
+      docName +
+      " has been rescheduled upon the Dr request to be on " +
+      date.split("-").reverse().join("/") +
+      " at: " +
+      time;
+
+    const patientId = appointment.patientID;
+    const patient = await patientModel.findById(patientId);
+    if (patient) {
+      notificationDoc =
+        "Your appointment with " +
+        patient.name +
+        " has been rescheduled to be on " +
+        date.split("-").reverse().join("/") +
+        " at: " +
+        time;
+      patient.notifications.push(notification);
+      patient.newNotifications = true;
+      await patient.save();
+      await notificationByMail(
+        patient.email,
+        notification,
+        "Appointment Rescheduled"
+      );
+
+      doctor.notifications.push(notificationDoc);
+      doctor.newNotifications = true;
+      await doctor.save();
+      await notificationByMail(
+        doctor.email,
+        notificationDoc,
+        "Appointment Rescheduled"
+      );
+    } else {
+      const familyMem = await familyMemberModel.findById(appointment.patientID);
+      if (familyMem) {
+        const parent = await patientModel.findById(familyMem.patientID);
+        notification =
+          "The appointment with Dr. " +
+          doctor.name +
+          " for " +
+          familyMem.name +
+          " has been rescheduled upon the Dr request to be on " +
+          date.split("-").reverse().join("/") +
+          " at: " +
+          time;
+        parent.notifications.push(notification);
+        parent.newNotifications = true;
+        await parent.save();
+        await notificationByMail(
+          parent.email,
+          notification,
+          "Appointment Rescheduled"
+        );
+        notificationDoc =
+          "An appointment with " +
+          familyMem.name +
+          " has been rescheduled to be on " +
+          date.split("-").reverse().join("/") +
+          " at: " +
+          time;
+        doctor.notifications.push(notificationDoc);
+        doctor.newNotifications = true;
+        await doctor.save();
+        await notificationByMail(
+          doctor.email,
+          notificationDoc,
+          "Appointment Rescheduled"
+        );
+      }
+
+      if (familyMem && familyMem.patientRef) {
+        console.log("family mem ref");
+        const linkedP = await patientModel.findById(familyMem.patientRef);
+        notification =
+          "Your appointment with Dr. " +
+          doctor.name +
+          " has been rescheduled upon the Dr request to be on " +
+          date.split("-").reverse().join("/") +
+          " at: " +
+          time;
+        linkedP.notifications.push(notification);
+        linkedP.newNotifications = true;
+        await linkedP.save();
+        await notificationByMail(
+          linkedP.email,
+          notification,
+          "Appointment Rescheduled"
+        );
+      }
+    }
+
+    const doctorAvailableSlots = doctor.availableSlots;
+
+    let isAvailableSlot = false;
+    let slot2;
+    for (const slot of doctorAvailableSlots) {
+      const [dateS, timeS] = slot.split(" ");
+      if (dateS === date && timeS === time) {
+        slot2 = slot;
+        isAvailableSlot = true;
+        break;
+      }
+    }
+
+    // If the date is available, remove it from the doctor's available slots
+    if (isAvailableSlot) {
+      doctor.availableSlots = doctorAvailableSlots.filter((slot) => {
+        return slot !== slot2;
+      });
+
+      await doctor.save();
+    }
+
+    res.status(200).json(appointment);
+  } catch (error) {
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+const viewNotifications = async (req, res) => {
+  try {
+    let notifications;
+    const id = req.user.id;
+    const doctor = await doctorModel.findById(id);
+    if (doctor) {
+      notifications = doctor.notifications;
+    } else {
+      const patient = await patientModel.findById(id);
+      notifications = patient.notifications;
+    }
+    res.status(200).json(notifications);
+  } catch (error) {
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+const notificationFlag = async (req, res) => {
+  try {
+    const id = req.user.id;
+    const doctor = await doctorModel.findById(id);
+    if (doctor) {
+      doctor.newNotifications = false;
+      await doctor.save();
+    } else {
+      const patient = await patientModel.findById(id);
+      patient.newNotifications = false;
+      await patient.save();
+    }
+    res.status(200).json("Notification flag = false");
+  } catch (error) {
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+const nodemailer = require("nodemailer");
+const emailService = "sarahhtawfik@outlook.com";
+const emailUser = "sarahhtawfik@outlook.com";
+const emailPassword = "Sarsoura2001";
+const transporter = nodemailer.createTransport({
+  service: "outlook",
+  auth: {
+    user: emailUser,
+    pass: emailPassword,
+  },
+});
+const notificationByMail = async (email, message, title) => {
+  try {
+    const mailOptions = {
+      from: emailUser,
+      to: email,
+      subject: title,
+      text: message,
+    };
+
+    const info = await transporter.sendMail(mailOptions);
+    console.log("Email sent successfully:", info.response);
+  } catch (error) {
+    console.error("Error sending email:", error);
+  }
+
+  // Introduce a delay between emails (adjust the duration as needed)
+  await new Promise((resolve) => setTimeout(resolve, 3000));
+};
+const viewMedicines = async (req, res) => {
+  try {
+    const medicines = await medicineModel.find();
+
+    if (!medicines) {
+      return res.status(404).json({ message: "No medicines found" });
+    }
+    res.status(200).json(medicines);
+  } catch (error) {
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+
+const addMedicineToPrescription = async (req, res) => {
+  try {
+    const doctorID = req.user.id;
+    const { patientID, medicines } = req.body;
+
+    // Fetch doctorName from req.user.name
+    const doctor = await doctorModel.findById(doctorID);
+    const doctorName = doctor.name;
+    console.log(doctorName);
+
+    // Create an array to store the medicines
+    const medicinesArray = [];
+
+    // Loop through each medicine in the request body
+    for (const medicineID of medicines) {
+      // Check if the medicine already exists
+      const existingMedicine = await medicineModel.findById(medicineID);
+
+      if (!existingMedicine) {
+        return res.status(400).json({ error: `Medicine not found` });
+      }
+
+      // Add the medicine to the medicines array with the required quantity
+      medicinesArray.push(existingMedicine);
+    }
+
+    // Create a new prescription
+    const prescription = await prescriptionModel.create({
+      medicine: medicinesArray,
+      doctorID,
+      patientID,
+      status: "Not submitted", // Assuming you want to set an initial status
+      date: new Date(),
+      doctorName: doctorName,
+      submitted: false, // Assuming you want to set an initial submitted status
+    });
+
+    // Save the prescription
+    await prescription.save();
+
+    // Send a success response
+    res.status(200).json(prescription);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+const removeMedicineFromPrescription = async (req, res) => {
+  try {
+    const { prescriptionID, medicineID } = req.body;
+
+    // Check if the prescription exists
+    const prescription = await prescriptionModel.findById(prescriptionID);
+    let flag = false;
+
+    if (!prescription) {
+      return res.status(400).json({ error: `Prescription not found` });
+    }
+
+    // Check if the medicine exists in the prescription
+    for (const medicine of prescription.medicine) {
+      if (medicineID == medicine._id) {
+        flag = true;
+      }
+    }
+
+    if (!flag) {
+      return res
+        .status(400)
+        .json({ error: `Medicine not found in the prescription` });
+    }
+
+    // Remove the medicine from the prescription
+    prescription.medicine = prescription.medicine.filter(
+      (med) => med._id.toString() !== medicineID
+    );
+
+    // Save the updated prescription
+    await prescription.save();
+
+    // Send a success response
+    res.status(200).json(prescription);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+const updatePrescription = async (req, res) => {
+  try {
+    const doctorID = req.user.id;
+    const { prescriptionID, medicine } = req.body;
+
+    const doctor = await doctorModel.findById(doctorID);
+    const existingPrescription =
+      await prescriptionModel.findById(prescriptionID);
+
+    const patient = await patientModel.findById(existingPrescription.patientID);
+
+    if (!existingPrescription.doctorID === doctorID) {
+      return res
+        .status(400)
+        .json({ error: `You can not edit in this prescription` });
+    }
+
+    if (!existingPrescription) {
+      return res.status(400).json({ error: `Prescription not found` });
+    }
+    // Update prescription properties with new values
+    existingPrescription.medicine = medicine;
+
+    // Save the updated prescription
+    await existingPrescription.save();
+    const patientPres = patient.prescreptions;
+    for (const pres of patientPres) {
+      if (pres._id == prescriptionID) {
+        pres.medicine = medicine;
+        patient.markModified("prescreptions");
+        await patient.save();
+      }
+    }
+    await patient.save();
+
+    // Send a success response
+    res.status(200).json(patient);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
 
 module.exports = {
   selectPatient,
@@ -417,4 +1090,17 @@ module.exports = {
   addAppointmentByPatientID,
   viewWalletDoc,
   acceptContract,
+  changePasswordForDoctorForget,
+  viewPrescriptionsDoc,
+  cancelAppointmentDoc,
+  viewFollowUpsReq,
+  acceptFollowUp,
+  rejectFollowUp,
+  rescheduleAppDoc,
+  viewNotifications,
+  notificationFlag,
+  viewMedicines,
+  addMedicineToPrescription,
+  removeMedicineFromPrescription,
+  updatePrescription,
 };
