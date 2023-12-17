@@ -53,7 +53,16 @@ const OTPVerificationForm = () => {
 
   return (
     <div className="col-9 form-container">
-      <h1 className="form-title">OTP Verification</h1>
+      <div
+        className="form-title"
+        style={{
+          fontFamily: "'Bebas Neue', sans-serif",
+          fontWeight: 600,
+          fontSize: "2rem",
+        }}
+      >
+        OTP Verification
+      </div>
       <h6 className="description" style={{ fontSize: "14px", color: "gray" }}>
         Enter the verification code that has been sent to your email address.
       </h6>
