@@ -571,7 +571,6 @@ export default function ChatPat({ who }) {
                 <div className="d-flex flex-column justify-content-center align-items-center">
                   <video
                     playsInline
-                    muted
                     ref={userVideoRef}
                     autoPlay
                     style={{

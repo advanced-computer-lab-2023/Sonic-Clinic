@@ -286,7 +286,6 @@ function ShowPrescriptions() {
           </Spinner>
         </div>
       )}
-      {error1 && <div style={{ color: "red" }}>{error1}</div>}
       {filteredPrescriptions.length === 0 && !loading && (
         <div style={{ textAlign: "center", marginTop: "20px" }} className="msg">
           You don't have any prescriptions.

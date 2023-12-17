@@ -299,7 +299,7 @@ function ShowAppointments() {
                       <Card.Title
                         style={{
                           marginTop: "2rem",
-                          fontSize: "1.5rem",
+                          fontSize: "1.3rem",
                           fontWeight: "bold",
                           color: "#212529",
                           marginBottom: "0.2rem",
@@ -364,7 +364,7 @@ function ShowAppointments() {
                       }}
                     >
                       {(appointment.status === "Upcoming" ||
-                        appointment.status === "Rescheduled") && (
+                        appointment.status === "upcoming") && (
                         <div>
                           {" "}
                           <Button
