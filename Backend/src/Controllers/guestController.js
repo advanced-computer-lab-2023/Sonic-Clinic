@@ -236,7 +236,7 @@ const viewChats = async (req, res) => {
       if (allPharmacists) {
         for (const pharmacist of allPharmacists) {
           const chat = await chatModel.findOne({
-            pharmacist: pharmacist._id,
+            pharmacistID: pharmacist._id,
             doctorID: userID,
           });
           if (chat) {
