@@ -5,7 +5,7 @@ const chatSchema = new Schema(
   {
     messages: {
       type: [[String, String, String,String]],
-      required: true,
+      required: false,
     },
     patientID: {
       type: String,

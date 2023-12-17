@@ -226,8 +226,7 @@ const viewChats = async (req, res) => {
           });
           if (chat) {
             chatNames.push(
-              currPatient.name + "-" + currPatient._id + "-" + chat.flag
-            );
+              currPatient.name + "-" + currPatient._id + "-" + chat.flag);
           } else {
             chatNames.push(currPatient.name + "-" + currPatient._id);
           }
@@ -237,7 +236,7 @@ const viewChats = async (req, res) => {
       if (allPharmacists) {
         for (const pharmacist of allPharmacists) {
           const chat = await chatModel.findOne({
-            pharmacist: currPatient._id,
+            pharmacist: pharmacist._id,
             doctorID: userID,
           });
           if (chat) {
@@ -250,7 +249,7 @@ const viewChats = async (req, res) => {
                 chat.flag
             );
           } else {
-            chatNames.push(currPatient.name + "-" + currPatient._id);
+            chatNames.push(pharmacist.name + "-" + pharmacist._id);
           }
         }
       }
@@ -383,7 +382,7 @@ const sendMessage = async (req, res) => {
         { doctorID: userID, pharmacistID: recipientID },
       ],
     });
-
+    
     if (!existingChat) {
       // Create a new chat
       let pNew = null;
@@ -435,10 +434,8 @@ const sendMessage = async (req, res) => {
       return res.status(200).json(newChat);
     } else {
       // Add message to the existing chat
+      console.log(senderTitle+currDate+currTime+message);
       existingChat.messages.push([senderTitle, currDate, currTime, message]);
-
-      await existingChat.save();
-
       existingChat.flag = true;
       await existingChat.save();
       console.log(existingChat._id + " " + existingChat.flag);
