@@ -288,7 +288,7 @@ Follow these steps to navigate and use Sonic-Clinic effectively:
 
 ## Screenshots of the System
 
-Access the [Google Drive folder](https://drive.google.com/drive/folders/1Nqq8H35nmAYbNz82tsrXSa3r3NvYQdoi?usp=drive_link) to view screenshots of the Sonic-Clinic system.
+Access the [Google Drive folder](https://drive.google.com/drive/folders/1xNpSNldeEy3VPrjI_GcZyIPH1yPvd4qr?usp=drive_link) to view screenshots of the Sonic-Clinic system.
 
 Feel free to explore the provided images for an in-depth look at the user interface, features, and functionalities of Sonic-Clinic.
 
